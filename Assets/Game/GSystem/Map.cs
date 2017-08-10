@@ -18,8 +18,26 @@ namespace Game.Systems
 
 		public void Initiate(GameManager game)
 		{
+			int mapheightEdges = 55;
+			int mapwidthEdges = 110;
 			int mapheight = 50;
 			int mapwidth = 100;
+
+			for (int x = (mapwidth - mapwidthEdges); x < mapwidthEdges; x++)
+			{
+				for (int y = (mapheight - mapheightEdges); y < mapheightEdges; y++)
+				{
+					if ((x < 0 || x > mapwidth+1) || (y < 0 || y > mapheight+1))
+					{
+						GameObject cube = new GameObject();
+						cube.AddComponent<SpriteRenderer>();
+						cube.AddComponent<BoxCollider2D>();
+						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
+						Tiles.Add(new Vector2(x, y), cube);
+					}
+
+				}
+			}
 
 			Vector2 shift = new Vector2(0, 0); // play with this to shift map around
 			float zoom = 0.1f; // play with this to zoom into the noise field
@@ -29,39 +47,29 @@ namespace Game.Systems
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);
-					GameObject cube = new GameObject();
-					cube.AddComponent<SpriteRenderer>();
-					cube.transform.position = new Vector3(x+(0.28f*x), y + (0.28f * y), 0);
+					
 					if (noise < 0.3f)
 					{
-						//GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-						//
-						//cube.transform.position = new Vector3(x, y, 0);
-						//var materialColored = new Material(Shader.Find("Diffuse"));
-						//materialColored.color = Color.blue;
-						//cube.GetComponent<Renderer>().material = materialColored;
+
 					}
 					else if (noise < 0.5f)
 					{
-						//GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-						//
-						//cube.transform.position = new Vector3(x, y, 0);
-						//var materialColored = new Material(Shader.Find("Diffuse"));
-						//materialColored.color = Color.yellow;
-						//cube.GetComponent<Renderer>().material = materialColored;
+
 					}
 					else if (noise < 0.9f && noise > 0.5f)
 					{
-						//var materialColored = new Material(Shader.Find("Diffuse"));
-						//materialColored.color = Color.green;
-						//cube.GetComponent<Renderer>().material = materialColored;
+						GameObject cube = new GameObject();
+						cube.AddComponent<SpriteRenderer>();
+						cube.AddComponent<BoxCollider2D>();
+						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Tiles.Add(new Vector2(x, y), cube);
 					}
 					else
 					{
-						//var materialColored = new Material(Shader.Find("Diffuse"));
-						//materialColored.color = Color.gray;
-						//cube.GetComponent<Renderer>().material = materialColored;
+						GameObject cube = new GameObject();
+						cube.AddComponent<SpriteRenderer>();
+						cube.AddComponent<BoxCollider2D>();
+						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Tiles.Add(new Vector2(x, y), cube);
 					}
 
