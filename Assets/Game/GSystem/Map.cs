@@ -1,0 +1,159 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using Game.GEntity;
+using Game.Component;
+
+namespace Game.Systems
+{
+	public class Map : ISystem
+	{
+
+		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Movement, ActionQueue>();
+		private Dictionary<Vector2, GameObject> Tiles = new Dictionary<Vector2, GameObject>();
+
+		public void Update(GameManager game)
+		{
+		}
+
+		public void Initiate(GameManager game)
+		{
+			int mapheight = 50;
+			int mapwidth = 100;
+
+			Vector2 shift = new Vector2(0, 0); // play with this to shift map around
+			float zoom = 0.1f; // play with this to zoom into the noise field
+
+			for (int x = 0; x < mapwidth; x++)
+				for (int y = 0; y < mapheight; y++)
+				{
+					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
+					float noise = Mathf.PerlinNoise(pos.x, pos.y);
+					GameObject cube = new GameObject();
+					cube.AddComponent<SpriteRenderer>();
+					cube.transform.position = new Vector3(x+(0.28f*x), y + (0.28f * y), 0);
+					if (noise < 0.3f)
+					{
+						//GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+						//
+						//cube.transform.position = new Vector3(x, y, 0);
+						//var materialColored = new Material(Shader.Find("Diffuse"));
+						//materialColored.color = Color.blue;
+						//cube.GetComponent<Renderer>().material = materialColored;
+					}
+					else if (noise < 0.5f)
+					{
+						//GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+						//
+						//cube.transform.position = new Vector3(x, y, 0);
+						//var materialColored = new Material(Shader.Find("Diffuse"));
+						//materialColored.color = Color.yellow;
+						//cube.GetComponent<Renderer>().material = materialColored;
+					}
+					else if (noise < 0.9f && noise > 0.5f)
+					{
+						//var materialColored = new Material(Shader.Find("Diffuse"));
+						//materialColored.color = Color.green;
+						//cube.GetComponent<Renderer>().material = materialColored;
+						Tiles.Add(new Vector2(x, y), cube);
+					}
+					else
+					{
+						//var materialColored = new Material(Shader.Find("Diffuse"));
+						//materialColored.color = Color.gray;
+						//cube.GetComponent<Renderer>().material = materialColored;
+						Tiles.Add(new Vector2(x, y), cube);
+					}
+
+					
+
+			}
+
+			Sprite newMat = null;
+			foreach (Vector2 pos in Tiles.Keys)
+			{
+				var top = Tiles.ContainsKey(new Vector2(0, 1)+ pos);
+				var bot = Tiles.ContainsKey(new Vector2(0, -1) + pos);
+				var right = Tiles.ContainsKey(new Vector2(1, 0) + pos);
+				var left = Tiles.ContainsKey(new Vector2(-1, 0) + pos);
+
+				if (!top && !right)
+				{
+					newMat = Resources.Load("Tiles/TopRight", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "TopRight";
+				}
+				if (!top && !left)
+				{
+					newMat = Resources.Load("Tiles/TopLeft", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "TopLeft";
+				}
+				if (!top && right && left)
+				{
+					newMat = Resources.Load("Tiles/Top", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "Top";
+				}
+				if (top && right && left && bot)
+				{
+					newMat = Resources.Load("Tiles/Middle", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "Middle";
+				}
+				if (top && !right && bot)
+				{
+					newMat = Resources.Load("Tiles/MiddleRight", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "MiddleRight";
+				}
+				if (top && !left && bot)
+				{
+					newMat = Resources.Load("Tiles/MiddleLeft", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "MiddleLeft";
+				}
+				if (top && !right && !bot)
+				{
+					newMat = Resources.Load("Tiles/BotRightCorner", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "BotRightCorner";
+				}
+				if (top && !left && !bot)
+				{
+					newMat = Resources.Load("Tiles/BotLeftCorner", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "BotLeftCorner";
+				}
+				if (top && left && !bot && right)
+				{
+					newMat = Resources.Load("Tiles/Bot", typeof(Sprite)) as Sprite;
+					Tiles[pos].name = "Bot";
+				}
+
+				Tiles[pos].GetComponent<SpriteRenderer>().sprite = newMat;
+			}
+
+			foreach (Vector2 pos in Tiles.Keys)
+			{
+				var top = Tiles.ContainsKey(new Vector2(0, 1) + pos);
+				var bot = Tiles.ContainsKey(new Vector2(0, -1) + pos);
+				var right = Tiles.ContainsKey(new Vector2(1, 0) + pos);
+				var left = Tiles.ContainsKey(new Vector2(-1, 0) + pos);
+
+				if (Tiles[pos].name == "Middle")
+				{
+					var middleRight = Tiles.ContainsKey(new Vector2(1, 1) + pos);
+					var middleLeft = Tiles.ContainsKey(new Vector2(-1, 1) + pos);
+					if (!middleRight)
+					{
+						newMat = Resources.Load("Tiles/Middle3", typeof(Sprite)) as Sprite;
+						Tiles[pos].GetComponent<SpriteRenderer>().sprite = newMat;
+					}
+					if (!middleLeft)
+					{
+						newMat = Resources.Load("Tiles/Middle2", typeof(Sprite)) as Sprite;
+						Tiles[pos].GetComponent<SpriteRenderer>().sprite = newMat;
+					}
+					
+				}
+			}
+		}
+		public void SendMessage(GameManager game, int reciever, Message message)
+		{
+
+		}
+	}
+}
