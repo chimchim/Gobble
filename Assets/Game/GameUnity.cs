@@ -10,34 +10,44 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System;
-using Game.AI;
-using Game.AI.Behaviors;
 
 public class GameUnity : MonoBehaviour 
 {
     public GameObject Prefab;
-    public GameObject AIPrefab;
-    public GameObject Aim;
 	GameManager game = new GameManager();
-    public GameObject player;
     public GameObject camera;
     public Dictionary<int, Transform> entityDic = new Dictionary<int, Transform>();
-    private int entity;
+
+	[SerializeField]
+	public static float PlayerSpeed = 6;
+	public static float JumpSpeed = 5.0F;
+	public static float Gravity = 0.5F;
+
+	public float PlayerSpeedPub = 6;
+	public float JumpSpeedPub = 5.0F;
+	public float GravityPub = 0.5F;
+
+	public static Vector3 StartingPosition;
+	public Transform StartPos;
+	private int entity;
 	void Start () 
 	{
-        SetFamilyID();
-		//Entity ent = new Entity();
-		//game.Entities.addEntity(ent);
-        //ent.AddComponent(ActionQueue.Make(ent.ID));
-        //ent.AddComponent(Movement.Make(ent.ID));
+		StartingPosition = StartPos.position;
+
+		SetFamilyID();
+		Entity ent = new Entity();
+		game.Entities.addEntity(ent);
+        ent.AddComponent(ActionQueue.Make(ent.ID));
+        ent.AddComponent(Game.Component.Input.Make(ent.ID));
 		//ent.AddComponent(Stats.Make(ent.ID));
-        //ent.AddComponent(Player.Make(ent.ID));
-        //player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-        //player.tag = "Player";
-        //ent.gameObject = player;
-		//
-        //entity = ent.ID;
-        //entityDic.Add(ent.ID, player.transform);
+		ent.AddComponent(Player.Make(ent.ID, true));
+        var player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+        player.tag = "Player";
+        ent.gameObject = player;
+
+		GetComponent<Camera>().player = player;
+		entity = ent.ID;
+        entityDic.Add(ent.ID, player.transform);
         game.Systems.CreateSystems();
         game.Initiate();        
 	}
@@ -46,6 +56,10 @@ public class GameUnity : MonoBehaviour
 	{
         game.Update(Time.deltaTime);
 
+
+		PlayerSpeed = PlayerSpeedPub;
+		JumpSpeed = JumpSpeedPub;
+		Gravity = GravityPub;
 	}
     void LateUpdate()
     {

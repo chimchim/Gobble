@@ -9,7 +9,7 @@ namespace Game.Systems
 	public class Map : ISystem
 	{
 
-		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Movement, ActionQueue>();
+		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private Dictionary<Vector2, GameObject> Tiles = new Dictionary<Vector2, GameObject>();
 
 		public void Update(GameManager game)
@@ -32,6 +32,7 @@ namespace Game.Systems
 						GameObject cube = new GameObject();
 						cube.AddComponent<SpriteRenderer>();
 						cube.AddComponent<BoxCollider2D>();
+						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Tiles.Add(new Vector2(x, y), cube);
 					}
@@ -61,6 +62,7 @@ namespace Game.Systems
 						GameObject cube = new GameObject();
 						cube.AddComponent<SpriteRenderer>();
 						cube.AddComponent<BoxCollider2D>();
+						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Tiles.Add(new Vector2(x, y), cube);
 					}
@@ -70,6 +72,7 @@ namespace Game.Systems
 						cube.AddComponent<SpriteRenderer>();
 						cube.AddComponent<BoxCollider2D>();
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
+						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						Tiles.Add(new Vector2(x, y), cube);
 					}
 
@@ -158,7 +161,15 @@ namespace Game.Systems
 					
 				}
 			}
+
+			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
+			foreach (int entity in entities)
+			{
+				var go = game.Entities.GetEntity(entity);
+				go.gameObject.transform.position = GameUnity.StartingPosition;
+			}
 		}
+
 		public void SendMessage(GameManager game, int reciever, Message message)
 		{
 

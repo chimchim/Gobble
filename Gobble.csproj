@@ -75,14 +75,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Game\AI\AIStateMachine.cs" />
-    <Compile Include="Assets\Game\AI\AgentBehaviour.cs" />
-    <Compile Include="Assets\Game\AI\Behaviors\FollowWayPoints.cs" />
-    <Compile Include="Assets\Game\AI\Behaviors\ForwardSensor.cs" />
-    <Compile Include="Assets\Game\AI\Behaviors\Inspect.cs" />
-    <Compile Include="Assets\Game\AI\Behaviors\RandomPathfinder.cs" />
-    <Compile Include="Assets\Game\AI\Behaviors\RotateShooter.cs" />
-    <Compile Include="Assets\Game\AI\BehaviourState.cs" />
     <Compile Include="Assets\Game\Action\Action.cs" />
     <Compile Include="Assets\Game\Action\JumpAction.cs" />
     <Compile Include="Assets\Game\Action\MoveAction.cs" />
@@ -95,21 +87,20 @@
     <Compile Include="Assets\Game\Entity\EntityManager.cs" />
     <Compile Include="Assets\Game\GComponent\AIGameObjects.cs" />
     <Compile Include="Assets\Game\GComponent\ActionQueue.cs" />
-    <Compile Include="Assets\Game\GComponent\Agent.cs" />
     <Compile Include="Assets\Game\GComponent\GComponent.cs" />
     <Compile Include="Assets\Game\GComponent\GameObjects.cs" />
     <Compile Include="Assets\Game\GComponent\Holster.cs" />
+    <Compile Include="Assets\Game\GComponent\Input.cs" />
     <Compile Include="Assets\Game\GComponent\Movement.cs" />
     <Compile Include="Assets\Game\GComponent\PathMovement.cs" />
     <Compile Include="Assets\Game\GComponent\Player.cs" />
     <Compile Include="Assets\Game\GComponent\Stats.cs" />
-    <Compile Include="Assets\Game\GSystem\AILogic.cs" />
     <Compile Include="Assets\Game\GSystem\ActionApplier.cs" />
     <Compile Include="Assets\Game\GSystem\CheckForDeath.cs" />
     <Compile Include="Assets\Game\GSystem\InputSystem.cs" />
     <Compile Include="Assets\Game\GSystem\Map.cs" />
     <Compile Include="Assets\Game\GSystem\MessageKiller.cs" />
-    <Compile Include="Assets\Game\GSystem\PhysicsSystem.cs" />
+    <Compile Include="Assets\Game\GSystem\Movement.cs" />
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
@@ -121,6 +112,7 @@
     <Compile Include="Assets\Game\Misc\PriorityQueue.cs" />
     <Compile Include="Assets\Game\Misc\Sound.cs" />
     <Compile Include="Assets\Game\Misc\Timer.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\Camera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\CharacterMover.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Pathfinder.cs" />
     <Compile Include="Assets\Game\ObjectPool.cs" />
