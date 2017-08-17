@@ -13,7 +13,7 @@ public class Camera : MonoBehaviour
 	void Start()
 	{
 		//Calculate and store the offset value by getting the distance between the player's position and camera's position.
-		offset = transform.position - player.transform.position;
+		//offset = transform.position - player.transform.position;
 	}
 
 	// LateUpdate is called after Update each frame
