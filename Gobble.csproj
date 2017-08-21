@@ -114,7 +114,11 @@
     <Compile Include="Assets\Game\Misc\Timer.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Camera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\CharacterMover.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpack.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\InventoryMain.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Pathfinder.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\RootCanvas.cs" />
     <Compile Include="Assets\Game\ObjectPool.cs" />
     <Compile Include="Assets\Game\ParticleManager.cs" />
     <Compile Include="Assets\Game\Shot.cs" />
