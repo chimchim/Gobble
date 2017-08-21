@@ -168,8 +168,43 @@ namespace Game.Systems
 				var go = game.Entities.GetEntity(entity);
 				go.gameObject.transform.position = GameUnity.StartingPosition;
 			}
+			CreateWater(3);
 		}
+		private void CreateWater(int amounts)
+		{
+			int mapheight = 50;
+			int mapwidth = 100;
+			Random r = new Random();
+			int[] sticks = new int[amounts];
+			Vector2[] stickpositions = new Vector2[amounts];
 
+			for (int i = 0; i < amounts; i++)
+			{
+				int rand = Random.Range(5, mapwidth - 5);
+				sticks[i] = rand;
+			}
+			for (int i = 0; i < amounts; i++)
+			{
+				float currentYPos = 1;
+				
+				Vector3 currentPos = new Vector3(sticks[i], currentYPos);
+				RaycastHit2D hit = Physics2D.Raycast(currentPos, -Vector2.up, 10);
+				Debug.Log("currentPos " + currentPos);
+				while (hit.distance == 0)
+				{
+					Debug.Log("currentPos " + currentPos);
+					currentYPos += 0.3f;
+					currentPos = new Vector3(sticks[i], currentYPos);
+					hit = Physics2D.Raycast(currentPos, -Vector2.up, 10);
+				}
+				stickpositions[i] = currentPos;
+			}
+
+			for (int i = 0; i < amounts; i++)
+			{
+				Debug.Log("stickpositions " + stickpositions[i]);
+			}
+		}
 		public void SendMessage(GameManager game, int reciever, Message message)
 		{
 
