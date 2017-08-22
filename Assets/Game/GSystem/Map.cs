@@ -12,16 +12,17 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private Dictionary<Vector2, GameObject> Tiles = new Dictionary<Vector2, GameObject>();
 
+		int mapheightEdges = 55;
+		int mapwidthEdges = 110;
+		int mapheight = 50;
+		int mapwidth = 100;
 		public void Update(GameManager game)
 		{
 		}
 
 		public void Initiate(GameManager game)
 		{
-			int mapheightEdges = 55;
-			int mapwidthEdges = 110;
-			int mapheight = 50;
-			int mapwidth = 100;
+			
 
 			for (int x = (mapwidth - mapwidthEdges); x < mapwidthEdges; x++)
 			{
@@ -170,41 +171,188 @@ namespace Game.Systems
 			}
 			CreateWater(3);
 		}
-		private void CreateWater(int amounts)
+
+		private void CreateWater(int height)
 		{
-			int mapheight = 50;
-			int mapwidth = 100;
-			Random r = new Random();
-			int[] sticks = new int[amounts];
-			Vector2[] stickpositions = new Vector2[amounts];
-
-			for (int i = 0; i < amounts; i++)
+			//int mapheight = 50;
+			//int mapwidth = 102;
+			List<List<Vector2>> waters = new List<List<Vector2>>();
+			bool foundWater = false;
+			int waterCount = -1;
+			for (int y = 0; y < 1; y++)
 			{
-				int rand = Random.Range(5, mapwidth - 5);
-				sticks[i] = rand;
-			}
-			for (int i = 0; i < amounts; i++)
-			{
-				float currentYPos = 1;
-				
-				Vector3 currentPos = new Vector3(sticks[i], currentYPos);
-				RaycastHit2D hit = Physics2D.Raycast(currentPos, -Vector2.up, 10);
-				Debug.Log("currentPos " + currentPos);
-				while (hit.distance == 0)
+				for (int x = 0; x < mapwidth + 2; x++)
 				{
-					Debug.Log("currentPos " + currentPos);
-					currentYPos += 0.3f;
-					currentPos = new Vector3(sticks[i], currentYPos);
-					hit = Physics2D.Raycast(currentPos, -Vector2.up, 10);
+					var pos = new Vector2(x, y);
+					if (!Tiles.ContainsKey(pos))
+					{
+						if (foundWater == false)
+						{
+							waterCount++;
+                            waters.Add(new List<Vector2>());
+							foundWater = true;
+						}
+						waters[waterCount].Add(pos);
+                    }
+					else
+					{
+						foundWater = false;
+					}
 				}
-				stickpositions[i] = currentPos;
 			}
-
-			for (int i = 0; i < amounts; i++)
+			
+			for (int i = 0; i < waters.Count; i++)
 			{
-				Debug.Log("stickpositions " + stickpositions[i]);
+				List<Vector2> newLevels = new List<Vector2>();
+				int count = waters[i].Count;
+				if (!AddWaterHorizontal(waters[i], newLevels))
+				{
+					continue;
+				}
+
+				Vector2 fp = waters[i][0];
+				Vector2 lp = waters[i][waters[i].Count - 1];
+
+				for (int j = 0; j < count; j++)
+				{
+					var pos = waters[i][j];
+					var highpos = new Vector2(pos.x, pos.y + 1);
+					if (!Tiles.ContainsKey(highpos))
+					{
+						waters[i].Add(highpos);
+						newLevels.Add(highpos);
+                    }
+				}
+
+				List<Vector2> newLevels2 = new List<Vector2>();
+				int levelamount = 1;
+                for (int j = 0; j < 8; j++)
+				{
+					if (newLevels.Count == 0)
+					{
+						break;
+					}
+					levelamount++;
+                    int count2 = newLevels.Count;
+
+					if (!AddWaterHorizontal(newLevels, newLevels2))
+					{
+						continue;
+					}
+					for (int k = 0; k < count2; k++)
+					{
+						var pos = newLevels[k];
+						var highpos = new Vector2(pos.x, pos.y + 1);
+						if (!Tiles.ContainsKey(highpos))
+						{
+							newLevels2.Add(highpos);
+						}
+					}
+					waters[i].AddRange(newLevels2);
+					newLevels.Clear();
+					newLevels.AddRange(newLevels2);
+					newLevels2.Clear();
+				}
+			}
+			for (int j = 0; j < levelamount; j++)
+			{
+
+			}
+			Sprite newMat = null;
+			for (int i = 0; i < waters.Count; i++)
+			{
+				for (int j = 0; j < waters[i].Count; j++)
+				{
+					var pos = waters[i][j];
+					if (!Tiles.ContainsKey(pos))
+                    {
+						float x = pos.x;
+						float y = pos.y;
+						GameObject cube = new GameObject();
+						cube.AddComponent<SpriteRenderer>();
+						cube.AddComponent<BoxCollider2D>();
+						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
+						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
+						Tiles.Add(new Vector2(x, y), cube);
+						newMat = Resources.Load("Tiles/MiddleWater", typeof(Sprite)) as Sprite;
+						cube.GetComponent<SpriteRenderer>().sprite = newMat;
+						cube.name = "TopWater";
+					}
+				}
 			}
 		}
+
+		private bool AddWaterHorizontal(List<Vector2> waters, List<Vector2> newLevel)
+		{
+
+			var firstPos = waters[0] + new Vector2(0, 1);
+			var lastPos = waters[waters.Count - 1] + new Vector2(0, 1);
+			bool leftCool = false;
+			bool rightCool = false;
+			var newWaters = new List<Vector2>();
+			var nextpos = new Vector2(-1, 0) + firstPos;
+			while (true)
+			{
+				
+				if (!Tiles.ContainsKey(nextpos))
+				{
+					var leftDown = new Vector2(0, -1) + nextpos;
+					if (Tiles.ContainsKey(leftDown))
+					{
+						newWaters.Add(nextpos);
+						newLevel.Add(nextpos);
+						nextpos += new Vector2(-1, 0);  
+					}
+					else
+					{
+						Debug.Log("left failed");
+						newLevel.Clear();
+                        newWaters.Clear();
+						break;
+					}
+				}
+				else
+				{
+					leftCool = true;
+					break;
+				}
+
+			}
+			var nextpos2 = new Vector2(1, 0) + lastPos;
+			while (true)
+			{
+				if (!Tiles.ContainsKey(nextpos2))
+				{
+					var rightDown = new Vector2(0, -1) + nextpos2;
+					if (Tiles.ContainsKey(rightDown))
+					{
+						newWaters.Add(nextpos2);
+						newLevel.Add(nextpos2);
+						nextpos2 += new Vector2(1, 0);
+						
+					}
+					else
+					{
+						Debug.Log("right failed");
+						newWaters.Clear();
+						newLevel.Clear();
+                        break;
+					}
+				}
+				else
+				{
+					rightCool = true;
+					break;
+				}
+			}
+			if (rightCool && leftCool)
+			{
+				waters.AddRange(newWaters);
+				return true;
+            }
+			return false;
+		}
+
 		public void SendMessage(GameManager game, int reciever, Message message)
 		{
 
