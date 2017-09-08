@@ -12,13 +12,12 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private GameObject[,] Blocks;
 
-		int mapheightEdges = 55;
-		int mapwidthEdges = 110;
 		int mapheight = 50;
-		int mapwidth = 100;
-		int heightBound = 10;
-		int widhtBound = 10;
+		int mapwidth = 90;
+		int heightBound = 8;
+		int widhtBound = 8;
 
+		GameObject Water;
 		private Material[] Waters = new Material[10];
 		int AIR = 0;
 		int GROUND = 1;
@@ -41,16 +40,105 @@ namespace Game.Systems
 		int map_height = 16;
 
 		int[,] blocks;
+		Transform[,] waters;
 
 		float[,] mass;
 		float[,] new_mass;
 
+		int currentDrawIndex = 0;
+		public List<GameObject> objs = new List<GameObject>();
+		public List<GameObject> drawed = new List<GameObject>();
+		public List<Vector2> oldWaters = new List<Vector2>();
 
 		public void Update(GameManager game)
 		{
-			
-		}
+			int fullWidhth = mapwidth + (widhtBound * 2);
+			int fullHeight = mapheight + (heightBound * 2);
+			currentDrawIndex = 0;
+			simulate_compression();
 
+			for (int x = 0; x < drawed.Count; x++)
+			{
+				drawed[x].transform.position = new Vector3(-1111, -1111, 0);
+			}
+			for (int x = 1; x < fullWidhth + 2; x++)
+			{
+				for (int y = 1; y < fullHeight + 2; y++)
+				{
+					if (blocks[x, y] == WATER)
+					{
+						if (mass[x, y] < MinDraw)
+						{
+							if (waters[x, y] != null)
+							{
+								oldWaters.Add(new Vector2(x, y));
+							}
+						}
+						else
+						{
+							if (mass[x, y] < MaxMass)
+							{
+								//Draw a half-full block. Block size is dependent on the amount of water in it.
+								if (mass[x, y + 1] >= MinDraw)
+								{
+									draw_block(x, y, mass[x, y + 1], 1);
+								}
+								draw_block(x, y, mass[x, y], mass[x, y]);
+							}
+							else
+							{
+
+								draw_block(x, y, mass[x, y], 1);
+							}
+						}
+					}
+					else
+					{
+						if (waters[x, y] != null)
+						{
+							oldWaters.Add(new Vector2(x, y));
+						}
+					}
+				}
+			}
+			for (int i = 0; i < oldWaters.Count; i++)
+			{
+				var x = (int)oldWaters[i].x;
+				var y = (int)oldWaters[i].y;
+				GameObject.Destroy(waters[x, y].gameObject);
+			}
+			oldWaters.Clear();
+		}
+		private void draw_block(int x, int y, float color, float mass)
+		{
+			GameObject go;
+			if (waters[x, y] == null && oldWaters.Count == 0)
+			{
+				go = GameObject.Instantiate(Water);
+				waters[x, y] = go.transform;
+			}
+			else if(waters[x, y] == null)
+			{
+				var oldX = (int)oldWaters[oldWaters.Count - 1].x;
+				var oldY = (int)oldWaters[oldWaters.Count - 1].y;
+				oldWaters.RemoveAt(oldWaters.Count - 1);
+				waters[x, y] = waters[oldX, oldY];
+			}
+
+
+			float scaledcolor = Mathf.Min(1, color);
+			float scaledMass = Mathf.Min(1, mass);
+			float yOffset = (1 - (scaledMass)) * 1.28f;
+			scaledMass = (scaledMass) * 1.28f;
+			int watertransparency = ((int)(scaledcolor * 10));
+			watertransparency = Mathf.Min(watertransparency, 9);
+			
+			waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
+
+			var pos = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
+			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2), 0);
+			waters[x, y].localScale = new Vector3(waters[x, y].localScale.x, scaledMass, 0.01f);
+		}
 		public void Initiate(GameManager game)
 		{
 			int fullWidhth = mapwidth + (widhtBound * 2);
@@ -128,9 +216,9 @@ namespace Game.Systems
 
 
 					var top = ((y + 1) < fullHeight) && (Blocks[x, y + 1] != null);
-					var bot = ((y - 1) >  0) && (Blocks[x, y - 1] != null);
+					var bot = ((y - 1) >=  0) && (Blocks[x, y - 1] != null);
 					var right = ((x + 1) < fullWidhth) && (Blocks[x + 1, y ] != null);
-					var left = ((x - 1) > 0) && (Blocks[x - 1, y] != null);
+					var left = ((x - 1) >= 0) && (Blocks[x - 1, y] != null);
 					if (Blocks[x, y] == null)
 					{
 						continue;
@@ -198,7 +286,7 @@ namespace Game.Systems
 					if (Blocks[x, y].name == "Middle")
 					{
 						var middleRight = ((x + 1) < fullWidhth) && ((y + 1) < fullHeight) && (Blocks[x + 1, y + 1] != null);
-						var middleLeft = ((x - 1) > 0) && ((y + 1) < fullHeight) && (Blocks[x - 1, y + 1] != null);
+						var middleLeft = ((x - 1) >= 0) && ((y + 1) < fullHeight) && (Blocks[x - 1, y + 1] != null);
 						if (!middleRight)
 						{
 							newMat = Resources.Load("Tiles/Middle3", typeof(Sprite)) as Sprite;
@@ -230,36 +318,54 @@ namespace Game.Systems
 		}
 		void InitiateWater()
 		{
+			Water = GameObject.Instantiate(Resources.Load("Prefabs/Water", typeof(GameObject))) as GameObject;
+			Water.transform.position = new Vector3(-1111, -1111, 0);
+			Waters[0] = Resources.Load("Material/Water/Blue9", typeof(Material)) as Material;
+			Waters[1] = Resources.Load("Material/Water/Blue8", typeof(Material)) as Material;
+			Waters[2] = Resources.Load("Material/Water/Blue7", typeof(Material)) as Material;
+			Waters[3] = Resources.Load("Material/Water/Blue6", typeof(Material)) as Material;
+			Waters[4] = Resources.Load("Material/Water/Blue5", typeof(Material)) as Material;
+			Waters[5] = Resources.Load("Material/Water/Blue4", typeof(Material)) as Material;
+			Waters[6] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
+			Waters[7] = Resources.Load("Material/Water/Blue2", typeof(Material)) as Material;
+			Waters[8] = Resources.Load("Material/Water/Blue1", typeof(Material)) as Material;
+			Waters[9] = Resources.Load("Material/Water/Blue", typeof(Material)) as Material;
+
 			int fullWidhth = mapwidth + (widhtBound * 2);
 			int fullHeight = mapheight + (heightBound * 2);
 
+			blocks = new int[fullWidhth + 2, fullHeight + 2];
+			mass = new float[fullWidhth + 2, fullHeight + 2];
+			new_mass = new float[fullWidhth + 2, fullHeight + 2];
+			waters = new Transform[fullWidhth + 2, fullHeight + 2];
 			for (int x = 0; x < fullWidhth + 2; x++)
 			{
 				for (int y = 0; y < fullHeight + 2; y++)
 				{
-					blocks[x, y] = Random.Range(0, 3);// int(random(0, 3));
-
-					if (GROUND == blocks[x, y])
+					blocks[x, y] = Random.Range(0, 3);
+					if (blocks[x, y] == 1)
 					{
-						//var water = Instantiate(Ground);
-						var water = new GameObject();
-						water.transform.position = new Vector3(x, y, 0);
+						blocks[x, y] = 0;
+					}
+					if ((y < fullHeight) && (x < fullWidhth) && Blocks[x, y] != null)
+					{
+						blocks[x, y] = 1;
 					}
 					mass[x, y] = blocks[x, y] == WATER ? MaxMass : 0.0f;
 					new_mass[x, y] = blocks[x, y] == WATER ? MaxMass : 0.0f;
 				}
 			}
 
-			for (int x = 0; x < map_width + 2; x++)
+			for (int x = 0; x < fullWidhth + 2; x++)
 			{
 				blocks[x, 0] = AIR;
-				blocks[x, map_height + 1] = AIR;
+				blocks[x, fullHeight + 1] = AIR;
 			}
 
-			for (int y = 1; y < map_height + 1; y++)
+			for (int y = 1; y < fullHeight + 1; y++)
 			{
 				blocks[0, y] = AIR;
-				blocks[map_width + 1, y] = AIR;
+				blocks[fullWidhth + 1, y] = AIR;
 			}
 
 		}
@@ -278,81 +384,18 @@ namespace Game.Systems
 				return (total_mass + MaxCompress) / 2;
 			}
 		}
-		Color waterColor(float m)
-		{
-			Color c = new Color();
 
-			m = Mathf.Clamp(m, MinDraw, MaxDraw);
 
-			int r = 50, g = 50;
-			int b;
-
-			if (m < 1)
-			{
-				b = (int)(map(m, 0.01f, 1, 255, 200));
-				r = (int)(map(m, 0.01f, 1, 240, 50));
-				r = Mathf.Clamp(r, 50, 240);
-				g = r;
-			}
-			else
-			{
-				b = (int)(map(m, 1, 1.1f, 190, 140));
-			}
-
-			b = Mathf.Clamp(b, 140, 255);
-			c.b = b;
-			c.g = g;
-			c.r = r;
-			c.g = g;
-			return c;
-		}
-		float map(float s, float a1, float a2, float b1, float b2)
-		{
-			return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
-		}
-
-		int currentDrawIndex = 0;
-		public List<GameObject> objs = new List<GameObject>();
-		public List<GameObject> drawed = new List<GameObject>();
-		private void draw_block(int x, int y, float color, float mass)
-		{
-			GameObject go;
-			if (currentDrawIndex >= objs.Count)
-			{
-				//go = Instantiate(Water);
-				go = new GameObject();
-				objs.Add(go);
-				drawed.Add(go);
-				currentDrawIndex++;
-			}
-			else
-			{
-
-				go = objs[currentDrawIndex];
-				if (!drawed.Contains(go))
-					drawed.Add(go);
-				currentDrawIndex++;
-			}
-
-			float scaledcolor = Mathf.Min(1, color);
-			float scaledMass = Mathf.Min(1, mass);
-			float yOffset = 1 - (scaledMass);
-			int watertransparency = ((int)(scaledcolor * 10));
-			watertransparency = Mathf.Min(watertransparency, 9);
-
-			go.GetComponent<Renderer>().material = Waters[watertransparency];
-			go.transform.position = new Vector3(x, y - (yOffset / 2), 0);
-			go.transform.localScale = new Vector3(go.transform.localScale.x, scaledMass, 1);
-		}
 		void simulate_compression()
 		{
 			float Flow = 0;
 			float remaining_mass;
-
+			int fullWidhth = mapwidth + (widhtBound * 2);
+			int fullHeight = mapheight + (heightBound * 2);
 			//Calculate and apply flow for each block
-			for (int x = 1; x <= map_width; x++)
+			for (int x = 1; x <= fullWidhth; x++)
 			{
-				for (int y = 1; y <= map_height; y++)
+				for (int y = 1; y <= fullHeight; y++)
 				{
 					//Skip inert ground blocks
 					if (blocks[x, y] == GROUND) continue;
@@ -426,17 +469,17 @@ namespace Game.Systems
 			}
 
 			//Copy the new mass values to the mass array
-			for (int x = 0; x < map_width + 2; x++)
+			for (int x = 0; x < fullWidhth + 2; x++)
 			{
-				for (int y = 0; y < map_height + 2; y++)
+				for (int y = 0; y < fullHeight + 2; y++)
 				{
 					mass[x, y] = new_mass[x, y];
 				}
 			}
 
-			for (int x = 1; x <= map_width; x++)
+			for (int x = 1; x <= fullWidhth; x++)
 			{
-				for (int y = 1; y <= map_height; y++)
+				for (int y = 1; y <= fullHeight; y++)
 				{
 					//Skip ground blocks
 					if (blocks[x, y] == GROUND) continue;
@@ -453,15 +496,15 @@ namespace Game.Systems
 			}
 
 			//Remove any water that has left the map
-			for (int x = 0; x < map_width + 2; x++)
+			for (int x = 0; x < fullWidhth + 2; x++)
 			{
 				mass[x, 0] = 0;
-				mass[x, map_height + 1] = 0;
+				mass[x, fullHeight + 1] = 0;
 			}
-			for (int y = 1; y < map_height + 1; y++)
+			for (int y = 1; y < fullHeight + 1; y++)
 			{
 				mass[0, y] = 0;
-				mass[map_width + 1, y] = 0;
+				mass[fullWidhth + 1, y] = 0;
 			}
 
 		}
