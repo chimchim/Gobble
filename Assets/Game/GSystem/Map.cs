@@ -31,13 +31,9 @@ namespace Game.Systems
 		float MinDraw = 0.01f;
 		float MaxDraw = 1.1f;
 
-		float MaxSpeed = 1;   //max units of water moved out of one block to another, per timestep
+		float MaxSpeed = 1;
 
 		float MinFlow = 0.01f;
-
-		//ne map dimensions and data structures
-		int map_width = 16;
-		int map_height = 16;
 
 		int[,] blocks;
 		Transform[,] waters;
@@ -45,22 +41,12 @@ namespace Game.Systems
 		float[,] mass;
 		float[,] new_mass;
 
-		int currentDrawIndex = 0;
-		public List<GameObject> objs = new List<GameObject>();
-		public List<GameObject> drawed = new List<GameObject>();
-		public List<Vector2> oldWaters = new List<Vector2>();
-
 		public void Update(GameManager game)
 		{
 			int fullWidhth = mapwidth + (widhtBound * 2);
 			int fullHeight = mapheight + (heightBound * 2);
-			currentDrawIndex = 0;
 			simulate_compression();
 
-			for (int x = 0; x < drawed.Count; x++)
-			{
-				drawed[x].transform.position = new Vector3(-1111, -1111, 0);
-			}
 			for (int x = 1; x < fullWidhth + 2; x++)
 			{
 				for (int y = 1; y < fullHeight + 2; y++)
@@ -71,7 +57,7 @@ namespace Game.Systems
 						{
 							if (waters[x, y] != null)
 							{
-								oldWaters.Add(new Vector2(x, y));
+								GameObject.Destroy(waters[x, y].gameObject);
 							}
 						}
 						else
@@ -79,11 +65,12 @@ namespace Game.Systems
 							if (mass[x, y] < MaxMass)
 							{
 								//Draw a half-full block. Block size is dependent on the amount of water in it.
+								float scaledSize = mass[x, y];
 								if (mass[x, y + 1] >= MinDraw)
 								{
-									draw_block(x, y, mass[x, y + 1], 1);
+									scaledSize = 1;
 								}
-								draw_block(x, y, mass[x, y], mass[x, y]);
+								draw_block(x, y, mass[x, y], scaledSize);
 							}
 							else
 							{
@@ -96,34 +83,22 @@ namespace Game.Systems
 					{
 						if (waters[x, y] != null)
 						{
-							oldWaters.Add(new Vector2(x, y));
+							GameObject.Destroy(waters[x, y].gameObject);
 						}
 					}
 				}
 			}
-			for (int i = 0; i < oldWaters.Count; i++)
-			{
-				var x = (int)oldWaters[i].x;
-				var y = (int)oldWaters[i].y;
-				GameObject.Destroy(waters[x, y].gameObject);
-			}
-			oldWaters.Clear();
+
 		}
 		private void draw_block(int x, int y, float color, float mass)
 		{
 			GameObject go;
-			if (waters[x, y] == null && oldWaters.Count == 0)
+			if (waters[x, y] == null)
 			{
 				go = GameObject.Instantiate(Water);
 				waters[x, y] = go.transform;
 			}
-			else if(waters[x, y] == null)
-			{
-				var oldX = (int)oldWaters[oldWaters.Count - 1].x;
-				var oldY = (int)oldWaters[oldWaters.Count - 1].y;
-				oldWaters.RemoveAt(oldWaters.Count - 1);
-				waters[x, y] = waters[oldX, oldY];
-			}
+
 
 
 			float scaledcolor = Mathf.Min(1, color);
@@ -136,7 +111,7 @@ namespace Game.Systems
 			waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
 
 			var pos = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
-			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2), 0);
+			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2), 0.1f);
 			waters[x, y].localScale = new Vector3(waters[x, y].localScale.x, scaledMass, 0.01f);
 		}
 		public void Initiate(GameManager game)
@@ -157,7 +132,6 @@ namespace Game.Systems
 						cube.AddComponent<BoxCollider2D>();
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
-						//Tiles.Add(new Vector2(x, y), cube);
 						Blocks[x, y] = cube;
 					}
 			
@@ -327,9 +301,9 @@ namespace Game.Systems
 			Waters[4] = Resources.Load("Material/Water/Blue5", typeof(Material)) as Material;
 			Waters[5] = Resources.Load("Material/Water/Blue4", typeof(Material)) as Material;
 			Waters[6] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
-			Waters[7] = Resources.Load("Material/Water/Blue2", typeof(Material)) as Material;
-			Waters[8] = Resources.Load("Material/Water/Blue1", typeof(Material)) as Material;
-			Waters[9] = Resources.Load("Material/Water/Blue", typeof(Material)) as Material;
+			Waters[7] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
+			Waters[8] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
+			Waters[9] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
 
 			int fullWidhth = mapwidth + (widhtBound * 2);
 			int fullHeight = mapheight + (heightBound * 2);
