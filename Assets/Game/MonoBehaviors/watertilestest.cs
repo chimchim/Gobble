@@ -35,34 +35,6 @@ public class watertilestest : MonoBehaviour
 	float[,] mass;
 	float[,] new_mass;
 
-	//Window size
-	int display_width = 600;
-	int display_height = 600;
-	//Set the size of the top panel
-	int panel_height = 25;
-	int panel_width = 600;
-
-	//Block size will be automatically calculated based on the above settings.
-	int block_width, block_height, hblock_width, hblock_height;
-
-	//Define colors
-
-
-	//Mouse highlight
-
-
-	//..and the font
-
-
-	//Control variables
-	bool stepping = false;   //run the simulation in stepping mode (press Space to run a single step)
-	bool grid = false;       //show the grid
-	bool draw_depth = true; //draw partially filled cells differently, simulating more
-							//fine-grained water depth display (imperfect)
-	int SHOW_NOTHING = 0;
-	int SHOW_MASS = 1;
-	//int show_state = SHOW_NOTHING; //whether to show the mass of each block
-
 	void Start()
 	{
 		Waters[0] = Resources.Load("Material/Water/Blue9", typeof(Material)) as Material;
@@ -79,13 +51,6 @@ public class watertilestest : MonoBehaviour
 		mass = new float[map_width + 2, map_height + 2];
 		new_mass = new float[map_width + 2, map_height + 2];
 
-		block_width = 601 / map_width;
-		block_height = (626 - panel_height) / map_height;
-
-		hblock_width = block_width / 2;
-		hblock_height = block_height / 2;
-
-		panel_width = block_width * map_width;
 
 		initmap();
 	}
@@ -110,7 +75,7 @@ public class watertilestest : MonoBehaviour
 					}
 					else
 					{
-						if (draw_depth && (mass[x, y] < MaxMass))
+						if (mass[x, y] < MaxMass)
 						{
 							//Draw a half-full block. Block size is dependent on the amount of water in it.
 							if (mass[x, y + 1] >= MinDraw)

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/asdw.unity
+- path: Assets/Myscene.unity
   isLoaded: 1
   isActive: 1
