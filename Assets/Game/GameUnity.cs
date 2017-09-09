@@ -19,25 +19,48 @@ public class GameUnity : MonoBehaviour
     public Dictionary<int, Transform> entityDic = new Dictionary<int, Transform>();
 
 	[SerializeField]
+	[Header("Gounded Variables")]
 	public static float PlayerSpeed = 6;
 	public static float JumpSpeed = 5.0F;
 	public static float Gravity = 0.5F;
-	public static float WaterGravity = 0.2F;
-	public static float MaxWaterGravity = 3.0F;
-	public static float SwimSpeed = 6;
+	public static float MaxGravity = 2.5F;
 
+	[Header("Swim Variables")]
+	public static float WaterResistance = 0.2F;
+	public static float WaterGravity = 0.2F;
+	public static float MaxWaterGravity = 1.0F;
+	public static float MaxWaterSpeed = 1.0F;
+	public static float SwimSpeed = 6;
+	public static bool CreateWater = true;
+
+	public bool CreateWaterPub = true;
 	public float PlayerSpeedPub = 6;
 	public float JumpSpeedPub = 5.0F;
 	public float GravityPub = 0.5F;
+
+	public float WaterResistancePub = 0.2F;
+	public float MaxGravityPub = 2.5F;
 	public float WaterGravityPub = 0.2F;
 	public float MaxWaterGravityPub = 3.2F;
 	public float SwimSpeedPub = 6f;
+	public float MaxWaterSpeedPub = 6f;
 
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
 	private int entity;
 	void Start () 
 	{
+		PlayerSpeed = PlayerSpeedPub;
+		JumpSpeed = JumpSpeedPub;
+		Gravity = GravityPub;
+
+		WaterResistance = WaterResistancePub;
+		WaterGravity = WaterGravityPub;
+		SwimSpeed = SwimSpeedPub;
+		MaxWaterGravity = MaxWaterGravityPub;
+		MaxGravity = MaxGravityPub;
+		CreateWater = CreateWaterPub;
+		MaxWaterSpeed = MaxWaterSpeedPub;
 		StartingPosition = StartPos.position;
 
 		SetFamilyID();
@@ -67,9 +90,12 @@ public class GameUnity : MonoBehaviour
 		JumpSpeed = JumpSpeedPub;
 		Gravity = GravityPub;
 		WaterGravity = WaterGravityPub;
+		WaterResistance = WaterResistancePub;
 		SwimSpeed = SwimSpeedPub;
 		MaxWaterGravity = MaxWaterGravityPub;
-
+		MaxGravity = MaxGravityPub;
+		MaxWaterSpeed = MaxWaterSpeedPub;
+		CreateWater = CreateWaterPub;
 	}
     void LateUpdate()
     {

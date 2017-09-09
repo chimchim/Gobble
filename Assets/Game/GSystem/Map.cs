@@ -45,8 +45,16 @@ namespace Game.Systems
 		Sprite waterSprite;
 		public void Update(GameManager game)
 		{
+			if (GameUnity.CreateWater)
+			{
+				UpdateWater();
+			}
+		}
+		public void UpdateWater()
+		{
 			int fullWidhth = mapwidth + (widhtBound * 2);
 			int fullHeight = mapheight + (heightBound * 2);
+
 			simulate_compression();
 
 			for (int x = 1; x < fullWidhth + 2; x++)
@@ -90,7 +98,6 @@ namespace Game.Systems
 					}
 				}
 			}
-
 		}
 		private void draw_block(int x, int y, float color, float waterMass)
 		{
@@ -100,8 +107,6 @@ namespace Game.Systems
 				go = GameObject.Instantiate(Water);
 				waters[x, y] = go.transform;
 			}
-
-
 
 			float scaledcolor = Mathf.Min(1, color);
 			float scaledMass = Mathf.Min(1, waterMass);
@@ -298,7 +303,10 @@ namespace Game.Systems
 				var go = game.Entities.GetEntity(entity);
 				go.gameObject.transform.position = GameUnity.StartingPosition;
 			}
-			InitiateWater();
+			if (GameUnity.CreateWater)
+			{
+				InitiateWater();
+			}
 		}
 
 		

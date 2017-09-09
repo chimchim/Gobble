@@ -9,8 +9,9 @@ namespace Game.Component
 		public Vector2 Axis;
 		public bool Space;
 
-		public float CurrentGravity;
 		public Vector2 CurrentVelocity;
+		public float SwimGravity;
+		public float EnterWater;
 		public bool Grounded;
 		public bool Swimming;
 		public Input()
