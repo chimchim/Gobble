@@ -12,8 +12,16 @@ namespace Game.Component
 		public Vector2 CurrentVelocity;
 		public float SwimGravity;
 		public float EnterWater;
+
+		public enum MoveState
+		{
+			Grounded,
+			Swimming,
+			Floating
+		}
+		public MoveState State;
 		public bool Grounded;
-		public bool Swimming;
+
 		public Input()
 		{
 

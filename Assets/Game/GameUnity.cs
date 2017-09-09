@@ -26,9 +26,9 @@ public class GameUnity : MonoBehaviour
 	public static float MaxGravity = 2.5F;
 
 	[Header("Swim Variables")]
-	public static float WaterResistance = 0.2F;
 	public static float WaterGravity = 0.2F;
-	public static float MaxWaterGravity = 1.0F;
+	public static float SwimUpExtraSpeed = 1.0F;
+	public static float SwimDownMult = 0.77F;
 	public static float MaxWaterSpeed = 1.0F;
 	public static float SwimSpeed = 6;
 	public static bool CreateWater = true;
@@ -38,10 +38,10 @@ public class GameUnity : MonoBehaviour
 	public float JumpSpeedPub = 5.0F;
 	public float GravityPub = 0.5F;
 
-	public float WaterResistancePub = 0.2F;
 	public float MaxGravityPub = 2.5F;
 	public float WaterGravityPub = 0.2F;
-	public float MaxWaterGravityPub = 3.2F;
+	public float SwimUpExtraSpeedPub = 3.2F;
+	public float SwimDownMultPub = 3.2F;
 	public float SwimSpeedPub = 6f;
 	public float MaxWaterSpeedPub = 6f;
 
@@ -54,11 +54,12 @@ public class GameUnity : MonoBehaviour
 		JumpSpeed = JumpSpeedPub;
 		Gravity = GravityPub;
 
-		WaterResistance = WaterResistancePub;
 		WaterGravity = WaterGravityPub;
 		SwimSpeed = SwimSpeedPub;
-		MaxWaterGravity = MaxWaterGravityPub;
+		SwimUpExtraSpeed = SwimUpExtraSpeedPub;
+		SwimDownMult = SwimDownMultPub;
 		MaxGravity = MaxGravityPub;
+
 		CreateWater = CreateWaterPub;
 		MaxWaterSpeed = MaxWaterSpeedPub;
 		StartingPosition = StartPos.position;
@@ -89,12 +90,14 @@ public class GameUnity : MonoBehaviour
 		PlayerSpeed = PlayerSpeedPub;
 		JumpSpeed = JumpSpeedPub;
 		Gravity = GravityPub;
+
 		WaterGravity = WaterGravityPub;
-		WaterResistance = WaterResistancePub;
 		SwimSpeed = SwimSpeedPub;
-		MaxWaterGravity = MaxWaterGravityPub;
+		SwimUpExtraSpeed = SwimUpExtraSpeedPub;
+		SwimDownMult = SwimDownMultPub;
 		MaxGravity = MaxGravityPub;
 		MaxWaterSpeed = MaxWaterSpeedPub;
+
 		CreateWater = CreateWaterPub;
 	}
     void LateUpdate()

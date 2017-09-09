@@ -11,109 +11,137 @@ namespace Game.Systems
         private float _gravity = 20;
 
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Game.Component.Input>();
-
-        public void Update(GameManager game)
+		//				entityGameObject.GetComponent<Animator>().SetBool("Run", false);
+		public void Update(GameManager game)
         {
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int e in entities)
 			{
 				var entityGameObject = game.Entities.GetEntity(e).gameObject;
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
-				if (!input.Swimming)
+
+				if (input.State == Component.Input.MoveState.Grounded)
 				{
-					entityGameObject.GetComponent<Animator>().SetBool("Run", false);
 					input.CurrentVelocity.y += -GameUnity.Gravity;
 					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
-					float xMovement = 0;
 
-					if (input.Axis.x != 0)
-					{
-						input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed * Time.deltaTime;
-						entityGameObject.GetComponent<Animator>().SetBool("Run", true);
-					}
-					else
-					{
-						input.CurrentVelocity.x = 0;
-					}
-					xMovement = input.CurrentVelocity.x;
+					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+
+
 					if (input.Space && input.Grounded)
 					{
-						Debug.Log("jump");
 						input.CurrentVelocity.y = GameUnity.JumpSpeed;
 					}
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
+					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
 
 					float xOffset = 0.35f;
 					float yOffset = 0.65f;
-					Vector3 tempPos = entityGameObject.transform.position;
-					bool isGrounded = false;
+					
+					bool vertGrounded = false;
 					bool horGrounded = false;
-					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out isGrounded);
-					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
 
-					input.Grounded = isGrounded;
-					if (isGrounded)
+					Vector3 tempPos = entityGameObject.transform.position;
+					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
+					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+					entityGameObject.transform.position = tempPos;
+
+					input.Grounded = vertGrounded;
+					if (vertGrounded)
 					{
 						input.CurrentVelocity.y = 0;
 					}
-					entityGameObject.transform.position = tempPos;
 
 					var layerMask = 1 << LayerMask.NameToLayer("Water");
 					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 					if (hit.collider != null)
 					{
-						input.Swimming = true;
-						input.EnterWater = 0.2f;
+						input.State = Component.Input.MoveState.Swimming;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
 				}
-				else
+				if (input.State == Component.Input.MoveState.Floating)
 				{
-					if (input.EnterWater <= 0)
-					{
-						input.SwimGravity += GameUnity.WaterGravity;
-						input.SwimGravity = Mathf.Min(input.SwimGravity, GameUnity.MaxWaterGravity);
-					}
-					input.CurrentVelocity += new Vector2(input.Axis.x, input.Axis.y) * GameUnity.SwimSpeed;
-					input.CurrentVelocity += new Vector2(0, GameUnity.WaterGravity);
-					if (input.EnterWater <= 0)
-					{
-						input.CurrentVelocity = input.CurrentVelocity.normalized * Mathf.Min(input.CurrentVelocity.magnitude, GameUnity.MaxWaterSpeed);
-					}
-					else
-					{
-						input.CurrentVelocity = input.CurrentVelocity.normalized * Mathf.Min(input.CurrentVelocity.magnitude, GameUnity.PlayerSpeed);
-					}
-					input.EnterWater -= Time.deltaTime;
+					input.CurrentVelocity.y = input.CurrentVelocity.y - GameUnity.Gravity;
+					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
+
+					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
-					float yMovement = input.CurrentVelocity.y * Time.deltaTime;// + (input.SwimGravity * Time.deltaTime);
-					
 
 					float xOffset = 0.35f;
 					float yOffset = 0.65f;
-					Vector3 tempPos = entityGameObject.transform.position;
-					bool horizontalGrounded = false;
-					bool verticalGrounded = false;
-					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out verticalGrounded);
-					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horizontalGrounded);
 
-					if (horizontalGrounded)
+					bool vertGrounded = false;
+					bool horGrounded = false;
+
+					Vector3 tempPos = entityGameObject.transform.position;
+					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
+					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+					entityGameObject.transform.position = tempPos;
+
+					if (vertGrounded)
 					{
-						input.CurrentVelocity.x = 0;
+						input.State = Component.Input.MoveState.Grounded;
 					}
-					if (verticalGrounded)
+
+					var layerMask = 1 << LayerMask.NameToLayer("Water");
+					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
+					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
+					if (hit.collider != null)
+					{
+						Debug.Log("Go Swin");
+						input.State = Component.Input.MoveState.Swimming;
+						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
+					}
+
+				}
+				if (input.State == Component.Input.MoveState.Swimming)
+				{
+					input.CurrentVelocity.y += GameUnity.WaterGravity + (input.Axis.y * GameUnity.SwimSpeed);
+					input.CurrentVelocity.y = Mathf.Clamp(input.CurrentVelocity.y, -GameUnity.MaxWaterSpeed, GameUnity.SwimUpExtraSpeed + GameUnity.MaxWaterSpeed);
+					input.CurrentVelocity.x += input.Axis.x * GameUnity.SwimSpeed;
+					input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
+
+					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
+					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
+
+					Vector2 fullmovement = new Vector2(xMovement, yMovement);
+					if (yMovement < 0)
+					{
+						fullmovement = fullmovement.normalized * fullmovement.magnitude * GameUnity.SwimDownMult;
+					}
+					float xOffset = 0.35f;
+					float yOffset = 0.65f;
+
+					bool vertGrounded = false;
+					bool horGrounded = false;
+
+					Vector3 tempPos = entityGameObject.transform.position;
+					tempPos = VerticalMovement(tempPos, fullmovement.y, xOffset, yOffset, out vertGrounded);
+					tempPos = HorizontalMovement(tempPos, fullmovement.x, xOffset, yOffset, out horGrounded);
+					entityGameObject.transform.position = tempPos;
+
+					if (vertGrounded)
 					{
 						input.CurrentVelocity.y = 0;
 					}
-					entityGameObject.transform.position = tempPos;
-
+					if (horGrounded)
+					{
+						input.CurrentVelocity.x = 0;
+					}
+					
 					var layerMask = 1 << LayerMask.NameToLayer("Water");
 					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 					if (hit.collider == null)
 					{
-						input.Swimming = false;
+						if (yMovement > 0)
+						{
+							input.CurrentVelocity.y = 6f;
+						}
+						Debug.Log("Go Float");
+						input.State = Component.Input.MoveState.Floating;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
 				}
