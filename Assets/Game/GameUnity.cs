@@ -22,10 +22,16 @@ public class GameUnity : MonoBehaviour
 	public static float PlayerSpeed = 6;
 	public static float JumpSpeed = 5.0F;
 	public static float Gravity = 0.5F;
+	public static float WaterGravity = 0.2F;
+	public static float MaxWaterGravity = 3.0F;
+	public static float SwimSpeed = 6;
 
 	public float PlayerSpeedPub = 6;
 	public float JumpSpeedPub = 5.0F;
 	public float GravityPub = 0.5F;
+	public float WaterGravityPub = 0.2F;
+	public float MaxWaterGravityPub = 3.2F;
+	public float SwimSpeedPub = 6f;
 
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
@@ -60,6 +66,10 @@ public class GameUnity : MonoBehaviour
 		PlayerSpeed = PlayerSpeedPub;
 		JumpSpeed = JumpSpeedPub;
 		Gravity = GravityPub;
+		WaterGravity = WaterGravityPub;
+		SwimSpeed = SwimSpeedPub;
+		MaxWaterGravity = MaxWaterGravityPub;
+
 	}
     void LateUpdate()
     {

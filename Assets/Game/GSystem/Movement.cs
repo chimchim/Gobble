@@ -19,41 +19,52 @@ namespace Game.Systems
 			{
 				var entityGameObject = game.Entities.GetEntity(e).gameObject;
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
-				entityGameObject.GetComponent<Animator>().SetBool("Run", false);
-				input.CurrentGravity += -GameUnity.Gravity;
-
-				float xMovement = 0;
-				
-				if (input.Axis != 0)
+				if (!input.Swimming)
 				{
-					xMovement = input.Axis * GameUnity.PlayerSpeed * Time.deltaTime;
-					entityGameObject.GetComponent<Animator>().SetBool("Run", true);
-				}
-				else
-				{
-					xMovement = 0;
-				}
+					entityGameObject.GetComponent<Animator>().SetBool("Run", false);
+					input.CurrentGravity += -GameUnity.Gravity;
 
-				if (input.Space && input.Grounded)
-				{
-					Debug.Log("jump");
-					input.CurrentGravity = GameUnity.JumpSpeed;
-				}
-				float yMovement = input.CurrentGravity * Time.deltaTime;
+					float xMovement = 0;
 
-				float xOffset = 0.35f;
-				float yOffset = 0.65f;
-				Vector3 tempPos = entityGameObject.transform.position;
-				bool isGrounded = false;
-				tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out isGrounded);
-				tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset);
+					if (input.Axis.x != 0)
+					{
+						xMovement = input.Axis.x * GameUnity.PlayerSpeed * Time.deltaTime;
+						entityGameObject.GetComponent<Animator>().SetBool("Run", true);
+					}
+					else
+					{
+						xMovement = 0;
+					}
 
-				input.Grounded = isGrounded;
-				if (isGrounded)
-				{
-					input.CurrentGravity = 0;
+					if (input.Space && input.Grounded)
+					{
+						Debug.Log("jump");
+						input.CurrentGravity = GameUnity.JumpSpeed;
+					}
+					float yMovement = input.CurrentGravity * Time.deltaTime;
+
+					float xOffset = 0.35f;
+					float yOffset = 0.65f;
+					Vector3 tempPos = entityGameObject.transform.position;
+					bool isGrounded = false;
+					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out isGrounded);
+					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset);
+
+					input.Grounded = isGrounded;
+					if (isGrounded)
+					{
+						input.CurrentGravity = 0;
+					}
+					entityGameObject.transform.position = tempPos;
+
+					var layerMask = 1 << LayerMask.NameToLayer("Water");
+					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
+					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
+					if (hit.collider != null)
+					{
+						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
+					}
 				}
-				entityGameObject.transform.position = tempPos;
 			}
 		}
 
@@ -64,8 +75,9 @@ namespace Game.Systems
 			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, y, 0) + pos;
 			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, y, 0) + pos;
 			RaycastHit2D[] hitsY = new RaycastHit2D[2];
-			hitsY[0] = Physics2D.Raycast(firstStartY, Vector3.up * sign, yoffset);
-			hitsY[1] = Physics2D.Raycast(secondStartY, Vector3.up * sign, yoffset);
+			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+			hitsY[0] = Physics2D.Raycast(firstStartY, Vector3.up * sign, yoffset, layerMask);
+			hitsY[1] = Physics2D.Raycast(secondStartY, Vector3.up * sign, yoffset, layerMask);
 
 			Debug.DrawLine(firstStartY, firstStartY + (Vector3.up * yoffset * sign), Color.red);
 			Debug.DrawLine(secondStartY, secondStartY + (Vector3.up * yoffset * sign), Color.red);
@@ -91,8 +103,9 @@ namespace Game.Systems
 			Vector3 firstStartX = new Vector3(x, -yoffset + 0.05f, 0) + pos;
 			Vector3 secondStartX = new Vector3(x, yoffset - 0.05f, 0) + pos;
 			RaycastHit2D[] hitsY = new RaycastHit2D[2];
-			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, xoffset);
-			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, xoffset);
+			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, xoffset, layerMask);
+			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, xoffset, layerMask);
 			Debug.DrawLine(firstStartX, firstStartX + (Vector3.right * xoffset * sign), Color.red);
 			Debug.DrawLine(secondStartX, secondStartX + (Vector3.right * xoffset * sign), Color.red);
 

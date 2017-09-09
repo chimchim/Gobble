@@ -22,7 +22,9 @@ namespace Game.Systems
 				if (player.Owner)
 				{
 					var input = game.Entities.GetComponentOf<Game.Component.Input>(entity);
-					input.Axis = UnityEngine.Input.GetAxis("Horizontal");
+					float x = UnityEngine.Input.GetAxis("Horizontal");
+					float y = UnityEngine.Input.GetAxis("Vertical");
+					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space);
 
 				}

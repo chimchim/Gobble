@@ -41,6 +41,8 @@ namespace Game.Systems
 		float[,] mass;
 		float[,] new_mass;
 
+		Sprite topWaterSprite;
+		Sprite waterSprite;
 		public void Update(GameManager game)
 		{
 			int fullWidhth = mapwidth + (widhtBound * 2);
@@ -90,7 +92,7 @@ namespace Game.Systems
 			}
 
 		}
-		private void draw_block(int x, int y, float color, float mass)
+		private void draw_block(int x, int y, float color, float waterMass)
 		{
 			GameObject go;
 			if (waters[x, y] == null)
@@ -102,23 +104,35 @@ namespace Game.Systems
 
 
 			float scaledcolor = Mathf.Min(1, color);
-			float scaledMass = Mathf.Min(1, mass);
+			float scaledMass = Mathf.Min(1, waterMass);
 			float yOffset = (1 - (scaledMass)) * 1.28f;
 			scaledMass = (scaledMass) * 1.28f;
 			int watertransparency = ((int)(scaledcolor * 10));
 			watertransparency = Mathf.Min(watertransparency, 9);
-			
-			waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
+			float topWaterOffset = 0;
+			//waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
+			if ((blocks[x, y + 1] != WATER || mass[x, y + 1] < MinDraw) && waterMass < MaxMass)
+			{
 
+				waters[x, y].GetComponent<SpriteRenderer>().sprite = topWaterSprite;
+				topWaterOffset = 0.05f;
+			}
+			else
+			{
+				waters[x, y].GetComponent<SpriteRenderer>().sprite = waterSprite;
+				scaledMass = 1;
+				//waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
+			}
 			var pos = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
-			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2), 0.1f);
+			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2) -topWaterOffset, 0.1f);
 			waters[x, y].localScale = new Vector3(waters[x, y].localScale.x, scaledMass, 0.01f);
 		}
 		public void Initiate(GameManager game)
 		{
 			int fullWidhth = mapwidth + (widhtBound * 2);
 			int fullHeight = mapheight + (heightBound * 2);
-
+			topWaterSprite = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
+			waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
 			Blocks = new GameObject[fullWidhth, mapheight + (heightBound * 2)];
 
 			for (int x = 0; x < fullWidhth; x++)
@@ -131,6 +145,7 @@ namespace Game.Systems
 						cube.AddComponent<SpriteRenderer>();
 						cube.AddComponent<BoxCollider2D>();
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
+						cube.layer = LayerMask.NameToLayer("Collideable");
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Blocks[x, y] = cube;
 					}
@@ -164,6 +179,7 @@ namespace Game.Systems
 						cube.AddComponent<BoxCollider2D>();
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
+						cube.layer = LayerMask.NameToLayer("Collideable");
 						Blocks[posX, posY] = cube;
 					}
 					else
@@ -173,6 +189,7 @@ namespace Game.Systems
 						cube.AddComponent<BoxCollider2D>();
 						cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
+						cube.layer = LayerMask.NameToLayer("Collideable");
 						Blocks[posX, posY] = cube;
 					}
 

@@ -6,11 +6,13 @@ namespace Game.Component
 	public class Input : GComponent
 	{
 		private static ObjectPool<Input> _pool = new ObjectPool<Input>(100);
-		public float Axis;
+		public Vector2 Axis;
 		public bool Space;
 
 		public float CurrentGravity;
+		public Vector2 CurrentVelocity;
 		public bool Grounded;
+		public bool Swimming;
 		public Input()
 		{
 
