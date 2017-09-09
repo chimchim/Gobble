@@ -65,6 +65,14 @@ namespace Game.Systems
 				{
 					input.CurrentVelocity.y = input.CurrentVelocity.y - GameUnity.Gravity;
 					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
+					input.CurrentVelocity.x += input.Axis.x * GameUnity.SwimSpeed;
+					input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
+
+					if (input.Space && input.FloatJump)
+					{
+						input.CurrentVelocity.y = GameUnity.JumpSpeed / 1.3f;
+						input.FloatJump = false;
+					}
 
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
@@ -82,7 +90,12 @@ namespace Game.Systems
 
 					if (vertGrounded)
 					{
-						input.State = Component.Input.MoveState.Grounded;
+						if (input.CurrentVelocity.y < 0)
+						{
+							input.State = Component.Input.MoveState.Grounded;
+							Debug.Log("go grounded");
+						}
+						input.CurrentVelocity.y = 0;
 					}
 
 					var layerMask = 1 << LayerMask.NameToLayer("Water");
@@ -90,7 +103,8 @@ namespace Game.Systems
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 					if (hit.collider != null)
 					{
-						Debug.Log("Go Swin");
+						//Debug.Log("Go Swin");
+						input.FloatJump = true;
 						input.State = Component.Input.MoveState.Swimming;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
@@ -138,9 +152,15 @@ namespace Game.Systems
 					{
 						if (yMovement > 0)
 						{
-							input.CurrentVelocity.y = 6f;
+							input.CurrentVelocity.y = GameUnity.JumpSpeed / 2f;
+							if (input.Axis.y > 0)
+							{
+								input.CurrentVelocity.y = GameUnity.JumpSpeed;
+							}
+							
+							//input.CurrentVelocity.x = (GameUnity.JumpSpeed / 2) * Mathf.Sign(input.Axis.x);
 						}
-						Debug.Log("Go Float");
+						//Debug.Log("Go Float");
 						input.State = Component.Input.MoveState.Floating;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}

@@ -21,6 +21,7 @@ namespace Game.Component
 		}
 		public MoveState State;
 		public bool Grounded;
+		public bool FloatJump;
 
 		public Input()
 		{
