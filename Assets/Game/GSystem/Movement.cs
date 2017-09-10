@@ -25,11 +25,6 @@ namespace Game.Systems
 				{
 					input.CurrentVelocity.y += -GameUnity.Gravity;
 					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
-					//if (input.FallingTime > GameUnity.ExtraFallSpeedAfter)
-					//{
-					//	Debug.Log("Extra damage");
-					//	input.CurrentVelocity.y = -GameUnity.MaxGravity - GameUnity.ExtraFallSpeed;
-					//}
 
 					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 
@@ -66,7 +61,10 @@ namespace Game.Systems
 					}
 					else
 					{
-						input.FallingTime += Time.deltaTime;
+						if (input.CurrentVelocity.y < 0)
+						{
+							input.FallingTime += Time.deltaTime;
+						}
 					}
 					var layerMask = 1 << LayerMask.NameToLayer("Water");
 					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);

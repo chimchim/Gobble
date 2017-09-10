@@ -37,7 +37,7 @@ public class GameUnity : MonoBehaviour
 	public static bool CreateWater = true;
 
 	public static int WaterAmountOneIn = 5;
-	public static int WaterSimulations = 300;
+	public static int WaterSimulations = 9000;
 
 	public bool CreateWaterPub = true;
 	public float PlayerSpeedPub = 6;
