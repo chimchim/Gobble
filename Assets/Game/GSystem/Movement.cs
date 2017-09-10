@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
+using Game.Actions;
 
 namespace Game.Systems
 {
@@ -24,6 +25,11 @@ namespace Game.Systems
 				{
 					input.CurrentVelocity.y += -GameUnity.Gravity;
 					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
+					//if (input.FallingTime > GameUnity.ExtraFallSpeedAfter)
+					//{
+					//	Debug.Log("Extra damage");
+					//	input.CurrentVelocity.y = -GameUnity.MaxGravity - GameUnity.ExtraFallSpeed;
+					//}
 
 					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 
@@ -49,9 +55,19 @@ namespace Game.Systems
 					input.Grounded = vertGrounded;
 					if (vertGrounded)
 					{
+						if (input.FallingTime > GameUnity.ExtraFallSpeedAfter)
+						{
+							float fallMulti = input.FallingTime - GameUnity.ExtraFallSpeedAfter;
+							AffectHP fallDamage = AffectHP.Make(-GameUnity.FallDamage * fallMulti);
+							fallDamage.Apply(game, e);
+						}
+						input.FallingTime = 0;
 						input.CurrentVelocity.y = 0;
 					}
-
+					else
+					{
+						input.FallingTime += Time.deltaTime;
+					}
 					var layerMask = 1 << LayerMask.NameToLayer("Water");
 					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
@@ -70,7 +86,7 @@ namespace Game.Systems
 
 					if (input.Space && input.FloatJump)
 					{
-						input.CurrentVelocity.y = GameUnity.JumpSpeed / 1.3f;
+						input.CurrentVelocity.y = GameUnity.JumpSpeed / 2f;
 						input.FloatJump = false;
 					}
 
@@ -93,7 +109,6 @@ namespace Game.Systems
 						if (input.CurrentVelocity.y < 0)
 						{
 							input.State = Component.Input.MoveState.Grounded;
-							Debug.Log("go grounded");
 						}
 						input.CurrentVelocity.y = 0;
 					}
@@ -103,7 +118,6 @@ namespace Game.Systems
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 					if (hit.collider != null)
 					{
-						//Debug.Log("Go Swin");
 						input.FloatJump = true;
 						input.State = Component.Input.MoveState.Swimming;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
@@ -152,10 +166,10 @@ namespace Game.Systems
 					{
 						if (yMovement > 0)
 						{
-							input.CurrentVelocity.y = GameUnity.JumpSpeed / 2f;
+							input.CurrentVelocity.y = GameUnity.WaterJumpSpeed / 2f;
 							if (input.Axis.y > 0)
 							{
-								input.CurrentVelocity.y = GameUnity.JumpSpeed;
+								input.CurrentVelocity.y = GameUnity.WaterJumpSpeed;
 							}
 							
 							//input.CurrentVelocity.x = (GameUnity.JumpSpeed / 2) * Mathf.Sign(input.Axis.x);

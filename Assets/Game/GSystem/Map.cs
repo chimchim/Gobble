@@ -306,6 +306,10 @@ namespace Game.Systems
 			if (GameUnity.CreateWater)
 			{
 				InitiateWater();
+				for (int i = 0; i < GameUnity.WaterSimulations; i++)
+				{
+					simulate_compression();
+				}
 			}
 		}
 
@@ -341,8 +345,8 @@ namespace Game.Systems
 			{
 				for (int y = 0; y < fullHeight + 2; y++)
 				{
-					blocks[x, y] = Random.Range(0, 3);
-					if (blocks[x, y] == 1)
+					blocks[x, y] = Random.Range(0, GameUnity.WaterAmountOneIn);
+					if (blocks[x, y] == GROUND || blocks[x, y] > WATER)
 					{
 						blocks[x, y] = 0;
 					}

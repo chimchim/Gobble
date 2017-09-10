@@ -24,8 +24,11 @@ public class GameUnity : MonoBehaviour
 	public static float JumpSpeed = 5.0F;
 	public static float Gravity = 0.5F;
 	public static float MaxGravity = 2.5F;
+	public static float ExtraFallSpeedAfter = 1.5F;
+	public static float FallDamage = 20F;
 
 	[Header("Swim Variables")]
+	public static float WaterJumpSpeed;
 	public static float WaterGravity = 0.2F;
 	public static float SwimUpExtraSpeed = 1.0F;
 	public static float SwimDownMult = 0.77F;
@@ -33,12 +36,19 @@ public class GameUnity : MonoBehaviour
 	public static float SwimSpeed = 6;
 	public static bool CreateWater = true;
 
+	public static int WaterAmountOneIn = 5;
+	public static int WaterSimulations = 300;
+
 	public bool CreateWaterPub = true;
 	public float PlayerSpeedPub = 6;
 	public float JumpSpeedPub = 5.0F;
 	public float GravityPub = 0.5F;
 
+	public float WaterJumpSpeedPub;
 	public float MaxGravityPub = 2.5F;
+	public float FallDamagePub = 2.5F;
+	public float ExtraFallSpeedAfterPub = 1.5F;
+
 	public float WaterGravityPub = 0.2F;
 	public float SwimUpExtraSpeedPub = 3.2F;
 	public float SwimDownMultPub = 3.2F;
@@ -50,16 +60,22 @@ public class GameUnity : MonoBehaviour
 	private int entity;
 	void Start () 
 	{
+		//ground
 		PlayerSpeed = PlayerSpeedPub;
 		JumpSpeed = JumpSpeedPub;
 		Gravity = GravityPub;
+		FallDamage = FallDamagePub;
+		ExtraFallSpeedAfter = ExtraFallSpeedAfterPub;
+		MaxGravity = MaxGravityPub;
 
+		//Water
+		WaterJumpSpeed = WaterJumpSpeedPub;
 		WaterGravity = WaterGravityPub;
 		SwimSpeed = SwimSpeedPub;
 		SwimUpExtraSpeed = SwimUpExtraSpeedPub;
 		SwimDownMult = SwimDownMultPub;
-		MaxGravity = MaxGravityPub;
-
+		
+		//Other
 		CreateWater = CreateWaterPub;
 		MaxWaterSpeed = MaxWaterSpeedPub;
 		StartingPosition = StartPos.position;
@@ -68,8 +84,8 @@ public class GameUnity : MonoBehaviour
 		Entity ent = new Entity();
 		game.Entities.addEntity(ent);
         ent.AddComponent(ActionQueue.Make(ent.ID));
-        ent.AddComponent(Game.Component.Input.Make(ent.ID));
-		//ent.AddComponent(Stats.Make(ent.ID));
+		ent.AddComponent(Stats.Make(ent.ID, 100, 100));
+		ent.AddComponent(Game.Component.Input.Make(ent.ID));
 		ent.AddComponent(Player.Make(ent.ID, true));
         var player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         player.tag = "Player";
@@ -86,19 +102,25 @@ public class GameUnity : MonoBehaviour
 	{
         game.Update(Time.deltaTime);
 
-
+		//ground
 		PlayerSpeed = PlayerSpeedPub;
 		JumpSpeed = JumpSpeedPub;
 		Gravity = GravityPub;
+		FallDamage = FallDamagePub;
+		ExtraFallSpeedAfter = ExtraFallSpeedAfterPub;
+		MaxGravity = MaxGravityPub;
 
+		//Water
+		WaterJumpSpeed = WaterJumpSpeedPub;
 		WaterGravity = WaterGravityPub;
 		SwimSpeed = SwimSpeedPub;
 		SwimUpExtraSpeed = SwimUpExtraSpeedPub;
 		SwimDownMult = SwimDownMultPub;
-		MaxGravity = MaxGravityPub;
-		MaxWaterSpeed = MaxWaterSpeedPub;
 
+		//Other
 		CreateWater = CreateWaterPub;
+		MaxWaterSpeed = MaxWaterSpeedPub;
+		StartingPosition = StartPos.position;
 	}
     void LateUpdate()
     {
