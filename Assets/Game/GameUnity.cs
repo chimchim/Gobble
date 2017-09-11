@@ -50,7 +50,10 @@ public class GameUnity : MonoBehaviour
 	public static int WaterAmountOneIn;
 	public static int WaterSimulations;
 	public static int WaterSimulationsPerUpdate;
-
+	public static int MapHeight;
+	public static int MapWidth;
+	public static int HeightBound;
+	public static int WidhtBound;
 
 
 	public static Vector3 StartingPosition;
@@ -73,7 +76,7 @@ public class GameUnity : MonoBehaviour
         player.tag = "Player";
         ent.gameObject = player;
 
-		GetComponent<Camera>().player = player;
+		GetComponent<FollowCamera>().player = player;
 		entity = ent.ID;
         game.Systems.CreateSystems();
         game.Initiate();        
@@ -112,11 +115,16 @@ public class GameUnity : MonoBehaviour
 		OxygenDPS = StatsData.OxygenDPS;
 		FallDamage = StatsData.FallDamage;
 		MaxHP = StatsData.MaxHP;
+
 		//Map
 		CreateWater = MapData.CreateWater;
 		WaterAmountOneIn = MapData.WaterAmountOneIn;
 		WaterSimulations = MapData.WaterSimulations;
 		WaterSimulationsPerUpdate = MapData.WaterSimulationsPerUpdate;
+		MapHeight = MapData.MapHeight;
+		MapWidth = MapData.MapWidth;
+		HeightBound = MapData.HeightBound;
+		WidhtBound = MapData.WidhtBound;
 	}
     void LateUpdate()
     {

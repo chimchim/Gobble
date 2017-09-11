@@ -15,7 +15,8 @@ namespace Game.Component
 		{
 			Grounded,
 			Swimming,
-			Floating
+			Floating,
+			FlyingDebug
 		}
 		public MoveState State;
 		public bool Grounded;

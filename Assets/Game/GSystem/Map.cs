@@ -12,11 +12,6 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private GameObject[,] Blocks;
 
-		int mapheight = 50;
-		int mapwidth = 90;
-		int heightBound = 8;
-		int widhtBound = 8;
-
 		GameObject Water;
 		private Material[] Waters = new Material[10];
 		int AIR = 0;
@@ -52,8 +47,8 @@ namespace Game.Systems
 		}
 		public void UpdateWater()
 		{
-			int fullWidhth = mapwidth + (widhtBound * 2);
-			int fullHeight = mapheight + (heightBound * 2);
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
 
 			for (int i = 0; i < GameUnity.WaterSimulationsPerUpdate; i++)
 			{
@@ -137,17 +132,17 @@ namespace Game.Systems
 		}
 		public void Initiate(GameManager game)
 		{
-			int fullWidhth = mapwidth + (widhtBound * 2);
-			int fullHeight = mapheight + (heightBound * 2);
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
 			topWaterSprite = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
 			waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
-			Blocks = new GameObject[fullWidhth, mapheight + (heightBound * 2)];
+			Blocks = new GameObject[fullWidhth, fullWidhth];
 
 			for (int x = 0; x < fullWidhth; x++)
 			{
 				for (int y = 0; y < fullHeight; y++)
 				{
-					if ((x < widhtBound || x > (mapwidth + widhtBound)) || (y < heightBound || y > (mapheight + heightBound)))
+					if ((x < GameUnity.WidhtBound || x > (GameUnity.MapWidth + GameUnity.WidhtBound)) || (y < GameUnity.HeightBound || y > (GameUnity.MapHeight + GameUnity.HeightBound)))
 					{
 						GameObject cube = new GameObject();
 						cube.AddComponent<SpriteRenderer>();
@@ -164,14 +159,14 @@ namespace Game.Systems
 			Vector2 shift = new Vector2(0, 0); // play with this to shift map around
 			float zoom = 0.1f; // play with this to zoom into the noise field
 
-			for (int x = 0; x < mapwidth; x++)
-				for (int y = 0; y < mapheight; y++)
+			for (int x = 0; x < GameUnity.MapWidth; x++)
+				for (int y = 0; y < GameUnity.MapHeight; y++)
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);
 
-					int posX = x + widhtBound;
-					int posY = y + heightBound;
+					int posX = x + GameUnity.WidhtBound;
+					int posY = y + GameUnity.HeightBound;
 					if (noise < 0.3f)
 					{
 
@@ -337,8 +332,8 @@ namespace Game.Systems
 			Waters[8] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
 			Waters[9] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
 
-			int fullWidhth = mapwidth + (widhtBound * 2);
-			int fullHeight = mapheight + (heightBound * 2);
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
 
 			blocks = new int[fullWidhth + 2, fullHeight + 2];
 			mass = new float[fullWidhth + 2, fullHeight + 2];
@@ -396,8 +391,8 @@ namespace Game.Systems
 		{
 			float Flow = 0;
 			float remaining_mass;
-			int fullWidhth = mapwidth + (widhtBound * 2);
-			int fullHeight = mapheight + (heightBound * 2);
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
 			//Calculate and apply flow for each block
 			for (int x = 1; x <= fullWidhth; x++)
 			{

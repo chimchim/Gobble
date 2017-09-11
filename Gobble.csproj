@@ -113,8 +113,8 @@
     <Compile Include="Assets\Game\Misc\PriorityQueue.cs" />
     <Compile Include="Assets\Game\Misc\Sound.cs" />
     <Compile Include="Assets\Game\Misc\Timer.cs" />
-    <Compile Include="Assets\Game\MonoBehaviors\Camera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\CharacterMover.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\FollowCamera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\HpBar.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpack.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />

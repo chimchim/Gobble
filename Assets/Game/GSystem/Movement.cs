@@ -21,7 +21,15 @@ namespace Game.Systems
 				var entityGameObject = game.Entities.GetEntity(e).gameObject;
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
+				if (input.State == Component.Input.MoveState.FlyingDebug)
+				{
+					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+					input.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed;
+					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
+					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
 
+					entityGameObject.transform.position += new Vector3(xMovement, yMovement, 0);
+				}
 				if (input.State == Component.Input.MoveState.Grounded)
 				{
 					input.CurrentVelocity.y += -GameUnity.Gravity;
@@ -271,8 +279,10 @@ namespace Game.Systems
 			{
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var player = game.Entities.GetComponentOf<Game.Component.Player>(e);
+				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				if (player.Owner)
 				{
+					input.State = Component.Input.MoveState.FlyingDebug;
 					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();
 					oxygenMeter.PlayerStats = stats;
 				}
