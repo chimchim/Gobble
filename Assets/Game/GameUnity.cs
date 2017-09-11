@@ -17,7 +17,8 @@ public class GameUnity : MonoBehaviour
 	GameManager game = new GameManager();
     public GameObject camera;
     public Dictionary<int, Transform> entityDic = new Dictionary<int, Transform>();
-
+	public SwimVariables SwimData;
+	public GroundVariables GroundData;
 	[SerializeField]
 	[Header("Gounded Variables")]
 	public static float PlayerSpeed = 6;
@@ -27,6 +28,7 @@ public class GameUnity : MonoBehaviour
 	public static float ExtraFallSpeedAfter = 1.5F;
 	public static float FallDamage = 20F;
 
+	
 	[Header("Swim Variables")]
 	public static float WaterJumpSpeed;
 	public static float WaterGravity = 0.2F;
@@ -34,7 +36,10 @@ public class GameUnity : MonoBehaviour
 	public static float SwimDownMult = 0.77F;
 	public static float MaxWaterSpeed = 1.0F;
 	public static float SwimSpeed = 6;
+	public static float OxygenTime = 6;
+	public static float LoseOxygenAfter = 1;
 	public static bool CreateWater = true;
+	
 
 	public static int WaterAmountOneIn = 5;
 	public static int WaterSimulations = 9000;
@@ -54,6 +59,8 @@ public class GameUnity : MonoBehaviour
 	public float SwimDownMultPub = 3.2F;
 	public float SwimSpeedPub = 6f;
 	public float MaxWaterSpeedPub = 6f;
+	public float OxygenTimePub = 6;
+	public float LoseOxygenAfterPub = 1;
 
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
@@ -61,20 +68,21 @@ public class GameUnity : MonoBehaviour
 	void Start () 
 	{
 		//ground
-		PlayerSpeed = PlayerSpeedPub;
-		JumpSpeed = JumpSpeedPub;
-		Gravity = GravityPub;
-		FallDamage = FallDamagePub;
-		ExtraFallSpeedAfter = ExtraFallSpeedAfterPub;
-		MaxGravity = MaxGravityPub;
-
-		//Water
-		WaterJumpSpeed = WaterJumpSpeedPub;
-		WaterGravity = WaterGravityPub;
-		SwimSpeed = SwimSpeedPub;
-		SwimUpExtraSpeed = SwimUpExtraSpeedPub;
-		SwimDownMult = SwimDownMultPub;
+		PlayerSpeed = GroundData.PlayerSpeed;
+		JumpSpeed = GroundData.JumpSpeed;
+		Gravity = GroundData.Gravity;
+		FallDamage = GroundData.FallDamage;
+		ExtraFallSpeedAfter = GroundData.ExtraFallSpeedAfter;
+		MaxGravity = GroundData.MaxGravity;
 		
+		//Water
+		WaterJumpSpeed = SwimData.WaterJumpSpeed;
+		WaterGravity = SwimData.WaterGravity;
+		SwimSpeed = SwimData.SwimSpeed;
+		SwimUpExtraSpeed = SwimData.SwimUpExtraSpeed;
+		SwimDownMult = SwimData.SwimDownMult;
+		OxygenTime = SwimData.OxygenTime;
+		LoseOxygenAfter = SwimData.LoseOxygenAfter;
 		//Other
 		CreateWater = CreateWaterPub;
 		MaxWaterSpeed = MaxWaterSpeedPub;
@@ -84,7 +92,7 @@ public class GameUnity : MonoBehaviour
 		Entity ent = new Entity();
 		game.Entities.addEntity(ent);
         ent.AddComponent(ActionQueue.Make(ent.ID));
-		ent.AddComponent(Stats.Make(ent.ID, 100, 100));
+		ent.AddComponent(Stats.Make(ent.ID, 100, OxygenTime, OxygenTime));
 		ent.AddComponent(Game.Component.Input.Make(ent.ID));
 		ent.AddComponent(Player.Make(ent.ID, true));
         var player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
@@ -103,19 +111,21 @@ public class GameUnity : MonoBehaviour
         game.Update(Time.deltaTime);
 
 		//ground
-		PlayerSpeed = PlayerSpeedPub;
-		JumpSpeed = JumpSpeedPub;
-		Gravity = GravityPub;
-		FallDamage = FallDamagePub;
-		ExtraFallSpeedAfter = ExtraFallSpeedAfterPub;
-		MaxGravity = MaxGravityPub;
+		PlayerSpeed = GroundData.PlayerSpeed;
+		JumpSpeed = GroundData.JumpSpeed;
+		Gravity = GroundData.Gravity;
+		FallDamage = GroundData.FallDamage;
+		ExtraFallSpeedAfter = GroundData.ExtraFallSpeedAfter;
+		MaxGravity = GroundData.MaxGravity;
 
 		//Water
-		WaterJumpSpeed = WaterJumpSpeedPub;
-		WaterGravity = WaterGravityPub;
-		SwimSpeed = SwimSpeedPub;
-		SwimUpExtraSpeed = SwimUpExtraSpeedPub;
-		SwimDownMult = SwimDownMultPub;
+		WaterJumpSpeed = SwimData.WaterJumpSpeed;
+		WaterGravity = SwimData.WaterGravity;
+		SwimSpeed = SwimData.SwimSpeed;
+		SwimUpExtraSpeed = SwimData.SwimUpExtraSpeed;
+		SwimDownMult = SwimData.SwimDownMult;
+		OxygenTime = SwimData.OxygenTime;
+		LoseOxygenAfter = SwimData.LoseOxygenAfter;
 
 		//Other
 		CreateWater = CreateWaterPub;

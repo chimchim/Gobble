@@ -125,6 +125,8 @@
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
     <Compile Include="Assets\Game\ObjectPool.cs" />
     <Compile Include="Assets\Game\ParticleManager.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\SwimVariables.cs" />
     <Compile Include="Assets\Game\Shot.cs" />
     <Compile Include="Assets\Game\SystemManager.cs" />
     <Compile Include="Assets\Server.cs" />

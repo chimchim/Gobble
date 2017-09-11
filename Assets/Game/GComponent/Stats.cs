@@ -7,19 +7,21 @@ namespace Game.Component
 	{
 		private static ObjectPool<Stats> _pool = new ObjectPool<Stats>(100);
 		public float HP;
-		public float Air;
+		public float OxygenSeconds;
+		public float MaxOxygenSeconds;
 		public bool Alive;
 		public Stats()
 		{
 
 		}
-		public static Stats Make(int entityID, float hp, float air)
+		public static Stats Make(int entityID, float hp, float oxygenSec, float maxOxygenSec)
 		{
 			Stats comp = _pool.GetNext();
 			comp.EntityID = entityID;
 			comp.Alive = true;
 			comp.HP = hp;
-			comp.Air = air;
+			comp.OxygenSeconds = oxygenSec;
+			comp.MaxOxygenSeconds = maxOxygenSec;
 			return comp;
 		}
 	}

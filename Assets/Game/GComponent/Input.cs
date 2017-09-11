@@ -10,7 +10,6 @@ namespace Game.Component
 		public bool Space;
 
 		public Vector2 CurrentVelocity;
-		public float SwimGravity;
 
 		public enum MoveState
 		{
@@ -22,6 +21,8 @@ namespace Game.Component
 		public bool Grounded;
 		public bool FloatJump;
 		public float FallingTime;
+
+		public float LoseOxygenAfter;
 
 		public Input()
 		{

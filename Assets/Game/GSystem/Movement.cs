@@ -20,14 +20,16 @@ namespace Game.Systems
 			{
 				var entityGameObject = game.Entities.GetEntity(e).gameObject;
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
+				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 
 				if (input.State == Component.Input.MoveState.Grounded)
 				{
 					input.CurrentVelocity.y += -GameUnity.Gravity;
 					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
-
 					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 
+					stats.OxygenSeconds += Time.deltaTime;
+					stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
 					if (input.Space && input.Grounded)
 					{
@@ -55,6 +57,7 @@ namespace Game.Systems
 							float fallMulti = input.FallingTime - GameUnity.ExtraFallSpeedAfter;
 							AffectHP fallDamage = AffectHP.Make(-GameUnity.FallDamage * fallMulti);
 							fallDamage.Apply(game, e);
+							fallDamage.Recycle();
 						}
 						input.FallingTime = 0;
 						input.CurrentVelocity.y = 0;
@@ -71,6 +74,7 @@ namespace Game.Systems
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 					if (hit.collider != null)
 					{
+						input.FallingTime = 0;
 						input.State = Component.Input.MoveState.Swimming;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
@@ -82,11 +86,14 @@ namespace Game.Systems
 					input.CurrentVelocity.x += input.Axis.x * GameUnity.SwimSpeed;
 					input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
 
-					if (input.Space && input.FloatJump)
-					{
-						input.CurrentVelocity.y = GameUnity.JumpSpeed / 2f;
-						input.FloatJump = false;
-					}
+					stats.OxygenSeconds += Time.deltaTime;
+					stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
+
+					//if (input.Space && input.FloatJump)
+					//{
+					//	input.CurrentVelocity.y = GameUnity.JumpSpeed / 2f;
+					//	input.FloatJump = false;
+					//}
 
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
@@ -129,6 +136,18 @@ namespace Game.Systems
 					input.CurrentVelocity.x += input.Axis.x * GameUnity.SwimSpeed;
 					input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
 
+					
+					input.LoseOxygenAfter += Time.deltaTime;
+					if (input.LoseOxygenAfter > GameUnity.LoseOxygenAfter)
+					{
+						stats.OxygenSeconds -= Time.deltaTime;
+						stats.OxygenSeconds = Mathf.Max(0, stats.OxygenSeconds);
+					}
+					else
+					{
+						stats.OxygenSeconds += Time.deltaTime;
+						stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
+					}
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
 
@@ -169,10 +188,8 @@ namespace Game.Systems
 							{
 								input.CurrentVelocity.y = GameUnity.WaterJumpSpeed;
 							}
-							
-							//input.CurrentVelocity.x = (GameUnity.JumpSpeed / 2) * Mathf.Sign(input.Axis.x);
 						}
-						//Debug.Log("Go Float");
+						input.LoseOxygenAfter = 0;
 						input.State = Component.Input.MoveState.Floating;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
@@ -237,9 +254,19 @@ namespace Game.Systems
 
 		}
 		public void Initiate(GameManager game)
-        {
-
-        }
+		{
+			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
+			foreach (int e in entities)
+			{
+				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
+				var player = game.Entities.GetComponentOf<Game.Component.Player>(e);
+				if (player.Owner)
+				{
+					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();
+					oxygenMeter.PlayerStats = stats;
+				}
+			}
+		}
         public void SendMessage(GameManager game, int reciever, Message message)
         {
 
