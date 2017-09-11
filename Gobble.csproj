@@ -120,6 +120,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryMain.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\OxygenMeter.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\Parallaxing.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Pathfinder.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\RootCanvas.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
