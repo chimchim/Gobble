@@ -9,5 +9,4 @@ public class GroundVariables : ScriptableObject
 	public float Gravity = 0.5f;
 	public float MaxGravity = 15;
 	public float ExtraFallSpeedAfter = 1;
-	public float FallDamage = 40;
 }

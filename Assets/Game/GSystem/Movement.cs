@@ -137,9 +137,17 @@ namespace Game.Systems
 					input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
 
 					
-					input.LoseOxygenAfter += Time.deltaTime;
-					if (input.LoseOxygenAfter > GameUnity.LoseOxygenAfter)
+					input.SwimTime += Time.deltaTime;
+					if (input.SwimTime > GameUnity.LoseOxygenAfter)
 					{
+						float oxygenDepletionTime = input.SwimTime - GameUnity.OxygenTime;
+						if (((int)oxygenDepletionTime) == input.OxygenDeplationTick)
+						{
+							input.OxygenDeplationTick++;
+							AffectHP damage = AffectHP.Make(-GameUnity.OxygenDPS);
+							damage.Apply(game, e);
+							damage.Recycle();
+						}
 						stats.OxygenSeconds -= Time.deltaTime;
 						stats.OxygenSeconds = Mathf.Max(0, stats.OxygenSeconds);
 					}
@@ -183,13 +191,16 @@ namespace Game.Systems
 					{
 						if (yMovement > 0)
 						{
-							input.CurrentVelocity.y = GameUnity.WaterJumpSpeed / 2f;
-							if (input.Axis.y > 0)
+							input.FloatingCounter++;
+							input.CurrentVelocity.y = GameUnity.WaterJumpSpeed / 4f;
+							if (input.Axis.y > 0 && input.FloatingCounter >= GameUnity.FloatJumpEvery)
 							{
+								input.FloatingCounter = 0;
 								input.CurrentVelocity.y = GameUnity.WaterJumpSpeed;
 							}
 						}
-						input.LoseOxygenAfter = 0;
+						input.SwimTime = 0;
+						input.OxygenDeplationTick = 0;
 						input.State = Component.Input.MoveState.Floating;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}

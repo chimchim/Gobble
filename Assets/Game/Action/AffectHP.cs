@@ -29,7 +29,7 @@ namespace Game.Actions
 			Stats stats = game.Entities.GetComponentOf<Stats>(owner);
 
 			stats.HP += HP;
-
+			stats.HP = Mathf.Clamp(stats.HP, 0, GameUnity.MaxHP);
 			if (player.Owner)
 			{
 				var hpBar = GameObject.FindObjectOfType<HpBar>();

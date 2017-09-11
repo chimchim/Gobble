@@ -55,7 +55,10 @@ namespace Game.Systems
 			int fullWidhth = mapwidth + (widhtBound * 2);
 			int fullHeight = mapheight + (heightBound * 2);
 
-			simulate_compression();
+			for (int i = 0; i < GameUnity.WaterSimulationsPerUpdate; i++)
+			{
+				simulate_compression();
+			}
 
 			for (int x = 1; x < fullWidhth + 2; x++)
 			{

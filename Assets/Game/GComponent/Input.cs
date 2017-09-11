@@ -19,10 +19,12 @@ namespace Game.Component
 		}
 		public MoveState State;
 		public bool Grounded;
-		public bool FloatJump;
 		public float FallingTime;
 
-		public float LoseOxygenAfter;
+		public int FloatingCounter;
+		public bool FloatJump;
+		public float SwimTime;
+		public int OxygenDeplationTick;
 
 		public Input()
 		{
@@ -32,6 +34,7 @@ namespace Game.Component
 		{
 			Input comp = _pool.GetNext();
 			comp.EntityID = entityID;
+			comp.OxygenDeplationTick = 1;
 			return comp;
 		}
 	}

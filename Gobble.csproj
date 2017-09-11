@@ -126,6 +126,8 @@
     <Compile Include="Assets\Game\ObjectPool.cs" />
     <Compile Include="Assets\Game\ParticleManager.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\StatsVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\SwimVariables.cs" />
     <Compile Include="Assets\Game\Shot.cs" />
     <Compile Include="Assets\Game\SystemManager.cs" />
