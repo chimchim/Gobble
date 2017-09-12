@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
 using Game.Actions;
+using UnityEditor;
 
 namespace Game.Systems
 {
@@ -56,7 +57,7 @@ namespace Game.Systems
 					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
 					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
 					entityGameObject.transform.position = tempPos;
-
+					
 					input.Grounded = vertGrounded;
 					if (vertGrounded)
 					{
@@ -96,12 +97,6 @@ namespace Game.Systems
 
 					stats.OxygenSeconds += Time.deltaTime;
 					stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
-
-					//if (input.Space && input.FloatJump)
-					//{
-					//	input.CurrentVelocity.y = GameUnity.JumpSpeed / 2f;
-					//	input.FloatJump = false;
-					//}
 
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
@@ -218,17 +213,16 @@ namespace Game.Systems
 
 		public Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, out bool grounded)
 		{
-			float sign = Mathf.Sign(y);
-
-			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, y, 0) + pos;
-			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, y, 0) + pos;
-			RaycastHit2D[] hitsY = new RaycastHit2D[2];
+			float fullRayDistance = yoffset + Mathf.Abs(y);
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-			hitsY[0] = Physics2D.Raycast(firstStartY, Vector3.up * sign, yoffset, layerMask);
-			hitsY[1] = Physics2D.Raycast(secondStartY, Vector3.up * sign, yoffset, layerMask);
-
-			Debug.DrawLine(firstStartY, firstStartY + (Vector3.up * yoffset * sign), Color.red);
-			Debug.DrawLine(secondStartY, secondStartY + (Vector3.up * yoffset * sign), Color.red);
+			float sign = Mathf.Sign(y);
+			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, 0, 0) + pos;
+			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, 0, 0) + pos;
+			RaycastHit2D[] hitsY = new RaycastHit2D[2];
+			hitsY[0] = Physics2D.Raycast(firstStartY, Vector3.up * sign, fullRayDistance, layerMask);
+			hitsY[1] = Physics2D.Raycast(secondStartY, Vector3.up * sign, fullRayDistance, layerMask);
+			Debug.DrawLine(firstStartY, firstStartY + (Vector3.up * fullRayDistance * sign), Color.red);
+			Debug.DrawLine(secondStartY, secondStartY + (Vector3.up * fullRayDistance * sign), Color.red);
 			grounded = false;
 			Vector3 movement = new Vector3(pos.x, pos.y + y, 0);
 			for (int i = 0; i < hitsY.Length; i++)
@@ -236,42 +230,47 @@ namespace Game.Systems
 				if (hitsY[i].collider != null)
 				{
 					float distance = Mathf.Abs(hitsY[i].point.y - pos.y);
-
-					float moveAmount = yoffset - distance;
-					movement = new Vector3(pos.x, pos.y + (moveAmount * -sign), 0);
+					float moveAmount = (fullRayDistance - distance);
+					moveAmount = (distance * sign) + (yoffset * -sign);
+					movement = new Vector3(pos.x, pos.y + (moveAmount), 0);
 					grounded = true;
 					break;
 				}
 			}
+			
 			return movement;
 		}
 		public Vector3 HorizontalMovement(Vector3 pos, float x, float xoffset, float yoffset, out bool grounded)
 		{
-			float sign = Mathf.Sign(x);
-			Vector3 firstStartX = new Vector3(x, -yoffset + 0.05f, 0) + pos;
-			Vector3 secondStartX = new Vector3(x, yoffset - 0.05f, 0) + pos;
-			RaycastHit2D[] hitsY = new RaycastHit2D[2];
+			float fullRayDistance = xoffset + Mathf.Abs(x);
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, xoffset, layerMask);
-			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, xoffset, layerMask);
-			Debug.DrawLine(firstStartX, firstStartX + (Vector3.right * xoffset * sign), Color.red);
-			Debug.DrawLine(secondStartX, secondStartX + (Vector3.right * xoffset * sign), Color.red);
+			float sign = Mathf.Sign(x);
+			Vector3 firstStartX = new Vector3(0, -yoffset + 0.05f, 0) + pos;
+			Vector3 secondStartX = new Vector3(0, yoffset - 0.05f, 0) + pos;
+			RaycastHit2D[] hitsY = new RaycastHit2D[2];
+			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, fullRayDistance, layerMask);
+			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, fullRayDistance, layerMask);
+			Debug.DrawLine(firstStartX, firstStartX + (Vector3.right * fullRayDistance * sign), Color.red);
+			Debug.DrawLine(secondStartX, secondStartX + (Vector3.right * fullRayDistance * sign), Color.red);
 			grounded = false;
+
 			Vector3 movement = new Vector3(pos.x + x, pos.y, 0);
 			for (int i = 0; i < hitsY.Length; i++)
 			{
 				if (hitsY[i].collider != null)
 				{
 					float distance = Mathf.Abs(hitsY[i].point.x - pos.x);
-					float moveAmount = (xoffset) - distance;
-					movement = new Vector3(pos.x + (moveAmount * -sign), pos.y, 0);
+					float moveAmount = (fullRayDistance - distance);
+					moveAmount = (distance * sign) + (xoffset * -sign);
+					movement = new Vector3(pos.x + (moveAmount), pos.y, 0);
 					grounded = true;
 					break;
 				}
 			}
-			return movement;
 
+			return movement;
 		}
+
 		public void Initiate(GameManager game)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
@@ -282,7 +281,10 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				if (player.Owner)
 				{
-					input.State = Component.Input.MoveState.FlyingDebug;
+					if (GameUnity.DebugMode)
+					{
+						input.State = Component.Input.MoveState.FlyingDebug;
+					}
 					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();
 					oxygenMeter.PlayerStats = stats;
 				}
@@ -294,3 +296,5 @@ namespace Game.Systems
         }
     }
 }
+//Debug.DrawLine(firstStartX, firstStartX + (Vector3.right * xoffset * sign), Color.red);
+//Debug.DrawLine(secondStartX, secondStartX + (Vector3.right * xoffset * sign), Color.red);

@@ -46,6 +46,7 @@ public class GameUnity : MonoBehaviour
 	public static float MaxHP;
 
 	[Header("Map Variables")]
+	public static bool DebugMode;
 	public static bool CreateWater;
 	public static int WaterAmountOneIn;
 	public static int WaterSimulations;
@@ -117,6 +118,7 @@ public class GameUnity : MonoBehaviour
 		MaxHP = StatsData.MaxHP;
 
 		//Map
+		DebugMode = MapData.DebugMode;
 		CreateWater = MapData.CreateWater;
 		WaterAmountOneIn = MapData.WaterAmountOneIn;
 		WaterSimulations = MapData.WaterSimulations;
@@ -125,6 +127,7 @@ public class GameUnity : MonoBehaviour
 		MapWidth = MapData.MapWidth;
 		HeightBound = MapData.HeightBound;
 		WidhtBound = MapData.WidhtBound;
+
 	}
     void LateUpdate()
     {
