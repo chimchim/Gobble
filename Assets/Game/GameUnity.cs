@@ -55,11 +55,13 @@ public class GameUnity : MonoBehaviour
 	public static int MapWidth;
 	public static int HeightBound;
 	public static int WidhtBound;
+	public static bool ShowMiniMap;
 
-
+	public MiniMap MiniMap;
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
 	private int entity;
+	private bool _miniMapActive;
 	void Start () 
 	{
 		SetVariables();
@@ -78,6 +80,7 @@ public class GameUnity : MonoBehaviour
         ent.gameObject = player;
 
 		GetComponent<FollowCamera>().player = player;
+		MiniMap.player = player;
 		entity = ent.ID;
         game.Systems.CreateSystems();
         game.Initiate();        
@@ -127,11 +130,20 @@ public class GameUnity : MonoBehaviour
 		MapWidth = MapData.MapWidth;
 		HeightBound = MapData.HeightBound;
 		WidhtBound = MapData.WidhtBound;
+		ShowMiniMap = MapData.ShowMiniMap;
 
 	}
     void LateUpdate()
     {
-
+		if (ShowMiniMap && !_miniMapActive)
+		{
+			_miniMapActive = true;
+			MiniMap.gameObject.SetActive(true);
+		}
+		else if(!ShowMiniMap && _miniMapActive)
+		{
+			MiniMap.gameObject.SetActive(false);
+		}
     }
 
     private void SetFamilyID()

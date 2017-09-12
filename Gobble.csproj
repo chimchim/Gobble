@@ -116,6 +116,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\CharacterMover.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\FollowCamera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\HpBar.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\MiniMap.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\OxygenMeter.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Parallaxing.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ParallaxingGroup.cs" />
