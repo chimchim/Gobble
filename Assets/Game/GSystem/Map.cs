@@ -38,6 +38,7 @@ namespace Game.Systems
 
 		Sprite topWaterSprite;
 		Sprite waterSprite;
+		Material diffMat;
 		public void Update(GameManager game)
 		{
 			if (GameUnity.CreateWater)
@@ -136,8 +137,10 @@ namespace Game.Systems
 			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
 			topWaterSprite = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
 			waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
+			diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
 			Blocks = new GameObject[fullWidhth, fullWidhth];
-
+			GameObject parentCube = new GameObject();
+			parentCube.name = "Tiles";
 			for (int x = 0; x < fullWidhth; x++)
 			{
 				for (int y = 0; y < fullHeight; y++)
@@ -145,7 +148,9 @@ namespace Game.Systems
 					if ((x < GameUnity.WidhtBound || x > (GameUnity.MapWidth + GameUnity.WidhtBound)) || (y < GameUnity.HeightBound || y > (GameUnity.MapHeight + GameUnity.HeightBound)))
 					{
 						GameObject cube = new GameObject();
+						cube.transform.parent = parentCube.transform;
 						cube.AddComponent<SpriteRenderer>();
+						cube.GetComponent<SpriteRenderer>().material = diffMat;
 						cube.AddComponent<BoxCollider2D>();
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						cube.layer = LayerMask.NameToLayer("Collideable");
@@ -178,7 +183,9 @@ namespace Game.Systems
 					else if (noise < 0.9f && noise > 0.5f)
 					{
 						GameObject cube = new GameObject();
+						cube.transform.parent = parentCube.transform;
 						cube.AddComponent<SpriteRenderer>();
+						cube.GetComponent<SpriteRenderer>().material = diffMat;
 						cube.AddComponent<BoxCollider2D>();
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 						cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
@@ -188,7 +195,9 @@ namespace Game.Systems
 					else
 					{
 						GameObject cube = new GameObject();
+						cube.transform.parent = parentCube.transform;
 						cube.AddComponent<SpriteRenderer>();
+						cube.GetComponent<SpriteRenderer>().material = diffMat;
 						cube.AddComponent<BoxCollider2D>();
 						cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 						cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);

@@ -133,9 +133,9 @@
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\StatsVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\SwimVariables.cs" />
+    <Compile Include="Assets\Game\Server.cs" />
     <Compile Include="Assets\Game\Shot.cs" />
     <Compile Include="Assets\Game\SystemManager.cs" />
-    <Compile Include="Assets\Server.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
