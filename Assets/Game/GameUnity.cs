@@ -56,6 +56,8 @@ public class GameUnity : MonoBehaviour
 	public static int HeightBound;
 	public static int WidhtBound;
 	public static bool ShowMiniMap;
+	public static int MiniMapBoundryX;
+	public static int MiniMapBoundryY;
 
 	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
@@ -132,7 +134,8 @@ public class GameUnity : MonoBehaviour
 		HeightBound = MapData.HeightBound;
 		WidhtBound = MapData.WidhtBound;
 		ShowMiniMap = MapData.ShowMiniMap;
-
+		MiniMapBoundryX = MapData.MiniMapBoundryX;
+		MiniMapBoundryY = MapData.MiniMapBoundryY;
 	}
     void LateUpdate()
     {

@@ -14,5 +14,8 @@ public class MapVariables : ScriptableObject
 	public int MapWidth = 90;
 	public int HeightBound = 8;
 	public int WidhtBound = 8;
-	
+	public int MiniMapBoundryX = 6;
+	public int MiniMapBoundryY = 6;
+
+
 }

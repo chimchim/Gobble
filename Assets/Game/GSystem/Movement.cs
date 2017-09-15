@@ -56,8 +56,7 @@ namespace Game.Systems
 					Vector3 tempPos = entityGameObject.transform.position;
 					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
 					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
-					entityGameObject.transform.position = tempPos;
-					
+					entityGameObject.transform.position = new Vector3(tempPos.x, tempPos.y, -0.1f);
 					input.Grounded = vertGrounded;
 					if (vertGrounded)
 					{

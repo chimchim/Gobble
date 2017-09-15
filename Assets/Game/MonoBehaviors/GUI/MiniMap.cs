@@ -5,11 +5,12 @@ public class MiniMap : MonoBehaviour
 {
 
 	public GameObject player;
-
+	public Shader SpriteDefault;
 	// Use this for initialization
 	void Start()
 	{
-
+		var cam = GetComponent<Camera>();
+		//cam.SetReplacementShader(SpriteDefault, "Transparent");
 	}
 
 

@@ -11,6 +11,7 @@ namespace Game.Systems
 
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private GameObject[,] Blocks;
+		bool[,] foundTile;
 
 		GameObject Water;
 		private Material[] Waters = new Material[10];
@@ -39,13 +40,65 @@ namespace Game.Systems
 		Sprite topWaterSprite;
 		Sprite waterSprite;
 		Material diffMat;
+
 		public void Update(GameManager game)
 		{
 			if (GameUnity.CreateWater)
 			{
 				UpdateWater();
 			}
+			UpdateMiniMap(game);
 		}
+
+		public void Initiate(GameManager game)
+		{
+			InitiateMap(game);
+			InitiateWater();
+		}
+
+		private void UpdateMiniMap(GameManager game)
+		{
+			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+
+			foreach (int e in entities)
+			{
+				var player = game.Entities.GetComponentOf<Player>(e);
+				if (player.Owner)
+				{
+					var entTransform = game.Entities.GetEntity(e).gameObject.transform;
+					int startX = (int)(entTransform.position.x / 1.28f);
+					int startY = (int)(entTransform.position.y / 1.28f);
+					for (int x = -GameUnity.MiniMapBoundryX; x < GameUnity.MiniMapBoundryX+3; x++)
+					{
+						for (int y = -GameUnity.MiniMapBoundryY; y < GameUnity.MiniMapBoundryY; y++)
+						{
+							int currentX = startX + (x);
+							int currentY = startY + (y);
+
+							currentX = Mathf.Clamp(currentX, 0, fullWidhth - 1);
+							currentY = Mathf.Clamp(currentY, 0, fullHeight - 1);
+							if (!foundTile[currentX, currentY])
+							{
+								foundTile[currentX, currentY] = true;
+								if (Blocks[currentX, currentY] != null)
+								{
+									var transform = Blocks[currentX, currentY].transform;
+									transform.position = new Vector3(transform.position.x, transform.position.y, -0.1f);
+								}
+								if (waters[currentX, currentY] != null)
+								{
+									var transform = waters[currentX, currentY].transform;
+									transform.position = new Vector3(transform.position.x, transform.position.y, -0.1f);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		public void UpdateWater()
 		{
 			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
@@ -114,7 +167,6 @@ namespace Game.Systems
 			int watertransparency = ((int)(scaledcolor * 10));
 			watertransparency = Mathf.Min(watertransparency, 9);
 			float topWaterOffset = 0;
-			//waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
 			if ((blocks[x, y + 1] != WATER || mass[x, y + 1] < MinDraw) && waterMass < MaxMass)
 			{
 
@@ -125,13 +177,13 @@ namespace Game.Systems
 			{
 				waters[x, y].GetComponent<SpriteRenderer>().sprite = waterSprite;
 				scaledMass = 1;
-				//waters[x, y].GetComponent<Renderer>().material = Waters[watertransparency];
 			}
 			var pos = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
-			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2) -topWaterOffset, 0.1f);
+			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2) -topWaterOffset, waters[x, y].position.z);
 			waters[x, y].localScale = new Vector3(waters[x, y].localScale.x, scaledMass, 0.01f);
 		}
-		public void Initiate(GameManager game)
+
+		public void InitiateMap(GameManager game)
 		{
 			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
 			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
@@ -139,6 +191,7 @@ namespace Game.Systems
 			waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
 			diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
 			Blocks = new GameObject[fullWidhth, fullWidhth];
+			foundTile = new bool[fullWidhth, fullWidhth];
 			GameObject parentCube = new GameObject();
 			parentCube.name = "Tiles";
 			for (int x = 0; x < fullWidhth; x++)
@@ -157,7 +210,7 @@ namespace Game.Systems
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Blocks[x, y] = cube;
 					}
-			
+
 				}
 			}
 
@@ -205,12 +258,12 @@ namespace Game.Systems
 						Blocks[posX, posY] = cube;
 					}
 
-					
 
-			}
+
+				}
 
 			Sprite newMat = null;
-			
+
 			for (int x = 0; x < fullWidhth; x++)
 			{
 				for (int y = 0; y < fullHeight; y++)
@@ -219,8 +272,8 @@ namespace Game.Systems
 
 
 					var top = ((y + 1) < fullHeight) && (Blocks[x, y + 1] != null);
-					var bot = ((y - 1) >=  0) && (Blocks[x, y - 1] != null);
-					var right = ((x + 1) < fullWidhth) && (Blocks[x + 1, y ] != null);
+					var bot = ((y - 1) >= 0) && (Blocks[x, y - 1] != null);
+					var right = ((x + 1) < fullWidhth) && (Blocks[x + 1, y] != null);
 					var left = ((x - 1) >= 0) && (Blocks[x - 1, y] != null);
 					if (Blocks[x, y] == null)
 					{
@@ -310,14 +363,6 @@ namespace Game.Systems
 				var go = game.Entities.GetEntity(entity);
 				go.gameObject.transform.position = GameUnity.StartingPosition;
 			}
-			if (GameUnity.CreateWater)
-			{
-				InitiateWater();
-				for (int i = 0; i < GameUnity.WaterSimulations; i++)
-				{
-					simulate_compression();
-				}
-			}
 		}
 
 		
@@ -328,6 +373,11 @@ namespace Game.Systems
 		}
 		void InitiateWater()
 		{
+			if (!GameUnity.CreateWater)
+			{
+				return;
+			}
+			
 			Water = GameObject.Instantiate(Resources.Load("Prefabs/Water", typeof(GameObject))) as GameObject;
 			Water.transform.position = new Vector3(-1111, -1111, 0);
 			Waters[0] = Resources.Load("Material/Water/Blue9", typeof(Material)) as Material;
@@ -376,6 +426,11 @@ namespace Game.Systems
 			{
 				blocks[0, y] = AIR;
 				blocks[fullWidhth + 1, y] = AIR;
+			}
+
+			for (int i = 0; i < GameUnity.WaterSimulations; i++)
+			{
+				simulate_compression();
 			}
 
 		}

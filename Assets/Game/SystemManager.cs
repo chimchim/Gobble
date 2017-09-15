@@ -29,7 +29,7 @@ namespace Game
         public void CreateSystems()
         {
 			_systems.Add(new Map());
-            _systems.Add(new InputSystem());
+			_systems.Add(new InputSystem());
 			_systems.Add(new Movement());
 		}
         public void InitAll(GameManager game)
