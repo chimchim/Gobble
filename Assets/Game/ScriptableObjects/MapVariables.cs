@@ -4,6 +4,7 @@ using System.Collections;
 [CreateAssetMenu(fileName = "Data", menuName = "Variables/Map", order = 1)]
 public class MapVariables : ScriptableObject
 {
+	public bool ShowMiniMap = true;
 	public bool DebugMode = true;
 	public bool CreateWater = true;
 	public int WaterAmountOneIn = 5;
@@ -13,5 +14,5 @@ public class MapVariables : ScriptableObject
 	public int MapWidth = 90;
 	public int HeightBound = 8;
 	public int WidhtBound = 8;
-	public bool ShowMiniMap = true;
+	
 }

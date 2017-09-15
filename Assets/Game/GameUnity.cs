@@ -57,11 +57,12 @@ public class GameUnity : MonoBehaviour
 	public static int WidhtBound;
 	public static bool ShowMiniMap;
 
+	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
 	private int entity;
-	private bool _miniMapActive;
+	private bool _miniMapActive = true;
 	void Start () 
 	{
 		SetVariables();
@@ -83,7 +84,7 @@ public class GameUnity : MonoBehaviour
 		MiniMap.player = player;
 		entity = ent.ID;
         game.Systems.CreateSystems();
-        game.Initiate();        
+        game.Initiate();
 	}
 
 	void Update () 
@@ -138,10 +139,13 @@ public class GameUnity : MonoBehaviour
 		if (ShowMiniMap && !_miniMapActive)
 		{
 			_miniMapActive = true;
+			MiniMapCanvas.SetActive(true);
 			MiniMap.gameObject.SetActive(true);
 		}
 		else if(!ShowMiniMap && _miniMapActive)
 		{
+			_miniMapActive = false;
+			MiniMapCanvas.SetActive(false);
 			MiniMap.gameObject.SetActive(false);
 		}
     }
