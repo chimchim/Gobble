@@ -10,6 +10,9 @@ namespace Game.Systems
 	{
 
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
+		private List<GameObject> _grassLevels = new List<GameObject>();
+		private List<GameObject> _boundries = new List<GameObject>();
+
 		private GameObject[,] Blocks;
 		bool[,] foundTile;
 
@@ -56,6 +59,8 @@ namespace Game.Systems
 			InitiateWater();
 		}
 
+		//private void Get
+
 		private void UpdateMiniMap(GameManager game)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
@@ -90,7 +95,7 @@ namespace Game.Systems
 								if (waters[currentX, currentY] != null)
 								{
 									var transform = waters[currentX, currentY].transform;
-									transform.position = new Vector3(transform.position.x, transform.position.y, -0.1f);
+									transform.position = new Vector3(transform.position.x, transform.position.y, -0.25f);
 								}
 							}
 						}
@@ -98,8 +103,6 @@ namespace Game.Systems
 				}
 			}
 		}
-
-		
 
 		public void InitiateMap(GameManager game)
 		{
@@ -127,6 +130,7 @@ namespace Game.Systems
 						cube.layer = LayerMask.NameToLayer("Collideable");
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Blocks[x, y] = cube;
+						_boundries.Add(cube);
 					}
 
 				}
@@ -212,6 +216,7 @@ namespace Game.Systems
 					{
 						newMat = Resources.Load("Tiles/Top", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "Top";
+						_grassLevels.Add(Blocks[x, y]);
 					}
 					if (top && right && left && bot)
 					{
@@ -298,16 +303,6 @@ namespace Game.Systems
 			
 			Water = GameObject.Instantiate(Resources.Load("Prefabs/Water", typeof(GameObject))) as GameObject;
 			Water.transform.position = new Vector3(-1111, -1111, 0);
-			Waters[0] = Resources.Load("Material/Water/Blue9", typeof(Material)) as Material;
-			Waters[1] = Resources.Load("Material/Water/Blue8", typeof(Material)) as Material;
-			Waters[2] = Resources.Load("Material/Water/Blue7", typeof(Material)) as Material;
-			Waters[3] = Resources.Load("Material/Water/Blue6", typeof(Material)) as Material;
-			Waters[4] = Resources.Load("Material/Water/Blue5", typeof(Material)) as Material;
-			Waters[5] = Resources.Load("Material/Water/Blue4", typeof(Material)) as Material;
-			Waters[6] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
-			Waters[7] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
-			Waters[8] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
-			Waters[9] = Resources.Load("Material/Water/Blue3", typeof(Material)) as Material;
 
 			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
 			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
@@ -348,11 +343,11 @@ namespace Game.Systems
 
 			for (int i = 0; i < GameUnity.WaterSimulations; i++)
 			{
-				simulate_compression();
+				SimulateCompression();
 			}
 
 		}
-		float get_stable_state_b(float total_mass)
+		float GetStableState(float total_mass)
 		{
 			if (total_mass <= 1)
 			{
@@ -367,7 +362,7 @@ namespace Game.Systems
 				return (total_mass + MaxCompress) / 2;
 			}
 		}
-		void simulate_compression()
+		void SimulateCompression()
 		{
 			float Flow = 0;
 			float remaining_mass;
@@ -389,7 +384,7 @@ namespace Game.Systems
 					//The block below this one
 					if ((blocks[x, y - 1] != GROUND))
 					{
-						Flow = get_stable_state_b(remaining_mass + mass[x, y - 1]) - mass[x, y - 1];
+						Flow = GetStableState(remaining_mass + mass[x, y - 1]) - mass[x, y - 1];
 						if (Flow > MinFlow)
 						{
 							Flow *= 0.5f; //leads to smoother flow
@@ -436,7 +431,7 @@ namespace Game.Systems
 					//Up. Only compressed water flows upwards.
 					if (blocks[x, y + 1] != GROUND)
 					{
-						Flow = remaining_mass - get_stable_state_b(remaining_mass + mass[x, y + 1]);
+						Flow = remaining_mass - GetStableState(remaining_mass + mass[x, y + 1]);
 						if (Flow > MinFlow) { Flow *= 0.5f; }
 						Flow = Mathf.Clamp(Flow, 0, Mathf.Min(MaxSpeed, remaining_mass));
 
@@ -496,7 +491,7 @@ namespace Game.Systems
 
 			for (int i = 0; i < GameUnity.WaterSimulationsPerUpdate; i++)
 			{
-				simulate_compression();
+				SimulateCompression();
 			}
 
 			for (int x = 1; x < fullWidhth + 2; x++)
@@ -522,12 +517,12 @@ namespace Game.Systems
 								{
 									scaledSize = 1;
 								}
-								draw_block(x, y, mass[x, y], scaledSize);
+								DrawBlock(x, y, mass[x, y], scaledSize);
 							}
 							else
 							{
 
-								draw_block(x, y, mass[x, y], 1);
+								DrawBlock(x, y, mass[x, y], 1);
 							}
 						}
 					}
@@ -541,7 +536,7 @@ namespace Game.Systems
 				}
 			}
 		}
-		private void draw_block(int x, int y, float color, float waterMass)
+		private void DrawBlock(int x, int y, float color, float waterMass)
 		{
 			GameObject go;
 			if (waters[x, y] == null)
