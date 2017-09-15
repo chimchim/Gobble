@@ -99,89 +99,7 @@ namespace Game.Systems
 			}
 		}
 
-		public void UpdateWater()
-		{
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
-
-			for (int i = 0; i < GameUnity.WaterSimulationsPerUpdate; i++)
-			{
-				simulate_compression();
-			}
-
-			for (int x = 1; x < fullWidhth + 2; x++)
-			{
-				for (int y = 1; y < fullHeight + 2; y++)
-				{
-					if (blocks[x, y] == WATER)
-					{
-						if (mass[x, y] < MinDraw)
-						{
-							if (waters[x, y] != null)
-							{
-								GameObject.Destroy(waters[x, y].gameObject);
-							}
-						}
-						else
-						{
-							if (mass[x, y] < MaxMass)
-							{
-								//Draw a half-full block. Block size is dependent on the amount of water in it.
-								float scaledSize = mass[x, y];
-								if (mass[x, y + 1] >= MinDraw)
-								{
-									scaledSize = 1;
-								}
-								draw_block(x, y, mass[x, y], scaledSize);
-							}
-							else
-							{
-
-								draw_block(x, y, mass[x, y], 1);
-							}
-						}
-					}
-					else
-					{
-						if (waters[x, y] != null)
-						{
-							GameObject.Destroy(waters[x, y].gameObject);
-						}
-					}
-				}
-			}
-		}
-		private void draw_block(int x, int y, float color, float waterMass)
-		{
-			GameObject go;
-			if (waters[x, y] == null)
-			{
-				go = GameObject.Instantiate(Water);
-				waters[x, y] = go.transform;
-			}
-
-			float scaledcolor = Mathf.Min(1, color);
-			float scaledMass = Mathf.Min(1, waterMass);
-			float yOffset = (1 - (scaledMass)) * 1.28f;
-			scaledMass = (scaledMass) * 1.28f;
-			int watertransparency = ((int)(scaledcolor * 10));
-			watertransparency = Mathf.Min(watertransparency, 9);
-			float topWaterOffset = 0;
-			if ((blocks[x, y + 1] != WATER || mass[x, y + 1] < MinDraw) && waterMass < MaxMass)
-			{
-
-				waters[x, y].GetComponent<SpriteRenderer>().sprite = topWaterSprite;
-				topWaterOffset = 0.05f;
-			}
-			else
-			{
-				waters[x, y].GetComponent<SpriteRenderer>().sprite = waterSprite;
-				scaledMass = 1;
-			}
-			var pos = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
-			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2) -topWaterOffset, waters[x, y].position.z);
-			waters[x, y].localScale = new Vector3(waters[x, y].localScale.x, scaledMass, 0.01f);
-		}
+		
 
 		public void InitiateMap(GameManager game)
 		{
@@ -449,8 +367,6 @@ namespace Game.Systems
 				return (total_mass + MaxCompress) / 2;
 			}
 		}
-
-
 		void simulate_compression()
 		{
 			float Flow = 0;
@@ -572,6 +488,89 @@ namespace Game.Systems
 				mass[fullWidhth + 1, y] = 0;
 			}
 
+		}
+		public void UpdateWater()
+		{
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+
+			for (int i = 0; i < GameUnity.WaterSimulationsPerUpdate; i++)
+			{
+				simulate_compression();
+			}
+
+			for (int x = 1; x < fullWidhth + 2; x++)
+			{
+				for (int y = 1; y < fullHeight + 2; y++)
+				{
+					if (blocks[x, y] == WATER)
+					{
+						if (mass[x, y] < MinDraw)
+						{
+							if (waters[x, y] != null)
+							{
+								GameObject.Destroy(waters[x, y].gameObject);
+							}
+						}
+						else
+						{
+							if (mass[x, y] < MaxMass)
+							{
+								//Draw a half-full block. Block size is dependent on the amount of water in it.
+								float scaledSize = mass[x, y];
+								if (mass[x, y + 1] >= MinDraw)
+								{
+									scaledSize = 1;
+								}
+								draw_block(x, y, mass[x, y], scaledSize);
+							}
+							else
+							{
+
+								draw_block(x, y, mass[x, y], 1);
+							}
+						}
+					}
+					else
+					{
+						if (waters[x, y] != null)
+						{
+							GameObject.Destroy(waters[x, y].gameObject);
+						}
+					}
+				}
+			}
+		}
+		private void draw_block(int x, int y, float color, float waterMass)
+		{
+			GameObject go;
+			if (waters[x, y] == null)
+			{
+				go = GameObject.Instantiate(Water);
+				waters[x, y] = go.transform;
+			}
+
+			float scaledcolor = Mathf.Min(1, color);
+			float scaledMass = Mathf.Min(1, waterMass);
+			float yOffset = (1 - (scaledMass)) * 1.28f;
+			scaledMass = (scaledMass) * 1.28f;
+			int watertransparency = ((int)(scaledcolor * 10));
+			watertransparency = Mathf.Min(watertransparency, 9);
+			float topWaterOffset = 0;
+			if ((blocks[x, y + 1] != WATER || mass[x, y + 1] < MinDraw) && waterMass < MaxMass)
+			{
+
+				waters[x, y].GetComponent<SpriteRenderer>().sprite = topWaterSprite;
+				topWaterOffset = 0.05f;
+			}
+			else
+			{
+				waters[x, y].GetComponent<SpriteRenderer>().sprite = waterSprite;
+				scaledMass = 1;
+			}
+			var pos = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
+			waters[x, y].position = new Vector3(pos.x, pos.y - (yOffset / 2) - topWaterOffset, waters[x, y].position.z);
+			waters[x, y].localScale = new Vector3(waters[x, y].localScale.x, scaledMass, 0.01f);
 		}
 	}
 }

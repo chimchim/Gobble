@@ -11,5 +11,6 @@ public class VIKTIGT : MonoBehaviour {
 	MiniMap exploring xLed +3 ?
 	vad Saker har för Z led
 	.28 retarded
+	https://www.youtube.com/watch?v=IjP2MeSozIs
 	*/
 }
