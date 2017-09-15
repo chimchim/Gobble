@@ -56,7 +56,7 @@ namespace Game.Systems
 					Vector3 tempPos = entityGameObject.transform.position;
 					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
 					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
-					entityGameObject.transform.position = new Vector3(tempPos.x, tempPos.y, -0.1f);
+					entityGameObject.transform.position = tempPos;
 					input.Grounded = vertGrounded;
 					if (vertGrounded)
 					{
@@ -207,6 +207,7 @@ namespace Game.Systems
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
 				}
+				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
 			}
 		}
 
