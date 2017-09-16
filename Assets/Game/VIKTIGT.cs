@@ -13,5 +13,6 @@ public class VIKTIGT : MonoBehaviour {
 	.28 retarded
 	https://www.youtube.com/watch?v=IjP2MeSozIs
 	hidda bara vilka mineraler det är om dom är långt inne
+	byta hopp till W
 	*/
 }
