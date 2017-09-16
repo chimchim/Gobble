@@ -73,10 +73,28 @@ namespace Game.Systems
 
 		public void Initiate(GameManager game)
 		{
+			
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+
 			InitiateMap(game);
+			watch.Stop();
+			var elapsedMs = watch.ElapsedMilliseconds;
+			Debug.Log("InitiateMap Time " + elapsedMs);
+			watch.Start();
+
 			InitiateWater();
+			watch.Stop();
+			elapsedMs = watch.ElapsedMilliseconds;
+			Debug.Log("InitiateWater Time " + elapsedMs);
+			watch.Start();
+
 			GetIslands();
-			CheckIslandLevels();
+			watch.Stop();
+			elapsedMs = watch.ElapsedMilliseconds;
+			Debug.Log("GetIslands Time " + elapsedMs);
+
+
+			//CheckIslandLevels();
 		}
 
 		private void CheckIslandLevels()
@@ -211,6 +229,9 @@ namespace Game.Systems
 
 		private void GetIslands()
 		{
+			if (!GameUnity.GenerateIslands)
+				return;
+
 			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
 			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
 			Vector2 firstPos = new Vector2(GameUnity.WidhtBound + (GameUnity.WidhtBound * 0.28f), GameUnity.HeightBound + (GameUnity.HeightBound * 0.28f));
@@ -318,7 +339,7 @@ namespace Game.Systems
 			float zoom = 0.1f; // play with this to zoom into the noise field
 
 			for (int x = 0; x < GameUnity.MapWidth; x++)
-				for (int y = 1; y < GameUnity.MapHeight; y++)
+				for (int y = 0; y < GameUnity.MapHeight; y++)
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);

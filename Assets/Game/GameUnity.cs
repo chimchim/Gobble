@@ -48,6 +48,7 @@ public class GameUnity : MonoBehaviour
 	[Header("Map Variables")]
 	public static bool DebugMode;
 	public static bool CreateWater;
+	public static bool GenerateIslands;
 	public static int WaterAmountOneIn;
 	public static int WaterSimulations;
 	public static int WaterSimulationsPerUpdate;
@@ -126,6 +127,7 @@ public class GameUnity : MonoBehaviour
 		//Map
 		DebugMode = MapData.DebugMode;
 		CreateWater = MapData.CreateWater;
+		GenerateIslands = MapData.GenerateIslands;
 		WaterAmountOneIn = MapData.WaterAmountOneIn;
 		WaterSimulations = MapData.WaterSimulations;
 		WaterSimulationsPerUpdate = MapData.WaterSimulationsPerUpdate;
@@ -139,6 +141,7 @@ public class GameUnity : MonoBehaviour
 	}
     void LateUpdate()
     {
+		
 		if (ShowMiniMap && !_miniMapActive)
 		{
 			_miniMapActive = true;
