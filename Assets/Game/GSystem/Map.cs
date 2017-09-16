@@ -12,7 +12,12 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private List<GameObject> _grassLevels = new List<GameObject>();
 		private List<GameObject> _boundries = new List<GameObject>();
-
+		private List<GameObject> _bottoms = new List<GameObject>();
+		private List<List<GameObject>> _islands = new List<List<GameObject>>();
+		//private GameObject[,] _grassLevels;
+		//private GameObject[,] _boundries;
+		//private GameObject[,] _bottoms;
+		// Side blocks, kolla längden och ta mitten
 		private GameObject[,] Blocks;
 		bool[,] foundTile;
 
@@ -57,8 +62,100 @@ namespace Game.Systems
 		{
 			InitiateMap(game);
 			InitiateWater();
+			//GetIslands();
 		}
 
+		// kolla se på inte sitter ihop med boundry
+
+		private bool AddIslandTile(List<GameObject> currentIsland, int x, int y, out bool add)
+		{
+			bool boundry = false;
+			add = false;
+			if (Blocks[x, y] != null)
+			{
+				if (!currentIsland.Contains(Blocks[x, y]))
+				{
+					if (_boundries.Contains(Blocks[x, y]))
+					{
+						boundry = true;
+					}
+					add = true;
+					currentIsland.Add(Blocks[x, y]);
+				}
+			}
+			return boundry;
+		}
+		private List<GameObject> GetIsland(int x, int y)
+		{
+			List<GameObject> currentIsland = new List<GameObject>();
+			bool foundBoundry = false;
+			while (!foundBoundry)
+			{
+				// Go left
+				bool add = false;
+
+				foundBoundry = AddIslandTile(currentIsland, x - 1, y, out add);
+				if (add)
+				{
+					x--;
+					continue;
+				}
+				// Go down
+				foundBoundry = AddIslandTile(currentIsland, x, y - 1, out add);
+				if (add)
+				{
+					if (currentIsland[0] == Blocks[x , y - 1]) return currentIsland;
+
+					y--;
+					continue;
+				}
+				// Go right
+				foundBoundry = AddIslandTile(currentIsland, x + 1, y, out add);
+				if (add)
+				{
+					if (currentIsland[0] == Blocks[x + 1, y]) return currentIsland;
+					x++;
+					continue;
+				}
+				// Go Up
+				foundBoundry = AddIslandTile(currentIsland, x, y + 1, out add);
+				if (add)
+				{
+					if (currentIsland[0] == Blocks[x, y + 1]) return currentIsland;
+					y++;
+					continue;
+				}
+			}
+
+			return null;
+		}
+
+		private void GetIslands()
+		{
+			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
+			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			//var block = Blocks[GameUnity.WidhtBound, GameUnity.HeightBound];
+			Vector2 firstPos = new Vector2(GameUnity.WidhtBound + (GameUnity.WidhtBound * 0.28f), GameUnity.HeightBound + (GameUnity.HeightBound * 0.28f));
+			Debug.Log("first block pos " + firstPos);
+			int islandIndex = 0;
+			for (int x = GameUnity.WidhtBound; x < GameUnity.MapWidth; x++)
+			{
+				for (int y = GameUnity.HeightBound; y < GameUnity.MapHeight; y++)
+				{
+					if (Blocks[x, y] != null)
+					{
+						var block = Blocks[x, y];
+						var newList = GetIsland(x, y);
+						if (newList != null)
+						{
+							Debug.Log("New island");
+							_islands[islandIndex] = newList;
+							islandIndex++;
+						}
+					}
+				}
+			}
+		}
 		//private void Get
 
 		private void UpdateMiniMap(GameManager game)
@@ -140,7 +237,7 @@ namespace Game.Systems
 			float zoom = 0.1f; // play with this to zoom into the noise field
 
 			for (int x = 0; x < GameUnity.MapWidth; x++)
-				for (int y = 0; y < GameUnity.MapHeight; y++)
+				for (int y = 1; y < GameUnity.MapHeight; y++)
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);
@@ -237,16 +334,19 @@ namespace Game.Systems
 					{
 						newMat = Resources.Load("Tiles/BotRightCorner", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "BotRightCorner";
+						_bottoms.Add(Blocks[x, y]);
 					}
 					if (top && !left && !bot)
 					{
 						newMat = Resources.Load("Tiles/BotLeftCorner", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "BotLeftCorner";
+						_bottoms.Add(Blocks[x, y]);
 					}
 					if (top && left && !bot && right)
 					{
 						newMat = Resources.Load("Tiles/Bot", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "Bot";
+						_bottoms.Add(Blocks[x, y]);
 					}
 
 					Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
