@@ -92,7 +92,7 @@ namespace Game.Systems
 									var transform = Blocks[currentX, currentY].transform;
 									transform.position = new Vector3(transform.position.x, transform.position.y, -0.1f);
 								}
-								if (waters[currentX, currentY] != null)
+								if (GameUnity.CreateWater && waters[currentX, currentY] != null)
 								{
 									var transform = waters[currentX, currentY].transform;
 									transform.position = new Vector3(transform.position.x, transform.position.y, -0.25f);
