@@ -12,5 +12,6 @@ public class VIKTIGT : MonoBehaviour {
 	vad Saker har för Z led
 	.28 retarded
 	https://www.youtube.com/watch?v=IjP2MeSozIs
+	hidda bara vilka mineraler det är om dom är långt inne
 	*/
 }

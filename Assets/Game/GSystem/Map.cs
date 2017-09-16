@@ -13,7 +13,8 @@ namespace Game.Systems
 		private List<GameObject> _grassLevels = new List<GameObject>();
 		private List<GameObject> _boundries = new List<GameObject>();
 		private List<GameObject> _bottoms = new List<GameObject>();
-		private List<List<GameObject>> _islands = new List<List<GameObject>>();
+		private List<GameObject> _walls = new List<GameObject>();
+		private List<List<Vector2>> _islands = new List<List<Vector2>>();
 		//private GameObject[,] _grassLevels;
 		//private GameObject[,] _boundries;
 		//private GameObject[,] _bottoms;
@@ -62,7 +63,7 @@ namespace Game.Systems
 		{
 			InitiateMap(game);
 			InitiateWater();
-			//GetIslands();
+			GetIslands();
 		}
 
 		// kolla se på inte sitter ihop med boundry
@@ -82,74 +83,106 @@ namespace Game.Systems
 					add = true;
 					currentIsland.Add(Blocks[x, y]);
 				}
+
 			}
 			return boundry;
 		}
-		private List<GameObject> GetIsland(int x, int y)
+		private List<Vector2> GetIsland(int x, int y)
 		{
-			List<GameObject> currentIsland = new List<GameObject>();
+			List<Vector2> currentIsland = new List<Vector2>();
 			bool foundBoundry = false;
-			while (!foundBoundry)
+			int maxtrax = 0;
+			currentIsland.Add(new Vector2(x, y));
+			var current = new Vector2(x, y);
+			//while (!foundBoundry || (maxtrax > 50))
+			int currentIndex = 0;
+			while (currentIsland.Count > currentIndex)
 			{
-				// Go left
-				bool add = false;
+				if (currentIsland.Count > currentIndex)
+				{
+					current = currentIsland[currentIndex];
+					//Debug.Log("currentx " + (current * 1.28f) + " currentIsland.Count " + currentIsland.Count + " currentIndex " + currentIndex);
+					var left = new Vector2(current.x - 1, current.y);
+					var down = new Vector2(current.x, current.y - 1);
+					var right = new Vector2(current.x + 1, current.y);
+					var up = new Vector2(current.x, current.y + 1);
 
-				foundBoundry = AddIslandTile(currentIsland, x - 1, y, out add);
-				if (add)
-				{
-					x--;
-					continue;
-				}
-				// Go down
-				foundBoundry = AddIslandTile(currentIsland, x, y - 1, out add);
-				if (add)
-				{
-					if (currentIsland[0] == Blocks[x , y - 1]) return currentIsland;
+					GameObject block = Blocks[(int)left.x, (int)left.y];
+					if (!currentIsland.Contains(left) && block != null)
+					{
+						if (_boundries.Contains(block))
+						{
+							currentIsland.Clear();
+							return null;
+						}
 
-					y--;
-					continue;
-				}
-				// Go right
-				foundBoundry = AddIslandTile(currentIsland, x + 1, y, out add);
-				if (add)
-				{
-					if (currentIsland[0] == Blocks[x + 1, y]) return currentIsland;
-					x++;
-					continue;
-				}
-				// Go Up
-				foundBoundry = AddIslandTile(currentIsland, x, y + 1, out add);
-				if (add)
-				{
-					if (currentIsland[0] == Blocks[x, y + 1]) return currentIsland;
-					y++;
-					continue;
+
+						currentIsland.Add(left);
+					}
+
+					block = Blocks[(int)down.x, (int)down.y];
+					if (!currentIsland.Contains(down) && block != null)
+					{
+						if (_boundries.Contains(block))
+						{
+							currentIsland.Clear();
+							return null;
+						}
+						currentIsland.Add(down);
+
+					}
+
+					block = Blocks[(int)right.x, (int)right.y];
+					if (!currentIsland.Contains(right) && block != null)
+					{
+						if (_boundries.Contains(block))
+						{
+							currentIsland.Clear();
+							return null;
+						}
+						currentIsland.Add(right);
+
+					}
+
+					block = Blocks[(int)up.x, (int)up.y];
+					if (!currentIsland.Contains(up) && block != null)
+					{
+						if (_boundries.Contains(block))
+						{
+							currentIsland.Clear();
+							return null;
+						}
+						currentIsland.Add(up);
+
+					}
+					currentIndex++;
 				}
 			}
 
-			return null;
+			return currentIsland;
 		}
 
 		private void GetIslands()
 		{
 			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
 			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
-			//var block = Blocks[GameUnity.WidhtBound, GameUnity.HeightBound];
 			Vector2 firstPos = new Vector2(GameUnity.WidhtBound + (GameUnity.WidhtBound * 0.28f), GameUnity.HeightBound + (GameUnity.HeightBound * 0.28f));
-			Debug.Log("first block pos " + firstPos);
+			List<Vector2> enlisted = new List<Vector2>();
 			int islandIndex = 0;
 			for (int x = GameUnity.WidhtBound; x < GameUnity.MapWidth; x++)
 			{
 				for (int y = GameUnity.HeightBound; y < GameUnity.MapHeight; y++)
 				{
-					if (Blocks[x, y] != null)
+					if (Blocks[x, y] != null && !enlisted.Contains(new Vector2(x, y)))
 					{
 						var block = Blocks[x, y];
 						var newList = GetIsland(x, y);
 						if (newList != null)
 						{
-							Debug.Log("New island");
+
+							_islands.Add(new List<Vector2>());// = new List<GameObject>();
 							_islands[islandIndex] = newList;
+							enlisted.AddRange(newList);
 							islandIndex++;
 						}
 					}
@@ -329,6 +362,7 @@ namespace Game.Systems
 					{
 						newMat = Resources.Load("Tiles/MiddleLeft", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "MiddleLeft";
+						//_walls.AddRange()
 					}
 					if (top && !right && !bot)
 					{
