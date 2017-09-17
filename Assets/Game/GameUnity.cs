@@ -58,6 +58,8 @@ public class GameUnity : MonoBehaviour
 	public static int WidhtBound;
 	public static int BottomBoundOffset;
 	public static int TopBoundOffset;
+	public static int FullWidth;
+	public static int FullHeight;
 	public static bool ShowMiniMap;
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
@@ -142,6 +144,8 @@ public class GameUnity : MonoBehaviour
 		ShowMiniMap = MapData.ShowMiniMap;
 		MiniMapBoundryX = MapData.MiniMapBoundryX;
 		MiniMapBoundryY = MapData.MiniMapBoundryY;
+		FullWidth = MapWidth + (WidhtBound * 2);
+		FullHeight = MapHeight + (HeightBound * 2) + BottomBoundOffset + TopBoundOffset;
 	}
     void LateUpdate()
     {

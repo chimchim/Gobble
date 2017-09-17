@@ -24,8 +24,8 @@ namespace Game.Systems
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				if (input.State == Component.Input.MoveState.FlyingDebug)
 				{
-					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
-					input.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed;
+					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed * 3;
+					input.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 3;
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
 

@@ -20,8 +20,8 @@ public class ParallaxingGroup : MonoBehaviour
 	void Start()
 	{
 		_zPosition = Background.position.z;
-		float fullWidhth = (GameUnity.MapWidth + (GameUnity.WidhtBound * 2)) * 1.28f;
-		float fullHeight = (GameUnity.MapHeight + (GameUnity.HeightBound * 2)) * 1.28f;
+		float fullWidhth = GameUnity.FullWidth * 1.28f;
+		float fullHeight = GameUnity.FullHeight * 1.28f;
 
 		var spriteRenderers = Background.GetComponentsInChildren<SpriteRenderer>();
 		for (int i = 0; i < spriteRenderers.Length; i++)
@@ -38,8 +38,8 @@ public class ParallaxingGroup : MonoBehaviour
 		float xSize = _xSpriteSize / 2;
 		float ySize = _ySpriteSize / 2;
 		OffsetBackGround = new Vector2(xSize, ySize);
-		float fullWidhth = (GameUnity.MapWidth + (GameUnity.WidhtBound * 2)) * 1.28f;
-		float fullHeight = (GameUnity.MapHeight + (GameUnity.HeightBound * 2)) * 1.28f;
+		float fullWidhth = GameUnity.FullWidth * 1.28f;
+		float fullHeight = GameUnity.FullHeight * 1.28f;
 
 		Vector2 midPos = new Vector2((fullWidhth / 2), (fullHeight / 2));
 		Vector2 cameraPosition = transform.position;

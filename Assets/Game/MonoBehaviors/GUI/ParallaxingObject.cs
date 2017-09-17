@@ -22,8 +22,8 @@ public class ParallaxingObject : MonoBehaviour
 
 	void LateUpdate()
 	{
-		float fullWidhth = (GameUnity.MapWidth + (GameUnity.WidhtBound * 2)) * 1.28f;
-		float fullHeight = (GameUnity.MapHeight + (GameUnity.HeightBound * 2)) * 1.28f;
+		float fullWidhth = GameUnity.FullWidth * 1.28f;
+		float fullHeight = GameUnity.FullHeight * 1.28f;
 		Vector2 midPos = new Vector2((fullWidhth / 2), (fullHeight / 2));
 		Vector2 cameraPosition = transform.position;
 

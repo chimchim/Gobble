@@ -112,9 +112,9 @@ namespace Game.Systems
 				//	}
 				//}
 			}
-			//Debug.Log("fad " +_islands[1][3] * 1.28f);
+
 		}
-		// kolla se på inte sitter ihop med boundry
+
 		private List<List<Vector2>> GetIslandLevel(List<Vector2> island)
 		{
 			var innerIsland = new List<List<Vector2>>();
@@ -215,21 +215,28 @@ namespace Game.Systems
 			if (!GameUnity.GenerateIslands)
 				return;
 
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+
 			Vector2 firstPos = new Vector2(GameUnity.WidhtBound + (GameUnity.WidhtBound * 0.28f), GameUnity.HeightBound + (GameUnity.HeightBound * 0.28f));
 			List<Vector2> enlisted = new List<Vector2>();
 			int islandIndex = 0;
+			int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
+			int maxY = GameUnity.FullHeight - GameUnity.HeightBound - GameUnity.TopBoundOffset;
+
 			for (int x = GameUnity.WidhtBound; x < GameUnity.MapWidth; x++)
 			{
-				for (int y = GameUnity.HeightBound; y < GameUnity.MapHeight; y++)
+				for (int y = startY; y < maxY; y++)
 				{
 					if (BlockTypes[x, y] == TileType.Air || BlockTypes[x, y] == TileType.Enlisted)
+					{
 						continue;
+					}
 
 					var newList = MakeIsland(x, y);
+					
 					if (newList != null)
 					{
+						var newMat = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
 						_islands.Add(new List<Vector2>());// = new List<GameObject>();
 						_islands[islandIndex] = newList;
 						enlisted.AddRange(newList);
@@ -239,13 +246,12 @@ namespace Game.Systems
 				}
 			}
 		}
-		//private void Get
 
 		private void UpdateMiniMap(GameManager game)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			int fullWidhth = GameUnity.FullWidth;
+			int fullHeight = GameUnity.FullHeight;
 
 			foreach (int e in entities)
 			{
@@ -286,22 +292,24 @@ namespace Game.Systems
 
 		public void InitiateMap(GameManager game)
 		{
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			int fullWidhth = GameUnity.FullWidth;
+			int fullHeight = GameUnity.FullHeight;
 			topWaterSprite = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
 			waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
 			diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
-			Blocks = new GameObject[fullWidhth, fullWidhth];
-			foundTile = new bool[fullWidhth, fullWidhth];
-			BlockTypes = new TileType[fullWidhth, fullWidhth];
+			Blocks = new GameObject[fullWidhth, fullHeight];
+			foundTile = new bool[fullWidhth, fullHeight];
+			BlockTypes = new TileType[fullWidhth, fullHeight];
 			GameObject parentCube = new GameObject();
 			parentCube.name = "Tiles";
 			for (int x = 0; x < fullWidhth; x++)
 			{
 				for (int y = 0; y < fullHeight; y++)
 				{
+
+					BlockTypes[x, y] = TileType.Air;
 					int rightLayerBound = (GameUnity.MapWidth + GameUnity.WidhtBound - 1);
-					int topLayerBound = (GameUnity.MapHeight + GameUnity.HeightBound - 1);
+					int topLayerBound = (GameUnity.MapHeight + GameUnity.HeightBound) + GameUnity.BottomBoundOffset + GameUnity.TopBoundOffset - 1;
 					if ((x < GameUnity.WidhtBound || x > rightLayerBound) || (y < GameUnity.HeightBound || y > topLayerBound))
 					{
 						GameObject cube = new GameObject();
@@ -322,16 +330,17 @@ namespace Game.Systems
 
 			Vector2 shift = new Vector2(0, 0); // play with this to shift map around
 			float zoom = 0.1f; // play with this to zoom into the noise field
-
-			for (int x = GameUnity.WidhtBound; x < GameUnity.MapWidth + GameUnity.WidhtBound; x++)
-				for (int y = GameUnity.HeightBound; y < GameUnity.MapHeight + GameUnity.HeightBound; y++)
+			int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
+			int maxY = GameUnity.MapHeight + GameUnity.HeightBound + GameUnity.BottomBoundOffset;
+			int maxX = GameUnity.MapWidth + GameUnity.WidhtBound;
+			for (int x = GameUnity.WidhtBound; x < maxX; x++)
+				for (int y = startY; y < maxY; y++)
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);
 
-					int posX = x;// + GameUnity.WidhtBound;
-					int posY = y;// + GameUnity.HeightBound;
-					BlockTypes[x, y] = TileType.Air;
+					int posX = x;
+					int posY = y;
 					if (noise < 0.3f)
 					{
 					}
@@ -377,12 +386,11 @@ namespace Game.Systems
 			}
 		}
 
-
 		private void SetBlockType()
 		{
 			Sprite newMat = null;
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			int fullWidhth = GameUnity.FullWidth;
+			int fullHeight = GameUnity.FullHeight;
 			for (int x = 0; x < fullWidhth; x++)
 			{
 				for (int y = 0; y < fullHeight; y++)
@@ -503,6 +511,7 @@ namespace Game.Systems
 				}
 			}
 		}
+
 		public void SendMessage(GameManager game, int reciever, Message message)
 		{
 
@@ -517,8 +526,8 @@ namespace Game.Systems
 			Water = GameObject.Instantiate(Resources.Load("Prefabs/Water", typeof(GameObject))) as GameObject;
 			Water.transform.position = new Vector3(-1111, -1111, 0);
 
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			int fullWidhth = GameUnity.FullWidth;
+			int fullHeight = GameUnity.FullHeight;
 
 			blocks = new int[fullWidhth + 2, fullHeight + 2];
 			mass = new float[fullWidhth + 2, fullHeight + 2];
@@ -579,8 +588,8 @@ namespace Game.Systems
 		{
 			float Flow = 0;
 			float remaining_mass;
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			int fullWidhth = GameUnity.FullWidth;
+			int fullHeight = GameUnity.FullHeight;
 			//Calculate and apply flow for each block
 			for (int x = 1; x <= fullWidhth; x++)
 			{
@@ -699,8 +708,8 @@ namespace Game.Systems
 		}
 		public void UpdateWater()
 		{
-			int fullWidhth = GameUnity.MapWidth + (GameUnity.WidhtBound * 2);
-			int fullHeight = GameUnity.MapHeight + (GameUnity.HeightBound * 2);
+			int fullWidhth = GameUnity.FullWidth;
+			int fullHeight = GameUnity.FullHeight;
 
 			for (int i = 0; i < GameUnity.WaterSimulationsPerUpdate; i++)
 			{
