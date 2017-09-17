@@ -209,7 +209,6 @@ namespace Game.Systems
 
 			return currentIsland;
 		}
-
 		private void GetIslands()
 		{
 			if (!GameUnity.GenerateIslands)
@@ -331,16 +330,16 @@ namespace Game.Systems
 			Vector2 shift = new Vector2(0, 0); // play with this to shift map around
 			float zoom = 0.1f; // play with this to zoom into the noise field
 			int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
-			int maxY = GameUnity.MapHeight + GameUnity.HeightBound + GameUnity.BottomBoundOffset;
-			int maxX = GameUnity.MapWidth + GameUnity.WidhtBound;
-			for (int x = GameUnity.WidhtBound; x < maxX; x++)
-				for (int y = startY; y < maxY; y++)
+			int maxY = GameUnity.MapHeight;
+			int maxX = GameUnity.MapWidth;
+			for (int x = 0; x < maxX; x++)
+				for (int y = 0; y < maxY; y++)
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);
 
-					int posX = x;
-					int posY = y;
+					int posX = x + GameUnity.WidhtBound;
+					int posY = y + startY;
 					if (noise < 0.3f)
 					{
 					}
