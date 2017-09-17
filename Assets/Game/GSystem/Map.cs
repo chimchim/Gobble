@@ -15,10 +15,7 @@ namespace Game.Systems
 			Grass,
 			Bottom,
 			Middle,
-			Middle1,
-			Middle2,
-			Middle3,
-			Middle4,
+			Enlisted,
 			Boundry
 		}
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
@@ -94,25 +91,26 @@ namespace Game.Systems
 			Debug.Log("GetIslands Time " + elapsedMs);
 
 
-			//CheckIslandLevels();
+			CheckIslandLevels();
 		}
 
 		private void CheckIslandLevels()
 		{
+			Debug.Log("_islands.Count " + _islands.Count);
 			for (int i = 0; i < _islands.Count; i++)
 			{
 				var island = _islands[i];
 				var islandLevels = GetIslandLevel(island);
-				Debug.Log("island nr " + i);
-				for (int j = 0; j < islandLevels.Count; j++)
-				{
-					var level = islandLevels[j];
-					Debug.Log("Level nr " + j);
-					for (int k = 0; k < level.Count; k++)
-					{
-						Debug.Log("island nr " + level[k] * 1.28f);
-					}
-				}
+				Debug.Log("island Count " + island.Count);
+				//for (int j = 0; j < islandLevels.Count; j++)
+				//{
+				//	var level = islandLevels[j];
+				//	Debug.Log("Level nr " + j);
+				//	for (int k = 0; k < level.Count; k++)
+				//	{
+				//		Debug.Log("island nr " + level[k] * 1.28f);
+				//	}
+				//}
 			}
 			//Debug.Log("fad " +_islands[1][3] * 1.28f);
 		}
@@ -159,6 +157,7 @@ namespace Game.Systems
 			var current = new Vector2(x, y);
 
 			int currentIndex = 0;
+			//Debug.Log("Left " + left + " leftpos " + left * 1.28f);
 			while (currentIsland.Count > currentIndex)
 			{
 				if (currentIsland.Count > currentIndex)
@@ -168,55 +167,39 @@ namespace Game.Systems
 					var down = new Vector2(current.x, current.y - 1);
 					var right = new Vector2(current.x + 1, current.y);
 					var up = new Vector2(current.x, current.y + 1);
-					var leftVector = new Vector2((int)left.x, (int)left.y);
-					GameObject block = Blocks[(int)left.x, (int)left.y];
-					if (!currentIsland.Contains(left) && block != null)
+
+					var blockType = BlockTypes[(int)left.x, (int)left.y];
+
+					if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 					{
-						if (_boundries.Contains(leftVector))
-						{
-							currentIsland.Clear();
-							return null;
-						}
 
-
+						BlockTypes[(int)left.x, (int)left.y] = TileType.Enlisted;
 						currentIsland.Add(left);
 					}
 
-					block = Blocks[(int)down.x, (int)down.y];
-					var downVector = new Vector2((int)down.x, (int)down.y);
-					if (!currentIsland.Contains(down) && block != null)
+					blockType = BlockTypes[(int)down.x, (int)down.y];
+					if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 					{
-						if (_boundries.Contains(downVector))
-						{
-							currentIsland.Clear();
-							return null;
-						}
+
+						BlockTypes[(int)down.x, (int)down.y] = TileType.Enlisted;
 						currentIsland.Add(down);
 
 					}
 
-					block = Blocks[(int)right.x, (int)right.y];
-					var rightVector = new Vector2((int)right.x, (int)right.y);
-					if (!currentIsland.Contains(right) && block != null)
+					blockType = BlockTypes[(int)right.x, (int)right.y];
+					if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 					{
-						if (_boundries.Contains(rightVector))
-						{
-							currentIsland.Clear();
-							return null;
-						}
+
+						BlockTypes[(int)right.x, (int)right.y] = TileType.Enlisted;
 						currentIsland.Add(right);
 
 					}
 
-					block = Blocks[(int)up.x, (int)up.y];
-					var upVector = new Vector2((int)up.x, (int)up.y);
-					if (!currentIsland.Contains(up) && block != null)
+					blockType = BlockTypes[(int)up.x, (int)up.y];
+					if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 					{
-						if (_boundries.Contains(upVector))
-						{
-							currentIsland.Clear();
-							return null;
-						}
+
+						BlockTypes[(int)up.x, (int)up.y] = TileType.Enlisted;
 						currentIsland.Add(up);
 
 					}
@@ -241,19 +224,18 @@ namespace Game.Systems
 			{
 				for (int y = GameUnity.HeightBound; y < GameUnity.MapHeight; y++)
 				{
-					if (Blocks[x, y] != null && !enlisted.Contains(new Vector2(x, y)))
-					{
-						var block = Blocks[x, y];
-						var newList = MakeIsland(x, y);
-						if (newList != null)
-						{
+					if (BlockTypes[x, y] == TileType.Air || BlockTypes[x, y] == TileType.Enlisted)
+						continue;
 
-							_islands.Add(new List<Vector2>());// = new List<GameObject>();
-							_islands[islandIndex] = newList;
-							enlisted.AddRange(newList);
-							islandIndex++;
-						}
+					var newList = MakeIsland(x, y);
+					if (newList != null)
+					{
+						_islands.Add(new List<Vector2>());// = new List<GameObject>();
+						_islands[islandIndex] = newList;
+						enlisted.AddRange(newList);
+						islandIndex++;
 					}
+					
 				}
 			}
 		}
@@ -318,7 +300,9 @@ namespace Game.Systems
 			{
 				for (int y = 0; y < fullHeight; y++)
 				{
-					if ((x < GameUnity.WidhtBound || x > (GameUnity.MapWidth + GameUnity.WidhtBound)) || (y < GameUnity.HeightBound || y > (GameUnity.MapHeight + GameUnity.HeightBound)))
+					int rightLayerBound = (GameUnity.MapWidth + GameUnity.WidhtBound - 1);
+					int topLayerBound = (GameUnity.MapHeight + GameUnity.HeightBound - 1);
+					if ((x < GameUnity.WidhtBound || x > rightLayerBound) || (y < GameUnity.HeightBound || y > topLayerBound))
 					{
 						GameObject cube = new GameObject();
 						cube.transform.parent = parentCube.transform;
@@ -330,6 +314,7 @@ namespace Game.Systems
 						cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 						Blocks[x, y] = cube;
 						_boundries.Add(new Vector2(x, y));
+						BlockTypes[x, y] = TileType.Boundry;
 					}
 
 				}
@@ -338,21 +323,20 @@ namespace Game.Systems
 			Vector2 shift = new Vector2(0, 0); // play with this to shift map around
 			float zoom = 0.1f; // play with this to zoom into the noise field
 
-			for (int x = 0; x < GameUnity.MapWidth; x++)
-				for (int y = 0; y < GameUnity.MapHeight; y++)
+			for (int x = GameUnity.WidhtBound; x < GameUnity.MapWidth + GameUnity.WidhtBound; x++)
+				for (int y = GameUnity.HeightBound; y < GameUnity.MapHeight + GameUnity.HeightBound; y++)
 				{
 					Vector2 pos = zoom * (new Vector2(x, y)) + shift;
 					float noise = Mathf.PerlinNoise(pos.x, pos.y);
 
-					int posX = x + GameUnity.WidhtBound;
-					int posY = y + GameUnity.HeightBound;
+					int posX = x;// + GameUnity.WidhtBound;
+					int posY = y;// + GameUnity.HeightBound;
+					BlockTypes[x, y] = TileType.Air;
 					if (noise < 0.3f)
 					{
-						BlockTypes[x, y] = TileType.Air;
 					}
 					else if (noise < 0.5f)
 					{
-						BlockTypes[x, y] = TileType.Air;
 					}
 					else if (noise < 0.9f && noise > 0.5f)
 					{
@@ -420,63 +404,72 @@ namespace Game.Systems
 						newMat = Resources.Load("Tiles/TopRight", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "TopRight";
 						_grassLevels.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Grass;
+						if(BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Grass;
 					}
 					if (!top && !left)
 					{
 						newMat = Resources.Load("Tiles/TopLeft", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "TopLeft";
 						_grassLevels.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Grass;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Grass;
 					}
 					if (!top && right && left)
 					{
 						newMat = Resources.Load("Tiles/Top", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "Top";
 						_grassLevels.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Grass;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Grass;
 					}
 					if (top && right && left && bot)
 					{
 						newMat = Resources.Load("Tiles/Middle", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "Middle";
 						_walls.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Middle;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Middle;
 					}
 					if (top && !right && bot)
 					{
 						newMat = Resources.Load("Tiles/MiddleRight", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "MiddleRight";
 						_walls.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Wall;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Wall;
 					}
 					if (top && !left && bot)
 					{
 						newMat = Resources.Load("Tiles/MiddleLeft", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "MiddleLeft";
 						_walls.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Wall;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Wall;
 					}
 					if (top && !right && !bot)
 					{
 						newMat = Resources.Load("Tiles/BotRightCorner", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "BotRightCorner";
 						_bottoms.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Bottom;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Bottom;
 					}
 					if (top && !left && !bot)
 					{
 						newMat = Resources.Load("Tiles/BotLeftCorner", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "BotLeftCorner";
 						_bottoms.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Bottom;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Bottom;
 					}
 					if (top && left && !bot && right)
 					{
 						newMat = Resources.Load("Tiles/Bot", typeof(Sprite)) as Sprite;
 						Blocks[x, y].name = "Bot";
 						_bottoms.Add(new Vector2(x, y));
-						BlockTypes[x, y] = TileType.Bottom;
+						if (BlockTypes[x, y] != TileType.Boundry)
+							BlockTypes[x, y] = TileType.Bottom;
 					}
 
 					Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
