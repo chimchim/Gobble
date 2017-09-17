@@ -20,6 +20,7 @@ namespace Game
 		public SystemManager Systems { get { return _systemManager; } }
         public ParticleManager Particles { get { return _particleManager; } }
 
+		public TileMap TileMap;
 		public GameManager()
 		{
             
@@ -28,13 +29,30 @@ namespace Game
         public void Update(float delta)
         { 
 			_systemManager.UpdateAll(this, delta);
-            //_particleManager.Update();
-        }
+
+			if (GameUnity.CreateWater)
+			{
+				TileMap.UpdateWater();
+			}
+		}
 
 		public void Initiate()
 		{
-            //_particleManager.Initiate();
-            _systemManager.InitAll(this);
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			TileMap = new TileMap();
+			TileMap.InitiateMap();
+			watch.Stop();
+			var elapsedMs = watch.ElapsedMilliseconds;
+			Debug.Log("InitiateMap Time " + elapsedMs);
+			watch.Start();
+
+			TileMap.InitiateWater();
+			watch.Stop();
+			elapsedMs = watch.ElapsedMilliseconds;
+			Debug.Log("InitiateWater Time " + elapsedMs);
+			watch.Start();
+
+			_systemManager.InitAll(this);
 		}
         public void SendMessage(int id, Message mess)
         {

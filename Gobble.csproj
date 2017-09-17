@@ -81,7 +81,6 @@
     <Compile Include="Assets\Game\Action\MoveAction.cs" />
     <Compile Include="Assets\Game\Action\ShootAction.cs" />
     <Compile Include="Assets\Game\Action\WalkAction.cs" />
-    <Compile Include="Assets\Game\Bitmask.cs" />
     <Compile Include="Assets\Game\Entity\Entity.cs" />
     <Compile Include="Assets\Game\Entity\EntityFactory.cs" />
     <Compile Include="Assets\Game\Entity\EntityID.cs" />
@@ -105,12 +104,16 @@
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
-    <Compile Include="Assets\Game\Message.cs" />
     <Compile Include="Assets\Game\Misc\AnimationMovement.cs" />
     <Compile Include="Assets\Game\Misc\Astartemp.cs" />
+    <Compile Include="Assets\Game\Misc\Bitmask.cs" />
     <Compile Include="Assets\Game\Misc\IDGiver.cs" />
     <Compile Include="Assets\Game\Misc\MathGame.cs" />
+    <Compile Include="Assets\Game\Misc\Message.cs" />
+    <Compile Include="Assets\Game\Misc\ObjectPool.cs" />
+    <Compile Include="Assets\Game\Misc\ParticleManager.cs" />
     <Compile Include="Assets\Game\Misc\PriorityQueue.cs" />
+    <Compile Include="Assets\Game\Misc\Server.cs" />
     <Compile Include="Assets\Game\Misc\Sound.cs" />
     <Compile Include="Assets\Game\Misc\Timer.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\CharacterMover.cs" />
@@ -128,15 +131,13 @@
     <Compile Include="Assets\Game\MonoBehaviors\Pathfinder.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\RootCanvas.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
-    <Compile Include="Assets\Game\ObjectPool.cs" />
-    <Compile Include="Assets\Game\ParticleManager.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\StatsVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\SwimVariables.cs" />
-    <Compile Include="Assets\Game\Server.cs" />
-    <Compile Include="Assets\Game\Shot.cs" />
     <Compile Include="Assets\Game\SystemManager.cs" />
+    <Compile Include="Assets\Game\TileMap.cs" />
+    <Compile Include="Assets\Game\TileMapWater.cs" />
     <Compile Include="Assets\Game\VIKTIGT.cs" />
   </ItemGroup>
   <ItemGroup>
