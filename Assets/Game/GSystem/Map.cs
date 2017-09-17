@@ -216,7 +216,6 @@ namespace Game.Systems
 
 
 			Vector2 firstPos = new Vector2(GameUnity.WidhtBound + (GameUnity.WidhtBound * 0.28f), GameUnity.HeightBound + (GameUnity.HeightBound * 0.28f));
-			List<Vector2> enlisted = new List<Vector2>();
 			int islandIndex = 0;
 			int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
 			int maxY = GameUnity.FullHeight - GameUnity.HeightBound - GameUnity.TopBoundOffset;
@@ -234,14 +233,10 @@ namespace Game.Systems
 					
 					if (newList != null)
 					{
-						var newMat = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
-						_islands.Add(new List<Vector2>());// = new List<GameObject>();
+						_islands.Add(new List<Vector2>());
 						_islands[islandIndex] = newList;
-						enlisted.AddRange(newList);
 						islandIndex++;
 					}
-					
 				}
 			}
 		}
