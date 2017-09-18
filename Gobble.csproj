@@ -133,6 +133,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\MineralsGenVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\StatsVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\SwimVariables.cs" />
     <Compile Include="Assets\Game\SystemManager.cs" />

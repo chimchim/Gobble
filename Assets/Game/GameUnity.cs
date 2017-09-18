@@ -20,6 +20,7 @@ public class GameUnity : MonoBehaviour
 	public GroundVariables GroundData;
 	public MapVariables MapData;
 	public StatsVariables StatsData;
+	public MineralsGenVariables MineralsGen;
 
 	[SerializeField]
 	[Header("Gounded Variables")]
@@ -63,6 +64,10 @@ public class GameUnity : MonoBehaviour
 	public static bool ShowMiniMap;
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
+
+	[Header("Map Variables")]
+	public static int RockMiddleOneIn;
+
 
 	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
@@ -146,6 +151,9 @@ public class GameUnity : MonoBehaviour
 		MiniMapBoundryY = MapData.MiniMapBoundryY;
 		FullWidth = MapWidth + (WidhtBound * 2);
 		FullHeight = MapHeight + (HeightBound * 2) + BottomBoundOffset + TopBoundOffset;
+
+		//MineralsGen
+		RockMiddleOneIn = MineralsGen.RockMiddleOneIn;
 	}
     void LateUpdate()
     {

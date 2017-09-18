@@ -4,14 +4,27 @@ using UnityEngine;
 
 public partial class TileMap
 {
+	public enum MineralType
+	{
+		Rock,
+		Iron,
+		Gold,
+		Copper
+	}
 	public enum TileType
 	{
 		Air,
-		Wall,
-		Grass,
-		Bottom,
+		Bot,
+		BotLeftCorner,
+		BotRightCorner,
 		Middle,
-		Enlisted,
+		Middle2,
+		Middle3,
+		MiddleLeft,
+		MiddleRight,
+		Top,
+		TopLeft,
+		TopRight,
 		Boundry
 	}
 	private List<Vector2> _grassLevels = new List<Vector2>();
@@ -21,19 +34,32 @@ public partial class TileMap
 	private List<List<Vector2>> _islands = new List<List<Vector2>>();
 	private Material diffMat;
 	private TileType[,] BlockTypes;
-
+	private MineralType[,] MineralTypes;
 	// Side blocks, kolla längden och ta mitten
 	public GameObject[,] Blocks;
 
+	private Sprite _rockBotMat;
+	private Sprite _rockBotLeftCornerMat;
+	private Sprite _rockBotRightCornerMat;
+	private Sprite _rockMiddleMat;
+	private Sprite _rockMiddle2Mat;
+	private Sprite _rockMiddle3Mat;
+	private Sprite _rockMiddleLeftMat;
+	private Sprite _rockMiddleRightMat;
+	private Sprite _rockTopMat;
+	private Sprite _rockTopLeftMat;
+	private Sprite _rockTopRightMat;
+
+	private bool[,] _enlisted;
 	public void InitiateMap()
 	{
+		SetMaterials();
 		int fullWidhth = GameUnity.FullWidth;
 		int fullHeight = GameUnity.FullHeight;
-		topWaterSprite = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
-		waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
-		diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
 		Blocks = new GameObject[fullWidhth, fullHeight];
 		BlockTypes = new TileType[fullWidhth, fullHeight];
+		MineralTypes = new MineralType[fullWidhth, fullHeight];
+		_enlisted = new bool[GameUnity.FullWidth, GameUnity.FullHeight];
 
 		GameObject parentCube = new GameObject();
 		parentCube.name = "Tiles";
@@ -77,8 +103,17 @@ public partial class TileMap
 
 				int posX = x + GameUnity.WidhtBound;
 				int posY = y + startY;
-				if (noise < 0.3f)
+				if (noise < 0.16f)
 				{
+					GameObject cube = new GameObject();
+					cube.transform.parent = parentCube.transform;
+					cube.AddComponent<SpriteRenderer>();
+					cube.GetComponent<SpriteRenderer>().material = diffMat;
+					cube.AddComponent<BoxCollider2D>();
+					cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
+					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
+					cube.layer = LayerMask.NameToLayer("Collideable");
+					Blocks[posX, posY] = cube;
 				}
 				else if (noise < 0.5f)
 				{
@@ -135,14 +170,18 @@ public partial class TileMap
 				{
 					continue;
 				}
-
+				if (!top && !right && !bot && !left)
+				{
+					GameObject.Destroy(Blocks[x, y]);
+					BlockTypes[x, y] = TileType.Air;
+				}
 				if (!top && !right)
 				{
 					newMat = Resources.Load("Tiles/TopRight", typeof(Sprite)) as Sprite;
 					Blocks[x, y].name = "TopRight";
 					_grassLevels.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Grass;
+						BlockTypes[x, y] = TileType.TopRight;
 				}
 				if (!top && !left)
 				{
@@ -150,7 +189,7 @@ public partial class TileMap
 					Blocks[x, y].name = "TopLeft";
 					_grassLevels.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Grass;
+						BlockTypes[x, y] = TileType.TopLeft;
 				}
 				if (!top && right && left)
 				{
@@ -158,7 +197,7 @@ public partial class TileMap
 					Blocks[x, y].name = "Top";
 					_grassLevels.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Grass;
+						BlockTypes[x, y] = TileType.Top;
 				}
 				if (top && right && left && bot)
 				{
@@ -174,7 +213,7 @@ public partial class TileMap
 					Blocks[x, y].name = "MiddleRight";
 					_walls.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Wall;
+						BlockTypes[x, y] = TileType.MiddleRight;
 				}
 				if (top && !left && bot)
 				{
@@ -182,7 +221,7 @@ public partial class TileMap
 					Blocks[x, y].name = "MiddleLeft";
 					_walls.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Wall;
+						BlockTypes[x, y] = TileType.MiddleLeft;
 				}
 				if (top && !right && !bot)
 				{
@@ -190,7 +229,7 @@ public partial class TileMap
 					Blocks[x, y].name = "BotRightCorner";
 					_bottoms.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Bottom;
+						BlockTypes[x, y] = TileType.BotRightCorner;
 				}
 				if (top && !left && !bot)
 				{
@@ -198,7 +237,7 @@ public partial class TileMap
 					Blocks[x, y].name = "BotLeftCorner";
 					_bottoms.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Bottom;
+						BlockTypes[x, y] = TileType.BotLeftCorner;
 				}
 				if (top && left && !bot && right)
 				{
@@ -206,7 +245,7 @@ public partial class TileMap
 					Blocks[x, y].name = "Bot";
 					_bottoms.Add(new Vector2(x, y));
 					if (BlockTypes[x, y] != TileType.Boundry)
-						BlockTypes[x, y] = TileType.Bottom;
+						BlockTypes[x, y] = TileType.Bot;
 				}
 
 				Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
@@ -230,11 +269,81 @@ public partial class TileMap
 					{
 						newMat = Resources.Load("Tiles/Middle3", typeof(Sprite)) as Sprite;
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
+						BlockTypes[x, y] = TileType.Middle3;
 					}
 					if (!middleLeft)
 					{
 						newMat = Resources.Load("Tiles/Middle2", typeof(Sprite)) as Sprite;
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
+						BlockTypes[x, y] = TileType.Middle2;
+					}
+				}
+			}
+		}
+	}
+
+	public void GenerateMinerals()
+	{
+		CreateRocks();
+		GetIslands();
+	}
+	public void CreateRocks()
+	{
+		int startX = GameUnity.WidhtBound;
+		int endX = GameUnity.MapWidth + startX;
+		int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
+		int endY = GameUnity.MapHeight + startY;
+		for (int x = startX; x < endX; x++)
+		{
+			for (int y = startY; y < endY; y++)
+			{
+				int chance = Random.Range(0, GameUnity.RockMiddleOneIn);
+				if (chance == 0)
+				{
+					MineralTypes[x, y] = MineralType.Rock;
+					//if (BlockTypes[x, y] == TileType.Bot)
+					//{
+					//	Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockBotMat;
+					//}
+					//if (BlockTypes[x, y] == TileType.BotLeftCorner)
+					//{
+					//	Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockBotLeftCornerMat;
+					//}
+					//if (BlockTypes[x, y] == TileType.BotRightCorner)
+					//{
+					//	Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockBotRightCornerMat;
+					//}
+					if (BlockTypes[x, y] == TileType.Middle)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleMat;
+					}
+					if (BlockTypes[x, y] == TileType.Middle2)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddle2Mat;
+					}
+					if (BlockTypes[x, y] == TileType.Middle3)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddle3Mat;
+					}
+					if (BlockTypes[x, y] == TileType.MiddleLeft)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleLeftMat;
+					}
+					if (BlockTypes[x, y] == TileType.MiddleRight)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleRightMat;
+					}
+					if (BlockTypes[x, y] == TileType.Top)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockTopMat;
+					}
+					if (BlockTypes[x, y] == TileType.TopLeft)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockTopLeftMat;
+					}
+					if (BlockTypes[x, y] == TileType.TopRight)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockTopRightMat;
 					}
 				}
 			}
@@ -295,37 +404,37 @@ public partial class TileMap
 				var up = new Vector2(current.x, current.y + 1);
 
 				var blockType = BlockTypes[(int)left.x, (int)left.y];
-
-				if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
+				bool enlisted = _enlisted[(int)left.x, (int)left.y];
+				if (enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 				{
 
-					BlockTypes[(int)left.x, (int)left.y] = TileType.Enlisted;
+					_enlisted[(int)left.x, (int)left.y] = true;
 					currentIsland.Add(left);
 				}
 
 				blockType = BlockTypes[(int)down.x, (int)down.y];
-				if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
+				if (enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 				{
 
-					BlockTypes[(int)down.x, (int)down.y] = TileType.Enlisted;
+					_enlisted[(int)down.x, (int)down.y] = true;
 					currentIsland.Add(down);
 
 				}
 
 				blockType = BlockTypes[(int)right.x, (int)right.y];
-				if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
+				if (enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 				{
 
-					BlockTypes[(int)right.x, (int)right.y] = TileType.Enlisted;
+					_enlisted[(int)right.x, (int)right.y] = true;
 					currentIsland.Add(right);
 
 				}
 
 				blockType = BlockTypes[(int)up.x, (int)up.y];
-				if (blockType != TileType.Enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
+				if (enlisted && blockType != TileType.Air && blockType != TileType.Boundry)
 				{
 
-					BlockTypes[(int)up.x, (int)up.y] = TileType.Enlisted;
+					_enlisted[(int)up.x, (int)up.y] = true;
 					currentIsland.Add(up);
 
 				}
@@ -340,7 +449,7 @@ public partial class TileMap
 		if (!GameUnity.GenerateIslands)
 			return;
 
-
+		
 		Vector2 firstPos = new Vector2(GameUnity.WidhtBound + (GameUnity.WidhtBound * 0.28f), GameUnity.HeightBound + (GameUnity.HeightBound * 0.28f));
 		int islandIndex = 0;
 		int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
@@ -350,7 +459,7 @@ public partial class TileMap
 		{
 			for (int y = startY; y < maxY; y++)
 			{
-				if (BlockTypes[x, y] == TileType.Air || BlockTypes[x, y] == TileType.Enlisted)
+				if (BlockTypes[x, y] == TileType.Air || _enlisted[x, y])
 				{
 					continue;
 				}
@@ -365,6 +474,23 @@ public partial class TileMap
 				}
 			}
 		}
+		_enlisted = null;
 	}
 
+	private void SetMaterials()
+	{
+		diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
+
+		_rockBotMat = Resources.Load("Tiles/Rocks/Bot", typeof(Sprite)) as Sprite;
+		_rockBotLeftCornerMat = Resources.Load("Tiles/Rocks/BotLeftCorner", typeof(Sprite)) as Sprite;
+		_rockBotRightCornerMat = Resources.Load("Tiles/Rocks/BotRightCorner", typeof(Sprite)) as Sprite;
+		_rockMiddleMat = Resources.Load("Tiles/Rocks/Middle", typeof(Sprite)) as Sprite;
+		_rockMiddle2Mat = Resources.Load("Tiles/Rocks/Middle2", typeof(Sprite)) as Sprite;
+		_rockMiddle3Mat = Resources.Load("Tiles/Rocks/Middle3", typeof(Sprite)) as Sprite;
+		_rockMiddleLeftMat = Resources.Load("Tiles/Rocks/MiddleLeft", typeof(Sprite)) as Sprite;
+		_rockMiddleRightMat = Resources.Load("Tiles/Rocks/MiddleRight", typeof(Sprite)) as Sprite;
+		_rockTopMat = Resources.Load("Tiles/Rocks/Top", typeof(Sprite)) as Sprite;
+		_rockTopLeftMat = Resources.Load("Tiles/Rocks/TopLeft", typeof(Sprite)) as Sprite;
+		_rockTopRightMat = Resources.Load("Tiles/Rocks/TopRight", typeof(Sprite)) as Sprite;
+	}
 }

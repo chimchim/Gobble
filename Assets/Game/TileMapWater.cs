@@ -36,7 +36,8 @@ public partial class TileMap
 		{
 			return;
 		}
-
+		topWaterSprite = Resources.Load("Tiles/TopWater", typeof(Sprite)) as Sprite;
+		waterSprite = Resources.Load("Tiles/Middlewater", typeof(Sprite)) as Sprite;
 		Water = GameObject.Instantiate(Resources.Load("Prefabs/Water", typeof(GameObject))) as GameObject;
 		Water.transform.position = new Vector3(-1111, -1111, 0);
 

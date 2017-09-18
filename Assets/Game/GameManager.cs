@@ -41,6 +41,7 @@ namespace Game
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 			TileMap = new TileMap();
 			TileMap.InitiateMap();
+			TileMap.GenerateMinerals();
 			watch.Stop();
 			var elapsedMs = watch.ElapsedMilliseconds;
 			Debug.Log("InitiateMap Time " + elapsedMs);
