@@ -38,6 +38,7 @@ public partial class TileMap
 	// Side blocks, kolla längden och ta mitten
 	public GameObject[,] Blocks;
 
+	#region SpriteVariables
 	private Sprite _rockBotMat;
 	private Sprite _rockBotLeftCornerMat;
 	private Sprite _rockBotRightCornerMat;
@@ -49,6 +50,43 @@ public partial class TileMap
 	private Sprite _rockTopMat;
 	private Sprite _rockTopLeftMat;
 	private Sprite _rockTopRightMat;
+
+	private Sprite _goldBotMat;
+	private Sprite _goldBotLeftCornerMat;
+	private Sprite _goldBotRightCornerMat;
+	private Sprite _goldMiddleMat;
+	private Sprite _goldMiddle2Mat;
+	private Sprite _goldMiddle3Mat;
+	private Sprite _goldMiddleLeftMat;
+	private Sprite _goldMiddleRightMat;
+	private Sprite _goldTopMat;
+	private Sprite _goldTopLeftMat;
+	private Sprite _goldTopRightMat;
+
+	private Sprite _ironBotMat;
+	private Sprite _ironBotLeftCornerMat;
+	private Sprite _ironBotRightCornerMat;
+	private Sprite _ironMiddleMat;
+	private Sprite _ironMiddle2Mat;
+	private Sprite _ironMiddle3Mat;
+	private Sprite _ironMiddleLeftMat;
+	private Sprite _ironMiddleRightMat;
+	private Sprite _ironTopMat;
+	private Sprite _ironTopLeftMat;
+	private Sprite _ironTopRightMat;
+
+	private Sprite _copperBotMat;
+	private Sprite _copperBotLeftCornerMat;
+	private Sprite _copperBotRightCornerMat;
+	private Sprite _copperMiddleMat;
+	private Sprite _copperMiddle2Mat;
+	private Sprite _copperMiddle3Mat;
+	private Sprite _copperMiddleLeftMat;
+	private Sprite _copperMiddleRightMat;
+	private Sprite _copperTopMat;
+	private Sprite _copperTopLeftMat;
+	private Sprite _copperTopRightMat;
+	#endregion
 
 	private bool[,] _enlisted;
 	public void InitiateMap()

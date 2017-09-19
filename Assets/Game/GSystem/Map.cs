@@ -13,8 +13,8 @@ namespace Game.Systems
 
 		public void Update(GameManager game)
 		{
-
-			UpdateMiniMap(game);
+			if(GameUnity.ShowMiniMap)
+				UpdateMiniMap(game);
 		}
 
 		public void Initiate(GameManager game)
