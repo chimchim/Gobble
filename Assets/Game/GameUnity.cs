@@ -65,9 +65,6 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
 
-	[Header("Map Variables")]
-	public static int RockMiddleOneIn;
-
 
 	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
@@ -152,8 +149,6 @@ public class GameUnity : MonoBehaviour
 		FullWidth = MapWidth + (WidhtBound * 2);
 		FullHeight = MapHeight + (HeightBound * 2) + BottomBoundOffset + TopBoundOffset;
 
-		//MineralsGen
-		RockMiddleOneIn = MineralsGen.RockMiddleOneIn;
 	}
     void LateUpdate()
     {
