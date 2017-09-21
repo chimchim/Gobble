@@ -18,4 +18,7 @@ public class MineralsGenVariables : ScriptableObject
 	public int IronRandomOneIn = 6;
 	public int IronMiddleOnIn = 10;
 	public int IronlevelChanceIncrease = 2;
+
+	public int CopperRandomOneIn = 6;
+	public int CopperSideOneIn = 10;
 }

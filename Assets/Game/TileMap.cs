@@ -93,6 +93,7 @@ public partial class TileMap
 
 	private bool[,] _enlisted;
 	private int _extraIron;
+	private int _extraCopper;
 	public void InitiateMap()
 	{
 		minsVariables = GameObject.FindObjectOfType<GameUnity>().MineralsGen;
@@ -201,7 +202,7 @@ public partial class TileMap
 		CreateRocks();
 		CreateGold();
 		CreateIron();
-
+		CreateCopper();
 	}
 
 	public void CreateRocks()
@@ -327,6 +328,14 @@ public partial class TileMap
 					{
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddle3Mat;
 					}
+					if (BlockTypes[x, y] == TileType.MiddleLeft)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddleLeftMat;
+					}
+					if (BlockTypes[x, y] == TileType.MiddleRight)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddleRightMat;
+					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldTopMat;
@@ -390,8 +399,9 @@ public partial class TileMap
 						MineralTypes[x, y] = MineralType.Iron;
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddleMat;
 					}
+					continue;
 				}
-				continue;
+				
 				chance = Random.Range(0, minsVariables.IronRandomOneIn);
 				if (chance == 0)
 				{
@@ -416,6 +426,14 @@ public partial class TileMap
 					{
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddle3Mat;
 					}
+					if (BlockTypes[x, y] == TileType.MiddleLeft)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddleLeftMat;
+					}
+					if (BlockTypes[x, y] == TileType.MiddleRight)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddleRightMat;
+					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironTopMat;
@@ -431,20 +449,92 @@ public partial class TileMap
 				}
 			}
 		}
+	}
+	public void CreateCopper()
+	{
+		int startX = GameUnity.WidhtBound;
+		int endX = GameUnity.MapWidth + startX;
+		int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
+		int endY = GameUnity.MapHeight + startY;
 
-		for (int i = 0; i < _islands.Count; i++)
+		for (int x = startX; x < endX; x++)
 		{
-			var tierList = GetIslandLevel(_islands[i]);
-
-			for (int j = 1; j < tierList.Count; j++)
+			for (int y = startY; y < endY; y++)
 			{
-				int tierIndex = Mathf.Clamp(j - 1, 3, 4);
-				for (int k = 0; k < tierList[j].Count; k++)
+				var type = BlockTypes[x, y];
+				int chance = 1;
+				int extraChance = 0;
+
+				if (MineralTypes[x, y] == MineralType.Gold || MineralTypes[x, y] == MineralType.Iron)
 				{
-					int x = (int)tierList[j][k].x;
-					int y = (int)tierList[j][k].y;
-					//Blocks[x, y].GetComponent<SpriteRenderer>().material = _darkMats[tierIndex];
-					//int x = (int)tierList[j][k].x; = 
+					_extraCopper++;
+					continue;
+				}
+
+				if (BlockTypes[x, y] == TileType.MiddleRight)
+				{
+					chance = Random.Range(0, minsVariables.CopperSideOneIn);
+
+					if (chance == 0)
+					{
+						MineralTypes[x, y] = MineralType.Copper;
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddleRightMat;
+					}
+					continue;
+				}
+
+				if (BlockTypes[x, y] == TileType.MiddleLeft)
+				{
+					chance = Random.Range(0, minsVariables.CopperSideOneIn);
+
+					if (chance == 0)
+					{
+						MineralTypes[x, y] = MineralType.Copper;
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddleLeftMat;
+					}
+					continue;
+				}
+
+				chance = Random.Range(0, minsVariables.CopperRandomOneIn);
+				if (chance == 0)
+				{
+					MineralTypes[x, y] = MineralType.Copper;
+					if (BlockTypes[x, y] == TileType.Middle)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddleMat;
+					}
+					if (BlockTypes[x, y] == TileType.Middle2)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddle2Mat;
+					}
+					if (BlockTypes[x, y] == TileType.Middle3)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddle3Mat;
+					}
+					if (BlockTypes[x, y] == TileType.Bot)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperBotMat;
+					}
+					if (BlockTypes[x, y] == TileType.BotLeftCorner)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperBotLeftCornerMat;
+					}
+					if (BlockTypes[x, y] == TileType.BotRightCorner)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperBotRightCornerMat;
+					}
+					if (BlockTypes[x, y] == TileType.Top)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperTopMat;
+					}
+					if (BlockTypes[x, y] == TileType.TopLeft)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperTopLeftMat;
+					}
+					if (BlockTypes[x, y] == TileType.TopRight)
+					{
+						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperTopRightMat;
+					}
 				}
 			}
 		}
