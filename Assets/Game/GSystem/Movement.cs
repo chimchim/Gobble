@@ -22,6 +22,7 @@ namespace Game.Systems
 				var entityGameObject = game.Entities.GetEntity(e).gameObject;
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
+				#region Debug
 				if (input.State == Component.Input.MoveState.FlyingDebug)
 				{
 					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed * 3;
@@ -30,26 +31,50 @@ namespace Game.Systems
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
 
 					entityGameObject.transform.position += new Vector3(xMovement, yMovement, 0);
-				}
-				if (input.State == Component.Input.MoveState.Grounded)
+				} 
+				#endregion
+				if (input.State == Component.Input.MoveState.Roped)
 				{
-					input.CurrentVelocity.y += -GameUnity.Gravity;
-					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
-					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+					
+					//input.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+					//input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
+					//input.CurrentVelocity.x += input.Axis.x * GameUnity.PlayerSpeed/5;
+					//input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -10, 10);
 
 					stats.OxygenSeconds += Time.deltaTime;
 					stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
-					if (input.Space && input.Grounded)
+					//if (input.Space && input.Grounded)
+					//{
+					//	input.CurrentVelocity.y = GameUnity.JumpSpeed;
+					//}
+
+					Vector2 playerPos = entityGameObject.transform.position;
+					Vector2 ropePos = input.RopePosistion;
+					float ropeL = input.RopeLength;
+					Debug.DrawLine(playerPos, ropePos, Color.red);
+
+					//playerPos += new Vector2(xMovement, yMovement);
+					float diff = (playerPos - ropePos).magnitude - ropeL;
+					Vector2 direction = playerPos - ropePos;
+					direction.Normalize();
+					float axis = input.Axis.x;
+					Vector3 cross = Vector3.Cross(new Vector3(direction.x, direction.y, 0), Vector3.forward);
+					Vector2 cross2D = new Vector2(cross.x, cross.y);
+					Debug.DrawLine(playerPos, playerPos + (new Vector2(cross.x, cross.y) * 4 * axis), Color.red);
+					if (diff > 0)
 					{
-						input.CurrentVelocity.y = GameUnity.JumpSpeed;
+						//input.CurrentVelocity += new 
+						//var playerPosTemp = (direction.normalized * ropeL) + ropePos;
+						//Vector2 movement = playerPosTemp - playerPos;
+						//input.CurrentVelocity += diff * GameUnity.RopeConstant * direction;
+
 					}
 					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
 					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
-
 					float xOffset = 0.35f;
 					float yOffset = 0.65f;
-					
+
 					bool vertGrounded = false;
 					bool horGrounded = false;
 
@@ -86,7 +111,66 @@ namespace Game.Systems
 						input.State = Component.Input.MoveState.Swimming;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
-				}
+				} 
+				#region Grounded
+				if (input.State == Component.Input.MoveState.Grounded)
+				{
+					input.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+					input.CurrentVelocity.y = Mathf.Max(input.CurrentVelocity.y, -GameUnity.MaxGravity);
+					input.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+
+					stats.OxygenSeconds += Time.deltaTime;
+					stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
+
+					if (input.Space && input.Grounded)
+					{
+						input.CurrentVelocity.y = GameUnity.JumpSpeed;
+					}
+					float yMovement = input.CurrentVelocity.y * Time.deltaTime;
+					float xMovement = input.CurrentVelocity.x * Time.deltaTime;
+
+					float xOffset = 0.35f;
+					float yOffset = 0.65f;
+
+					bool vertGrounded = false;
+					bool horGrounded = false;
+
+					Vector3 tempPos = entityGameObject.transform.position;
+					tempPos = VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
+					tempPos = HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+					entityGameObject.transform.position = tempPos;
+					input.Grounded = vertGrounded;
+					if (vertGrounded)
+					{
+						if (input.FallingTime > GameUnity.ExtraFallSpeedAfter)
+						{
+							float fallMulti = input.FallingTime - GameUnity.ExtraFallSpeedAfter;
+							AffectHP fallDamage = AffectHP.Make(-GameUnity.FallDamage * fallMulti);
+							fallDamage.Apply(game, e);
+							fallDamage.Recycle();
+						}
+						input.FallingTime = 0;
+						input.CurrentVelocity.y = 0;
+					}
+					else
+					{
+						if (input.CurrentVelocity.y < 0)
+						{
+							input.FallingTime += Time.deltaTime;
+						}
+					}
+					var layerMask = 1 << LayerMask.NameToLayer("Water");
+					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
+					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
+					if (hit.collider != null)
+					{
+						input.FallingTime = 0;
+						input.State = Component.Input.MoveState.Swimming;
+						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
+					}
+				} 
+				#endregion
+				#region Floating
 				if (input.State == Component.Input.MoveState.Floating)
 				{
 					input.CurrentVelocity.y = input.CurrentVelocity.y - GameUnity.Gravity;
@@ -130,7 +214,9 @@ namespace Game.Systems
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
 
-				}
+				} 
+				#endregion
+				#region Swimming
 				if (input.State == Component.Input.MoveState.Swimming)
 				{
 					input.CurrentVelocity.y += GameUnity.WaterGravity + (input.Axis.y * GameUnity.SwimSpeed);
@@ -138,7 +224,7 @@ namespace Game.Systems
 					input.CurrentVelocity.x += input.Axis.x * GameUnity.SwimSpeed;
 					input.CurrentVelocity.x = Mathf.Clamp(input.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
 
-					
+
 					input.SwimTime += Time.deltaTime;
 					if (input.SwimTime > GameUnity.LoseOxygenAfter)
 					{
@@ -185,7 +271,7 @@ namespace Game.Systems
 					{
 						input.CurrentVelocity.x = 0;
 					}
-					
+
 					var layerMask = 1 << LayerMask.NameToLayer("Water");
 					var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
 					RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
@@ -206,7 +292,8 @@ namespace Game.Systems
 						input.State = Component.Input.MoveState.Floating;
 						Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 					}
-				}
+				} 
+				#endregion
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
 			}
 		}

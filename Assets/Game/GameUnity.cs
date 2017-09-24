@@ -24,12 +24,14 @@ public class GameUnity : MonoBehaviour
 
 	[SerializeField]
 	[Header("Gounded Variables")]
+	public static float Weight;
 	public static float PlayerSpeed;
 	public static float JumpSpeed;
 	public static float Gravity;
 	public static float MaxGravity;
 	public static float ExtraFallSpeedAfter;
-	
+	public static float RopeConstant;
+
 	[Header("Swim Variables")]
 	public static float WaterJumpSpeed;
 	public static float WaterGravity;
@@ -96,7 +98,7 @@ public class GameUnity : MonoBehaviour
         game.Initiate();
 	}
 
-	void Update () 
+	void FixedUpdate () 
 	{
         game.Update(Time.deltaTime);
 
@@ -113,7 +115,8 @@ public class GameUnity : MonoBehaviour
 		Gravity = GroundData.Gravity;
 		ExtraFallSpeedAfter = GroundData.ExtraFallSpeedAfter;
 		MaxGravity = GroundData.MaxGravity;
-
+		Weight = GroundData.Weight;
+		RopeConstant = GroundData.RopeConstant;
 		//Water
 		WaterJumpSpeed = SwimData.WaterJumpSpeed;
 		WaterGravity = SwimData.WaterGravity;

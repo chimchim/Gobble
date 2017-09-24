@@ -8,7 +8,7 @@ namespace Game.Component
 		private static ObjectPool<Input> _pool = new ObjectPool<Input>(100);
 		public Vector2 Axis;
 		public bool Space;
-
+		public bool RightClick;
 		public Vector2 CurrentVelocity;
 
 		public enum MoveState
@@ -16,7 +16,8 @@ namespace Game.Component
 			Grounded,
 			Swimming,
 			Floating,
-			FlyingDebug
+			FlyingDebug,
+			Roped
 		}
 		public MoveState State;
 		public bool Grounded;
@@ -27,6 +28,8 @@ namespace Game.Component
 		public float SwimTime;
 		public int OxygenDeplationTick;
 
+		public Vector2 RopePosistion;
+		public float RopeLength;
 		public Input()
 		{
 
