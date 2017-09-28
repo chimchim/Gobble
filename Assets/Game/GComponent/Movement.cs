@@ -13,7 +13,7 @@ namespace Game.Component
 		public int OxygenDeplationTick;
 
 		public Vector2 CurrentVelocity;
-
+		public Vector2 ForceVelocity;
 		public bool Jumped;
 		public Roped CurrentRoped;
 

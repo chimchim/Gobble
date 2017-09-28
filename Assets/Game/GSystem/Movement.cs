@@ -38,7 +38,8 @@ namespace Game.Systems
 				if (movement.State == Component.Movement.MoveState.Roped)
 				{
 					Vector2 playerPos = entityGameObject.transform.position;
-					Vector2 playerPosFirstMove = playerPos + (movement.CurrentVelocity * Time.deltaTime);
+					Vector2 currentMove = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
+					Vector2 playerPosFirstMove = playerPos + currentMove;
 					Vector2 origin = movement.CurrentRoped.origin;
 
 					float len = movement.CurrentRoped.Length;
@@ -49,9 +50,11 @@ namespace Game.Systems
 					Debug.DrawLine(playerPos, origin, Color.red);
 					float yMovement = 0;
 					float xMovement = 0;
+					float lastAngle = 0;
 					if (diff > len || movement.CurrentRoped.FirstAngle || (movement.CurrentVelocity.y < 0 && playerPos.y < origin.y))
 					{
-						//movement.CurrentRoped.Length = (playerPos - origin).magnitude;
+
+						#region First Angle
 						if (!movement.CurrentRoped.FirstAngle)
 						{
 							movement.CurrentRoped.Length = (playerPos - origin).magnitude;
@@ -67,48 +70,42 @@ namespace Game.Systems
 							}
 							movement.CurrentRoped.Angle = angle;
 							movement.CurrentRoped.FirstAngle = true;
-							//if(input.Axis.x != 0)
-								movement.CurrentRoped.Vel =/* Mathf.Sign(input.Axis.x) **/ -0.07f / len;
+							movement.CurrentRoped.Vel = 1;
 
 							float sinned = Mathf.Abs(Mathf.Sin(angle));
 							float cosed = Mathf.Abs(Mathf.Cos(angle));
 							float newXVel = movement.CurrentVelocity.x * cosed;
 							float newYVel = movement.CurrentVelocity.y * sinned;
-							//Debug.Log("sinned " + sinned + " cosed " + cosed);
-							//Vector2 firstTranslate = playerPosFirstMove - playerPos;
-							float deltaTimeMult = 1 / Time.deltaTime;
-							float speed = movement.CurrentVelocity.magnitude;
 
+							float velXDir = newXVel * -Mathf.Sign(Mathf.Cos(angle));
+							float velYDir = newYVel * Mathf.Sign(Mathf.Sin(angle));
+
+							float newSpeed = velXDir + velYDir;
+							float ropeDirection = Mathf.Sign(newSpeed);
+							float deltaTimeMult = 1 / Time.deltaTime;
+
+							//Debug.Log("newSpeed " + newSpeed);
 
 							float tempAngle = movement.CurrentRoped.Vel + angle;
 							playerPos.x = origin.x + (-len * Mathf.Sin(tempAngle));
 							playerPos.y = origin.y + (-len * Mathf.Cos(tempAngle));
-							
+
 							Vector2 ropeMovePos = playerPos - new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y);
 							float ropeSpeed = (ropeMovePos.magnitude) * deltaTimeMult;
 							float velDivider = movement.CurrentRoped.Vel / ropeSpeed;
-							float newVel = velDivider * speed; // 6 = New ropeSpeed
+							float newVel = Mathf.Abs(velDivider) * Mathf.Abs(newSpeed) * ropeDirection; // 6 = New ropeSpeed
 							movement.CurrentRoped.Vel = newVel;
 
-							// detta funkar
-							//tempAngle = movement.CurrentRoped.Vel + angle;
-							//playerPos.x = origin.x + (-len * Mathf.Sin(tempAngle));
-							//playerPos.y = origin.y + (-len * Mathf.Cos(tempAngle));
-							//
-							//ropeMovePos = playerPos - new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y);
-							//ropeSpeed = (ropeMovePos.magnitude) * deltaTimeMult;
-							//Debug.Log("speed " + speed + " ropeSpeed " + ropeSpeed);
-						}
-
+							movement.CurrentVelocity = Vector2.zero;
+						} 
+						#endregion
 						playerPos.x = origin.x + (-len * Mathf.Sin(angle));
 						playerPos.y = origin.y + (-len * Mathf.Cos(angle));
+						lastAngle = angle - movement.CurrentRoped.Vel;
 
-						//entityGameObject.transform.position = playerPos;
 						xMovement = playerPos.x - entityGameObject.transform.position.x;
 						yMovement = playerPos.y - entityGameObject.transform.position.y;
 						
-
-
 						float gravity = GameUnity.RopeGravity;
 						#region Rope Input
 						if (playerPos.x < origin.x)
@@ -127,10 +124,8 @@ namespace Game.Systems
 						} 
 						#endregion
 						aAcc = (-1 * gravity / len) * Mathf.Sin(angle) * Time.deltaTime;
-						Debug.Log("movement.CurrentRoped.Vel " + movement.CurrentRoped.Vel);
 						movement.CurrentRoped.Vel += aAcc;
 						movement.CurrentRoped.Vel *= movement.CurrentRoped.Damp;
-						//Debug.Log("movement.CurrentRoped.Vel " + movement.CurrentRoped.Vel + " xMoveme " + xMovement);
 						movement.CurrentRoped.Angle += movement.CurrentRoped.Vel;
 
 					}
@@ -158,46 +153,29 @@ namespace Game.Systems
 					entityGameObject.transform.position = tempPos;
 					if (vertGrounded)
 					{
-						//movement.State = Component.Movement.MoveState.Grounded;
 						if (yMovement > 0)
 						{
-
-							movement.CurrentRoped.Angle -= (movement.CurrentRoped.Vel * 2);
+							movement.CurrentRoped.Angle = lastAngle;
 							movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
-							//entityGameObject.transform.position = tempPos;
 						}
 						else
 						{
 							movement.State = Component.Movement.MoveState.Grounded;
 						}
-						//movement.CurrentRoped.Vel = 0;
-						//movement.CurrentRoped.Damp = 0.3f;
 					}
 					else
 					{
 						movement.CurrentRoped.Damp = GameUnity.RopeDamping;
 					}
-					if (horGrounded && !vertGrounded)
+					if (horGrounded)
 					{
-						//if (movement.CurrentRoped.origin.x > tempPos.x && movement.CurrentRoped.Angle > 0)
-						//{
-						//movement.CurrentRoped.Vel -= aAcc;
-						movement.CurrentRoped.Angle -= (movement.CurrentRoped.Vel * 2);
-						movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
-						//movement.CurrentRoped.Damp *= 0.5f;
-						//entityGameObject.transform.position = tempPos;
-						//}
-						//if (movement.CurrentRoped.origin.x < tempPos.x && movement.CurrentRoped.Angle < 0)
-						//{
-						//	movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.2f;
-						//	movement.CurrentRoped.Damp *= 0.5f;
-						//}
 
+						movement.CurrentRoped.Angle = lastAngle;
+						movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
 					}
 					else
 					{
 						movement.CurrentRoped.Damp = GameUnity.RopeDamping;
-						//entityGameObject.transform.position = tempPos;
 					}
 					movement.Grounded = vertGrounded;
 					
