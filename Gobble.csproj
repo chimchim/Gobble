@@ -77,10 +77,7 @@
   <ItemGroup>
     <Compile Include="Assets\Game\Action\Action.cs" />
     <Compile Include="Assets\Game\Action\AffectHP.cs" />
-    <Compile Include="Assets\Game\Action\JumpAction.cs" />
-    <Compile Include="Assets\Game\Action\MoveAction.cs" />
     <Compile Include="Assets\Game\Action\ShootAction.cs" />
-    <Compile Include="Assets\Game\Action\WalkAction.cs" />
     <Compile Include="Assets\Game\Entity\Entity.cs" />
     <Compile Include="Assets\Game\Entity\EntityFactory.cs" />
     <Compile Include="Assets\Game\Entity\EntityID.cs" />
@@ -101,6 +98,7 @@
     <Compile Include="Assets\Game\GSystem\Map.cs" />
     <Compile Include="Assets\Game\GSystem\MessageKiller.cs" />
     <Compile Include="Assets\Game\GSystem\Movement.cs" />
+    <Compile Include="Assets\Game\GSystem\ResetInput.cs" />
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
@@ -129,7 +127,9 @@
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryMain.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Pathfinder.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\Pendulum.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\RootCanvas.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\pendulum2.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />

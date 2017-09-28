@@ -10,5 +10,8 @@ public class GroundVariables : ScriptableObject
 	public float MaxGravity = 15;
 	public float ExtraFallSpeedAfter = 1;
 	public float Weight = 2;
-	public float RopeConstant = 2;
+	public float RopeGravity = 0.5f;
+	public float RopeSpeedMult = 0.5f;
+	public float RopeDamping = 0.995f;
+	public float RopeLength = 30;
 }

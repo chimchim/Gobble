@@ -30,7 +30,10 @@ public class GameUnity : MonoBehaviour
 	public static float Gravity;
 	public static float MaxGravity;
 	public static float ExtraFallSpeedAfter;
-	public static float RopeConstant;
+	public static float RopeGravity;
+	public static float RopeSpeedMult;
+	public static float RopeDamping;
+	public static float RopeLength;
 
 	[Header("Swim Variables")]
 	public static float WaterJumpSpeed;
@@ -84,6 +87,7 @@ public class GameUnity : MonoBehaviour
 		Entity ent = new Entity();
 		game.Entities.addEntity(ent);
         ent.AddComponent(ActionQueue.Make(ent.ID));
+		ent.AddComponent(Game.Component.Movement.Make(ent.ID));
 		ent.AddComponent(Stats.Make(ent.ID, 100, OxygenTime, OxygenTime));
 		ent.AddComponent(Game.Component.Input.Make(ent.ID));
 		ent.AddComponent(Player.Make(ent.ID, true));
@@ -98,13 +102,17 @@ public class GameUnity : MonoBehaviour
         game.Initiate();
 	}
 
-	void FixedUpdate () 
+	void Update () 
 	{
         game.Update(Time.deltaTime);
 
 		SetVariables();
 
 		StartingPosition = StartPos.position;
+	}
+	void FixedUpdate()
+	{
+		game.FixedUpdate(Time.deltaTime);
 	}
 
 	private void SetVariables()
@@ -116,7 +124,11 @@ public class GameUnity : MonoBehaviour
 		ExtraFallSpeedAfter = GroundData.ExtraFallSpeedAfter;
 		MaxGravity = GroundData.MaxGravity;
 		Weight = GroundData.Weight;
-		RopeConstant = GroundData.RopeConstant;
+		RopeGravity = GroundData.RopeGravity;
+		RopeSpeedMult = GroundData.RopeSpeedMult;
+		RopeDamping = GroundData.RopeDamping;
+		RopeLength = GroundData.RopeLength;
+
 		//Water
 		WaterJumpSpeed = SwimData.WaterJumpSpeed;
 		WaterGravity = SwimData.WaterGravity;

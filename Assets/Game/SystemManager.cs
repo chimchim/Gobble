@@ -6,38 +6,51 @@ namespace Game
 {
     public class SystemManager
     {
-        private List<ISystem> _systems = new List<ISystem>();
-		
+        private List<ISystem> _update = new List<ISystem>();
+		private List<ISystem> _fixedUpdate = new List<ISystem>();
 		public void UpdateAll(GameManager game, float delta)
 		{
-            var entities = game.Entities.GetEntites();
-			foreach(ISystem system in _systems)
+            //var entities = game.Entities.GetEntites();
+			foreach(ISystem system in _update)
 			{
-                foreach (int e in entities)
-                {
-                    var messages = game.Entities.GetEntity(e).Messages;
-                    for (int i = 0; i < messages.Count; i++)
-                    {
-                        system.SendMessage(game, e, messages[i]);
 
-                    }
-                }
                 system.Update(game);
 			}
 		}
-
-        public void CreateSystems()
+		public void FixedUpdate(GameManager game, float delta)
+		{
+			//var entities = game.Entities.GetEntites();
+			foreach (ISystem system in _fixedUpdate)
+			{
+				//foreach (int e in entities)
+				//{
+				//	var messages = game.Entities.GetEntity(e).Messages;
+				//	for (int i = 0; i < messages.Count; i++)
+				//	{
+				//		system.SendMessage(game, e, messages[i]);
+				//
+				//	}
+				//}
+				system.Update(game);
+			}
+		}
+		public void CreateSystems()
         {
-			_systems.Add(new Map());
-			_systems.Add(new InputSystem());
-			_systems.Add(new Movement());
+			_update.Add(new Map());
+			_update.Add(new InputSystem());
+			_fixedUpdate.Add(new Movement());
+			_fixedUpdate.Add(new ResetInput());
 		}
         public void InitAll(GameManager game)
         {
-            foreach (ISystem system in _systems)
+            foreach (ISystem system in _update)
             {
                 system.Initiate(game);
             }
-        }
+			foreach (ISystem system in _fixedUpdate)
+			{
+				system.Initiate(game);
+			}
+		}
     }
 }

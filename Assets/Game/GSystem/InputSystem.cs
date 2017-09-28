@@ -22,39 +22,71 @@ namespace Game.Systems
 				if (player.Owner)
 				{
 					var input = game.Entities.GetComponentOf<Game.Component.Input>(entity);
+					var movement = game.Entities.GetComponentOf<Game.Component.Movement>(entity);
+
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					input.Axis = new Vector2(x, y);
-					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space);
-					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1);
+					if (!input.Space)
+					{
+						input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space);
+					}
+					if (!input.RightClick)
+					{
+						
+						input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1);
 
-					if (input.RightClick && input.State != Component.Input.MoveState.Roped)
-					{
-						Vector2 entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
-						Vector2 mousePos = UnityEngine.Input.mousePosition;
-						mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-						Debug.Log("MousePos " + mousePos);
-						Vector2 direction = mousePos - entityPos;
-						Debug.DrawRay(entityPos, direction, Color.red);
-						var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-						//var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
-						RaycastHit2D hit = Physics2D.Raycast(entityPos, direction.normalized, 200, layerMask);
-						if (hit.collider != null)
+
+						if (input.RightClick && movement.State != Component.Movement.MoveState.Roped)
 						{
-							input.RopePosistion = hit.point;
-							input.RopeLength = (entityPos - hit.point).magnitude;
-							input.State = Component.Input.MoveState.Roped;
+
+							TryRope(game, entity, movement);
 						}
-					}
-					else if (input.RightClick && input.State == Component.Input.MoveState.Roped)
-					{
-						input.State = Component.Input.MoveState.Grounded;
-					}
+						else if (input.RightClick && movement.State == Component.Movement.MoveState.Roped)
+						{
+							movement.State = Component.Movement.MoveState.Grounded;
+						}
+					}		
 				}
 			}
 		}
 
+		public static void TryRope(GameManager game, int entity, Component.Movement movement)
+		{
+			Vector2 entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
+			Vector2 mousePos = UnityEngine.Input.mousePosition;
+			mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
 
+			Vector2 direction = mousePos - entityPos;
+			Debug.DrawRay(entityPos, direction, Color.red);
+			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+
+			RaycastHit2D hit = Physics2D.Raycast(entityPos, direction.normalized, GameUnity.RopeLength, layerMask);
+			if (hit.collider != null)
+			{
+				float ropeL = (entityPos - hit.point).magnitude;
+				movement.State = Component.Movement.MoveState.Roped;
+
+				movement.CurrentRoped = new Component.Movement.Roped()
+				{
+					origin = hit.point,
+					Length = ropeL,
+					Damp = GameUnity.RopeDamping
+				};
+				//game.Entities.GetEntity(entity).gameObject.transform.position = hit.point + new Vector2(0, -input.RopeLength);
+				//movement.CurrentRoped.Angle = Mathf.PI / 4f;
+				//Len = (transform.position - bob.position).magnitude;
+				//float angle2 = Vector2.Angle((transform.position - bob.position).normalized, (-Vector2.up));
+				//if (transform.position.x > bob.position.x)
+				//{
+				//	angle = (Mathf.PI / 180f) * (180 - angle2);
+				//}
+				//else
+				//{
+				//	angle = (Mathf.PI / 180f) * -(180 - angle2);
+				//}
+			}
+		}
 
         public void Initiate(GameManager game)
 		{

@@ -35,7 +35,10 @@ namespace Game
 				TileMap.UpdateWater();
 			}
 		}
-
+		public void FixedUpdate(float delta)
+		{
+			_systemManager.FixedUpdate(this, delta);
+		}
 		public void Initiate()
 		{
 			var watch = System.Diagnostics.Stopwatch.StartNew();
