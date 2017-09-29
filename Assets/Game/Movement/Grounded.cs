@@ -21,7 +21,25 @@ namespace Game.Movement
 
 			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
-			movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+			
+			movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
+			movement.ForceVelocity.y = Mathf.Clamp(movement.ForceVelocity.y, -15, 15);
+			movement.ForceVelocity.x = movement.ForceVelocity.x * GameUnity.ForceDamper;
+			movement.ForceVelocity.y = movement.ForceVelocity.y * GameUnity.ForceDamper;
+
+			float combinedSpeed = Mathf.Abs(movement.ForceVelocity.x + (input.Axis.x * GameUnity.PlayerSpeed));
+			float signedCombinedSpeed = Mathf.Sign(movement.ForceVelocity.x + input.Axis.x * GameUnity.PlayerSpeed);
+			float forceXSpeed = Mathf.Abs(movement.ForceVelocity.x);
+
+			if (combinedSpeed > GameUnity.PlayerSpeed)
+			{
+
+				movement.ForceVelocity.x = signedCombinedSpeed * forceXSpeed;
+			}
+			else
+			{
+				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+			}
 
 			stats.OxygenSeconds += Time.deltaTime;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
@@ -31,8 +49,8 @@ namespace Game.Movement
 				movement.CurrentVelocity.y = GameUnity.JumpSpeed;
 			}
 
-			float yMovement = movement.CurrentVelocity.y * Time.deltaTime;
-			float xMovement = movement.CurrentVelocity.x * Time.deltaTime;
+			float yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
+			float xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
 
 			float xOffset = 0.35f;
 			float yOffset = 0.65f;
@@ -54,6 +72,8 @@ namespace Game.Movement
 					fallDamage.Apply(game, entityID);
 					fallDamage.Recycle();
 				}
+				movement.ForceVelocity.y = 0;
+				movement.ForceVelocity.x = 0;
 				movement.FallingTime = 0;
 				movement.CurrentVelocity.y = 0;
 			}
@@ -63,6 +83,12 @@ namespace Game.Movement
 				{
 					movement.FallingTime += Time.deltaTime;
 				}
+			}
+
+			if(horGrounded)
+			{
+				movement.ForceVelocity.x = -movement.ForceVelocity.x * 0.7f;
+
 			}
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
 			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);

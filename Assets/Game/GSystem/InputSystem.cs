@@ -36,7 +36,6 @@ namespace Game.Systems
 						
 						input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1);
 
-
 						if (input.RightClick && movement.CurrentState != Component.Movement.MoveState.Roped)
 						{
 
@@ -66,25 +65,13 @@ namespace Game.Systems
 			{
 				float ropeL = (entityPos - hit.point).magnitude;
 				movement.CurrentState = Component.Movement.MoveState.Roped;
-
 				movement.CurrentRoped = new Component.Movement.RopedData()
 				{
+					RayCastOrigin = ((0.3f * hit.normal) + hit.point),
 					origin = hit.point,
 					Length = ropeL,
 					Damp = GameUnity.RopeDamping
 				};
-				//game.Entities.GetEntity(entity).gameObject.transform.position = hit.point + new Vector2(0, -input.RopeLength);
-				//movement.CurrentRoped.Angle = Mathf.PI / 4f;
-				//Len = (transform.position - bob.position).magnitude;
-				//float angle2 = Vector2.Angle((transform.position - bob.position).normalized, (-Vector2.up));
-				//if (transform.position.x > bob.position.x)
-				//{
-				//	angle = (Mathf.PI / 180f) * (180 - angle2);
-				//}
-				//else
-				//{
-				//	angle = (Mathf.PI / 180f) * -(180 - angle2);
-				//}
 			}
 		}
 

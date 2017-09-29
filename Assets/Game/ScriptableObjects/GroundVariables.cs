@@ -14,6 +14,6 @@ public class GroundVariables : ScriptableObject
 	public float RopeSpeedMult = 0.5f;
 	public float RopeDamping = 0.995f;
 	public float RopeLength = 30;
-	public float ForceMaxX = 15;
-	public float ForceMaxY = 15;
+	public float ForceDamper = 0.99f;
+
 }

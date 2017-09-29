@@ -19,7 +19,8 @@ namespace Game.Movement
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 
 			Vector2 playerPos = entityGameObject.transform.position;
-			Vector2 playerPosFirstMove = playerPos + (movement.CurrentVelocity * Time.deltaTime);
+			Vector2 currentTranslate = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
+			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;
 
 			float len = movement.CurrentRoped.Length;
@@ -31,9 +32,9 @@ namespace Game.Movement
 			float yMovement = 0;
 			float xMovement = 0;
 			float lastAngle = 0;
-			if (diff > len || movement.CurrentRoped.FirstAngle || (movement.CurrentVelocity.y < 0 && playerPos.y < origin.y))
+			if (diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y))
 			{
-
+				float deltaTimeMult = 1 / Time.deltaTime;
 				#region First Angle
 				if (!movement.CurrentRoped.FirstAngle)
 				{
@@ -54,17 +55,15 @@ namespace Game.Movement
 
 					float sinned = Mathf.Abs(Mathf.Sin(angle));
 					float cosed = Mathf.Abs(Mathf.Cos(angle));
-					float newXVel = movement.CurrentVelocity.x * cosed;
-					float newYVel = movement.CurrentVelocity.y * sinned;
+					Vector2 combinedVelocity = movement.CurrentVelocity + movement.ForceVelocity;
+					float newXVel = combinedVelocity.x * cosed;
+					float newYVel = combinedVelocity.y * sinned;
 
 					float velXDir = newXVel * -Mathf.Sign(Mathf.Cos(angle));
 					float velYDir = newYVel * Mathf.Sign(Mathf.Sin(angle));
 
 					float newSpeed = velXDir + velYDir;
 					float ropeDirection = Mathf.Sign(newSpeed);
-					float deltaTimeMult = 1 / Time.deltaTime;
-
-					//Debug.Log("newSpeed " + newSpeed);
 
 					float tempAngle = movement.CurrentRoped.Vel + angle;
 					playerPos.x = origin.x + (-len * Mathf.Sin(tempAngle));
@@ -86,6 +85,9 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
+				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
+				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
+
 				float gravity = GameUnity.RopeGravity;
 				#region Rope Input
 				if (playerPos.x < origin.x)
@@ -103,20 +105,33 @@ namespace Game.Movement
 					}
 				}
 				#endregion
-				aAcc = (-1 * gravity / len) * Mathf.Sin(angle) * Time.deltaTime;
-				movement.CurrentRoped.Vel += aAcc;
-				movement.CurrentRoped.Vel *= movement.CurrentRoped.Damp;
-				movement.CurrentRoped.Angle += movement.CurrentRoped.Vel;
+				float gravityDivier = Math.Max(1, len);
+				var collided = CheckRopeCollision(playerPos, movement);
+				if (!collided)
+				{
+					aAcc = (-1 * gravity / gravityDivier) * Mathf.Sin(angle) * Time.deltaTime;
+					movement.CurrentRoped.Vel += aAcc;
+					movement.CurrentRoped.Vel *= movement.CurrentRoped.Damp;
+					movement.CurrentRoped.Angle += movement.CurrentRoped.Vel;
+				}
+				else
+				{
 
+				}
 			}
 			else
 			{
-
 				movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 				movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
 				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
-				yMovement = movement.CurrentVelocity.y * Time.deltaTime;
-				xMovement = movement.CurrentVelocity.x * Time.deltaTime;
+
+				movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
+				movement.ForceVelocity.y = Mathf.Clamp(movement.ForceVelocity.y, -15, 15);
+				movement.ForceVelocity.x = movement.ForceVelocity.x * GameUnity.ForceDamper;
+				movement.ForceVelocity.y = movement.ForceVelocity.y * GameUnity.ForceDamper;
+
+				yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
+				xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
 			}
 			stats.OxygenSeconds += Time.deltaTime;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
@@ -151,16 +166,36 @@ namespace Game.Movement
 			}
 
 			movement.Grounded = vertGrounded;
+			movement.FallingTime = 0;
+			var layerMask = 1 << LayerMask.NameToLayer("Water");
+			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
+			RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
+			if (hit.collider != null)
+			{
+				movement.CurrentState = Component.Movement.MoveState.Grounded;
+			}
 
-			//var layerMask = 1 << LayerMask.NameToLayer("Water");
-			//var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
-			//RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
-			//if (hit.collider != null)
-			//{
-			//	movement.FallingTime = 0;
-			//	movement.State = Component.Movement.MoveState.Swimming;
-			//	Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
-			//}
+		}
+		private bool CheckRopeCollision(Vector2 entityPos, Component.Movement movement)
+		{
+			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+			Vector2 direction = entityPos - movement.CurrentRoped.RayCastOrigin;
+			RaycastHit2D hit = Physics2D.Raycast(movement.CurrentRoped.RayCastOrigin, direction.normalized, movement.CurrentRoped.Length, layerMask);
+			if (hit.collider != null)
+			{
+				float ropeL = (entityPos - hit.point).magnitude;
+				movement.CurrentState = Component.Movement.MoveState.Roped;
+				movement.OldRope = movement.CurrentRoped;
+				movement.CurrentRoped = new Component.Movement.RopedData()
+				{
+					RayCastOrigin = ((0.3f * hit.normal) + hit.point),
+					origin = hit.point,
+					Length = ropeL,
+					Damp = GameUnity.RopeDamping
+				};
+				return true;
+			}
+			return false;
 		}
 		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
 		{

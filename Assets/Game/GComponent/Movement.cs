@@ -16,12 +16,13 @@ namespace Game.Component
 		public Vector2 ForceVelocity;
 		public bool Jumped;
 		public RopedData CurrentRoped;
-
+		public RopedData OldRope;
 		public struct RopedData
 		{
 			public float Vel;
 			public float Angle;
 			public Vector2 origin;
+			public Vector2 RayCastOrigin;
 			public float Length;
 			public bool FirstAngle;
 			public float Damp;
