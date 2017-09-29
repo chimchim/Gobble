@@ -23,7 +23,7 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
-
+				movement.CurrentVelocity += movement.ForceVelocity;
 				#region Debug
 				if (movement.State == Component.Movement.MoveState.FlyingDebug)
 				{
@@ -38,8 +38,7 @@ namespace Game.Systems
 				if (movement.State == Component.Movement.MoveState.Roped)
 				{
 					Vector2 playerPos = entityGameObject.transform.position;
-					Vector2 currentMove = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
-					Vector2 playerPosFirstMove = playerPos + currentMove;
+					Vector2 playerPosFirstMove = playerPos + (movement.CurrentVelocity * Time.deltaTime);
 					Vector2 origin = movement.CurrentRoped.origin;
 
 					float len = movement.CurrentRoped.Length;
@@ -163,20 +162,13 @@ namespace Game.Systems
 							movement.State = Component.Movement.MoveState.Grounded;
 						}
 					}
-					else
-					{
-						movement.CurrentRoped.Damp = GameUnity.RopeDamping;
-					}
 					if (horGrounded)
 					{
 
 						movement.CurrentRoped.Angle = lastAngle;
 						movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
 					}
-					else
-					{
-						movement.CurrentRoped.Damp = GameUnity.RopeDamping;
-					}
+
 					movement.Grounded = vertGrounded;
 					
 					//var layerMask = 1 << LayerMask.NameToLayer("Water");
