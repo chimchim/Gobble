@@ -1,4 +1,6 @@
-﻿Shader "Sprites/Water Distortion"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Sprites/Water Distortion"
 {
 	Properties
 	{
@@ -66,7 +68,7 @@
 	v2f vert(appdata_t IN)
 	{
 		v2f OUT;
-		OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
+		OUT.vertex = UnityObjectToClipPos(IN.vertex);
 
 #if UNITY_UV_STARTS_AT_TOP
 		float scale = -1.0;

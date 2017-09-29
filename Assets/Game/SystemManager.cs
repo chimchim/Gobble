@@ -38,7 +38,7 @@ namespace Game
         {
 			_update.Add(new Map());
 			_update.Add(new InputSystem());
-			_fixedUpdate.Add(new Movement());
+			_fixedUpdate.Add(new Game.Systems.Movement());
 			_fixedUpdate.Add(new ResetInput());
 		}
         public void InitAll(GameManager game)

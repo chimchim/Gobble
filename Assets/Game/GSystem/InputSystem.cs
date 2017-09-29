@@ -37,14 +37,14 @@ namespace Game.Systems
 						input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1);
 
 
-						if (input.RightClick && movement.State != Component.Movement.MoveState.Roped)
+						if (input.RightClick && movement.CurrentState != Component.Movement.MoveState.Roped)
 						{
 
 							TryRope(game, entity, movement);
 						}
-						else if (input.RightClick && movement.State == Component.Movement.MoveState.Roped)
+						else if (input.RightClick && movement.CurrentState == Component.Movement.MoveState.Roped)
 						{
-							movement.State = Component.Movement.MoveState.Grounded;
+							movement.CurrentState = Component.Movement.MoveState.Grounded;
 						}
 					}		
 				}
@@ -65,9 +65,9 @@ namespace Game.Systems
 			if (hit.collider != null)
 			{
 				float ropeL = (entityPos - hit.point).magnitude;
-				movement.State = Component.Movement.MoveState.Roped;
+				movement.CurrentState = Component.Movement.MoveState.Roped;
 
-				movement.CurrentRoped = new Component.Movement.Roped()
+				movement.CurrentRoped = new Component.Movement.RopedData()
 				{
 					origin = hit.point,
 					Length = ropeL,
