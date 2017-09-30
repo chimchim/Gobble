@@ -5,7 +5,7 @@ namespace Game.Component
 {
 	public class Input : GComponent
 	{
-		private static ObjectPool<Input> _pool = new ObjectPool<Input>(100);
+		private static ObjectPool<Input> _pool = new ObjectPool<Input>(10);
 		public Vector2 Axis;
 		public bool Space;
 		public bool RightClick;

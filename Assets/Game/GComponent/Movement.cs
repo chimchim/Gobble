@@ -5,7 +5,7 @@ namespace Game.Component
 {
     public class Movement : GComponent
     {
-        private static ObjectPool<Movement> _pool = new ObjectPool<Movement>(100);
+        private static ObjectPool<Movement> _pool = new ObjectPool<Movement>(10);
 		// Swim
 		public int FloatingCounter;
 		public bool FloatJump;
@@ -18,7 +18,9 @@ namespace Game.Component
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
+		public List<GameObject> RopeLines;
 		public int RopeIndex;
+		public int DrawIndex;
 		public struct RopedData
 		{
 			public float Vel;
@@ -62,6 +64,7 @@ namespace Game.Component
 			comp.States[(int)MoveState.Roped] = new Roped();
 			comp.CurrentState = MoveState.Grounded;
 			comp.RopeList = new List<RopedData>();
+			comp.RopeLines = new List<GameObject>();
 
 			return comp;
         }

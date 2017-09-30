@@ -5,7 +5,7 @@ namespace Game.Component
 {
 	public class Stats : GComponent
 	{
-		private static ObjectPool<Stats> _pool = new ObjectPool<Stats>(100);
+		private static ObjectPool<Stats> _pool = new ObjectPool<Stats>(10);
 		public float HP;
 		public float OxygenSeconds;
 		public float MaxOxygenSeconds;

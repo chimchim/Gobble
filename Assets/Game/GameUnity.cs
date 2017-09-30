@@ -91,6 +91,7 @@ public class GameUnity : MonoBehaviour
 		ent.AddComponent(Game.Component.Movement.Make(ent.ID));
 		ent.AddComponent(Stats.Make(ent.ID, 100, OxygenTime, OxygenTime));
 		ent.AddComponent(Game.Component.Input.Make(ent.ID));
+		ent.AddComponent(Game.Component.Resources.Make(ent.ID));
 		ent.AddComponent(Player.Make(ent.ID, true));
         var player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         player.tag = "Player";

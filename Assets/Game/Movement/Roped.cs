@@ -10,16 +10,61 @@ namespace Game.Movement
 {
 	public class Roped : MovementState
 	{
+
 		public override void EnterState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
 		{
 
+		}
+		private void DrawRopes(GameManager game, Component.Movement movement, Game.Component.Resources resources, Vector2 position)
+		{
+			for (int i = movement.RopeIndex; i < movement.RopeList.Count; i++)
+			{
+				
+				var rope = movement.RopeList[movement.RopeIndex];
+				Vector2 origin = rope.origin;
+				if (movement.RopeLines.Count < movement.RopeList.Count)
+				{
+					var ropeLine = new GameObject();
+					ropeLine.name = "ropeline";
+					movement.RopeLines.Add(ropeLine);
+					Debug.Log("Add .RopeLines ");
+				}
+				//Debug.Log("movement.RopeIndex origin" + origin);
+				var ropeline = movement.RopeLines[movement.RopeIndex];
+				ropeline.transform.position = origin;
+				ropeline.transform.LookAt(position);
+
+				Vector2 direction = (position - origin).normalized;
+				float len = (position - origin).magnitude;
+				float ropeAmount = len / 0.51f;
+				float currentRopeXPos = 0;
+				//if(ropeline.)
+				if (ropeAmount > movement.DrawIndex)
+				{
+					if(resources.Ropes.Count < movement.DrawIndex +1)
+					{
+						var ropeSprite = GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/Rope", typeof(GameObject))) as GameObject;
+						resources.Ropes.Add(ropeSprite);
+				
+					}
+					var ropeFromResources = resources.Ropes[movement.DrawIndex];
+					ropeFromResources.SetActive(true);
+					ropeFromResources.transform.parent = ropeline.transform;
+					ropeFromResources.transform.localPosition = new Vector3(0, 0, 0.51f * movement.DrawIndex);
+					ropeFromResources.transform.localEulerAngles= new Vector3(0, -90, 0);
+					movement.DrawIndex++;
+				}
+
+			}
 		}
 		public override void Update(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
-
+			var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entityID);
+			
 			Vector2 playerPos = entityGameObject.transform.position;
+			DrawRopes(game, movement, resources, playerPos);
 			Vector2 currentTranslate = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
 			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;

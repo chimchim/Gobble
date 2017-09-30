@@ -5,7 +5,7 @@ namespace Game.Component
 {
     public class ActionQueue : GComponent
     {
-		private static ObjectPool<ActionQueue> _pool = new ObjectPool<ActionQueue>(100);
+		private static ObjectPool<ActionQueue> _pool = new ObjectPool<ActionQueue>(10);
 
         public List<Action> Actions = new List<Action>();
         public ActionQueue()

@@ -5,7 +5,7 @@ namespace Game.Component
 {
     public class Player : GComponent
     {
-        private static ObjectPool<Player> _pool = new ObjectPool<Player>(100);
+        private static ObjectPool<Player> _pool = new ObjectPool<Player>(10);
 		public bool Owner;
         public Player()
         {

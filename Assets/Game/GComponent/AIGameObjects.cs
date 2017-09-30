@@ -6,7 +6,7 @@ namespace Game.Component
 {
     public class AIGameObjects : GComponent
     {
-        private static ObjectPool<AIGameObjects> _pool = new ObjectPool<AIGameObjects>(100);
+        private static ObjectPool<AIGameObjects> _pool = new ObjectPool<AIGameObjects>(10);
 
         public GameObject Head;
         public GameObject Shooter;

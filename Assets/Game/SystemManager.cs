@@ -38,6 +38,7 @@ namespace Game
         {
 			_update.Add(new Map());
 			_update.Add(new InputSystem());
+			_update.Add(new InitResources());
 			_fixedUpdate.Add(new Game.Systems.Movement());
 			_fixedUpdate.Add(new ResetInput());
 		}

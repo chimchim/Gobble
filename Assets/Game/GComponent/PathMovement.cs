@@ -5,7 +5,7 @@ namespace Game.Component
 {
     public class PathMovement : GComponent
     {
-        private static ObjectPool<PathMovement> _pool = new ObjectPool<PathMovement>(100);
+        private static ObjectPool<PathMovement> _pool = new ObjectPool<PathMovement>(10);
         public Pathfinder Pathfinder;
         public UnityEngine.AI.NavMeshPath NavPath = new UnityEngine.AI.NavMeshPath();
         public bool HasPath;

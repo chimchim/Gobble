@@ -6,7 +6,7 @@ namespace Game.Component
 {
 	public class Holster : GComponent
 	{
-		private static ObjectPool<Holster> _pool = new ObjectPool<Holster>(100);
+		private static ObjectPool<Holster> _pool = new ObjectPool<Holster>(10);
 
 		public Holster()
 		{
