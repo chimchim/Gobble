@@ -67,10 +67,10 @@ namespace Game.Systems
 			{
 				float ropeL = (entityPos - hit.point).magnitude;
 				movement.CurrentState = Component.Movement.MoveState.Roped;
-				Debug.Log("Input Hit Normal 1" + hit.normal + " hit.point " + hit.point + " movement.CurrentRoped " + ((0.3f * hit.normal) + hit.point));
+				
 				movement.CurrentRoped = new Component.Movement.RopedData()
 				{
-					RayCastOrigin = ((0.2f * hit.normal) + hit.point),
+					RayCastOrigin = ((0.05f * hit.normal) + hit.point),
 					origin = hit.point,
 					Length = ropeL,
 					Damp = GameUnity.RopeDamping

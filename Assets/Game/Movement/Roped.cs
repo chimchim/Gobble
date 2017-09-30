@@ -34,13 +34,15 @@ namespace Game.Movement
 			float xMovement = 0;
 			float lastAngle = 0;
 			float deltaTimeMult = 1 / Time.deltaTime;
-			if (diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y))
+			if (movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y))
 			{
 				
 				#region First Angle
 				if (!movement.CurrentRoped.FirstAngle)
 				{
-					movement.CurrentRoped.Length = (playerPos - origin).magnitude;
+					if (movement.RopeIndex == 0)
+						movement.CurrentRoped.Length = (playerPos - origin).magnitude;
+
 					len = movement.CurrentRoped.Length;
 					float angle2 = Vector2.Angle((origin - playerPos).normalized, (-Vector2.up));
 					if (origin.x > playerPos.x)
@@ -80,16 +82,16 @@ namespace Game.Movement
 					movement.CurrentVelocity = Vector2.zero;
 					xMovement = playerPos.x - entityGameObject.transform.position.x;
 					yMovement = playerPos.y - entityGameObject.transform.position.y;
-					Debug.Log("firstangle " + angle);
+					movement.CurrentRoped.Angle = angle;
 				}
 				#endregion
 				playerPos.x = origin.x + (-len * Mathf.Sin(angle));
 				playerPos.y = origin.y + (-len * Mathf.Cos(angle));
 				lastAngle = angle - movement.CurrentRoped.Vel;
-				Debug.Log("Speed angle " + angle);
+
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
-				//Debug.Log("Speed " + ((new Vector2(xMovement, yMovement) * deltaTimeMult).magnitude));
+
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
 
@@ -113,11 +115,11 @@ namespace Game.Movement
 				float gravityDivier = Math.Max(1, len);
 				
 				aAcc = (-1 * gravity / gravityDivier) * Mathf.Sin(angle) * Time.deltaTime;
-				Debug.Log("Speed " + ((new Vector2(xMovement, yMovement) * deltaTimeMult).magnitude) + " aAcc " + aAcc + " movement.CurrentRoped.Vel " + movement.CurrentRoped.Vel);
+
 				movement.CurrentRoped.Vel += aAcc;
 				movement.CurrentRoped.Vel *= movement.CurrentRoped.Damp;
 				movement.CurrentRoped.Angle += movement.CurrentRoped.Vel;
-				Debug.Log("movement.CurrentRoped.Angle after  " + movement.CurrentRoped.Angle);
+
 			}
 			#region Else 
 			else
@@ -152,6 +154,8 @@ namespace Game.Movement
 			{
 				if (yMovement > 0)
 				{
+					tempPos = oldPos;
+					entityGameObject.transform.position = oldPos;
 					movement.CurrentRoped.Angle = lastAngle;
 					movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
 				}
@@ -164,6 +168,8 @@ namespace Game.Movement
 			}
 			if (horGrounded && !vertGrounded)
 			{
+				tempPos = oldPos;
+				entityGameObject.transform.position = oldPos;
 				movement.CurrentRoped.Angle = lastAngle;
 				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
 			}
@@ -197,12 +203,13 @@ namespace Game.Movement
 				{
 					float vel = movement.CurrentRoped.Vel;
 					movement.CurrentRoped = oldRope;
-					//movement.CurrentRoped.Vel = vel;
+					movement.CurrentRoped.Vel = vel;
 					movement.RopeList.RemoveAt(movement.RopeIndex);
 					movement.RopeIndex--;
+
 					return false;
 				}
-				Debug.DrawLine(oldRope.RayCastOrigin, movement.CurrentRoped.RayCastCollideOldPos, Color.blue);
+				//Debug.DrawLine(oldRope.RayCastOrigin, movement.CurrentRoped.RayCastCollideOldPos, Color.blue);
 			}
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 			Vector2 direction = playerPos - movement.CurrentRoped.RayCastOrigin;
@@ -217,10 +224,9 @@ namespace Game.Movement
 					var isLeft = IsLeft(movement.CurrentRoped.RayCastOrigin, ((oldPos - movement.CurrentRoped.RayCastOrigin).normalized * 30) + movement.CurrentRoped.RayCastOrigin, playerPos);
 					float ropeL =  (playerPos - secondHit.point).magnitude;
 					movement.CurrentRoped.RayCastCollideOldPos = oldPos;
-					Debug.Log("New rope");
 					movement.CurrentRoped = new Component.Movement.RopedData()
 					{
-						RayCastOrigin = ((0.2f * secondHit.normal) + secondHit.point),
+						RayCastOrigin = ((0.05f * secondHit.normal) + secondHit.point),
 						origin = secondHit.point,
 						Length = ropeL,
 						Damp = GameUnity.RopeDamping,
