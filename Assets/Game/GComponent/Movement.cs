@@ -17,12 +17,16 @@ namespace Game.Component
 		public bool Jumped;
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
+		public List<RopedData> RopeList;
+		public int RopeIndex;
 		public struct RopedData
 		{
 			public float Vel;
 			public float Angle;
 			public Vector2 origin;
 			public Vector2 RayCastOrigin;
+			public Vector2 RayCastCollideOldPos;
+			public bool NewRopeIsLeft;
 			public float Length;
 			public bool FirstAngle;
 			public float Damp;
@@ -57,7 +61,9 @@ namespace Game.Component
 			comp.States[(int)MoveState.FlyingDebug] = new FlyingDebug();
 			comp.States[(int)MoveState.Roped] = new Roped();
 			comp.CurrentState = MoveState.Grounded;
-            return comp;
+			comp.RopeList = new List<RopedData>();
+
+			return comp;
         }
     }
 }
