@@ -18,9 +18,8 @@ namespace Game.Component
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
-		public List<GameObject> RopeLines;
 		public int RopeIndex;
-		public int DrawIndex;
+
 		public struct RopedData
 		{
 			public float Vel;
@@ -28,6 +27,7 @@ namespace Game.Component
 			public Vector2 origin;
 			public Vector2 RayCastOrigin;
 			public Vector2 RayCastCollideOldPos;
+			public Vector2 OldRopeCollidePos;
 			public bool NewRopeIsLeft;
 			public float Length;
 			public bool FirstAngle;
@@ -64,7 +64,6 @@ namespace Game.Component
 			comp.States[(int)MoveState.Roped] = new Roped();
 			comp.CurrentState = MoveState.Grounded;
 			comp.RopeList = new List<RopedData>();
-			comp.RopeLines = new List<GameObject>();
 
 			return comp;
         }

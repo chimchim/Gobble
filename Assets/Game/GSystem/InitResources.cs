@@ -36,30 +36,14 @@ namespace Game.Systems
 				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entity);
 				if (player.Owner)
 				{
-					resources.Ropes = MakeRopes();
-					resources.DrawRopes = true;
+					GameObject Ropes = new GameObject();
+					Ropes.AddComponent<GraphicRope>();
+					Ropes.GetComponent<GraphicRope>().MakeRopes();
+					resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 				}
-				//resources.DrawRopes
 			}
 		}
 
-		private List<GameObject> MakeRopes()
-		{
-			List<GameObject> ropes = new List<GameObject>();
-			var rope = GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/Rope", typeof(GameObject))) as GameObject;
-			ropes.Add(rope);
-			var parent = new GameObject();
-			rope.transform.parent = parent.transform;
-			for (int i = 0; i < 30; i++)
-			{
-				var newRope = GameObject.Instantiate(rope);
-				newRope.transform.parent = parent.transform;
-				newRope.SetActive(false);
-				ropes.Add(newRope);
-			}
-				
-			return ropes;
-		}
 		public void SendMessage(GameManager game, int reciever, Message message)
 		{
 

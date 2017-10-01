@@ -6,9 +6,7 @@ namespace Game.Component
 	public class Resources : GComponent
 	{
 		private static ObjectPool<Resources> _pool = new ObjectPool<Resources>(10);
-
-		public bool DrawRopes;
-		public List<GameObject> Ropes;
+		public GraphicRope GraphicRope;
 		public Resources()
 		{
 

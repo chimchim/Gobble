@@ -17,45 +17,25 @@ namespace Game.Movement
 		}
 		private void DrawRopes(GameManager game, Component.Movement movement, Game.Component.Resources resources, Vector2 position)
 		{
-			for (int i = movement.RopeIndex; i < movement.RopeList.Count; i++)
-			{
-				
-				var rope = movement.RopeList[movement.RopeIndex];
-				Vector2 origin = rope.origin;
-				if (movement.RopeLines.Count < movement.RopeList.Count)
-				{
-					var ropeLine = new GameObject();
-					ropeLine.name = "ropeline";
-					movement.RopeLines.Add(ropeLine);
-					Debug.Log("Add .RopeLines ");
-				}
-				//Debug.Log("movement.RopeIndex origin" + origin);
-				var ropeline = movement.RopeLines[movement.RopeIndex];
-				ropeline.transform.position = origin;
-				ropeline.transform.LookAt(position);
+			int positionAmount = (movement.RopeIndex * 2) + 2;
+			Vector2[] drawPositions = new Vector2[positionAmount];
 
-				Vector2 direction = (position - origin).normalized;
-				float len = (position - origin).magnitude;
-				float ropeAmount = len / 0.51f;
-				float currentRopeXPos = 0;
-				//if(ropeline.)
-				if (ropeAmount > movement.DrawIndex)
-				{
-					if(resources.Ropes.Count < movement.DrawIndex +1)
-					{
-						var ropeSprite = GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/Rope", typeof(GameObject))) as GameObject;
-						resources.Ropes.Add(ropeSprite);
-				
-					}
-					var ropeFromResources = resources.Ropes[movement.DrawIndex];
-					ropeFromResources.SetActive(true);
-					ropeFromResources.transform.parent = ropeline.transform;
-					ropeFromResources.transform.localPosition = new Vector3(0, 0, 0.51f * movement.DrawIndex);
-					ropeFromResources.transform.localEulerAngles= new Vector3(0, -90, 0);
-					movement.DrawIndex++;
-				}
+			drawPositions[0] = movement.RopeList[0].origin;
+			drawPositions[1] = position;
+
+			int currentIndex = 1;
+			for (int i = 1; i < movement.RopeList.Count; i++)
+			{
+				var rope = movement.RopeList[i];
+				drawPositions[currentIndex] = rope.OldRopeCollidePos;
+				currentIndex++;
+				drawPositions[currentIndex] = rope.origin;
+				currentIndex++;
+				drawPositions[currentIndex] = position;
 
 			}
+			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeIndex);
+
 		}
 		public override void Update(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
 		{
@@ -74,7 +54,7 @@ namespace Game.Movement
 			float vel = movement.CurrentRoped.Vel;
 			float angle = movement.CurrentRoped.Angle;
 			float aAcc = 0;
-			Debug.DrawLine(playerPos, movement.CurrentRoped.origin, Color.red);
+			//Debug.DrawLine(playerPos, movement.CurrentRoped.origin, Color.red);
 			float yMovement = 0;
 			float xMovement = 0;
 			float lastAngle = 0;
@@ -209,6 +189,8 @@ namespace Game.Movement
 					movement.RopeList.Clear();
 					movement.RopeIndex = 0;
 					movement.CurrentState = Component.Movement.MoveState.Grounded;
+					resources.GraphicRope.DeActivate();
+					Debug.LogError("HOOK BROOK GROUNDED yMovement " + yMovement + " tempPos " + tempPos + " oldPos " + oldPos);
 				}
 			}
 			if (horGrounded && !vertGrounded)
@@ -276,7 +258,8 @@ namespace Game.Movement
 						Length = ropeL,
 						Damp = GameUnity.RopeDamping,
 						RayCastCollideOldPos = oldPos,
-						NewRopeIsLeft = !isLeft
+						NewRopeIsLeft = !isLeft,
+						OldRopeCollidePos = hit.point
 					};
 					movement.RopeList.Add(movement.CurrentRoped);
 					movement.RopeIndex++;

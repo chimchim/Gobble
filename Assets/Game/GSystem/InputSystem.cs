@@ -23,7 +23,7 @@ namespace Game.Systems
 				{
 					var input = game.Entities.GetComponentOf<Game.Component.Input>(entity);
 					var movement = game.Entities.GetComponentOf<Game.Component.Movement>(entity);
-
+					var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entity);
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					input.Axis = new Vector2(x, y);
@@ -43,6 +43,7 @@ namespace Game.Systems
 						}
 						else if (input.RightClick && movement.CurrentState == Component.Movement.MoveState.Roped)
 						{
+							resources.GraphicRope.DeActivate();
 							movement.RopeList.Clear();
 							movement.RopeIndex = 0;
 							movement.CurrentState = Component.Movement.MoveState.Grounded;
@@ -57,7 +58,7 @@ namespace Game.Systems
 			Vector2 entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
 			Vector2 mousePos = UnityEngine.Input.mousePosition;
 			mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-
+		
 			Vector2 direction = mousePos - entityPos;
 			Debug.DrawRay(entityPos, direction, Color.red);
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
@@ -75,6 +76,7 @@ namespace Game.Systems
 					Length = ropeL,
 					Damp = GameUnity.RopeDamping
 				};
+				
 				movement.RopeList.Add(movement.CurrentRoped);
 			}
 		}
