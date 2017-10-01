@@ -60,17 +60,13 @@ public class GraphicRope : MonoBehaviour {
 				Ropes[drawIndex].position = first + (direction * 0.51f * j) + (direction * 0.255f);
 				nextPos = first + (direction * 0.51f * j);
 				Ropes[drawIndex].localScale = new Vector3(1, 1, 1);
-				//Ropes[drawIndex].LookAt(second);
 				Ropes[drawIndex].right = direction;
-				//Ropes[drawIndex].localEulerAngles = new Vector3(Ropes[drawIndex].eulerAngles.x, -90.1f, Ropes[drawIndex].eulerAngles.z);
 				drawIndex++;
 			}
 			Ropes[drawIndex].position = first + (direction * 0.51f * (ropeAmount -1)) + (direction * 0.255f) + (direction * 0.255f) + (direction * extra/2);
 			Ropes[drawIndex].name = "jerry";
 			Ropes[drawIndex].localScale = new Vector3(extra / 0.51f, Ropes[drawIndex].localScale.y, Ropes[drawIndex].localScale.z);
 			Ropes[drawIndex].right = direction;
-			//Ropes[drawIndex].LookAt(second);
-			//Ropes[drawIndex].localEulerAngles = new Vector3(Ropes[drawIndex].eulerAngles.x, -90.1f, Ropes[drawIndex].eulerAngles.z);
 			drawIndex++;
 		}
 		for (int j = drawIndex; j < Ropes.Count; j++)
