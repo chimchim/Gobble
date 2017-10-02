@@ -24,6 +24,7 @@ namespace Game.Systems
 					var input = game.Entities.GetComponentOf<Game.Component.Input>(entity);
 					var movement = game.Entities.GetComponentOf<Game.Component.Movement>(entity);
 					var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entity);
+					var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					input.Axis = new Vector2(x, y);
@@ -38,8 +39,7 @@ namespace Game.Systems
 
 						if (input.RightClick && movement.CurrentState != Component.Movement.MoveState.Roped)
 						{
-
-							TryRope(game, entity, movement);
+							resources.GraphicRope.ThrowRope(game, entity, movement);
 						}
 						else if (input.RightClick && movement.CurrentState == Component.Movement.MoveState.Roped)
 						{
@@ -50,34 +50,6 @@ namespace Game.Systems
 						}
 					}		
 				}
-			}
-		}
-
-		public static void TryRope(GameManager game, int entity, Component.Movement movement)
-		{
-			Vector2 entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
-			Vector2 mousePos = UnityEngine.Input.mousePosition;
-			mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-		
-			Vector2 direction = mousePos - entityPos;
-			Debug.DrawRay(entityPos, direction, Color.red);
-			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-
-			RaycastHit2D hit = Physics2D.Raycast(entityPos, direction.normalized, GameUnity.RopeLength, layerMask);
-			if (hit.collider != null)
-			{
-				float ropeL = (entityPos - hit.point).magnitude;
-				movement.CurrentState = Component.Movement.MoveState.Roped;
-				
-				movement.CurrentRoped = new Component.Movement.RopedData()
-				{
-					RayCastOrigin = ((0.05f * hit.normal) + hit.point),
-					origin = hit.point,
-					Length = ropeL,
-					Damp = GameUnity.RopeDamping
-				};
-				
-				movement.RopeList.Add(movement.CurrentRoped);
 			}
 		}
 

@@ -35,7 +35,7 @@ public class GameUnity : MonoBehaviour
 	public static float RopeDamping;
 	public static float RopeLength;
 	public static float ForceDamper;
-
+	public static float RopeThrowStartSpeed;
 	[Header("Swim Variables")]
 	public static float WaterJumpSpeed;
 	public static float WaterGravity;
@@ -131,6 +131,7 @@ public class GameUnity : MonoBehaviour
 		RopeDamping = GroundData.RopeDamping;
 		RopeLength = GroundData.RopeLength;
 		ForceDamper = GroundData.ForceDamper;
+		RopeThrowStartSpeed = GroundData.RopeThrowStartSpeed;
 		//Water
 		WaterJumpSpeed = SwimData.WaterJumpSpeed;
 		WaterGravity = SwimData.WaterGravity;

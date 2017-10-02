@@ -175,7 +175,7 @@ namespace Game.Movement
 			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
 			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
 			entityGameObject.transform.position = tempPos;
-			if (vertGrounded)
+			if (vertGrounded && yMovement != 0)
 			{
 				if (yMovement > 0)
 				{
