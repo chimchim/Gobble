@@ -10,7 +10,6 @@ namespace Game.Movement
 {
 	public class Roped : MovementState
 	{
-
 		public override void EnterState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
 		{
 
@@ -59,9 +58,8 @@ namespace Game.Movement
 			float xMovement = 0;
 			float lastAngle = 0;
 			float deltaTimeMult = 1 / Time.deltaTime;
-			if (movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y))
+			if ((movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
 			{
-				
 				#region First Angle
 				if (!movement.CurrentRoped.FirstAngle)
 				{
@@ -126,14 +124,14 @@ namespace Game.Movement
 				{
 					if (input.Axis.x > 0)
 					{
-						gravity += gravity * GameUnity.RopeSpeedMult;
+						gravity += gravity * GameUnity.PlayerSpeed/6;
 					}
 				}
 				if (playerPos.x > origin.x)
 				{
 					if (input.Axis.x < 0)
 					{
-						gravity += gravity * GameUnity.RopeSpeedMult;
+						gravity += gravity * GameUnity.PlayerSpeed/6;
 					}
 				}
 				#endregion
@@ -160,6 +158,19 @@ namespace Game.Movement
 
 				yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
 				xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
+
+				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, 0);
+				if (input.Space && movement.Grounded)
+				{
+					movement.CurrentVelocity.y = GameUnity.JumpSpeed;
+				}
+				if (diffvec.magnitude > len)
+				{
+					movement.CurrentRoped.FirstAngle = false;
+					movement.Grounded = false;
+					return;
+				}
+				
 			} 
 			#endregion
 			stats.OxygenSeconds += Time.deltaTime;
@@ -186,12 +197,22 @@ namespace Game.Movement
 				}
 				else
 				{
-					movement.RopeList.Clear();
-					movement.RopeIndex = 0;
-					movement.CurrentState = Component.Movement.MoveState.Grounded;
-					resources.GraphicRope.DeActivate();
-					Debug.LogError("HOOK BROOK GROUNDED yMovement " + yMovement + " tempPos " + tempPos + " oldPos " + oldPos);
+					movement.ForceVelocity = Vector2.zero;
+					movement.Grounded = true;
+					//movement.RopeList.Clear();
+					//movement.RopeIndex = 0;
+					//movement.CurrentState = Component.Movement.MoveState.Grounded;
+					//resources.GraphicRope.DeActivate();
+					//Debug.LogError("HOOK BROOK GROUNDED yMovement " + yMovement + " tempPos " + tempPos + " oldPos " + oldPos);
 				}
+			}
+			else
+			{	if (movement.Grounded)
+				{
+					movement.CurrentRoped.FirstAngle = false;
+				}
+				movement.Grounded = false;
+				
 			}
 			if (horGrounded && !vertGrounded)
 			{
