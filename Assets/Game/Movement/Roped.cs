@@ -190,6 +190,7 @@ namespace Game.Movement
 			{
 				if (yMovement > 0)
 				{
+					movement.CurrentVelocity.y = 0;
 					tempPos = oldPos;
 					entityGameObject.transform.position = oldPos;
 					movement.CurrentRoped.Angle = lastAngle;
@@ -199,11 +200,6 @@ namespace Game.Movement
 				{
 					movement.ForceVelocity = Vector2.zero;
 					movement.Grounded = true;
-					//movement.RopeList.Clear();
-					//movement.RopeIndex = 0;
-					//movement.CurrentState = Component.Movement.MoveState.Grounded;
-					//resources.GraphicRope.DeActivate();
-					//Debug.LogError("HOOK BROOK GROUNDED yMovement " + yMovement + " tempPos " + tempPos + " oldPos " + oldPos);
 				}
 			}
 			else
@@ -224,7 +220,6 @@ namespace Game.Movement
 
 			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
 
-			movement.Grounded = vertGrounded;
 			movement.FallingTime = 0;
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
 			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
