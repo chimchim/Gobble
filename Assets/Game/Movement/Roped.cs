@@ -53,7 +53,7 @@ namespace Game.Movement
 			float vel = movement.CurrentRoped.Vel;
 			float angle = movement.CurrentRoped.Angle;
 			float aAcc = 0;
-			//Debug.DrawLine(playerPos, movement.CurrentRoped.origin, Color.red);
+
 			float yMovement = 0;
 			float xMovement = 0;
 			float lastAngle = 0;
@@ -159,7 +159,7 @@ namespace Game.Movement
 				yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
 				xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
 
-				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, 0);
+				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, yMovement);
 				if (input.Space && movement.Grounded)
 				{
 					movement.CurrentVelocity.y = GameUnity.JumpSpeed;
@@ -227,6 +227,9 @@ namespace Game.Movement
 			if (hit.collider != null)
 			{
 				movement.CurrentState = Component.Movement.MoveState.Grounded;
+				resources.GraphicRope.DeActivate();
+				movement.RopeList.Clear();
+				movement.RopeIndex = 0;
 			}
 
 		}
@@ -266,6 +269,8 @@ namespace Game.Movement
 				{
 					var isLeft = IsLeft(movement.CurrentRoped.RayCastOrigin, ((oldPos - movement.CurrentRoped.RayCastOrigin).normalized * 30) + movement.CurrentRoped.RayCastOrigin, playerPos);
 					float ropeL =  (playerPos - secondHit.point).magnitude;
+					if (ropeL < 0.5f)
+						return false;
 					movement.CurrentRoped.RayCastCollideOldPos = oldPos;
 					movement.CurrentRoped = new Component.Movement.RopedData()
 					{
