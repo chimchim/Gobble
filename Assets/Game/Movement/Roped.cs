@@ -152,6 +152,7 @@ namespace Game.Movement
 			{
 				movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 				movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
+				if(movement.Grounded)
 				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 
 				movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
