@@ -18,7 +18,9 @@ namespace Game.Movement
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
-
+			var animator = movement.Animator;
+			animator.SetBool("Run", false);
+			animator.SetBool("Roped", false);
 			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
 			
@@ -44,9 +46,14 @@ namespace Game.Movement
 			stats.OxygenSeconds += Time.deltaTime;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
+			if (movement.Grounded && input.Axis.x != 0)
+			{
+				animator.SetBool("Run", true);
+			}
 			if (input.Space && movement.Grounded)
 			{
 				movement.CurrentVelocity.y = GameUnity.JumpSpeed;
+				animator.SetBool("Jump", true);
 			}
 
 			float yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
@@ -65,6 +72,7 @@ namespace Game.Movement
 			movement.Grounded = vertGrounded;
 			if (vertGrounded)
 			{
+				animator.SetBool("Jump", false);
 				if (movement.FallingTime > GameUnity.ExtraFallSpeedAfter)
 				{
 					float fallMulti = movement.FallingTime - GameUnity.ExtraFallSpeedAfter;
@@ -79,6 +87,7 @@ namespace Game.Movement
 			}
 			else
 			{
+				animator.SetBool("Jump", true);
 				if (movement.CurrentVelocity.y < 0)
 				{
 					movement.FallingTime += Time.deltaTime;

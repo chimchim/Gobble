@@ -96,7 +96,7 @@ public class GameUnity : MonoBehaviour
         var player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         player.tag = "Player";
         ent.gameObject = player;
-
+		ent.Animator = player.GetComponentInChildren<Animator>();
 		GetComponent<FollowCamera>().player = player;
 		MiniMap.player = player;
 		entity = ent.ID;

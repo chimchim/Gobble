@@ -21,6 +21,7 @@ public class GraphicRope : MonoBehaviour {
 	public bool UpdateNewRope;
 	Vector2 CurrentVelocity;
 	Vector2[] DrawThrowPositions = new Vector2[2];
+	GameObject RopeFab;
 	void Start ()
 	{
 		UpdateFront = true;
@@ -46,12 +47,12 @@ public class GraphicRope : MonoBehaviour {
 	{
 		List<Transform> ropes = new List<Transform>();
 		FrontRope = (GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/RopeFront", typeof(GameObject))) as GameObject).transform;
-		var rope = GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/Rope", typeof(GameObject))) as GameObject;
-		ropes.Add(rope.transform);
+		RopeFab = GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/Rope", typeof(GameObject))) as GameObject;
+		ropes.Add(RopeFab.transform);
 
 		for (int i = 0; i < 60; i++)
 		{
-			var newRope = GameObject.Instantiate(rope);
+			var newRope = GameObject.Instantiate(RopeFab);
 			newRope.SetActive(true);
 			ropes.Add(newRope.transform);
 		}
@@ -134,12 +135,24 @@ public class GraphicRope : MonoBehaviour {
 
 			for (int j = 0; j < ropeAmount; j++)
 			{
+				if (Ropes.Count < (drawIndex + 1))
+				{
+					var newRope = GameObject.Instantiate(RopeFab);
+					newRope.SetActive(true);
+					Ropes.Add(newRope.transform);
+				}
 				Ropes[drawIndex].name = second.ToString();
 				Ropes[drawIndex].position = first + (direction * 0.51f * j) + (direction * 0.255f);
 				nextPos = first + (direction * 0.51f * j);
 				Ropes[drawIndex].localScale = new Vector3(1, 1, 1);
 				Ropes[drawIndex].right = direction;
 				drawIndex++;
+			}
+			if (Ropes.Count < (drawIndex + 1))
+			{
+				var newRope = GameObject.Instantiate(RopeFab);
+				newRope.SetActive(true);
+				Ropes.Add(newRope.transform);
 			}
 			Ropes[drawIndex].position = first + (direction * 0.51f * (ropeAmount -1)) + (direction * 0.255f) + (direction * 0.255f) + (direction * extra/2);
 			Ropes[drawIndex].name = "jerry";

@@ -13,7 +13,7 @@ namespace Game.Systems
         private float _gravity = 20;
 
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Game.Component.Input>();
-		//				entityGameObject.GetComponent<Animator>().SetBool("Run", false);
+		
 		public void Update(GameManager game)
         {
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
@@ -24,6 +24,12 @@ namespace Game.Systems
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
 
+				float signDir = movement.CurrentVelocity.x + movement.ForceVelocity.x;
+				if (Mathf.Abs(signDir) > 0.1f)
+				{
+					movement.Animator.transform.LookAt(entityGameObject.transform.position + new Vector3(0, 0, signDir));
+				}
+				//if()
 				int currentStateIndex = (int)movement.CurrentState;
 				movement.States[currentStateIndex].Update(game, movement, e, entityGameObject);
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
@@ -100,13 +106,15 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
 				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(e);
+
+				movement.Animator = game.Entities.GetEntity(e).Animator;
 				if (player.Owner)
 				{
 					if (GameUnity.DebugMode)
 					{
 						movement.CurrentState = Component.Movement.MoveState.FlyingDebug;
 					}
-
+					
 					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();
 					oxygenMeter.PlayerStats = stats;
 				}

@@ -17,7 +17,7 @@ namespace Game.GEntity
         public Bitmask Lock { get { return _lock; } }
         public int ID { get { return _id; } }
         public GameObject gameObject;
-
+		public Animator Animator;
 		public Entity()
 		{
             _lock = Bitmask.Zero;

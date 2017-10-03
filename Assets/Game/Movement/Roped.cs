@@ -41,9 +41,11 @@ namespace Game.Movement
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entityID);
-			
+			var animator = movement.Animator;
+			animator.SetBool("Roped", true);
+			animator.SetBool("Run", false);
 			Vector2 playerPos = entityGameObject.transform.position;
-			DrawRopes(game, movement, resources, playerPos);
+			
 			Vector2 currentTranslate = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
 			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;
@@ -108,6 +110,7 @@ namespace Game.Movement
 					movement.CurrentRoped.Angle = angle;
 				}
 				#endregion
+
 				playerPos.x = origin.x + (-len * Mathf.Sin(angle));
 				playerPos.y = origin.y + (-len * Mathf.Cos(angle));
 				lastAngle = angle - movement.CurrentRoped.Vel;
@@ -158,7 +161,10 @@ namespace Game.Movement
 
 				yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
 				xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
-
+				animator.SetBool("Roped", false);
+				animator.SetBool("Jump", false);
+				if(input.Axis.x != 0)
+					animator.SetBool("Run", true);
 				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, yMovement);
 				if (input.Space && movement.Grounded)
 				{
@@ -219,7 +225,7 @@ namespace Game.Movement
 			}
 
 			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
-
+			DrawRopes(game, movement, resources, playerPos);
 			movement.FallingTime = 0;
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
 			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);

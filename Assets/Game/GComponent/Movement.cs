@@ -19,7 +19,7 @@ namespace Game.Component
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
 		public int RopeIndex;
-
+		public Animator Animator;
 		public struct RopedData
 		{
 			public float Vel;
