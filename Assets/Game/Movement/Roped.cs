@@ -21,7 +21,19 @@ namespace Game.Movement
 
 			drawPositions[0] = movement.RopeList[0].origin;
 			drawPositions[1] = position;
-
+			float angle2 = Vector2.Angle((drawPositions[0] - position).normalized, (-Vector2.up));
+			//if (drawPositions[0].x > position.x)
+			//{
+			//	angle2 = (Mathf.PI / 180f) * (180 - angle2);
+			//}
+			//else
+			//{
+			//	angle2 = (Mathf.PI / 180f) * -(180 - angle2);
+			//}
+			Debug.Log("angle2 " + angle2);
+			//movement.Animator.transform.LookAt(position + drawPositions[0]);
+			Vector3 euler = movement.Animator.transform.eulerAngles;
+			movement.Animator.transform.eulerAngles = new Vector3(euler.x, euler.y, angle2-90);
 			int currentIndex = 1;
 			for (int i = 1; i < movement.RopeList.Count; i++)
 			{
@@ -183,8 +195,8 @@ namespace Game.Movement
 			stats.OxygenSeconds += Time.deltaTime;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
-			float xOffset = 0.35f;
-			float yOffset = 0.65f;
+			float xOffset = GameUnity.RopeHitBox.x;
+			float yOffset = GameUnity.RopeHitBox.y;
 
 			bool vertGrounded = false;
 			bool horGrounded = false;
@@ -201,7 +213,7 @@ namespace Game.Movement
 					tempPos = oldPos;
 					entityGameObject.transform.position = oldPos;
 					movement.CurrentRoped.Angle = lastAngle;
-					movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
+					movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 				}
 				else
 				{
@@ -222,7 +234,7 @@ namespace Game.Movement
 				tempPos = oldPos;
 				entityGameObject.transform.position = oldPos;
 				movement.CurrentRoped.Angle = lastAngle;
-				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * 0.3f;
+				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 			}
 
 			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
@@ -276,7 +288,7 @@ namespace Game.Movement
 				{
 					var isLeft = IsLeft(movement.CurrentRoped.RayCastOrigin, ((oldPos - movement.CurrentRoped.RayCastOrigin).normalized * 30) + movement.CurrentRoped.RayCastOrigin, playerPos);
 					float ropeL =  (playerPos - secondHit.point).magnitude;
-					if (ropeL < 0.5f)
+					if (ropeL < 0.9f)
 						return false;
 					movement.CurrentRoped.RayCastCollideOldPos = oldPos;
 					movement.CurrentRoped = new Component.Movement.RopedData()

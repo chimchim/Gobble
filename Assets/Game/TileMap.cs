@@ -148,7 +148,7 @@ public partial class TileMap
 
 				int posX = x + GameUnity.WidhtBound;
 				int posY = y + startY;
-				if (noise < 0.16f)
+				if (noise < 0.16f && GameUnity.GenerateSmallIsland)
 				{
 					GameObject cube = new GameObject();
 					cube.transform.parent = parentCube.transform;

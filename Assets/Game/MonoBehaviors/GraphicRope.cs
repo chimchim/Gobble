@@ -69,7 +69,8 @@ public class GraphicRope : MonoBehaviour {
 
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 			Vector2 playerPos = new Vector2(PlayerTransform.position.x, PlayerTransform.position.y);
-			RaycastHit2D hit = Physics2D.Raycast(NewRopePosition, currentMove.normalized, currentMove.magnitude, layerMask);
+			Vector2 currentL = (NewRopePosition - playerPos);
+			RaycastHit2D hit = Physics2D.Raycast(playerPos, currentL.normalized, (currentMove.magnitude + currentL.magnitude), layerMask);
 			if (hit.collider != null)
 			{
 				float ropeL = (playerPos - hit.point).magnitude;
@@ -122,6 +123,10 @@ public class GraphicRope : MonoBehaviour {
 		}
 		
 		drawIndex = 0;
+
+
+		//drawPositions
+		
 		for (int i = 0; i < drawPositions.Length - 1; i++)
 		{
 			Vector2 first = drawPositions[i];

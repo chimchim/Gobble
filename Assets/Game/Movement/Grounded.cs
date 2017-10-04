@@ -59,8 +59,8 @@ namespace Game.Movement
 			float yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
 			float xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
 
-			float xOffset = 0.35f;
-			float yOffset = 0.65f;
+			float xOffset = GameUnity.GroundHitBox.x;
+			float yOffset = GameUnity.GroundHitBox.y;
 
 			bool vertGrounded = false;
 			bool horGrounded = false;
@@ -99,7 +99,7 @@ namespace Game.Movement
 
 			if(horGrounded)
 			{
-				movement.ForceVelocity.x = -movement.ForceVelocity.x * 0.7f;
+				movement.ForceVelocity.x = 0;
 			}
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
 			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);

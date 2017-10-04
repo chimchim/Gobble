@@ -8,6 +8,7 @@ public class MapVariables : ScriptableObject
 	public bool ShowMiniMap = true;
 	public bool DebugMode = true;
 	public bool CreateWater = true;
+	public bool GenerateSmallIsland = false;
 	public int WaterAmountOneIn = 5;
 	public int WaterSimulations = 9000;
 	public int WaterSimulationsPerUpdate = 3;

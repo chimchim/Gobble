@@ -16,4 +16,5 @@ public class GroundVariables : ScriptableObject
 	public float RopeLength = 30;
 	public float ForceDamper = 0.99f;
 	public float RopeThrowStartSpeed = 35f;
+	public Vector2 GroundHitBox = new Vector2(0.35f, 0.65f);
 }

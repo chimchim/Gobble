@@ -21,7 +21,7 @@ public class GameUnity : MonoBehaviour
 	public MapVariables MapData;
 	public StatsVariables StatsData;
 	public MineralsGenVariables MineralsGen;
-
+	public RopeDataVariables RopeData;
 	[SerializeField]
 	[Header("Gounded Variables")]
 	public static float Weight;
@@ -30,12 +30,18 @@ public class GameUnity : MonoBehaviour
 	public static float Gravity;
 	public static float MaxGravity;
 	public static float ExtraFallSpeedAfter;
+	public static float ForceDamper;
+	public static Vector2 GroundHitBox;
+
+	[Header("Rope Variables")]
 	public static float RopeGravity;
 	public static float RopeSpeedMult;
 	public static float RopeDamping;
 	public static float RopeLength;
-	public static float ForceDamper;
 	public static float RopeThrowStartSpeed;
+	public static float RopeBouncy;
+	public static Vector2 RopeHitBox;
+
 	[Header("Swim Variables")]
 	public static float WaterJumpSpeed;
 	public static float WaterGravity;
@@ -56,6 +62,7 @@ public class GameUnity : MonoBehaviour
 	public static bool DebugMode;
 	public static bool CreateWater;
 	public static bool GenerateIslands;
+	public static bool GenerateSmallIsland;
 	public static int WaterAmountOneIn;
 	public static int WaterSimulations;
 	public static int WaterSimulationsPerUpdate;
@@ -126,12 +133,16 @@ public class GameUnity : MonoBehaviour
 		ExtraFallSpeedAfter = GroundData.ExtraFallSpeedAfter;
 		MaxGravity = GroundData.MaxGravity;
 		Weight = GroundData.Weight;
-		RopeGravity = GroundData.RopeGravity;
-		RopeSpeedMult = GroundData.RopeSpeedMult;
-		RopeDamping = GroundData.RopeDamping;
-		RopeLength = GroundData.RopeLength;
 		ForceDamper = GroundData.ForceDamper;
-		RopeThrowStartSpeed = GroundData.RopeThrowStartSpeed;
+		GroundHitBox = GroundData.GroundHitBox;
+
+		RopeGravity = RopeData.RopeGravity;
+		RopeSpeedMult = RopeData.RopeSpeedMult;
+		RopeDamping = RopeData.RopeDamping;
+		RopeLength = RopeData.RopeLength;
+		RopeThrowStartSpeed = RopeData.RopeThrowStartSpeed;
+		RopeBouncy =  RopeData.RopeBouncy;
+		RopeHitBox = RopeData.RopeHitBox;
 		//Water
 		WaterJumpSpeed = SwimData.WaterJumpSpeed;
 		WaterGravity = SwimData.WaterGravity;
@@ -152,6 +163,7 @@ public class GameUnity : MonoBehaviour
 		DebugMode = MapData.DebugMode;
 		CreateWater = MapData.CreateWater;
 		GenerateIslands = MapData.GenerateIslands;
+		GenerateSmallIsland = MapData.GenerateSmallIsland;
 		WaterAmountOneIn = MapData.WaterAmountOneIn;
 		WaterSimulations = MapData.WaterSimulations;
 		WaterSimulationsPerUpdate = MapData.WaterSimulationsPerUpdate;

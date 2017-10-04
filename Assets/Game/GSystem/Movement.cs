@@ -27,7 +27,9 @@ namespace Game.Systems
 				float signDir = movement.CurrentVelocity.x + movement.ForceVelocity.x;
 				if (Mathf.Abs(signDir) > 0.1f)
 				{
-					movement.Animator.transform.LookAt(entityGameObject.transform.position + new Vector3(0, 0, signDir));
+					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
+					movement.Animator.transform.eulerAngles = new Vector3(movement.Animator.transform.eulerAngles.x, mult * 180, movement.Animator.transform.eulerAngles.z);
+					//movement.Animator.transform.LookAt(entityGameObject.transform.position + new Vector3(0, 0, signDir));
 				}
 				//if()
 				int currentStateIndex = (int)movement.CurrentState;
