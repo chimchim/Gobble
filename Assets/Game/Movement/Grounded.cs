@@ -33,7 +33,7 @@ namespace Game.Movement
 			float signedCombinedSpeed = Mathf.Sign(movement.ForceVelocity.x + input.Axis.x * GameUnity.PlayerSpeed);
 			float forceXSpeed = Mathf.Abs(movement.ForceVelocity.x);
 
-			if (combinedSpeed > GameUnity.PlayerSpeed)
+			if (combinedSpeed > GameUnity.PlayerSpeed && !movement.Grounded)
 			{
 
 				movement.ForceVelocity.x = signedCombinedSpeed * forceXSpeed;
@@ -81,7 +81,10 @@ namespace Game.Movement
 					fallDamage.Recycle();
 				}
 				movement.ForceVelocity.y = 0;
-				movement.ForceVelocity.x = 0;
+				if (yMovement < 0)
+				{
+					movement.ForceVelocity.x *= 0.88f;
+				}
 				movement.FallingTime = 0;
 				movement.CurrentVelocity.y = 0;
 			}
@@ -97,7 +100,6 @@ namespace Game.Movement
 			if(horGrounded)
 			{
 				movement.ForceVelocity.x = -movement.ForceVelocity.x * 0.7f;
-
 			}
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
 			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
