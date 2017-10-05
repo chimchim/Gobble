@@ -21,19 +21,7 @@ namespace Game.Movement
 
 			drawPositions[0] = movement.RopeList[0].origin;
 			drawPositions[1] = position;
-			float angle2 = Vector2.Angle((drawPositions[0] - position).normalized, (-Vector2.up));
-			//if (drawPositions[0].x > position.x)
-			//{
-			//	angle2 = (Mathf.PI / 180f) * (180 - angle2);
-			//}
-			//else
-			//{
-			//	angle2 = (Mathf.PI / 180f) * -(180 - angle2);
-			//}
-			Debug.Log("angle2 " + angle2);
-			//movement.Animator.transform.LookAt(position + drawPositions[0]);
-			Vector3 euler = movement.Animator.transform.eulerAngles;
-			movement.Animator.transform.eulerAngles = new Vector3(euler.x, euler.y, angle2-90);
+
 			int currentIndex = 1;
 			for (int i = 1; i < movement.RopeList.Count; i++)
 			{
@@ -115,6 +103,7 @@ namespace Game.Movement
 					float velDivider = movement.CurrentRoped.Vel / ropeSpeed;
 					float newVel = Mathf.Abs(velDivider) * Mathf.Abs(newSpeed) * ropeDirection; // 6 = New ropeSpeed
 					movement.CurrentRoped.Vel = newVel;
+					Debug.Log("New rope NEW SPEED   " + newSpeed + " newVel " + newVel);
 					angle += newVel;
 					movement.CurrentVelocity = Vector2.zero;
 					xMovement = playerPos.x - entityGameObject.transform.position.x;
@@ -130,6 +119,7 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
+				Debug.Log("currentSpeed  " + new Vector2(xMovement, yMovement).magnitude * deltaTimeMult + " current Vel " + movement.CurrentRoped.Vel);
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
 
