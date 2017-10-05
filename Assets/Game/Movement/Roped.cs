@@ -90,8 +90,9 @@ namespace Game.Movement
 					
 					float velXDir = newXVel * -Mathf.Sign(Mathf.Cos(angle));
 					float velYDir = newYVel * Mathf.Sign(Mathf.Sin(angle));
-
+					
 					float newSpeed = velXDir + velYDir;
+					movement.CurrentRoped.Vel = (newSpeed * Time.deltaTime/len);
 					float ropeDirection = Mathf.Sign(newSpeed);
 
 					float tempAngle = movement.CurrentRoped.Vel + angle;
@@ -103,7 +104,7 @@ namespace Game.Movement
 					float velDivider = movement.CurrentRoped.Vel / ropeSpeed;
 					float newVel = Mathf.Abs(velDivider) * Mathf.Abs(newSpeed) * ropeDirection; // 6 = New ropeSpeed
 					movement.CurrentRoped.Vel = newVel;
-					Debug.Log("New rope NEW SPEED   " + newSpeed + " newVel " + newVel);
+
 					angle += newVel;
 					movement.CurrentVelocity = Vector2.zero;
 					xMovement = playerPos.x - entityGameObject.transform.position.x;
@@ -119,7 +120,7 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
-				Debug.Log("currentSpeed  " + new Vector2(xMovement, yMovement).magnitude * deltaTimeMult + " current Vel " + movement.CurrentRoped.Vel);
+				//Debug.Log("currentSpeed  " + new Vector2(xMovement, yMovement).magnitude * deltaTimeMult + " current Vel " + movement.CurrentRoped.Vel);
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
 
