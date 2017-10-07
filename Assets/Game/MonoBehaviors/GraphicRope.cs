@@ -75,17 +75,17 @@ public class GraphicRope : MonoBehaviour {
 			{
 				float ropeL = (playerPos - hit.point).magnitude;
 				PlayerMovement.CurrentState = Movement.MoveState.Roped;
-
 				PlayerMovement.CurrentRoped = new Movement.RopedData()
 				{
 					RayCastOrigin = ((0.05f * hit.normal) + hit.point),
 					origin = hit.point,
 					Length = ropeL,
+					FirstLen = ropeL,
 					Damp = GameUnity.RopeDamping
 				};
 				UpdateNewRope = false;
 				UpdateFront = true;
-				PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
+				//PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
 				return;
 			}
 			
@@ -100,7 +100,7 @@ public class GraphicRope : MonoBehaviour {
 	public void ThrowRope(GameManager game, int entity, Movement movement)
 	{
 		DeActivate();
-
+		movement.RopeColList.Clear();
 		PlayerTransform  = game.Entities.GetEntity(entity).gameObject.transform;
 		PlayerMovement = movement;
 		Vector2 mousePos = UnityEngine.Input.mousePosition;

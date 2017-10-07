@@ -19,10 +19,12 @@ namespace Game.Component
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
+		public List<RopeCol> RopeColList;
 		public int RopeIndex;
 		public Animator Animator;
 		public class RopedData
 		{
+			public float FirstLen;
 			public float Vel;
 			public float Angle;
 			public Vector2 origin;
@@ -34,7 +36,13 @@ namespace Game.Component
 			public bool FirstAngle;
 			public float Damp;
 		}
-
+		public struct RopeCol
+		{
+			public Vector2 origin;
+			public Vector2 RayCastOrigin;
+			public Vector2 RayCastCollideOldPos;
+			public bool NewRopeIsLeft;
+		}
 		public enum MoveState
 		{
 			Grounded,
@@ -65,7 +73,7 @@ namespace Game.Component
 			comp.States[(int)MoveState.Roped] = new RopedNew();
 			comp.CurrentState = MoveState.Grounded;
 			comp.RopeList = new List<RopedData>();
-
+			comp.RopeColList = new List<RopeCol>();
 			return comp;
         }
     }
