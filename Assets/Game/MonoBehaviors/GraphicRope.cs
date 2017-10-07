@@ -88,7 +88,9 @@ public class GraphicRope : MonoBehaviour {
 				PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
 				return;
 			}
+			
 			NewRopePosition += currentMove;
+			return;
 			DrawThrowPositions[0] = NewRopePosition;
 			DrawThrowPositions[1] = playerPos;
 			UpdateFront = true;

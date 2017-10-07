@@ -14,13 +14,14 @@ namespace Game.Component
 
 		public Vector2 CurrentVelocity;
 		public Vector2 ForceVelocity;
+		public Vector2 RopeForce;
 		public bool Jumped;
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
 		public int RopeIndex;
 		public Animator Animator;
-		public struct RopedData
+		public class RopedData
 		{
 			public float Vel;
 			public float Angle;
@@ -61,7 +62,7 @@ namespace Game.Component
 			comp.States[(int)MoveState.Swimming] = new Swim();
 			comp.States[(int)MoveState.Floating] = new Floating();
 			comp.States[(int)MoveState.FlyingDebug] = new FlyingDebug();
-			comp.States[(int)MoveState.Roped] = new Roped();
+			comp.States[(int)MoveState.Roped] = new RopedNew();
 			comp.CurrentState = MoveState.Grounded;
 			comp.RopeList = new List<RopedData>();
 
