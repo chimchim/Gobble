@@ -60,7 +60,8 @@ namespace Game.Movement
 			float xMovement = 0;
 			float lastAngle = 0;
 			float deltaTimeMult = 1 / Time.deltaTime;
-			if ((movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
+			//Debug.Log((movement.RopeIndex > 0) + " + " + (diff > len) + " + " + (movement.CurrentRoped.FirstAngle) + " + " + ((currentTranslate.y < 0 && playerPos.y < origin.y)) + " + " + !movement.Grounded);
+			if ((oldRoped || movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
 			{
 				#region First Angle
 				if (!movement.CurrentRoped.FirstAngle)
@@ -104,12 +105,13 @@ namespace Game.Movement
 					float velDivider = movement.CurrentRoped.Vel / ropeSpeed;
 					float newVel = Mathf.Abs(velDivider) * Mathf.Abs(newSpeed) * ropeDirection; // 6 = New ropeSpeed
 					movement.CurrentRoped.Vel = newVel;
-
+					
 					angle += newVel;
 					movement.CurrentVelocity = Vector2.zero;
 					xMovement = playerPos.x - entityGameObject.transform.position.x;
 					yMovement = playerPos.y - entityGameObject.transform.position.y;
 					movement.CurrentRoped.Angle = angle;
+					//Debug.Log("newspeed " + newSpeed + " newVel " + movement.CurrentRoped.Vel);
 				}
 				#endregion
 
@@ -227,7 +229,7 @@ namespace Game.Movement
 				movement.CurrentRoped.Angle = lastAngle;
 				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 			}
-
+			oldRoped = false;
 			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
 			DrawRopes(game, movement, resources, playerPos);
 			movement.FallingTime = 0;
@@ -247,6 +249,7 @@ namespace Game.Movement
 		{
 			return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) > 0;
 		}
+		bool oldRoped = false;
 		private bool CheckRopeCollision(Vector2 oldPos, Vector2 playerPos, Component.Movement movement, float lastAngle)
 		{
 
@@ -262,7 +265,8 @@ namespace Game.Movement
 					movement.CurrentRoped.Vel = vel;
 					movement.RopeList.RemoveAt(movement.RopeIndex);
 					movement.RopeIndex--;
-
+					Debug.Log("Set old rope");
+					oldRoped = true;
 					return false;
 				}
 				//Debug.DrawLine(oldRope.RayCastOrigin, movement.CurrentRoped.RayCastCollideOldPos, Color.blue);
