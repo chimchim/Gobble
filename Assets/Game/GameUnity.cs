@@ -13,7 +13,6 @@ using System;
 
 public class GameUnity : MonoBehaviour 
 {
-    public GameObject Prefab;
 	GameManager game = new GameManager();
 
 	public SwimVariables SwimData;
@@ -22,6 +21,7 @@ public class GameUnity : MonoBehaviour
 	public StatsVariables StatsData;
 	public MineralsGenVariables MineralsGen;
 	public RopeDataVariables RopeData;
+	public PrefabsVariables PrefabData;
 	[SerializeField]
 	[Header("Gounded Variables")]
 	public static float Weight;
@@ -78,12 +78,11 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
 
-
+	public GameObject MenuObject;
 	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
-	private int entity;
 	private bool _miniMapActive = true;
 	void Start () 
 	{
@@ -92,25 +91,46 @@ public class GameUnity : MonoBehaviour
 		StartingPosition = StartPos.position;
 
 		SetFamilyID();
+		if (!MapData.UseMenu)
+		{
+			CreatePlayer(true);
+			game.Systems.CurrentGameState = SystemManager.GameState.Game;
+		}
+		else
+		{
+			MenuObject.SetActive(true);
+			game.Systems.CurrentGameState = SystemManager.GameState.Menu;
+		}
+		game.Systems.CreateSystems();
+		game.Initiate();
+	}
+
+	public void CreatePlayer(bool owner)
+	{
 		Entity ent = new Entity();
 		game.Entities.addEntity(ent);
-        ent.AddComponent(ActionQueue.Make(ent.ID));
+		ent.AddComponent(ActionQueue.Make(ent.ID));
 		ent.AddComponent(Game.Component.Movement.Make(ent.ID));
 		ent.AddComponent(Stats.Make(ent.ID, 100, OxygenTime, OxygenTime));
 		ent.AddComponent(Game.Component.Input.Make(ent.ID));
 		ent.AddComponent(Game.Component.Resources.Make(ent.ID));
-		ent.AddComponent(Player.Make(ent.ID, true));
-        var player = Instantiate(Prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-        player.tag = "Player";
-        ent.gameObject = player;
+		ent.AddComponent(Player.Make(ent.ID, owner));
+		var player = Instantiate(PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+		player.tag = "Player";
+		ent.gameObject = player;
 		ent.Animator = player.GetComponentInChildren<Animator>();
+
+		if (owner)
+		{
+			GetComponent<FollowCamera>().player = player;
+			MiniMap.player = player;
+		}
+	}
+	public void SetMainPlayer(GameObject player)
+	{
 		GetComponent<FollowCamera>().player = player;
 		MiniMap.player = player;
-		entity = ent.ID;
-        game.Systems.CreateSystems();
-        game.Initiate();
 	}
-
 	void Update () 
 	{
         game.Update(Time.deltaTime);
@@ -126,7 +146,6 @@ public class GameUnity : MonoBehaviour
 
 	private void SetVariables()
 	{
-		//ground
 		PlayerSpeed = GroundData.PlayerSpeed;
 		JumpSpeed = GroundData.JumpSpeed;
 		Gravity = GroundData.Gravity;

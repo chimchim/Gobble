@@ -23,6 +23,8 @@ public class OxygenMeter : MonoBehaviour
 
 	void Update()
 	{
+		if (PlayerStats == null)
+			return;
 		float size = (PlayerStats.OxygenSeconds / PlayerStats.MaxOxygenSeconds);
 		if (size < 1)
 		{

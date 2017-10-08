@@ -9,6 +9,7 @@ public class MapVariables : ScriptableObject
 	public bool DebugMode = true;
 	public bool CreateWater = true;
 	public bool GenerateSmallIsland = false;
+	public bool UseMenu = false;
 	public int WaterAmountOneIn = 5;
 	public int WaterSimulations = 9000;
 	public int WaterSimulationsPerUpdate = 3;
@@ -20,6 +21,6 @@ public class MapVariables : ScriptableObject
 	public int TopBoundOffset = 4;
 	public int MiniMapBoundryX = 6;
 	public int MiniMapBoundryY = 6;
-
+	
 
 }

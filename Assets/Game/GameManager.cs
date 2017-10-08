@@ -21,14 +21,37 @@ namespace Game
         public ParticleManager Particles { get { return _particleManager; } }
 
 		public TileMap TileMap;
+		private GameUnity _gameUnity;
+		public Client Client;
+		public void CreatePlayer(bool owner)
+		{
+			Entity ent = new Entity();
+			this.Entities.addEntity(ent);
+			ent.AddComponent(ActionQueue.Make(ent.ID));
+			ent.AddComponent(Game.Component.Movement.Make(ent.ID));
+			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
+			ent.AddComponent(Game.Component.Input.Make(ent.ID));
+			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+			ent.AddComponent(Player.Make(ent.ID, owner));
+			var player = GameObject.Instantiate(_gameUnity.PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+			player.tag = "Player";
+			ent.gameObject = player;
+			ent.Animator = player.GetComponentInChildren<Animator>();
+			if (ent.Animator)
+				Debug.Log("animator exists");
+			if (owner)
+			{
+				_gameUnity.SetMainPlayer(player);
+			}
+		}
 		public GameManager()
 		{
-            
+			
 		}
 
         public void Update(float delta)
         { 
-			_systemManager.UpdateAll(this, delta);
+			_systemManager.NormalUpdate(this, delta);
 
 			if (GameUnity.CreateWater)
 			{
@@ -41,21 +64,8 @@ namespace Game
 		}
 		public void Initiate()
 		{
-			var watch = System.Diagnostics.Stopwatch.StartNew();
-			TileMap = new TileMap();
-			TileMap.InitiateMap();
-			TileMap.GenerateMinerals();
-			watch.Stop();
-			var elapsedMs = watch.ElapsedMilliseconds;
-			Debug.Log("InitiateMap Time " + elapsedMs);
-			watch.Start();
-
-			TileMap.InitiateWater();
-			watch.Stop();
-			elapsedMs = watch.ElapsedMilliseconds;
-			Debug.Log("InitiateWater Time " + elapsedMs);
-			watch.Start();
-
+			_gameUnity = GameObject.FindObjectOfType<GameUnity>();
+			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 		}
         public void SendMessage(int id, Message mess)

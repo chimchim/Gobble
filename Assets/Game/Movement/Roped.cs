@@ -132,14 +132,14 @@ namespace Game.Movement
 				{
 					if (input.Axis.x > 0)
 					{
-						gravity += gravity * GameUnity.PlayerSpeed/6;
+						gravity += gravity * GameUnity.PlayerSpeed/6 * GameUnity.RopeSpeedMult;
 					}
 				}
 				if (playerPos.x > origin.x)
 				{
 					if (input.Axis.x < 0)
 					{
-						gravity += gravity * GameUnity.PlayerSpeed/6;
+						gravity += gravity * GameUnity.PlayerSpeed/6 * GameUnity.RopeSpeedMult;
 					}
 				}
 				#endregion
@@ -265,7 +265,6 @@ namespace Game.Movement
 					movement.CurrentRoped.Vel = vel;
 					movement.RopeList.RemoveAt(movement.RopeIndex);
 					movement.RopeIndex--;
-					Debug.Log("Set old rope");
 					oldRoped = true;
 					return false;
 				}

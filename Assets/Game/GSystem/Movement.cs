@@ -110,6 +110,7 @@ namespace Game.Systems
 				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(e);
 
 				movement.Animator = game.Entities.GetEntity(e).Animator;
+				Debug.Log("initiate aniamtor");
 				if (player.Owner)
 				{
 					if (GameUnity.DebugMode)
