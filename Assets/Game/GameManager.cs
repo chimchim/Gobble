@@ -53,7 +53,7 @@ namespace Game
         { 
 			_systemManager.NormalUpdate(this, delta);
 
-			if (GameUnity.CreateWater)
+			if (GameUnity.CreateWater && TileMap != null)
 			{
 				TileMap.UpdateWater();
 			}

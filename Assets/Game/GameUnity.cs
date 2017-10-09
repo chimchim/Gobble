@@ -95,6 +95,7 @@ public class GameUnity : MonoBehaviour
 		{
 			CreatePlayer(true);
 			game.Systems.CurrentGameState = SystemManager.GameState.Game;
+			MenuObject.SetActive(false);
 		}
 		else
 		{

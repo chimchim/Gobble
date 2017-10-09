@@ -32,8 +32,7 @@ namespace Game.Actions
 			stats.HP = Mathf.Clamp(stats.HP, 0, GameUnity.MaxHP);
 			if (player.Owner)
 			{
-				var hpBar = GameObject.FindObjectOfType<HpBar>();
-				hpBar.SetHP(stats.HP);
+				stats.HpBar.SetHP(stats.HP);
 			}
 		}
 

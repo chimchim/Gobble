@@ -10,6 +10,7 @@ namespace Game.Component
 		public float OxygenSeconds;
 		public float MaxOxygenSeconds;
 		public bool Alive;
+		public HpBar HpBar;
 		public Stats()
 		{
 

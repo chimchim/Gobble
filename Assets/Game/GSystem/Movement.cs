@@ -119,6 +119,10 @@ namespace Game.Systems
 					}
 					
 					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();
+					var hpbar = GameObject.FindObjectOfType<HpBar>();
+					stats.HpBar = hpbar;
+					stats.HpBar.Bar.gameObject.SetActive(true);
+					oxygenMeter.gameObject.SetActive(true);
 					oxygenMeter.PlayerStats = stats;
 				}
 			}

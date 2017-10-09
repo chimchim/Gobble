@@ -7,14 +7,13 @@ public class HpBar : MonoBehaviour
 {
 
 	// Use this for initialization
-	public Image BackGround;
 	public Sprite FullHeart;
 	public Sprite HalfHeart;
 	public Sprite EmpyHeart;
 	private List<Image> _items = new List<Image>();
 	public int HeartAmount;
 	public GameObject Template;
-
+	public GameObject Bar;
 	public void SetHP(float hp)
 	{
 		hp = Mathf.Max(hp, 0);
@@ -45,7 +44,7 @@ public class HpBar : MonoBehaviour
 		for (int i = 0; i < HeartAmount; i++)
 		{
 			var go = Instantiate(Template);
-			go.transform.parent = transform;
+			go.transform.parent = Bar.transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
 			go.GetComponent<Image>().sprite = FullHeart;
 			_items.Add(go.GetComponent<Image>());
