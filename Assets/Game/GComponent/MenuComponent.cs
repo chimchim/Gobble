@@ -8,6 +8,7 @@ namespace Game.Component
 		private static ObjectPool<MenuComponent> _pool = new ObjectPool<MenuComponent>(10);
 		public MenuGUI Menu;
 		public int PlayerAmount;
+
 		public MenuComponent()
 		{
 

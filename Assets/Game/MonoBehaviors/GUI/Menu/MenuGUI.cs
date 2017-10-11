@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,12 +14,14 @@ public class MenuGUI : MonoBehaviour {
 	public InputField IP;
 	public InputField Port;
 	public InputField Name;
+
 	void Start ()
 	{
 
 	}
-	
+
 	// Update is called once per frame
+
 	void Update ()
 	{
 		if (Multiplayer.Clicked)
@@ -36,6 +39,10 @@ public class MenuGUI : MonoBehaviour {
 		if (Join.Clicked)
 		{
 			Join.Clicked = false;
+		}
+		if (Local.Clicked)
+		{
+			Local.Clicked = false;
 		}
 	}
 }

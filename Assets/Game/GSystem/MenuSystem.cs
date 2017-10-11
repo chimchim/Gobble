@@ -10,7 +10,8 @@ namespace Game.Systems
 	{
 		private readonly Bitmask _playerBitmask = Bitmask.MakeFromComponents<Player>();
 		private readonly Bitmask _menuBitmask = Bitmask.MakeFromComponents<MenuComponent>();
-		
+
+		MenuComponent _menu;
 		public void Update(GameManager game)
 		{
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
@@ -22,35 +23,26 @@ namespace Game.Systems
 
 				}
 			}
-			var menu = game.Entities.GetEntitiesWithComponents(_menuBitmask);
-			bool goLocal = false;
-			foreach (int entity in menu)
-			{
-				var menuComp = game.Entities.GetComponentOf<MenuComponent>(entity);
-				if (menuComp.Menu.Local.Clicked)
-				{
-					goLocal = true;
-					menuComp.Menu.gameObject.SetActive(false);
-				}
-				if (menuComp.Menu.Join.Clicked)
-				{
-					string ip = menuComp.Menu.IP.text;
-					int port = int.Parse(menuComp.Menu.Port.text);
-					string name = menuComp.Menu.Name.text;
-					Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name);
 
-					game.Client = new Client();
-					game.Client.TryJoin(ip, port, name);
-					game.Client.BeginToRecieve();
-
-				}
-			}
-			if (goLocal)
+			if (_menu.Menu.Local.Clicked)
 			{
+				_menu.Menu.gameObject.SetActive(false);
 				game.Systems.ChangeState(game, SystemManager.GameState.Game);
 				game.CreatePlayer(true);
-				
 			}
+			if (_menu.Menu.Join.Clicked)
+			{
+				string ip = _menu.Menu.IP.text;
+				int port = int.Parse(_menu.Menu.Port.text);
+				string name = _menu.Menu.Name.text;
+				Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name);
+
+				//game.Client = new Client();
+				//game.Client.TryJoin(ip, port, name);
+				//game.Client.BeginToRecieve();
+
+			}
+			
 		}
 
 		public void Initiate(GameManager game)
@@ -60,7 +52,7 @@ namespace Game.Systems
 			var menu = MenuComponent.Make(ent.ID);
 			ent.AddComponent(menu);
 			menu.Menu = GameObject.FindObjectOfType<MenuGUI>();
-			//game.Systems.ChangeState(game, SystemManager.GameState.Game);
+			_menu = menu;
 		}
 
 
