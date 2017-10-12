@@ -23,6 +23,15 @@ namespace Game
 		public TileMap TileMap;
 		private GameUnity _gameUnity;
 		public Client Client;
+
+		public void CreateEmptyPlayer(bool owner, string name, bool isHost)
+		{
+			Entity ent = new Entity();
+			this.Entities.addEntity(ent);
+			ent.AddComponent(Player.Make(ent.ID, owner, name, isHost));
+			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost);
+		}
 		public void CreatePlayer(bool owner)
 		{
 			Entity ent = new Entity();

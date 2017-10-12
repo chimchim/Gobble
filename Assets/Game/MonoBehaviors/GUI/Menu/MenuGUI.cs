@@ -10,6 +10,9 @@ public class MenuGUI : MonoBehaviour {
 	public LocalGame Local;
 	public MultiplayerGame Multiplayer;
 	public JoinGame Join;
+	public CharacterSelection CharacterSelection;
+	public GameLobby GameLobby;
+
 	public GameObject MultiPlayerSection;
 	public InputField IP;
 	public InputField Port;
@@ -21,7 +24,11 @@ public class MenuGUI : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-
+	public void ActivateGameLobby()
+	{
+		CharacterSelection.gameObject.SetActive(true);
+		GameLobby.gameObject.SetActive(true);
+	}
 	void Update ()
 	{
 		if (Multiplayer.Clicked)

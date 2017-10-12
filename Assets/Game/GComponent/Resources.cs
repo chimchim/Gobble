@@ -7,6 +7,8 @@ namespace Game.Component
 	{
 		private static ObjectPool<Resources> _pool = new ObjectPool<Resources>(10);
 		public GraphicRope GraphicRope;
+		public string Character;
+
 		public Resources()
 		{
 

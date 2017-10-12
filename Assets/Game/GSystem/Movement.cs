@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
 using Game.Actions;
-using UnityEditor;
 
 namespace Game.Systems
 {
@@ -29,9 +28,9 @@ namespace Game.Systems
 				{
 					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
 					movement.Animator.transform.eulerAngles = new Vector3(movement.Animator.transform.eulerAngles.x, mult * 180, movement.Animator.transform.eulerAngles.z);
-					//movement.Animator.transform.LookAt(entityGameObject.transform.position + new Vector3(0, 0, signDir));
+
 				}
-				//if()
+
 				int currentStateIndex = (int)movement.CurrentState;
 				movement.States[currentStateIndex].Update(game, movement, e, entityGameObject);
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);

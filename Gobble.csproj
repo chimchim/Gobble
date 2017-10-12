@@ -122,6 +122,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\FollowCamera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\HpBar.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ChangeTeamButton.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\CharacterSelection.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ChooseCharacter.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\GameLobby.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\JoinGame.cs" />

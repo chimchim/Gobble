@@ -25,7 +25,8 @@ using UnityEngine;
 		public int MyID = -1;
 		public List<OtherClient> Others = new List<OtherClient>();
 
-		List<byte> _currentByteArray = new List<byte>();
+		public List<byte[]> _currentByteData = new List<byte[]>();
+		public List<byte> _currentByteArray = new List<byte>();
 		byte[] byteData = new byte[1024];
 
 		public void TryJoin(string serverIP, int port, string name)
@@ -171,11 +172,13 @@ using UnityEngine;
 						break;
 
 					case Data.Command.List:
-					/*
+
+						_currentByteData.Add(byteData);
 						int clientCount = BitConverter.ToInt32(byteData, 1);
 						int currentByteIndex = 1;
 
 						currentByteIndex += sizeof(int);
+						Debug.Log("clientCount " + clientCount);
 						for (int i = 0; i < clientCount; i++)
 						{
 
@@ -185,31 +188,31 @@ using UnityEngine;
 							currentByteIndex += nameLen;
 							if (name == MyName)
 							{
-								if (MyID == -1)
-								{
-									GameManager.Instance.AddPlayer(i, name, true);
-									MyID = i;
-								}
+								//if (MyID == -1)
+								//{
+								//	GameManager.Instance.AddPlayer(i, name, true);
+								//	MyID = i;
+								//}
 							}
 							else
 							{
-								bool alreadyJoined = false;
-								for (int j = 0; j < Others.Count; j++)
-								{
-									if (Others[j].ClientID == i)
-									{
-										alreadyJoined = true;
-									}
-								}
-								if (!alreadyJoined)
-								{
-									Debug.WriteLine("OtherClient " + i);
-									var newClient = new OtherClient(i, name);
-									Others.Add(newClient);
-									GameManager.Instance.AddPlayer(i, name, false);
-								}
+								//bool alreadyJoined = false;
+								//for (int j = 0; j < Others.Count; j++)
+								//{
+								//	if (Others[j].ClientID == i)
+								//	{
+								//		alreadyJoined = true;
+								//	}
+								//}
+								//if (!alreadyJoined)
+								//{
+								//	Debug.WriteLine("OtherClient " + i);
+								//	var newClient = new OtherClient(i, name);
+								//	Others.Add(newClient);
+								//	GameManager.Instance.AddPlayer(i, name, false);
+								//}
 							}
-						}*/
+						}
 						break;
 				}
 

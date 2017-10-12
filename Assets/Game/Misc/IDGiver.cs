@@ -21,7 +21,10 @@ namespace Game.Misc
 				return nextID++;
 			}
 		}
-
+		public static int GetCurrentID()
+		{
+			return nextID;
+		}
 		public static void FreeID(int id)
 		{
 			freeIDs.Add(id);

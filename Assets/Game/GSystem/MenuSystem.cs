@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
+using Game.Misc;
+using System;
+using System.Text;
 
 namespace Game.Systems
 {
@@ -14,6 +17,16 @@ namespace Game.Systems
 		MenuComponent _menu;
 		public void Update(GameManager game)
 		{
+			for (int i = 0; i < game.Client._currentByteData.Count; i++)
+			{
+				byte[] byteData = game.Client._currentByteData[i];
+				Data.Command cmd = (Data.Command)byteData[0];
+				if (cmd == Data.Command.List)
+				{
+					CheckList(game, _menu, byteData);
+				}
+			}
+			game.Client._currentByteData.Clear();
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
 			foreach (int entity in players)
 			{
@@ -35,14 +48,38 @@ namespace Game.Systems
 				string ip = _menu.Menu.IP.text;
 				int port = int.Parse(_menu.Menu.Port.text);
 				string name = _menu.Menu.Name.text;
-				Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name);
+				Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name + " currentid " + IDGiver.GetCurrentID());
 
-				//game.Client = new Client();
-				//game.Client.TryJoin(ip, port, name);
-				//game.Client.BeginToRecieve();
+				game.Client.TryJoin(ip, port, name);
+				game.Client.BeginToRecieve();
 
 			}
 			
+		}
+
+		private void CheckList(GameManager game, MenuComponent menu, byte[] byteData)
+		{
+			int clientCount = BitConverter.ToInt32(byteData, 1);
+			int currentByteIndex = 1;
+
+			currentByteIndex += sizeof(int);
+			if (menu.PlayerAmount == 0)
+			{
+				menu.Menu.ActivateGameLobby();
+			}
+			for (int i = menu.PlayerAmount; i < clientCount; i++)
+			{
+
+				int nameLen = BitConverter.ToInt32(byteData, currentByteIndex);
+				currentByteIndex += sizeof(int);
+				var name = Encoding.UTF8.GetString(byteData, currentByteIndex, nameLen);
+				currentByteIndex += nameLen;
+				bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
+				bool isHost = clientCount == 1;
+				menu.IsHost = isHost;
+				game.CreateEmptyPlayer(isOwner, name, isHost);
+			}
+			menu.PlayerAmount = clientCount;
 		}
 
 		public void Initiate(GameManager game)
@@ -53,6 +90,7 @@ namespace Game.Systems
 			ent.AddComponent(menu);
 			menu.Menu = GameObject.FindObjectOfType<MenuGUI>();
 			_menu = menu;
+			game.Client = new Client();
 		}
 
 

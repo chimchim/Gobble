@@ -7,11 +7,23 @@ namespace Game.Component
     {
         private static ObjectPool<Player> _pool = new ObjectPool<Player>(10);
 		public bool Owner;
-        public Player()
+		public bool IsHost;
+		public string PlayerName;
+
+		public Player()
         {
 
         }
-        public static Player Make(int entityID, bool owner)
+		public static Player Make(int entityID, bool owner, string name, bool isHost)
+		{
+			Player comp = _pool.GetNext();
+			comp.EntityID = entityID;
+			comp.Owner = owner;
+			comp.PlayerName = name;
+			comp.IsHost = isHost;
+			return comp;
+		}
+		public static Player Make(int entityID, bool owner)
         {
             Player comp = _pool.GetNext();
             comp.EntityID = entityID;
