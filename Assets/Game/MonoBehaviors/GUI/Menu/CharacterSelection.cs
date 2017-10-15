@@ -10,7 +10,6 @@ public class CharacterSelection : MonoBehaviour {
 	public GameObject Characters;
 	void Start () {
 
-		Debug.Log("Start CharacterSelection");
 		var images = Characters.GetComponentsInChildren<ChooseCharacter>();
 		foreach (ChooseCharacter character in images)
 		{

@@ -87,7 +87,7 @@ public class GameUnity : MonoBehaviour
 	void Start () 
 	{
 		SetVariables();
-
+		Application.runInBackground = true;
 		StartingPosition = StartPos.position;
 
 		SetFamilyID();

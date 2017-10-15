@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\DebugConsole.cs" />
     <Compile Include="Assets\Game\Action\Action.cs" />
     <Compile Include="Assets\Game\Action\AffectHP.cs" />
     <Compile Include="Assets\Game\Entity\Entity.cs" />

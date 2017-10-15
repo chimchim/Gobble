@@ -26,11 +26,10 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				if (player.LobbySlot == -1)
 				{
-					player.LobbySlot = monoMenu.SetSlot(player.Team, player.PlayerName, "Yolanda");
+					player.LobbySlot = monoMenu.SetSlot(player.Team, entity.ToString(), "Yolanda");
 					if (player.IsHost)
 					{
-						Debug.Log("SetHost");
-						monoMenu.SetHost(player.Team, player.LobbySlot);
+						monoMenu.SetHost(player.Team, player.LobbySlot, player.Owner);
 					}
 				}
 				if (player.Owner)
@@ -49,7 +48,7 @@ namespace Game.Systems
 					if (monoMenu.HostSection.Randomize.Clicked)
 					{
 						game.Client.SendRandomTeams();
-						Debug.Log("random team CLicked");
+
 					}
 				}
 			}
@@ -95,7 +94,7 @@ namespace Game.Systems
 				string ip = _menu.Menu.IP.text;
 				int port = int.Parse(_menu.Menu.Port.text);
 				string name = _menu.Menu.Name.text;
-				Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name + " currentid " + IDGiver.NextID);
+				//Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name + " currentid " + IDGiver.NextID);
 
 				game.Client = new Client();
 				game.Client.TryJoin(ip, port, name);
@@ -119,7 +118,6 @@ namespace Game.Systems
 			{
 				var ent = game.Entities.GetEntity(playersIds[i]);
 				game.Entities.RemoveEntity(ent);
-				Debug.Log("REMOVE entity " + playersIds[i]);
 			}
 			_menu.Menu.UnsetAll();
 			_menu.Menu.DeactivateGameLobby();
@@ -128,7 +126,7 @@ namespace Game.Systems
 		{
 			int playerCounts = BitConverter.ToInt32(byteData, 1);
 			int currentByteIndex = sizeof(int) + 1;
-			Debug.Log("playerCounts " + playerCounts);
+
 			menu.Menu.UnsetAll();
 			for (int i = 0; i < playerCounts; i++)
 			{
@@ -137,11 +135,12 @@ namespace Game.Systems
 				int team = BitConverter.ToInt32(byteData, currentByteIndex);
 				currentByteIndex += sizeof(int);
 				var player = game.Entities.GetComponentOf<Player>(playerID);
-				int newSlot = menu.Menu.SetSlot(team, player.PlayerName, "Yolanda");
+				int newSlot = menu.Menu.SetSlot(team, playerID.ToString(), "Yolanda");
 				player.LobbySlot = newSlot;
+				player.Team = team;
 				if (player.IsHost)
 				{
-					menu.Menu.SetHost(team, newSlot);
+					menu.Menu.SetHost(team, newSlot, player.Owner);
 				}
 			}
 		}
@@ -154,17 +153,19 @@ namespace Game.Systems
 			var playerComp = player.GetComponent<Player>();
 			menu.Menu.UnsetSlot(playerComp.Team, playerComp.LobbySlot);
 			playerComp.Team = team;
-			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerComp.PlayerName, "Yolanda");
+			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerID.ToString(), "Yolanda");
 			if (playerComp.IsHost)
 			{
-				menu.Menu.SetHost(team, playerComp.LobbySlot);
+				menu.Menu.SetHost(team, playerComp.LobbySlot, playerComp.Owner);
 			}
 			
 		}
 
 		private void CheckLogout(GameManager game, MenuComponent menu, byte[] byteData)
 		{
+			
 			int leftID = BitConverter.ToInt32(byteData, 1);
+
 			int currentByteIndex = sizeof(int) + 1;
 			int currentHostID = BitConverter.ToInt32(byteData, currentByteIndex);
 			var leftEntity = game.Entities.GetEntity(leftID);
@@ -175,7 +176,7 @@ namespace Game.Systems
 			currenHostPlayer.IsHost = true;
 			if (leftPlayer.IsHost)
 			{
-				menu.Menu.SetHost(currenHostPlayer.Team, currenHostPlayer.LobbySlot);
+				menu.Menu.SetHost(currenHostPlayer.Team, currenHostPlayer.LobbySlot, currenHostPlayer.Owner);
 			}
 			
 			menu.Menu.UnsetSlot(leftPlayer.Team, leftPlayer.LobbySlot);
@@ -208,7 +209,7 @@ namespace Game.Systems
 				currentByteIndex += sizeof(int);
 				if (i >= menu.PlayerAmount)
 				{
-					Debug.Log("name " + name + " id " + id + " ishost " + isHost + " team " + team);
+					//Debug.Log("name " + name + " id " + id + " ishost " + isHost + " team " + team);
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
 					game.CreateEmptyPlayer(isOwner, name, isHost, team, id);

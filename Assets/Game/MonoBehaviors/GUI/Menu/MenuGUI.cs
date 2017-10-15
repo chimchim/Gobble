@@ -51,9 +51,11 @@ public class MenuGUI : MonoBehaviour {
 		HostSection.gameObject.SetActive(false);
 	}
 
-	public void SetHost(int team, int slot)
+	public void SetHost(int team, int slot, bool isOwner)
 	{
-		HostSection.gameObject.SetActive(true);
+		if(isOwner)
+			HostSection.gameObject.SetActive(true);
+
 		Teams[team].SetHost(slot);
 	}
 	public int SetSlot(int team, string name, string character)

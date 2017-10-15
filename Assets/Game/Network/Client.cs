@@ -169,6 +169,7 @@ public class OtherClient
 			{
 				clientSocket.EndReceive(ar);
 				Data.Command cmd = (Data.Command)byteData[0];
+				Debug.Log("Recive " + cmd);
 				_currentByteData.Add(byteData);
 
 				clientSocket.BeginReceiveFrom(byteData, 0, byteData.Length, SocketFlags.None, ref epServer,
