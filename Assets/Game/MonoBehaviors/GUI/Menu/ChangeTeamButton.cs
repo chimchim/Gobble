@@ -25,15 +25,20 @@ public class ChangeTeamButton : MonoBehaviour, IPointerClickHandler, IPointerUpH
 		for (int i = 0; i < 4; i++)
 		{
 			var slot = Slots[i];
+			slot.SlotNumber = i;
 			if (!slot.IsSet)
-			{
+			{	
 				slot.SetSlot(name, character);
-				slot.SlotNumber = i;
 				gotSlot = i;
 				break;
 			}
 		}
 		return gotSlot;
+	}
+
+	public void SetHost(int slot)
+	{
+		Slots[slot].SetHost();
 	}
 
 	public void UnsetSlot(int slot)

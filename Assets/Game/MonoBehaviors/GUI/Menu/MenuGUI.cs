@@ -17,12 +17,14 @@ public class MenuGUI : MonoBehaviour {
 	public ChangeTeamButton GreenTeam;
 	[HideInInspector]
 	public ChangeTeamButton[] Teams;
-
+	public HostSection HostSection;
 	public GameObject MultiPlayerSection;
 	public InputField IP;
 	public InputField Port;
 	public InputField Name;
 
+	public GameObject BigTitle;
+	public GameObject SmallTitle;
 	void Start ()
 	{
 		Teams = new ChangeTeamButton[2];
@@ -35,13 +37,25 @@ public class MenuGUI : MonoBehaviour {
 	{
 		CharacterSelection.gameObject.SetActive(true);
 		GameLobby.gameObject.SetActive(true);
+		BigTitle.SetActive(false);
+		SmallTitle.SetActive(true);
+		MultiPlayerSection.gameObject.SetActive(false);
+		Debug.Log("SetActiveTrue FALSE");
 	}
 	public void DeactivateGameLobby()
 	{
 		CharacterSelection.gameObject.SetActive(false);
 		GameLobby.gameObject.SetActive(false);
+		BigTitle.SetActive(true);
+		SmallTitle.SetActive(false);
+		HostSection.gameObject.SetActive(false);
 	}
 
+	public void SetHost(int team, int slot)
+	{
+		HostSection.gameObject.SetActive(true);
+		Teams[team].SetHost(slot);
+	}
 	public int SetSlot(int team, string name, string character)
 	{
 		var charSprite = CharacterSelection.Sprites[character];
@@ -70,6 +84,7 @@ public class MenuGUI : MonoBehaviour {
 			}
 			else
 			{
+				Debug.Log("SetActiveTrue");
 				MultiPlayerSection.SetActive(true);
 			}
 			Multiplayer.Clicked = false;
@@ -82,5 +97,6 @@ public class MenuGUI : MonoBehaviour {
 		Join.Clicked = false;
 		Local.Clicked = false;
 		leaveLobby.Clicked = false;
+		Multiplayer.Clicked = false;
 	}
 }

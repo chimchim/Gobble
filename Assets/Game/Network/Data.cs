@@ -15,6 +15,7 @@ using System.Text;
 			List,       //Get a list of users in the chat room from the server
 			ChangeTeam,
 			ChangeChar,
+			RandomTeam,
 			Null        //No command
 		}
 

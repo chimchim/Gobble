@@ -13,6 +13,7 @@ public class SlotData : MonoBehaviour
 	public GameObject OpenSlot;
 	public Image SlotCharacter;
 	public Text ClosedSlotText;
+	public GameObject Host;
 	//public 
 
 	public void SetSlot(string name, Sprite character)
@@ -31,5 +32,10 @@ public class SlotData : MonoBehaviour
 		ClosedSlot.SetActive(false);
 		OpenSlot.SetActive(true);
 		IsSet = false;
+		Host.SetActive(false);
+	}
+	public void SetHost()
+	{
+		Host.SetActive(true);
 	}
 }

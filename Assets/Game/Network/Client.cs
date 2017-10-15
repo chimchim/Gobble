@@ -87,6 +87,16 @@ public class OtherClient
 			//Send it to the server
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
+
+		public void SendRandomTeams()
+		{
+			List<byte> _currentByteArray = new List<byte>();
+			_currentByteArray.Clear();
+			_currentByteArray.Add((byte)Data.Command.RandomTeam);
+			var byteData = _currentByteArray.ToArray();
+			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
+		}
+
 		public void SendChangeTeam(int id, int team)
 		{
 			List<byte> _currentByteArray = new List<byte>();
@@ -158,49 +168,8 @@ public class OtherClient
 			try
 			{
 				clientSocket.EndReceive(ar);
-
-			//Convert the bytes received into an object of type Data
-			//Data msgReceived = new Data(byteData);
-			Data.Command cmd = (Data.Command)byteData[0];
-			//Accordingly process the message received
-			//Debug.Log("Command " + cmd);
-				switch (cmd)
-				{
-					case Data.Command.Input:
-					/*
-						int id = BitConverter.ToInt32(byteData, 1);
-						var players = GameManager.Instance.Players;
-						for (int i = 0; i < players.Count; i++)
-						{
-							if (players[i].ID == id)
-							{
-								players[i].UpdateInput(byteData[5]);
-							}
-						}*/
-
-
-						break;
-					case Data.Command.Login:
-
-
-						break;
-					case Data.Command.ChangeTeam:
-					_currentByteData.Add(byteData);
-
-					break;
-				case Data.Command.Logout:
-						_currentByteData.Add(byteData);
-					break;
-
-					case Data.Command.Message:
-
-						break;
-
-					case Data.Command.List:
-
-						_currentByteData.Add(byteData);
-						break;
-				}
+				Data.Command cmd = (Data.Command)byteData[0];
+				_currentByteData.Add(byteData);
 
 				clientSocket.BeginReceiveFrom(byteData, 0, byteData.Length, SocketFlags.None, ref epServer,
 										   new AsyncCallback(OnReceive), null);

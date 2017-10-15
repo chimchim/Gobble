@@ -27,20 +27,34 @@ namespace Game.Systems
 				if (player.LobbySlot == -1)
 				{
 					player.LobbySlot = monoMenu.SetSlot(player.Team, player.PlayerName, "Yolanda");
+					if (player.IsHost)
+					{
+						Debug.Log("SetHost");
+						monoMenu.SetHost(player.Team, player.LobbySlot);
+					}
 				}
 				if (player.Owner)
 				{
 					for (int i = 0; i < monoMenu.Teams.Length; i++)
 					{
 
-						if (monoMenu.Teams[i].Clicked)
+						if (monoMenu.Teams[i].Clicked && player.Team != i)
 						{
 							game.Client.SendChangeTeam(entity, i);
 						}
 					}
 				}
+				if (player.Owner && player.IsHost)
+				{
+					if (monoMenu.HostSection.Randomize.Clicked)
+					{
+						game.Client.SendRandomTeams();
+						Debug.Log("random team CLicked");
+					}
+				}
 			}
 
+			#region CheckBytes
 			for (int i = 0; i < game.Client._currentByteData.Count; i++)
 			{
 				byte[] byteData = game.Client._currentByteData[i];
@@ -58,7 +72,12 @@ namespace Game.Systems
 				{
 					CheckChangeTeam(game, _menu, byteData);
 				}
-			}
+				if (cmd == Data.Command.RandomTeam)
+				{
+					CheckRandomTeams(game, _menu, byteData);
+				}
+			} 
+			#endregion
 			game.Client._currentByteData.Clear();
 			
 			if (monoMenu.leaveLobby.Clicked)
@@ -78,18 +97,10 @@ namespace Game.Systems
 				string name = _menu.Menu.Name.text;
 				Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name + " currentid " + IDGiver.NextID);
 
-				if (game.Client.epServer == null)
-				{
-					game.Client.TryJoin(ip, port, name);
-					game.Client.BeginToRecieve();
-
-				}
-				else
-				{
-					game.Client = new Client();
-					game.Client.TryJoin(ip, port, name);
-					game.Client.BeginToRecieve();
-				}
+				game.Client = new Client();
+				game.Client.TryJoin(ip, port, name);
+				game.Client.BeginToRecieve();
+				
 			}
 		}
 
@@ -113,7 +124,27 @@ namespace Game.Systems
 			_menu.Menu.UnsetAll();
 			_menu.Menu.DeactivateGameLobby();
 		}
-
+		private void CheckRandomTeams(GameManager game, MenuComponent menu, byte[] byteData)
+		{
+			int playerCounts = BitConverter.ToInt32(byteData, 1);
+			int currentByteIndex = sizeof(int) + 1;
+			Debug.Log("playerCounts " + playerCounts);
+			menu.Menu.UnsetAll();
+			for (int i = 0; i < playerCounts; i++)
+			{
+				int playerID = BitConverter.ToInt32(byteData, currentByteIndex);
+				currentByteIndex += sizeof(int);
+				int team = BitConverter.ToInt32(byteData, currentByteIndex);
+				currentByteIndex += sizeof(int);
+				var player = game.Entities.GetComponentOf<Player>(playerID);
+				int newSlot = menu.Menu.SetSlot(team, player.PlayerName, "Yolanda");
+				player.LobbySlot = newSlot;
+				if (player.IsHost)
+				{
+					menu.Menu.SetHost(team, newSlot);
+				}
+			}
+		}
 		private void CheckChangeTeam(GameManager game, MenuComponent menu, byte[] byteData)
 		{
 			int playerID = BitConverter.ToInt32(byteData, 1);
@@ -123,8 +154,12 @@ namespace Game.Systems
 			var playerComp = player.GetComponent<Player>();
 			menu.Menu.UnsetSlot(playerComp.Team, playerComp.LobbySlot);
 			playerComp.Team = team;
+			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerComp.PlayerName, "Yolanda");
+			if (playerComp.IsHost)
+			{
+				menu.Menu.SetHost(team, playerComp.LobbySlot);
+			}
 			
-			menu.Menu.SetSlot(team, playerComp.PlayerName, "Yolanda");
 		}
 
 		private void CheckLogout(GameManager game, MenuComponent menu, byte[] byteData)
@@ -132,13 +167,17 @@ namespace Game.Systems
 			int leftID = BitConverter.ToInt32(byteData, 1);
 			int currentByteIndex = sizeof(int) + 1;
 			int currentHostID = BitConverter.ToInt32(byteData, currentByteIndex);
+			var leftEntity = game.Entities.GetEntity(leftID);
+			var leftPlayer = leftEntity.GetComponent<Player>();
 
 			var currenHostEntity = game.Entities.GetEntity(currentHostID);
 			var currenHostPlayer = currenHostEntity.GetComponent<Player>();
 			currenHostPlayer.IsHost = true;
-
-			var leftEntity = game.Entities.GetEntity(leftID);
-			var leftPlayer = leftEntity.GetComponent<Player>();
+			if (leftPlayer.IsHost)
+			{
+				menu.Menu.SetHost(currenHostPlayer.Team, currenHostPlayer.LobbySlot);
+			}
+			
 			menu.Menu.UnsetSlot(leftPlayer.Team, leftPlayer.LobbySlot);
 			Debug.Log("leftPlayer " + leftPlayer.PlayerName + " currenHostPlayer " + currenHostPlayer.PlayerName + " left ID " + leftID);
 			game.Entities.RemoveEntity(leftEntity);
