@@ -42,15 +42,26 @@ namespace Game.Systems
 							game.Client.SendChangeTeam(entity, i);
 						}
 					}
-				}
-				if (player.Owner && player.IsHost)
-				{
-					if (monoMenu.HostSection.Randomize.Clicked)
+					if (player.IsHost)
 					{
-						game.Client.SendRandomTeams();
+						if (monoMenu.HostSection.Randomize.Clicked)
+						{
+							game.Client.SendRandomTeams();
 
+						}
 					}
-				}
+					for (int i = 0; i < monoMenu.CharacterSelection.ChooseCharacters.Length; i++)
+					{
+						var chooseChar = monoMenu.CharacterSelection.ChooseCharacters[i];
+						if (chooseChar.Clicked)
+						{
+							Debug.Log("Set slot char 1  " + chooseChar.Name);
+							game.Client.SendChangeCharacter(player.EntityID, chooseChar.Name);
+							monoMenu.SetSlotCharacter(player.Team, player.LobbySlot, chooseChar.Name);
+							break;
+						}
+					}
+				}		
 			}
 
 			#region CheckBytes
@@ -74,6 +85,10 @@ namespace Game.Systems
 				if (cmd == Data.Command.RandomTeam)
 				{
 					CheckRandomTeams(game, _menu, byteData);
+				}
+				if (cmd == Data.Command.ChangeChar)
+				{
+					CheckChangeChar(game, _menu, byteData);
 				}
 			} 
 			#endregion
@@ -135,7 +150,7 @@ namespace Game.Systems
 				int team = BitConverter.ToInt32(byteData, currentByteIndex);
 				currentByteIndex += sizeof(int);
 				var player = game.Entities.GetComponentOf<Player>(playerID);
-				int newSlot = menu.Menu.SetSlot(team, playerID.ToString(), "Yolanda");
+				int newSlot = menu.Menu.SetSlot(team, playerID.ToString(), player.Character);
 				player.LobbySlot = newSlot;
 				player.Team = team;
 				if (player.IsHost)
@@ -144,6 +159,27 @@ namespace Game.Systems
 				}
 			}
 		}
+		private void CheckChangeChar(GameManager game, MenuComponent menu, byte[] byteData)
+		{
+			int playerID = BitConverter.ToInt32(byteData, 1);
+			int currentByteIndex = sizeof(int) + 1;
+			int nameLen = BitConverter.ToInt32(byteData, currentByteIndex);
+			currentByteIndex += sizeof(int);
+			var name = Encoding.UTF8.GetString(byteData, currentByteIndex, nameLen);
+			var player = game.Entities.GetEntity(playerID);
+			var playerComp = player.GetComponent<Player>();
+			menu.Menu.SetSlotCharacter(playerComp.Team, playerComp.LobbySlot, name);
+			playerComp.Character = name;
+			//menu.Menu.UnsetSlot(playerComp.Team, playerComp.LobbySlot);
+			//playerComp.Team = team;
+			//playerComp.LobbySlot = menu.Menu.SetSlot(team, playerID.ToString(), "Yolanda");
+			//if (playerComp.IsHost)
+			//{
+			//	menu.Menu.SetHost(team, playerComp.LobbySlot, playerComp.Owner);
+			//}
+
+		}
+
 		private void CheckChangeTeam(GameManager game, MenuComponent menu, byte[] byteData)
 		{
 			int playerID = BitConverter.ToInt32(byteData, 1);
@@ -153,7 +189,7 @@ namespace Game.Systems
 			var playerComp = player.GetComponent<Player>();
 			menu.Menu.UnsetSlot(playerComp.Team, playerComp.LobbySlot);
 			playerComp.Team = team;
-			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerID.ToString(), "Yolanda");
+			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerID.ToString(), playerComp.Character);
 			if (playerComp.IsHost)
 			{
 				menu.Menu.SetHost(team, playerComp.LobbySlot, playerComp.Owner);
@@ -207,12 +243,16 @@ namespace Game.Systems
 				currentByteIndex += sizeof(bool);
 				int team = BitConverter.ToInt32(byteData, currentByteIndex);
 				currentByteIndex += sizeof(int);
+				int charLen = BitConverter.ToInt32(byteData, currentByteIndex);
+				currentByteIndex += sizeof(int);
+				var character = Encoding.UTF8.GetString(byteData, currentByteIndex, nameLen);
+				currentByteIndex += nameLen;
 				if (i >= menu.PlayerAmount)
 				{
 					//Debug.Log("name " + name + " id " + id + " ishost " + isHost + " team " + team);
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
-					game.CreateEmptyPlayer(isOwner, name, isHost, team, id);
+					game.CreateEmptyPlayer(isOwner, name, isHost, team, character, id);
 					
 
 				}

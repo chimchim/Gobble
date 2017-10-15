@@ -6,11 +6,13 @@ using UnityEngine.UI;
 public class CharacterSelection : MonoBehaviour {
 
 	// Use this for initialization
+	public ChooseCharacter[] ChooseCharacters;
 	public Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
 	public GameObject Characters;
 	void Start () {
 
 		var images = Characters.GetComponentsInChildren<ChooseCharacter>();
+		ChooseCharacters = GetComponentsInChildren<ChooseCharacter>();
 		foreach (ChooseCharacter character in images)
 		{
 			var img = character.GetComponent<Image>();
@@ -19,7 +21,13 @@ public class CharacterSelection : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void LateUpdate ()
+	{
+		for (int i = 0; i < ChooseCharacters.Length; i++)
+		{
+			ChooseCharacters[i].Clicked = false;
+
+			
+		}
 	}
 }

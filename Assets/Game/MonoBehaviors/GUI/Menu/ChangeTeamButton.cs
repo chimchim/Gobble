@@ -36,6 +36,11 @@ public class ChangeTeamButton : MonoBehaviour, IPointerClickHandler, IPointerUpH
 		return gotSlot;
 	}
 
+	public void SetSlotCharacter(int slot, Sprite character)
+	{
+		Slots[slot].SetSlotCharacter(character);
+	}
+
 	public void SetHost(int slot)
 	{
 		Slots[slot].SetHost();

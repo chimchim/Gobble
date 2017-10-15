@@ -24,12 +24,12 @@ namespace Game
 		private GameUnity _gameUnity;
 		public Client Client;
 
-		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, int reservedID = -1)
+		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, string character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
 			
-			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team));
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}

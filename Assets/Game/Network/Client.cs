@@ -87,6 +87,18 @@ public class OtherClient
 			//Send it to the server
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
+	
+		public void SendChangeCharacter(int id, string character)
+		{
+			List<byte> _currentByteArray = new List<byte>();
+			_currentByteArray.Clear();
+			_currentByteArray.Add((byte)Data.Command.ChangeChar);
+			_currentByteArray.AddRange(BitConverter.GetBytes(id));
+			_currentByteArray.AddRange((BitConverter.GetBytes(character.Length)));
+			_currentByteArray.AddRange(Encoding.UTF8.GetBytes(character));
+			var byteData = _currentByteArray.ToArray();
+			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
+		}
 
 		public void SendRandomTeams()
 		{
