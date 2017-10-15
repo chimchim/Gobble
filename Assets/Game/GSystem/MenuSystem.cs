@@ -55,7 +55,6 @@ namespace Game.Systems
 						var chooseChar = monoMenu.CharacterSelection.ChooseCharacters[i];
 						if (chooseChar.Clicked)
 						{
-							Debug.Log("Set slot char 1  " + chooseChar.Name);
 							game.Client.SendChangeCharacter(player.EntityID, chooseChar.Name);
 							monoMenu.SetSlotCharacter(player.Team, player.LobbySlot, chooseChar.Name);
 							break;
@@ -246,13 +245,13 @@ namespace Game.Systems
 				int charLen = BitConverter.ToInt32(byteData, currentByteIndex);
 				currentByteIndex += sizeof(int);
 				var character = Encoding.UTF8.GetString(byteData, currentByteIndex, nameLen);
-				currentByteIndex += nameLen;
+				currentByteIndex += charLen;
 				if (i >= menu.PlayerAmount)
 				{
 					//Debug.Log("name " + name + " id " + id + " ishost " + isHost + " team " + team);
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
-					game.CreateEmptyPlayer(isOwner, name, isHost, team, character, id);
+					game.CreateEmptyPlayer(isOwner, name, isHost, team, "Yolanda", id);
 					
 
 				}
