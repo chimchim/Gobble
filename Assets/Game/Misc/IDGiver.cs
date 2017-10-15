@@ -6,7 +6,7 @@ namespace Game.Misc
 	public class IDGiver
 	{
 		private static List<int> freeIDs = new List<int>();
-		private static int nextID = 0;
+		public static int NextID = 0;
 
 		public static int GetNewID()
 		{
@@ -18,12 +18,8 @@ namespace Game.Misc
 			}
 			else
 			{
-				return nextID++;
+				return NextID++;
 			}
-		}
-		public static int GetCurrentID()
-		{
-			return nextID;
 		}
 		public static void FreeID(int id)
 		{

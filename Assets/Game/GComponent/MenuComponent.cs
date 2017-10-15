@@ -10,6 +10,13 @@ namespace Game.Component
 		public bool IsHost;
 		public int PlayerAmount;
 
+		public override void Recycle()
+		{
+			Menu = null;
+			IsHost = false;
+			PlayerAmount = 0;
+			_pool.Recycle(this);
+		}
 		public MenuComponent()
 		{
 

@@ -17,7 +17,7 @@ namespace Game.Component
             Disabled = false;
         }
 
-		//public abstract void Recycle();
+		public abstract void Recycle();
 
 		public int EntityID;
         public bool Disabled;

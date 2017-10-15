@@ -9,6 +9,12 @@ namespace Game.Component
 		public GraphicRope GraphicRope;
 		public string Character;
 
+		public override void Recycle()
+		{
+			GraphicRope = null;
+			Character = "";
+			_pool.Recycle(this);
+		}
 		public Resources()
 		{
 

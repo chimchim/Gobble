@@ -6,7 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-	public class OtherClient
+
+public class OtherClient
 	{
 		public OtherClient(int id, string name)
 		{
@@ -58,22 +59,43 @@ using UnityEngine;
 			}
 		}
 
-		public void Sendlogin(byte input)
+		public void SendLogin(string name)
 		{
 			try
 			{
 
-				_currentByteArray.Add((byte)Data.Command.Login);
-				_currentByteArray.Add(input);
+			_currentByteArray.Add((byte)Data.Command.Login);
+			_currentByteArray.AddRange((BitConverter.GetBytes(name.Length)));
+			_currentByteArray.AddRange(Encoding.UTF8.GetBytes(name));
+			var byteArray = _currentByteArray.ToArray();
 
-				//Send it to the server
-				//clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
+			clientSocket.BeginSendTo(byteArray, 0, byteArray.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 
-			}
+		}
 			catch (Exception)
 			{
 				Console.Write("failed to send message");
 			}
+		}
+
+		public void SendLogout()
+		{
+			List<byte> _currentByteArray = new List<byte>();
+			_currentByteArray.Clear();
+			_currentByteArray.Add((byte)Data.Command.Logout);
+			var byteData = _currentByteArray.ToArray();
+			//Send it to the server
+			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
+		}
+		public void SendChangeTeam(int id, int team)
+		{
+			List<byte> _currentByteArray = new List<byte>();
+			_currentByteArray.Clear();
+			_currentByteArray.Add((byte)Data.Command.ChangeTeam);
+			_currentByteArray.AddRange(BitConverter.GetBytes(id));
+			_currentByteArray.AddRange(BitConverter.GetBytes(team));
+			var byteData = _currentByteArray.ToArray();
+			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
 
 		public void SendInput(byte input, int id)
@@ -141,7 +163,7 @@ using UnityEngine;
 			//Data msgReceived = new Data(byteData);
 			Data.Command cmd = (Data.Command)byteData[0];
 			//Accordingly process the message received
-			Debug.Log("Command " + cmd);
+			//Debug.Log("Command " + cmd);
 				switch (cmd)
 				{
 					case Data.Command.Input:
@@ -162,10 +184,13 @@ using UnityEngine;
 
 
 						break;
+					case Data.Command.ChangeTeam:
+					_currentByteData.Add(byteData);
 
-					case Data.Command.Logout:
-
-						break;
+					break;
+				case Data.Command.Logout:
+						_currentByteData.Add(byteData);
+					break;
 
 					case Data.Command.Message:
 
@@ -174,45 +199,6 @@ using UnityEngine;
 					case Data.Command.List:
 
 						_currentByteData.Add(byteData);
-						int clientCount = BitConverter.ToInt32(byteData, 1);
-						int currentByteIndex = 1;
-
-						currentByteIndex += sizeof(int);
-						Debug.Log("clientCount " + clientCount);
-						for (int i = 0; i < clientCount; i++)
-						{
-
-							int nameLen = BitConverter.ToInt32(byteData, currentByteIndex);
-							currentByteIndex += sizeof(int);
-							var name = Encoding.UTF8.GetString(byteData, currentByteIndex, nameLen);
-							currentByteIndex += nameLen;
-							if (name == MyName)
-							{
-								//if (MyID == -1)
-								//{
-								//	GameManager.Instance.AddPlayer(i, name, true);
-								//	MyID = i;
-								//}
-							}
-							else
-							{
-								//bool alreadyJoined = false;
-								//for (int j = 0; j < Others.Count; j++)
-								//{
-								//	if (Others[j].ClientID == i)
-								//	{
-								//		alreadyJoined = true;
-								//	}
-								//}
-								//if (!alreadyJoined)
-								//{
-								//	Debug.WriteLine("OtherClient " + i);
-								//	var newClient = new OtherClient(i, name);
-								//	Others.Add(newClient);
-								//	GameManager.Instance.AddPlayer(i, name, false);
-								//}
-							}
-						}
 						break;
 				}
 
@@ -238,7 +224,7 @@ using UnityEngine;
 
 			//The user has logged into the system so we now request the server to send
 			//the names of all users who are in the chat room
-			Debug.Log("Send List");
+
 			//Data msgToSend = new Data();
 			//msgToSend.cmdCommand = Command.List;
 			//msgToSend.strName = strName;

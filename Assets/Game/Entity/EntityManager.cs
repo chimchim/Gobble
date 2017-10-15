@@ -22,8 +22,13 @@ namespace Game.GEntity
 				Debug.Log("Could not add entity, ID Taken!");
 			}
 		}
+		public void RemoveEntity(Entity entity)
+		{
+			entity.RecycleEntity();
+			_entities.Remove(entity.ID);
 
-        public T GetComponentOf<T>(int entity) where T : GComponent
+		}
+		public T GetComponentOf<T>(int entity) where T : GComponent
         {
 
             return _entities[entity].GetComponent<T>();
@@ -57,11 +62,6 @@ namespace Game.GEntity
                 }
             }
             //return new EntityIterator.Proxy(_entities, key);
-        }
-
-        public void AddMessage(int id, Message mess)
-        {
-            _entities[id].NewMessages.Add(mess);
         }
 	}
 }

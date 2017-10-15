@@ -12,6 +12,11 @@ public class MenuGUI : MonoBehaviour {
 	public JoinGame Join;
 	public CharacterSelection CharacterSelection;
 	public GameLobby GameLobby;
+	public LeaveLobby leaveLobby;
+	public ChangeTeamButton BlueTeam;
+	public ChangeTeamButton GreenTeam;
+	[HideInInspector]
+	public ChangeTeamButton[] Teams;
 
 	public GameObject MultiPlayerSection;
 	public InputField IP;
@@ -20,7 +25,9 @@ public class MenuGUI : MonoBehaviour {
 
 	void Start ()
 	{
-
+		Teams = new ChangeTeamButton[2];
+		Teams[0] = BlueTeam;
+		Teams[1] = GreenTeam;
 	}
 
 	// Update is called once per frame
@@ -28,6 +35,30 @@ public class MenuGUI : MonoBehaviour {
 	{
 		CharacterSelection.gameObject.SetActive(true);
 		GameLobby.gameObject.SetActive(true);
+	}
+	public void DeactivateGameLobby()
+	{
+		CharacterSelection.gameObject.SetActive(false);
+		GameLobby.gameObject.SetActive(false);
+	}
+
+	public int SetSlot(int team, string name, string character)
+	{
+		var charSprite = CharacterSelection.Sprites[character];
+		int gotSlot = Teams[team].SetSlot(name, charSprite);
+		return gotSlot;
+	}
+	public void UnsetSlot(int team, int slot)
+	{
+		Teams[team].UnsetSlot(slot);
+	}
+	public void UnsetAll()
+	{
+		for (int i = 0; i < Teams.Length; i++)
+		{
+			Teams[i].UnsetAllSlot();
+		}
+			
 	}
 	void Update ()
 	{
@@ -42,14 +73,14 @@ public class MenuGUI : MonoBehaviour {
 				MultiPlayerSection.SetActive(true);
 			}
 			Multiplayer.Clicked = false;
-		}
-		if (Join.Clicked)
-		{
-			Join.Clicked = false;
-		}
-		if (Local.Clicked)
-		{
-			Local.Clicked = false;
-		}
+		}		
+	}
+	private void LateUpdate()
+	{
+		BlueTeam.Clicked = false;
+		GreenTeam.Clicked = false;
+		Join.Clicked = false;
+		Local.Clicked = false;
+		leaveLobby.Clicked = false;
 	}
 }

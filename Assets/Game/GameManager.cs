@@ -24,13 +24,14 @@ namespace Game
 		private GameUnity _gameUnity;
 		public Client Client;
 
-		public void CreateEmptyPlayer(bool owner, string name, bool isHost)
+		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, int reservedID = -1)
 		{
-			Entity ent = new Entity();
+			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
-			ent.AddComponent(Player.Make(ent.ID, owner, name, isHost));
+			
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team));
 			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
-			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost);
+			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
 		public void CreatePlayer(bool owner)
 		{
@@ -77,9 +78,5 @@ namespace Game
 			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 		}
-        public void SendMessage(int id, Message mess)
-        {
-            Entities.AddMessage(id, mess);
-        }
 	}
 }

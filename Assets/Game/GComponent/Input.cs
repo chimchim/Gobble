@@ -10,7 +10,13 @@ namespace Game.Component
 		public bool Space;
 		public bool RightClick;
 
-
+		public override void Recycle()
+		{
+			Axis = Vector2.zero;
+			Space = false;
+			RightClick = false;
+			_pool.Recycle(this);
+		}
 		public Input()
 		{
 

@@ -9,18 +9,30 @@ namespace Game.Component
 		public bool Owner;
 		public bool IsHost;
 		public string PlayerName;
-
+		public int Team;
+		public int LobbySlot;
+		public override void Recycle()
+		{
+			LobbySlot = -1;
+			Team = 0;
+			Owner = false;
+			IsHost = false;
+			PlayerName = "";
+			_pool.Recycle(this);
+		}
 		public Player()
         {
 
         }
-		public static Player Make(int entityID, bool owner, string name, bool isHost)
+		public static Player MakeFromLobby(int entityID, bool owner, string name, bool isHost, int team)
 		{
 			Player comp = _pool.GetNext();
 			comp.EntityID = entityID;
 			comp.Owner = owner;
 			comp.PlayerName = name;
 			comp.IsHost = isHost;
+			comp.Team = team;
+			comp.LobbySlot = -1;
 			return comp;
 		}
 		public static Player Make(int entityID, bool owner)

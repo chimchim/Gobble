@@ -9,8 +9,17 @@ namespace Game.Component
 		public float HP;
 		public float OxygenSeconds;
 		public float MaxOxygenSeconds;
-		public bool Alive;
 		public HpBar HpBar;
+
+		public override void Recycle()
+		{
+			HpBar = null;
+			HP = 0;
+			OxygenSeconds = 0;
+			MaxOxygenSeconds = 0;
+			_pool.Recycle(this);
+		}
+
 		public Stats()
 		{
 
@@ -19,7 +28,6 @@ namespace Game.Component
 		{
 			Stats comp = _pool.GetNext();
 			comp.EntityID = entityID;
-			comp.Alive = true;
 			comp.HP = hp;
 			comp.OxygenSeconds = oxygenSec;
 			comp.MaxOxygenSeconds = maxOxygenSec;

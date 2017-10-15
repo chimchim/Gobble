@@ -11,17 +11,37 @@ namespace Game.GEntity
         private readonly Bitmask _lock;
 		private int _id;
 		private Dictionary<int,GComponent> _components = new Dictionary<int,GComponent>();
-        public List<Message> NewMessages = new List<Message>();
 
-        public List<Message> Messages = new List<Message>(); 
         public Bitmask Lock { get { return _lock; } }
         public int ID { get { return _id; } }
         public GameObject gameObject;
 		public Animator Animator;
-		public Entity()
+
+		public void RecycleEntity()
+		{
+			foreach (GComponent comp in _components.Values)
+			{
+				comp.Recycle();
+			}
+			Animator = null;
+			gameObject = null;
+			_components = null;
+		}
+		public Entity(int replaceID = -1)
 		{
             _lock = Bitmask.Zero;
-			_id = IDGiver.GetNewID();
+			if (replaceID == -1)
+			{
+				_id = IDGiver.GetNewID();
+			}
+			else
+			{
+				_id = replaceID;
+			}
+			if (IDGiver.NextID < replaceID)
+			{
+				IDGiver.NextID = replaceID;
+			}
             
 		}
         public void DisableComponent<T>() where T : GComponent

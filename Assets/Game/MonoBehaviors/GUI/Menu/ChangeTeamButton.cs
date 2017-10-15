@@ -8,18 +8,53 @@ public class ChangeTeamButton : MonoBehaviour, IPointerClickHandler, IPointerUpH
 	public string Team;
 	public bool Clicked;
 	public GameObject HoverObject;
-
+	public GameObject Members;
 	private bool _activated;
+
+	[HideInInspector]
+	private SlotData[] Slots = new SlotData[4];
 	void Start()
 	{
-
+		var slots = Members.GetComponentsInChildren<SlotData>();
+		Slots = slots;
 	}
 
+	public int SetSlot(string name, Sprite character)
+	{
+		int gotSlot = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			var slot = Slots[i];
+			if (!slot.IsSet)
+			{
+				slot.SetSlot(name, character);
+				slot.SlotNumber = i;
+				gotSlot = i;
+				break;
+			}
+		}
+		return gotSlot;
+	}
 
+	public void UnsetSlot(int slot)
+	{
+		Slots[slot].UnSet();
+	}
+	public void UnsetAllSlot()
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			var slot = Slots[i];
+			slot.IsSet = false;
+			slot.UnSet();
+		}
+	}
 	public void OnPointerClick(PointerEventData eventData) 
 	{
+
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
+
 			Clicked = true;
 		}
 

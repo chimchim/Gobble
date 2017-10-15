@@ -13,6 +13,8 @@ using System.Text;
 			Logout,     //Logout of the server
 			Message,    //Send a text message to all the chat clients
 			List,       //Get a list of users in the chat room from the server
+			ChangeTeam,
+			ChangeChar,
 			Null        //No command
 		}
 

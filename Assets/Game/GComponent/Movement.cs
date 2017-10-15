@@ -14,7 +14,6 @@ namespace Game.Component
 
 		public Vector2 CurrentVelocity;
 		public Vector2 ForceVelocity;
-		public bool Jumped;
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
@@ -51,7 +50,25 @@ namespace Game.Component
         {
             
         }
-        public static Movement Make(int entityID)
+		public override void Recycle()
+		{
+			Grounded = false;
+			FallingTime = 0;
+			States = null;
+			RopeList = null;
+			FloatingCounter = 0;
+			FloatJump = false;
+			SwimTime = 0;
+			OxygenDeplationTick = 0;
+
+			CurrentVelocity = Vector2.zero;
+			ForceVelocity = Vector2.zero;
+			RopeList.Clear();
+			RopeIndex = 0;
+			Animator = null;
+			_pool.Recycle(this);
+		}
+		public static Movement Make(int entityID)
         {
             Movement comp = _pool.GetNext();
             comp.EntityID = entityID;
