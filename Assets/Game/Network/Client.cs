@@ -120,48 +120,6 @@ public class OtherClient
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
 
-		public void SendInput(byte input, int id)
-		{
-			try
-			{
-				_currentByteArray.Clear();
-				Debug.Log("(byte)Command.Input " + (byte)Data.Command.Input);
-				_currentByteArray.Add((byte)Data.Command.Input);
-				_currentByteArray.AddRange(BitConverter.GetBytes(id));
-				_currentByteArray.Add(input);
-				var byteData = _currentByteArray.ToArray();
-				//Send it to the server
-				clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
-
-			}
-			catch (Exception)
-			{
-				Console.Write("failed to send message");
-			}
-		}
-		public void SendMessage(string mess)
-		{
-			try
-			{
-				//Fill the info for the message to be send
-				Data msgToSend = new Data();
-
-				msgToSend.strName = MyName;
-				msgToSend.strMessage = mess;
-				msgToSend.cmdCommand = Data.Command.Message;
-
-				byte[] byteData = msgToSend.ToByte();
-
-				//Send it to the server
-				clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
-
-			}
-			catch (Exception)
-			{
-				Console.Write("failed to send message");
-			}
-		}
-
 		private void OnSend(IAsyncResult ar)
 		{
 			try

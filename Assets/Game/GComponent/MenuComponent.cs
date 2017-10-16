@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Component
@@ -10,6 +11,7 @@ namespace Game.Component
 		public bool IsHost;
 		public int PlayerAmount;
 
+		public Action<GameManager, MenuComponent, byte[]>[] ActionArray;
 		public override void Recycle()
 		{
 			Menu = null;

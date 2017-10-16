@@ -8,10 +8,8 @@ using System.Text;
 	{
 		public enum Command
 		{
-			Input,
 			Login,      //Log into the server
 			Logout,     //Logout of the server
-			Message,    //Send a text message to all the chat clients
 			List,       //Get a list of users in the chat room from the server
 			ChangeTeam,
 			ChangeChar,

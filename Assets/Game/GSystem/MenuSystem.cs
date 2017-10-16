@@ -34,27 +34,6 @@ namespace Game.Systems
 				}
 				if (player.Owner)
 				{
-					for (int i = 0; i < monoMenu.Teams.Length; i++)
-					{
-
-						if (monoMenu.Teams[i].Clicked && player.Team != i)
-						{
-							game.Client.SendChangeTeam(entity, i);
-						}
-					}
-					if (player.IsHost)
-					{
-						if (monoMenu.HostSection.Randomize.Clicked)
-						{
-							game.Client.SendRandomTeams();
-
-						}
-						if (monoMenu.HostSection.StartGame.Clicked)
-						{
-							game.Client.SendStartGame();
-
-						}
-					}
 					for (int i = 0; i < monoMenu.CharacterSelection.ChooseCharacters.Length; i++)
 					{
 						var chooseChar = monoMenu.CharacterSelection.ChooseCharacters[i];
@@ -65,6 +44,27 @@ namespace Game.Systems
 							break;
 						}
 					}
+
+					for (int i = 0; i < monoMenu.Teams.Length; i++)
+					{
+						if (monoMenu.Teams[i].Clicked && player.Team != i)
+						{
+							game.Client.SendChangeTeam(entity, i);
+						}
+					}
+
+					if (player.IsHost)
+					{
+						if (monoMenu.HostSection.Randomize.Clicked)
+						{
+							game.Client.SendRandomTeams();
+						}
+
+						if (monoMenu.HostSection.StartGame.Clicked)
+						{
+							game.Client.SendStartGame();
+						}
+					}
 				}		
 			}
 
@@ -72,28 +72,9 @@ namespace Game.Systems
 			for (int i = 0; i < game.Client._currentByteData.Count; i++)
 			{
 				byte[] byteData = game.Client._currentByteData[i];
-				Data.Command cmd = (Data.Command)byteData[0];
-				//Debug.Log("Recieve CMD " + cmd);
-				if (cmd == Data.Command.List)
-				{
-					CheckList(game, _menu, byteData);
-				}
-				if (cmd == Data.Command.Logout)
-				{
-					CheckLogout(game, _menu, byteData);
-				}
-				if (cmd == Data.Command.ChangeTeam)
-				{
-					CheckChangeTeam(game, _menu, byteData);
-				}
-				if (cmd == Data.Command.RandomTeam)
-				{
-					CheckRandomTeams(game, _menu, byteData);
-				}
-				if (cmd == Data.Command.ChangeChar)
-				{
-					CheckChangeChar(game, _menu, byteData);
-				}
+				int arrayIndex = byteData[0];
+				_menu.ActionArray[arrayIndex].Invoke(game, _menu, byteData);
+
 			} 
 			#endregion
 			game.Client._currentByteData.Clear();
@@ -113,7 +94,6 @@ namespace Game.Systems
 				string ip = _menu.Menu.IP.text;
 				int port = int.Parse(_menu.Menu.Port.text);
 				string name = _menu.Menu.Name.text;
-				//Debug.Log("MenuSystem: Tryjoin " + ip + " port " + port + " name " + name + " currentid " + IDGiver.NextID);
 
 				game.Client = new Client();
 				game.Client.TryJoin(ip, port, name);
@@ -141,6 +121,7 @@ namespace Game.Systems
 			_menu.Menu.UnsetAll();
 			_menu.Menu.DeactivateGameLobby();
 		}
+
 		private void CheckRandomTeams(GameManager game, MenuComponent menu, byte[] byteData)
 		{
 			int playerCounts = BitConverter.ToInt32(byteData, 1);
@@ -163,6 +144,7 @@ namespace Game.Systems
 				}
 			}
 		}
+
 		private void CheckChangeChar(GameManager game, MenuComponent menu, byte[] byteData)
 		{
 			int playerID = BitConverter.ToInt32(byteData, 1);
@@ -261,6 +243,12 @@ namespace Game.Systems
 			menu.PlayerAmount = clientCount;
 		}
 
+		private void CheckStartGame(GameManager game, MenuComponent menu, byte[] byteData)
+		{
+			int randomSeed = BitConverter.ToInt32(byteData, 1);
+			Debug.Log("START GAME randomSeed " + randomSeed);
+		}
+
 		public void Initiate(GameManager game)
 		{
 			Entity ent = new Entity();
@@ -270,6 +258,16 @@ namespace Game.Systems
 			menu.Menu = GameObject.FindObjectOfType<MenuGUI>();
 			_menu = menu;
 			game.Client = new Client();
+
+			var actionArray = new Action<GameManager, MenuComponent, byte[]>[7];
+			actionArray[0] = null;
+			actionArray[1] = CheckLogout;
+			actionArray[2] = CheckList;
+			actionArray[3] = CheckChangeTeam;
+			actionArray[4] = CheckChangeChar;
+			actionArray[5] = CheckRandomTeams;
+			actionArray[6] = CheckStartGame;
+			_menu.ActionArray = actionArray;
 		}
 
 
