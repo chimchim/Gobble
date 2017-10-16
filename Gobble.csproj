@@ -103,6 +103,7 @@
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
     <Compile Include="Assets\Game\Misc\Bitmask.cs" />
+    <Compile Include="Assets\Game\Misc\BuildConsole.cs" />
     <Compile Include="Assets\Game\Misc\IDGiver.cs" />
     <Compile Include="Assets\Game\Misc\MathGame.cs" />
     <Compile Include="Assets\Game\Misc\Message.cs" />
