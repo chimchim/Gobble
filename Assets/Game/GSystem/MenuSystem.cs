@@ -26,7 +26,7 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				if (player.LobbySlot == -1)
 				{
-					player.LobbySlot = monoMenu.SetSlot(player.Team, entity.ToString(), Characters.Yolanda);
+					player.LobbySlot = monoMenu.SetSlot(player.Team, player.PlayerName, Characters.Yolanda);
 					if (player.IsHost)
 					{
 						monoMenu.SetHost(player.Team, player.LobbySlot, player.Owner);
@@ -135,7 +135,7 @@ namespace Game.Systems
 				int team = BitConverter.ToInt32(byteData, currentByteIndex);
 				currentByteIndex += sizeof(int);
 				var player = game.Entities.GetComponentOf<Player>(playerID);
-				int newSlot = menu.Menu.SetSlot(team, playerID.ToString(), player.Character);
+				int newSlot = menu.Menu.SetSlot(team, player.PlayerName, player.Character);
 				player.LobbySlot = newSlot;
 				player.Team = team;
 				if (player.IsHost)
@@ -173,7 +173,7 @@ namespace Game.Systems
 			var playerComp = player.GetComponent<Player>();
 			menu.Menu.UnsetSlot(playerComp.Team, playerComp.LobbySlot);
 			playerComp.Team = team;
-			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerID.ToString(), playerComp.Character);
+			playerComp.LobbySlot = menu.Menu.SetSlot(team, playerComp.PlayerName, playerComp.Character);
 			if (playerComp.IsHost)
 			{
 				menu.Menu.SetHost(team, playerComp.LobbySlot, playerComp.Owner);

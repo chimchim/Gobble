@@ -88,15 +88,7 @@ public class MenuGUI : MonoBehaviour {
 	{
 		if (Multiplayer.Clicked)
 		{
-			if (MultiPlayerSection.active)
-			{
-				MultiPlayerSection.SetActive(false);
-			}
-			else
-			{
-				Debug.Log("SetActiveTrue");
-				MultiPlayerSection.SetActive(true);
-			}
+			MultiPlayerSection.SetActive(true);
 			Multiplayer.Clicked = false;
 		}		
 	}
