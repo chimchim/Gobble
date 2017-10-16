@@ -80,32 +80,32 @@ public class OtherClient
 
 		public void SendLogout()
 		{
-			List<byte> _currentByteArray = new List<byte>();
-			_currentByteArray.Clear();
-			_currentByteArray.Add((byte)Data.Command.Logout);
-			var byteData = _currentByteArray.ToArray();
-			//Send it to the server
+			byte[] byteData = new byte[1];
+			byteData[0] = (byte)Data.Command.Logout;
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
 	
-		public void SendChangeCharacter(int id, string character)
+		public void SendChangeCharacter(int id, Characters character)
 		{
 			List<byte> _currentByteArray = new List<byte>();
 			_currentByteArray.Clear();
 			_currentByteArray.Add((byte)Data.Command.ChangeChar);
 			_currentByteArray.AddRange(BitConverter.GetBytes(id));
-			_currentByteArray.AddRange((BitConverter.GetBytes(character.Length)));
-			_currentByteArray.AddRange(Encoding.UTF8.GetBytes(character));
+			_currentByteArray.AddRange((BitConverter.GetBytes(((int)character))));
 			var byteData = _currentByteArray.ToArray();
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
 
+		public void SendStartGame()
+		{
+			byte[] byteData = new byte[1];
+			byteData[0] = (byte)Data.Command.StartGame;
+			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
+		}
 		public void SendRandomTeams()
 		{
-			List<byte> _currentByteArray = new List<byte>();
-			_currentByteArray.Clear();
-			_currentByteArray.Add((byte)Data.Command.RandomTeam);
-			var byteData = _currentByteArray.ToArray();
+			byte[] byteData = new byte[1];
+			byteData[0] = (byte)Data.Command.RandomTeam;
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
 

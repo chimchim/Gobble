@@ -26,7 +26,7 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				if (player.LobbySlot == -1)
 				{
-					player.LobbySlot = monoMenu.SetSlot(player.Team, entity.ToString(), "Yolanda");
+					player.LobbySlot = monoMenu.SetSlot(player.Team, entity.ToString(), Characters.Yolanda);
 					if (player.IsHost)
 					{
 						monoMenu.SetHost(player.Team, player.LobbySlot, player.Owner);
@@ -49,14 +49,19 @@ namespace Game.Systems
 							game.Client.SendRandomTeams();
 
 						}
+						if (monoMenu.HostSection.StartGame.Clicked)
+						{
+							game.Client.SendStartGame();
+
+						}
 					}
 					for (int i = 0; i < monoMenu.CharacterSelection.ChooseCharacters.Length; i++)
 					{
 						var chooseChar = monoMenu.CharacterSelection.ChooseCharacters[i];
 						if (chooseChar.Clicked)
 						{
-							game.Client.SendChangeCharacter(player.EntityID, chooseChar.Name);
-							monoMenu.SetSlotCharacter(player.Team, player.LobbySlot, chooseChar.Name);
+							game.Client.SendChangeCharacter(player.EntityID, chooseChar.Character);
+							monoMenu.SetSlotCharacter(player.Team, player.LobbySlot, chooseChar.Character);
 							break;
 						}
 					}
@@ -162,13 +167,11 @@ namespace Game.Systems
 		{
 			int playerID = BitConverter.ToInt32(byteData, 1);
 			int currentByteIndex = sizeof(int) + 1;
-			int nameLen = BitConverter.ToInt32(byteData, currentByteIndex);
-			currentByteIndex += sizeof(int);
-			var name = Encoding.UTF8.GetString(byteData, currentByteIndex, nameLen);
+			Characters character = (Characters)BitConverter.ToInt32(byteData, currentByteIndex);
 			var player = game.Entities.GetEntity(playerID);
 			var playerComp = player.GetComponent<Player>();
-			menu.Menu.SetSlotCharacter(playerComp.Team, playerComp.LobbySlot, name);
-			playerComp.Character = name;
+			menu.Menu.SetSlotCharacter(playerComp.Team, playerComp.LobbySlot, character);
+			playerComp.Character = character;
 			//menu.Menu.UnsetSlot(playerComp.Team, playerComp.LobbySlot);
 			//playerComp.Team = team;
 			//playerComp.LobbySlot = menu.Menu.SetSlot(team, playerID.ToString(), "Yolanda");
@@ -248,10 +251,9 @@ namespace Game.Systems
 				currentByteIndex += charLen;
 				if (i >= menu.PlayerAmount)
 				{
-					//Debug.Log("name " + name + " id " + id + " ishost " + isHost + " team " + team);
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
-					game.CreateEmptyPlayer(isOwner, name, isHost, team, "Yolanda", id);
+					game.CreateEmptyPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
 					
 
 				}

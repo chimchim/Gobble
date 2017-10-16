@@ -11,7 +11,7 @@ namespace Game.Component
 		public string PlayerName;
 		public int Team;
 		public int LobbySlot;
-		public string Character;
+		public Characters Character;
 		public override void Recycle()
 		{
 			LobbySlot = -1;
@@ -19,14 +19,14 @@ namespace Game.Component
 			Owner = false;
 			IsHost = false;
 			PlayerName = "";
-			Character = "";
+			Character = 0;
 			_pool.Recycle(this);
 		}
 		public Player()
         {
 
         }
-		public static Player MakeFromLobby(int entityID, bool owner, string name, bool isHost, int team, string character)
+		public static Player MakeFromLobby(int entityID, bool owner, string name, bool isHost, int team, Characters character)
 		{
 			Player comp = _pool.GetNext();
 			comp.EntityID = entityID;

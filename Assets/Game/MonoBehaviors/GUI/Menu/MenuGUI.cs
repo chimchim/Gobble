@@ -59,14 +59,14 @@ public class MenuGUI : MonoBehaviour {
 		Teams[team].SetHost(slot);
 	}
 
-	public int SetSlot(int team, string name, string character)
+	public int SetSlot(int team, string name, Characters character)
 	{
 		var charSprite = CharacterSelection.Sprites[character];
 		int gotSlot = Teams[team].SetSlot(name, charSprite);
 		return gotSlot;
 	}
 
-	public void SetSlotCharacter(int team, int slot, string character)
+	public void SetSlotCharacter(int team, int slot, Characters character)
 	{
 		var charSprite = CharacterSelection.Sprites[character];
 		Teams[team].SetSlotCharacter(slot, charSprite);

@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum Characters
+{
+	Yolanda,
+	Schmillo,
+	Milton,
+	Peppermin
+}
 public class CharacterSelection : MonoBehaviour {
 
 	// Use this for initialization
 	public ChooseCharacter[] ChooseCharacters;
-	public Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
+	public Dictionary<Characters, Sprite> Sprites = new Dictionary<Characters, Sprite>();
 	public GameObject Characters;
 	void Start () {
 
-		var images = Characters.GetComponentsInChildren<ChooseCharacter>();
+		//var images = Characters.GetComponentsInChildren<ChooseCharacter>();
 		ChooseCharacters = GetComponentsInChildren<ChooseCharacter>();
-		foreach (ChooseCharacter character in images)
+		foreach (ChooseCharacter character in ChooseCharacters)
 		{
 			var img = character.GetComponent<Image>();
-			Sprites.Add(img.sprite.name, img.sprite);
+			Sprites.Add(character.Character, img.sprite);
 		}
 	}
 	
@@ -26,8 +33,6 @@ public class CharacterSelection : MonoBehaviour {
 		for (int i = 0; i < ChooseCharacters.Length; i++)
 		{
 			ChooseCharacters[i].Clicked = false;
-
-			
 		}
 	}
 }

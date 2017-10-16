@@ -18,7 +18,6 @@ public class SlotData : MonoBehaviour
 
 	public void SetSlotCharacter(Sprite character)
 	{
-		Debug.Log("Set slot char 1  " + character.name);
 		SlotCharacter.sprite = character;
 	}
 	public void SetSlot(string name, Sprite character)

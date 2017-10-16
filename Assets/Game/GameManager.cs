@@ -24,7 +24,7 @@ namespace Game
 		private GameUnity _gameUnity;
 		public Client Client;
 
-		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, string character, int reservedID = -1)
+		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);

@@ -6,12 +6,10 @@ using UnityEngine.UI;
 
 public class ChooseCharacter : MonoBehaviour, IPointerClickHandler
 {
-	public string Name;
 	public bool Clicked;
-
+	public Characters Character;
 	void Start()
 	{
-		Name = GetComponent<Image>().sprite.name;
 	}
 
 
@@ -19,9 +17,7 @@ public class ChooseCharacter : MonoBehaviour, IPointerClickHandler
 	{
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
-			Name = GetComponent<Image>().sprite.name;
 			Clicked = true;
 		}
-
 	}
 }
