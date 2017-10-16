@@ -14,11 +14,9 @@ namespace Game
 	{
         private EntityManager _entityManager = new EntityManager();
 		private SystemManager _systemManager = new SystemManager();
-        private ParticleManager _particleManager = new ParticleManager();
 
         public EntityManager Entities { get { return _entityManager; } }
 		public SystemManager Systems { get { return _systemManager; } }
-        public ParticleManager Particles { get { return _particleManager; } }
 
 		public TileMap TileMap;
 		private GameUnity _gameUnity;
