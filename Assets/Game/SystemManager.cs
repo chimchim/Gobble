@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Game.Systems;
+using UnityEngine;
 
 namespace Game
 {
@@ -10,7 +11,8 @@ namespace Game
 		{
 			None,
 			Menu,
-			Game
+			Game,
+			QuickJoin
 		}
 		public GameState GoToState;
 		public GameState CurrentGameState;
@@ -49,8 +51,11 @@ namespace Game
 			_fixedUpdate.Add(GameState.Menu, new List<ISystem>());
 			_update.Add(GameState.Game, new List<ISystem>());
 			_fixedUpdate.Add(GameState.Game, new List<ISystem>());
-
+			_update.Add(GameState.QuickJoin, new List<ISystem>());
+			_fixedUpdate.Add(GameState.QuickJoin, new List<ISystem>());
+			Debug.Log("QuickJoin");
 			_update[GameState.Menu].Add(new MenuSystem());
+			_update[GameState.QuickJoin].Add(new QuickJoin());
 
 			_update[GameState.Game].Add(new Map());
 			_update[GameState.Game].Add(new InputSystem());

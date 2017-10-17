@@ -99,8 +99,16 @@ public class GameUnity : MonoBehaviour
 		}
 		else
 		{
-			MenuObject.SetActive(true);
-			game.Systems.CurrentGameState = SystemManager.GameState.Menu;
+			if (MapData.QuickJoin)
+			{
+				game.Systems.CurrentGameState = SystemManager.GameState.QuickJoin;
+				MenuObject.SetActive(false);
+			}
+			else
+			{
+				MenuObject.SetActive(true);
+				game.Systems.CurrentGameState = SystemManager.GameState.Menu;
+			}
 		}
 		game.Systems.CreateSystems();
 		game.Initiate();

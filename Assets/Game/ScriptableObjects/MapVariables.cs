@@ -10,6 +10,7 @@ public class MapVariables : ScriptableObject
 	public bool CreateWater = true;
 	public bool GenerateSmallIsland = false;
 	public bool UseMenu = false;
+	public bool QuickJoin = false;
 	public int WaterAmountOneIn = 5;
 	public int WaterSimulations = 9000;
 	public int WaterSimulationsPerUpdate = 3;
