@@ -28,7 +28,7 @@ public class GraphicRope : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
 	{
 		UpdateRope();
 	}
@@ -65,7 +65,6 @@ public class GraphicRope : MonoBehaviour {
 		{
 			Vector2 currentMove = CurrentVelocity * Time.deltaTime;
 			CurrentVelocity.y += -GameUnity.Gravity;
-			 
 
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 			Vector2 playerPos = new Vector2(PlayerTransform.position.x, PlayerTransform.position.y);
@@ -98,7 +97,7 @@ public class GraphicRope : MonoBehaviour {
 	public void ThrowRope(GameManager game, int entity, Movement movement)
 	{
 		DeActivate();
-		Debug.Log("Ropespeed " + GameUnity.RopeThrowStartSpeed);
+		
 		PlayerTransform  = game.Entities.GetEntity(entity).gameObject.transform;
 		PlayerMovement = movement;
 		Vector2 mousePos = UnityEngine.Input.mousePosition;
