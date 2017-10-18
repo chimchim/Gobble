@@ -90,10 +90,7 @@ public class MenuGUI : MonoBehaviour {
 		{
 			MultiPlayerSection.SetActive(true);
 			Multiplayer.Clicked = false;
-		}		
-	}
-	private void LateUpdate()
-	{
+		}
 		BlueTeam.Clicked = false;
 		GreenTeam.Clicked = false;
 		Join.Clicked = false;

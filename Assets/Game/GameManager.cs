@@ -32,28 +32,6 @@ namespace Game
 			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
-		//public void CreatePlayerLocalPlayer(bool owner)
-		//{
-		//	Entity ent = new Entity();
-		//	this.Entities.addEntity(ent);
-		//	ent.AddComponent(ActionQueue.Make(ent.ID));
-		//	ent.AddComponent(Game.Component.Movement.Make(ent.ID));
-		//	ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
-		//	ent.AddComponent(Game.Component.Input.Make(ent.ID));
-		//	ent.AddComponent(Game.Component.Resources.Make(ent.ID));
-		//	ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, "local", true, 0, Characters.Yolanda));
-		//
-		//	//var player = GameObject.Instantiate(_gameUnity.PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-		//	//player.tag = "Player";
-		//	//ent.gameObject = player;
-		//	//ent.Animator = player.GetComponentInChildren<Animator>();
-		//	//if (ent.Animator)
-		//	//	Debug.Log("animator exists");
-		//	//if (owner)
-		//	//{
-		//	//	_gameUnity.SetMainPlayer(player);
-		//	//}
-		//}
 
 		public void SetMainPlayer(GameObject player)
 		{
