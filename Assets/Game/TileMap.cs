@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Game;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -94,7 +95,7 @@ public partial class TileMap
 	private bool[,] _enlisted;
 	private int _extraIron;
 	private int _extraCopper;
-	public void InitiateMap()
+	public void InitiateMap(GameManager game)
 	{
 		minsVariables = GameObject.FindObjectOfType<GameUnity>().MineralsGen;
 		SetMaterials();
@@ -193,19 +194,14 @@ public partial class TileMap
 			}
 
 		SetBlockType();
-
-	}
-	
-	public void GenerateMinerals()
-	{
-		GetIslands();
-		CreateRocks();
-		CreateGold();
-		CreateIron();
-		CreateCopper();
+		GetIslands(game);
+		CreateRocks(game);
+		CreateGold(game);
+		CreateIron(game);
+		CreateCopper(game);
 	}
 
-	public void CreateRocks()
+	public void CreateRocks(GameManager game)
 	{
 		int startX = GameUnity.WidhtBound;
 		int endX = GameUnity.MapWidth + startX;
@@ -215,22 +211,11 @@ public partial class TileMap
 		{
 			for (int y = startY; y < endY; y++)
 			{
-				int chance = Random.Range(0, minsVariables.RockMiddleOneIn);
+				int chance = game.CurrentRandom.Next(0, minsVariables.RockMiddleOneIn);
 				if (chance == 0)
 				{
 					MineralTypes[x, y] = MineralType.Rock;
-					//if (BlockTypes[x, y] == TileType.Bot)
-					//{
-					//	Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockBotMat;
-					//}
-					//if (BlockTypes[x, y] == TileType.BotLeftCorner)
-					//{
-					//	Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockBotLeftCornerMat;
-					//}
-					//if (BlockTypes[x, y] == TileType.BotRightCorner)
-					//{
-					//	Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockBotRightCornerMat;
-					//}
+
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleMat;
@@ -267,7 +252,7 @@ public partial class TileMap
 			}
 		}
 	}
-	public void CreateGold()
+	public void CreateGold(GameManager game)
 	{
 		int startX = GameUnity.WidhtBound;
 		int endX = GameUnity.MapWidth + startX;
@@ -287,7 +272,7 @@ public partial class TileMap
 				}
 				if (type == TileType.Bot)
 				{
-					chance = Random.Range(0, minsVariables.GoldBotOnIn);
+					chance = game.CurrentRandom.Next(0, minsVariables.GoldBotOnIn);
 					if (chance == 0)
 					{
 						MineralTypes[x, y] = MineralType.Gold;
@@ -296,7 +281,7 @@ public partial class TileMap
 				}
 				if (type == TileType.BotLeftCorner)
 				{
-					chance = Random.Range(0, minsVariables.GoldLeftRightBot - extraChance);
+					chance = game.CurrentRandom.Next(0, minsVariables.GoldLeftRightBot - extraChance);
 					if (chance == 0)
 					{
 						MineralTypes[x, y] = MineralType.Gold;
@@ -305,14 +290,14 @@ public partial class TileMap
 				}
 				if (type == TileType.BotRightCorner)
 				{
-					chance = Random.Range(0, minsVariables.GoldLeftRightBot - extraChance);
+					chance = game.CurrentRandom.Next(0, minsVariables.GoldLeftRightBot - extraChance);
 					if (chance == 0)
 					{
 						MineralTypes[x, y] = MineralType.Gold;
 						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldBotRightCornerMat;
 					}
 				}
-				chance = Random.Range(0, minsVariables.GoldRandomOneIn);
+				chance = game.CurrentRandom.Next(0, minsVariables.GoldRandomOneIn);
 				if (chance == 0)
 				{
 					MineralTypes[x, y] = MineralType.Gold;
@@ -352,7 +337,7 @@ public partial class TileMap
 			}
 		}
 	}
-	public void CreateIron()
+	public void CreateIron(GameManager game)
 	{
 		int startX = GameUnity.WidhtBound;
 		int endX = GameUnity.MapWidth + startX;
@@ -381,7 +366,6 @@ public partial class TileMap
 			{
 				var type = BlockTypes[x, y];
 				int chance = 1;
-				int extraChance = 0;
 
 				if (MineralTypes[x, y] == MineralType.Gold)
 				{
@@ -392,7 +376,7 @@ public partial class TileMap
 				if (BlockTypes[x, y] == TileType.Middle)
 				{
 					int extra = level[x, y] * minsVariables.IronlevelChanceIncrease;	
-					chance = Random.Range(0, minsVariables.IronMiddleOnIn - extra);
+					chance = game.CurrentRandom.Next(0, minsVariables.IronMiddleOnIn - extra);
 
 					if (chance == 0)
 					{
@@ -402,7 +386,7 @@ public partial class TileMap
 					continue;
 				}
 				
-				chance = Random.Range(0, minsVariables.IronRandomOneIn);
+				chance = game.CurrentRandom.Next(0, minsVariables.IronRandomOneIn);
 				if (chance == 0)
 				{
 					MineralTypes[x, y] = MineralType.Iron;
@@ -450,7 +434,7 @@ public partial class TileMap
 			}
 		}
 	}
-	public void CreateCopper()
+	public void CreateCopper(GameManager game)
 	{
 		int startX = GameUnity.WidhtBound;
 		int endX = GameUnity.MapWidth + startX;
@@ -463,7 +447,6 @@ public partial class TileMap
 			{
 				var type = BlockTypes[x, y];
 				int chance = 1;
-				int extraChance = 0;
 
 				if (MineralTypes[x, y] == MineralType.Gold || MineralTypes[x, y] == MineralType.Iron)
 				{
@@ -473,7 +456,7 @@ public partial class TileMap
 
 				if (BlockTypes[x, y] == TileType.MiddleRight)
 				{
-					chance = Random.Range(0, minsVariables.CopperSideOneIn);
+					chance = game.CurrentRandom.Next(0, minsVariables.CopperSideOneIn);
 
 					if (chance == 0)
 					{
@@ -485,7 +468,7 @@ public partial class TileMap
 
 				if (BlockTypes[x, y] == TileType.MiddleLeft)
 				{
-					chance = Random.Range(0, minsVariables.CopperSideOneIn);
+					chance = game.CurrentRandom.Next(0, minsVariables.CopperSideOneIn);
 
 					if (chance == 0)
 					{
@@ -495,7 +478,7 @@ public partial class TileMap
 					continue;
 				}
 
-				chance = Random.Range(0, minsVariables.CopperRandomOneIn);
+				chance = game.CurrentRandom.Next(0, minsVariables.CopperRandomOneIn);
 				if (chance == 0)
 				{
 					MineralTypes[x, y] = MineralType.Copper;
@@ -647,7 +630,7 @@ public partial class TileMap
 		}
 		return currentIsland;
 	}
-	private void GetIslands()
+	private void GetIslands(GameManager game)
 	{
 		if (!GameUnity.GenerateIslands)
 			return;

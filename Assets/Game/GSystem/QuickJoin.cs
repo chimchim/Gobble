@@ -32,10 +32,21 @@ namespace Game.Systems
 				{
 					CheckList(game, _menu, byteData);
 				}
+				if (cmd == Data.Command.StartGame)
+				{
+					CheckStartGame(game, _menu, byteData);
+				}
 
 			}
 
 			game.Client._currentByteData.Clear();
+		}
+
+		private void CheckStartGame(GameManager game, MenuComponent menu, byte[] byteData)
+		{
+			int randomSeed = BitConverter.ToInt32(byteData, 1);
+			game.CurrentRandom = new System.Random(randomSeed);
+			Debug.Log("START GAME randomSeed " + randomSeed);
 		}
 
 		private void SendLogout(GameManager game)
@@ -91,8 +102,15 @@ namespace Game.Systems
 			menu.PlayerAmount = clientCount;
 		}
 
+		private bool _initiated;
 		public void Initiate(GameManager game)
 		{
+			if (_initiated)
+			{
+				return;
+			}
+
+			_initiated = true;
 			Entity ent = new Entity();
 			game.Entities.addEntity(ent);
 			var menu = MenuComponent.Make(ent.ID);

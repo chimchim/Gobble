@@ -53,15 +53,19 @@ namespace Game
 			_fixedUpdate.Add(GameState.Game, new List<ISystem>());
 			_update.Add(GameState.QuickJoin, new List<ISystem>());
 			_fixedUpdate.Add(GameState.QuickJoin, new List<ISystem>());
-			Debug.Log("QuickJoin");
-			_update[GameState.Menu].Add(new MenuSystem());
-			_update[GameState.QuickJoin].Add(new QuickJoin());
 
+			var quickJoin = new QuickJoin();
+            _update[GameState.QuickJoin].Add(quickJoin);
+			_update[GameState.Game].Add(quickJoin);
+
+			#region Using Menu
+			_update[GameState.Menu].Add(new MenuSystem());
 			_update[GameState.Game].Add(new Map());
-			_update[GameState.Game].Add(new InputSystem());
 			_update[GameState.Game].Add(new InitResources());
+			_update[GameState.Game].Add(new InputSystem());
 			_fixedUpdate[GameState.Game].Add(new Game.Systems.Movement());
-			_fixedUpdate[GameState.Game].Add(new ResetInput());
+			_fixedUpdate[GameState.Game].Add(new ResetInput()); 
+			#endregion
 		}
 		
         public void InitAll(GameManager game)
