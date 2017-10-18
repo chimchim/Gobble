@@ -40,6 +40,8 @@ public partial class TileMap
 	private int[,] BlockIslandSize;
 	// Side blocks, kolla längden och ta mitten
 	public GameObject[,] Blocks;
+	public Transform[,] Minerals;
+
 	private MineralsGenVariables minsVariables;
 
 	#region SpriteVariables
@@ -101,6 +103,7 @@ public partial class TileMap
 		SetMaterials();
 		int fullWidhth = GameUnity.FullWidth;
 		int fullHeight = GameUnity.FullHeight;
+		Minerals = new Transform[fullWidhth, fullHeight];
 		Blocks = new GameObject[fullWidhth, fullHeight];
 		BlockTypes = new TileType[fullWidhth, fullHeight];
 		MineralTypes = new MineralType[fullWidhth, fullHeight];
@@ -275,8 +278,8 @@ public partial class TileMap
 					chance = game.CurrentRandom.Next(0, minsVariables.GoldBotOnIn);
 					if (chance == 0)
 					{
+						CreateMineral(game, x, y, _goldBotMat);
 						MineralTypes[x, y] = MineralType.Gold;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldBotMat;
 					}
 				}
 				if (type == TileType.BotLeftCorner)
@@ -284,8 +287,8 @@ public partial class TileMap
 					chance = game.CurrentRandom.Next(0, minsVariables.GoldLeftRightBot - extraChance);
 					if (chance == 0)
 					{
+						CreateMineral(game, x, y, _goldBotLeftCornerMat);
 						MineralTypes[x, y] = MineralType.Gold;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldBotLeftCornerMat;
 					}
 				}
 				if (type == TileType.BotRightCorner)
@@ -293,8 +296,8 @@ public partial class TileMap
 					chance = game.CurrentRandom.Next(0, minsVariables.GoldLeftRightBot - extraChance);
 					if (chance == 0)
 					{
+						CreateMineral(game, x, y, _goldBotRightCornerMat);
 						MineralTypes[x, y] = MineralType.Gold;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldBotRightCornerMat;
 					}
 				}
 				chance = game.CurrentRandom.Next(0, minsVariables.GoldRandomOneIn);
@@ -303,40 +306,49 @@ public partial class TileMap
 					MineralTypes[x, y] = MineralType.Gold;
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddleMat;
+						CreateMineral(game, x, y, _goldMiddleMat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddle2Mat;
+						CreateMineral(game, x, y, _goldMiddle2Mat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddle3Mat;
+						CreateMineral(game, x, y, _goldMiddle3Mat);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddleLeftMat;
+						CreateMineral(game, x, y, _goldMiddleLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldMiddleRightMat;
+						CreateMineral(game, x, y, _goldMiddleRightMat);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldTopMat;
+						CreateMineral(game, x, y, _goldTopMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldTopLeftMat;
+						CreateMineral(game, x, y, _goldTopLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _goldTopRightMat;
+						CreateMineral(game, x, y, _goldTopRightMat);
 					}
 				}
 			}
 		}
 	}
+
+	private void CreateMineral(GameManager game, int x, int y, Sprite sprite)
+	{
+		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
+		go.transform.position = new Vector3(x * 1.28f, y * 1.28f, -0.2f);
+		go.GetComponent<SpriteRenderer>().sprite = sprite;
+		Minerals[x, y] = go.transform;
+	}
+
 	public void CreateIron(GameManager game)
 	{
 		int startX = GameUnity.WidhtBound;
@@ -381,7 +393,7 @@ public partial class TileMap
 					if (chance == 0)
 					{
 						MineralTypes[x, y] = MineralType.Iron;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddleMat;
+						CreateMineral(game, x, y, _ironMiddleMat);
 					}
 					continue;
 				}
@@ -392,43 +404,43 @@ public partial class TileMap
 					MineralTypes[x, y] = MineralType.Iron;
 					if (BlockTypes[x, y] == TileType.Bot)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironBotMat;
+						CreateMineral(game, x, y, _ironBotMat);
 					}
 					if (BlockTypes[x, y] == TileType.BotLeftCorner)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironBotLeftCornerMat;
+						CreateMineral(game, x, y, _ironBotLeftCornerMat);
 					}
 					if (BlockTypes[x, y] == TileType.BotRightCorner)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironBotRightCornerMat;
+						CreateMineral(game, x, y, _ironBotRightCornerMat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddle2Mat;
+						CreateMineral(game, x, y, _ironMiddle2Mat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddle3Mat;
+						CreateMineral(game, x, y, _ironMiddle3Mat);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddleLeftMat;
+						CreateMineral(game, x, y, _ironMiddleLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironMiddleRightMat;
+						CreateMineral(game, x, y, _ironMiddleRightMat);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironTopMat;
+						CreateMineral(game, x, y, _ironTopMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironTopLeftMat;
+						CreateMineral(game, x, y, _ironTopLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _ironTopRightMat;
+						CreateMineral(game, x, y, _ironTopRightMat);
 					}
 				}
 			}
@@ -460,8 +472,8 @@ public partial class TileMap
 
 					if (chance == 0)
 					{
+						CreateMineral(game, x, y, _copperMiddleRightMat);
 						MineralTypes[x, y] = MineralType.Copper;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddleRightMat;
 					}
 					continue;
 				}
@@ -472,8 +484,8 @@ public partial class TileMap
 
 					if (chance == 0)
 					{
+						CreateMineral(game, x, y, _copperMiddleLeftMat);
 						MineralTypes[x, y] = MineralType.Copper;
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddleLeftMat;
 					}
 					continue;
 				}
@@ -484,39 +496,39 @@ public partial class TileMap
 					MineralTypes[x, y] = MineralType.Copper;
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddleMat;
+						CreateMineral(game, x, y, _copperMiddleMat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddle2Mat;
+						CreateMineral(game, x, y, _copperMiddle2Mat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperMiddle3Mat;
+						CreateMineral(game, x, y, _copperMiddle3Mat);
 					}
 					if (BlockTypes[x, y] == TileType.Bot)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperBotMat;
+						CreateMineral(game, x, y, _copperBotMat);
 					}
 					if (BlockTypes[x, y] == TileType.BotLeftCorner)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperBotLeftCornerMat;
+						CreateMineral(game, x, y, _copperBotLeftCornerMat);
 					}
 					if (BlockTypes[x, y] == TileType.BotRightCorner)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperBotRightCornerMat;
+						CreateMineral(game, x, y, _copperBotRightCornerMat);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperTopMat;
+						CreateMineral(game, x, y, _copperTopMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperTopLeftMat;
+						CreateMineral(game, x, y, _copperTopLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _copperTopRightMat;
+						CreateMineral(game, x, y, _copperTopRightMat);
 					}
 				}
 			}
@@ -564,8 +576,7 @@ public partial class TileMap
 	private List<Vector2> MakeIsland(int x, int y)
 	{
 		List<Vector2> currentIsland = new List<Vector2>();
-		bool foundBoundry = false;
-		int maxtrax = 0;
+
 		currentIsland.Add(new Vector2(x, y));
 		var current = new Vector2(x, y);
 

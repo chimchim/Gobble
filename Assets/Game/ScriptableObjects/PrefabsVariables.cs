@@ -8,4 +8,6 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Schmillo;
 	public GameObject Milton;
 	public GameObject Yolanda;
+
+	public GameObject SpriteDiffuse;
 }
