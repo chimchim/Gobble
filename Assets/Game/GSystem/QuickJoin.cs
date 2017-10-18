@@ -47,6 +47,8 @@ namespace Game.Systems
 			int randomSeed = BitConverter.ToInt32(byteData, 1);
 			game.CurrentRandom = new System.Random(randomSeed);
 			Debug.Log("START GAME randomSeed " + randomSeed);
+			game.Systems.ChangeState(game, SystemManager.GameState.Game);
+			_menu.Menu.gameObject.SetActive(false);
 		}
 
 		private void SendLogout(GameManager game)

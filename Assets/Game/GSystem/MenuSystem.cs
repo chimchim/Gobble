@@ -49,6 +49,7 @@ namespace Game.Systems
 					{
 						if (monoMenu.Teams[i].Clicked && player.Team != i)
 						{
+							monoMenu.Teams[i].Clicked = false;
 							game.Client.SendChangeTeam(entity, i);
 						}
 					}
@@ -57,11 +58,13 @@ namespace Game.Systems
 					{
 						if (monoMenu.HostSection.Randomize.Clicked)
 						{
+							monoMenu.HostSection.Randomize.Clicked = false;
 							game.Client.SendRandomTeams();
 						}
 
 						if (monoMenu.HostSection.StartGame.Clicked)
 						{
+							monoMenu.HostSection.StartGame.Clicked = false;
 							game.Client.SendStartGame();
 						}
 					}
@@ -79,12 +82,14 @@ namespace Game.Systems
 			#endregion
 			game.Client._currentByteData.Clear();
 			
-			if (monoMenu.leaveLobby.Clicked)
+			if (monoMenu.LeaveLobby.Clicked)
 			{
+				monoMenu.LeaveLobby.Clicked = false;
 				SendLogout(game);
 			}
 			if (monoMenu.Local.Clicked)
 			{
+				monoMenu.Local.Clicked = false;
 				monoMenu.gameObject.SetActive(false);
 				game.Systems.ChangeState(game, SystemManager.GameState.Game);
 				game.CreateEmptyPlayer(true, "local", true, 0, Characters.Schmillo);
@@ -92,6 +97,8 @@ namespace Game.Systems
 			}
 			if (monoMenu.Join.Clicked)
 			{
+				monoMenu.Join.Clicked = false;
+				Debug.Log("Join game");
 				string ip = _menu.Menu.IP.text;
 				int port = int.Parse(_menu.Menu.Port.text);
 				string name = _menu.Menu.Name.text;
@@ -248,7 +255,9 @@ namespace Game.Systems
 		{
 			int randomSeed = BitConverter.ToInt32(byteData, 1);
 			game.CurrentRandom = new System.Random(randomSeed);
+			game.Systems.ChangeState(game, SystemManager.GameState.Game);
 			Debug.Log("START GAME randomSeed " + randomSeed);
+			_menu.Menu.gameObject.SetActive(false);
 		}
 
 		public void Initiate(GameManager game)

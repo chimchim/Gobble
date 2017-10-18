@@ -12,7 +12,7 @@ public class MenuGUI : MonoBehaviour {
 	public JoinGame Join;
 	public CharacterSelection CharacterSelection;
 	public GameLobby GameLobby;
-	public LeaveLobby leaveLobby;
+	public LeaveLobby LeaveLobby;
 	public ChangeTeamButton BlueTeam;
 	public ChangeTeamButton GreenTeam;
 	[HideInInspector]
@@ -91,11 +91,13 @@ public class MenuGUI : MonoBehaviour {
 			MultiPlayerSection.SetActive(true);
 			Multiplayer.Clicked = false;
 		}
-		BlueTeam.Clicked = false;
-		GreenTeam.Clicked = false;
-		Join.Clicked = false;
-		Local.Clicked = false;
-		leaveLobby.Clicked = false;
+		//BlueTeam.Clicked = false;
+		//GreenTeam.Clicked = false;
+		//Join.Clicked = false;
+		//Local.Clicked = false;
+		//leaveLobby.Clicked = false;
 		Multiplayer.Clicked = false;
+		//HostSection.StartGame.Clicked = false;
+		//HostSection.Randomize.Clicked = false;
 	}
 }

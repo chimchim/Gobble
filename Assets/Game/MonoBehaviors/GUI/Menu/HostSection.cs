@@ -12,9 +12,4 @@ public class HostSection : MonoBehaviour
 
 	}
 
-	private void LateUpdate()
-	{
-		Randomize.Clicked = false;
-		StartGame.Clicked = false;
-	}
 }

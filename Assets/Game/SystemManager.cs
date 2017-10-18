@@ -54,9 +54,12 @@ namespace Game
 			_update.Add(GameState.QuickJoin, new List<ISystem>());
 			_fixedUpdate.Add(GameState.QuickJoin, new List<ISystem>());
 
-			var quickJoin = new QuickJoin();
-            _update[GameState.QuickJoin].Add(quickJoin);
-			_update[GameState.Game].Add(quickJoin);
+			if (GameUnity.QuickJoin)
+			{
+				var quickJoin = new QuickJoin();
+				_update[GameState.QuickJoin].Add(quickJoin);
+				_update[GameState.Game].Add(quickJoin);
+			}
 
 			#region Using Menu
 			_update[GameState.Menu].Add(new MenuSystem());

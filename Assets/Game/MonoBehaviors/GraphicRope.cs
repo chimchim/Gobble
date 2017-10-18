@@ -98,7 +98,7 @@ public class GraphicRope : MonoBehaviour {
 	public void ThrowRope(GameManager game, int entity, Movement movement)
 	{
 		DeActivate();
-
+		Debug.Log("Ropespeed " + GameUnity.RopeThrowStartSpeed);
 		PlayerTransform  = game.Entities.GetEntity(entity).gameObject.transform;
 		PlayerMovement = movement;
 		Vector2 mousePos = UnityEngine.Input.mousePosition;

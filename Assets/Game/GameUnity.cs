@@ -63,6 +63,7 @@ public class GameUnity : MonoBehaviour
 	public static bool CreateWater;
 	public static bool GenerateIslands;
 	public static bool GenerateSmallIsland;
+	public static bool QuickJoin;
 	public static int WaterAmountOneIn;
 	public static int WaterSimulations;
 	public static int WaterSimulationsPerUpdate;
@@ -78,6 +79,7 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
 
+	public GameObject BuildConsole;
 	public GameObject MenuObject;
 	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
@@ -141,6 +143,8 @@ public class GameUnity : MonoBehaviour
 		GetComponent<FollowCamera>().player = player;
 		MiniMap.player = player;
 	}
+
+	bool buildConsoleActive;
 	void Update () 
 	{
         game.Update(Time.deltaTime);
@@ -148,6 +152,12 @@ public class GameUnity : MonoBehaviour
 		SetVariables();
 
 		StartingPosition = StartPos.position;
+
+		if (UnityEngine.Input.GetKeyDown(KeyCode.B))
+		{
+			buildConsoleActive = !buildConsoleActive;
+			BuildConsole.SetActive(buildConsoleActive);
+		}
 	}
 	void FixedUpdate()
 	{
@@ -193,6 +203,7 @@ public class GameUnity : MonoBehaviour
 		CreateWater = MapData.CreateWater;
 		GenerateIslands = MapData.GenerateIslands;
 		GenerateSmallIsland = MapData.GenerateSmallIsland;
+		QuickJoin = MapData.QuickJoin;
 		WaterAmountOneIn = MapData.WaterAmountOneIn;
 		WaterSimulations = MapData.WaterSimulations;
 		WaterSimulationsPerUpdate = MapData.WaterSimulationsPerUpdate;

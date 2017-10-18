@@ -346,6 +346,10 @@ public partial class TileMap
 		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
 		go.transform.position = new Vector3(x * 1.28f, y * 1.28f, -0.2f);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
+		if (Minerals[x, y] != null)
+		{
+			GameObject.Destroy(Minerals[x, y].gameObject);
+		}
 		Minerals[x, y] = go.transform;
 	}
 
