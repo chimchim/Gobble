@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Game;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,7 +31,7 @@ public partial class TileMap
 	Sprite topWaterSprite;
 	Sprite waterSprite;
 
-	public void InitiateWater()
+	public void InitiateWater(GameManager game)
 	{
 		if (!GameUnity.CreateWater)
 		{
@@ -52,7 +53,7 @@ public partial class TileMap
 		{
 			for (int y = 0; y < fullHeight + 2; y++)
 			{
-				blocks[x, y] = Random.Range(0, GameUnity.WaterAmountOneIn);
+				blocks[x, y] = game.CurrentRandom.Next(0, GameUnity.WaterAmountOneIn);
 				if (blocks[x, y] == GROUND || blocks[x, y] > WATER)
 				{
 					blocks[x, y] = 0;
@@ -65,7 +66,6 @@ public partial class TileMap
 				new_mass[x, y] = blocks[x, y] == WATER ? MaxMass : 0.0f;
 			}
 		}
-
 		for (int x = 0; x < fullWidhth + 2; x++)
 		{
 			blocks[x, 0] = AIR;

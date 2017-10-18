@@ -87,7 +87,8 @@ namespace Game.Systems
 			{
 				monoMenu.gameObject.SetActive(false);
 				game.Systems.ChangeState(game, SystemManager.GameState.Game);
-				game.CreatePlayer(true);
+				game.CreateEmptyPlayer(true, "local", true, 0, Characters.Schmillo);
+				game.CurrentRandom = new System.Random();
 			}
 			if (monoMenu.Join.Clicked)
 			{
@@ -246,6 +247,7 @@ namespace Game.Systems
 		private void CheckStartGame(GameManager game, MenuComponent menu, byte[] byteData)
 		{
 			int randomSeed = BitConverter.ToInt32(byteData, 1);
+			game.CurrentRandom = new System.Random(randomSeed);
 			Debug.Log("START GAME randomSeed " + randomSeed);
 		}
 

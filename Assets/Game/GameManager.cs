@@ -18,10 +18,11 @@ namespace Game
         public EntityManager Entities { get { return _entityManager; } }
 		public SystemManager Systems { get { return _systemManager; } }
 
+		public GameResources GameResources;
 		public TileMap TileMap;
 		private GameUnity _gameUnity;
 		public Client Client;
-
+		public System.Random CurrentRandom;
 		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
@@ -31,26 +32,32 @@ namespace Game
 			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
-		public void CreatePlayer(bool owner)
+		//public void CreatePlayerLocalPlayer(bool owner)
+		//{
+		//	Entity ent = new Entity();
+		//	this.Entities.addEntity(ent);
+		//	ent.AddComponent(ActionQueue.Make(ent.ID));
+		//	ent.AddComponent(Game.Component.Movement.Make(ent.ID));
+		//	ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
+		//	ent.AddComponent(Game.Component.Input.Make(ent.ID));
+		//	ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+		//	ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, "local", true, 0, Characters.Yolanda));
+		//
+		//	//var player = GameObject.Instantiate(_gameUnity.PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+		//	//player.tag = "Player";
+		//	//ent.gameObject = player;
+		//	//ent.Animator = player.GetComponentInChildren<Animator>();
+		//	//if (ent.Animator)
+		//	//	Debug.Log("animator exists");
+		//	//if (owner)
+		//	//{
+		//	//	_gameUnity.SetMainPlayer(player);
+		//	//}
+		//}
+
+		public void SetMainPlayer(GameObject player)
 		{
-			Entity ent = new Entity();
-			this.Entities.addEntity(ent);
-			ent.AddComponent(ActionQueue.Make(ent.ID));
-			ent.AddComponent(Game.Component.Movement.Make(ent.ID));
-			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
-			ent.AddComponent(Game.Component.Input.Make(ent.ID));
-			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
-			ent.AddComponent(Player.Make(ent.ID, owner));
-			var player = GameObject.Instantiate(_gameUnity.PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-			player.tag = "Player";
-			ent.gameObject = player;
-			ent.Animator = player.GetComponentInChildren<Animator>();
-			if (ent.Animator)
-				Debug.Log("animator exists");
-			if (owner)
-			{
-				_gameUnity.SetMainPlayer(player);
-			}
+			_gameUnity.SetMainPlayer(player);
 		}
 		public GameManager()
 		{
@@ -73,7 +80,9 @@ namespace Game
 		public void Initiate()
 		{
 			_gameUnity = GameObject.FindObjectOfType<GameUnity>();
-			Debug.Log("Initiate GameManager");
+			GameResources = new GameResources();
+			GameResources.Prefabs = _gameUnity.PrefabData;
+            Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 		}
 	}

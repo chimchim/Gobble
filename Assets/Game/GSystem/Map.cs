@@ -31,14 +31,13 @@ namespace Game.Systems
 			}
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 			game.TileMap = new TileMap();
-			game.TileMap.InitiateMap();
-			game.TileMap.GenerateMinerals();
+			game.TileMap.InitiateMap(game);
 			watch.Stop();
 			var elapsedMs = watch.ElapsedMilliseconds;
 			Debug.Log("InitiateMap Time " + elapsedMs);
 			watch.Start();
 
-			game.TileMap.InitiateWater();
+			game.TileMap.InitiateWater(game);
 			watch.Stop();
 			elapsedMs = watch.ElapsedMilliseconds;
 			Debug.Log("InitiateWater Time " + elapsedMs);

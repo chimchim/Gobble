@@ -96,11 +96,20 @@ public class GameUnity : MonoBehaviour
 			CreatePlayer(true);
 			game.Systems.CurrentGameState = SystemManager.GameState.Game;
 			MenuObject.SetActive(false);
-		}
+			game.CurrentRandom = new System.Random();
+        }
 		else
 		{
-			MenuObject.SetActive(true);
-			game.Systems.CurrentGameState = SystemManager.GameState.Menu;
+			if (MapData.QuickJoin)
+			{
+				game.Systems.CurrentGameState = SystemManager.GameState.QuickJoin;
+				MenuObject.SetActive(false);
+			}
+			else
+			{
+				MenuObject.SetActive(true);
+				game.Systems.CurrentGameState = SystemManager.GameState.Menu;
+			}
 		}
 		game.Systems.CreateSystems();
 		game.Initiate();
