@@ -140,7 +140,7 @@ public partial class TileMap
 		}
 
 		Vector2 shift = new Vector2(0, 0); // play with this to shift map around
-		float zoom = 0.1f; // play with this to zoom into the noise field
+		float zoom = GameUnity.PerlinZoom; // play with this to zoom into the noise field
 		int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
 		int maxY = GameUnity.MapHeight;
 		int maxX = GameUnity.MapWidth;
@@ -391,8 +391,9 @@ public partial class TileMap
 
 				if (BlockTypes[x, y] == TileType.Middle)
 				{
-					int extra = level[x, y] * minsVariables.IronlevelChanceIncrease;	
-					chance = game.CurrentRandom.Next(0, minsVariables.IronMiddleOnIn - extra);
+					int extra = level[x, y] * minsVariables.IronlevelChanceIncrease;
+					int maxNext = Mathf.Max(0, minsVariables.IronMiddleOnIn - extra);
+					chance = game.CurrentRandom.Next(0, maxNext);
 
 					if (chance == 0)
 					{

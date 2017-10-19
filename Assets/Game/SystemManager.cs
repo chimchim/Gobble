@@ -47,6 +47,8 @@ namespace Game
 
 		public void CreateSystems()
         {
+			_update.Add(GameState.None, new List<ISystem>());
+			_fixedUpdate.Add(GameState.None, new List<ISystem>());
 			_update.Add(GameState.Menu, new List<ISystem>());
 			_fixedUpdate.Add(GameState.Menu, new List<ISystem>());
 			_update.Add(GameState.Game, new List<ISystem>());

@@ -51,7 +51,7 @@ namespace Game
 			playerGameObject.tag = "Player";
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
-			playerGameObject.transform.position = new Vector3(50, 50, 0);
+			playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 
 			GameObject Ropes = new GameObject();
 			Ropes.AddComponent<GraphicRope>();

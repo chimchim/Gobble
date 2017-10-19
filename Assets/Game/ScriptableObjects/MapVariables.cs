@@ -22,6 +22,8 @@ public class MapVariables : ScriptableObject
 	public int TopBoundOffset = 4;
 	public int MiniMapBoundryX = 6;
 	public int MiniMapBoundryY = 6;
-	
+	public float PerlinZoom = 0.1f;
+
+
 
 }

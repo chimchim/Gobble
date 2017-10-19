@@ -45,8 +45,8 @@ namespace Game.Systems
 				playerGameObject.tag = "Player";
 				ent.gameObject = playerGameObject;
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
-				playerGameObject.transform.position = new Vector3(50, 50, 0);
-                if (player.Owner)
+				playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
+				if (player.Owner)
 				{
 					game.SetMainPlayer(playerGameObject);
 				}

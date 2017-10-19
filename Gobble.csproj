@@ -112,7 +112,6 @@
     <Compile Include="Assets\Game\Misc\ObjectPool.cs" />
     <Compile Include="Assets\Game\Misc\PriorityQueue.cs" />
     <Compile Include="Assets\Game\Misc\Server.cs" />
-    <Compile Include="Assets\Game\MonoBehaviors\CharacterMover.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\FollowCamera.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\HpBar.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ButtonClick.cs" />

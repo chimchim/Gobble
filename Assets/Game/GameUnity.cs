@@ -78,6 +78,7 @@ public class GameUnity : MonoBehaviour
 	public static bool ShowMiniMap;
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
+	public static float PerlinZoom;
 
 	public GameObject BuildConsole;
 	public GameObject MenuObject;
@@ -93,28 +94,29 @@ public class GameUnity : MonoBehaviour
 		StartingPosition = StartPos.position;
 
 		SetFamilyID();
+	
+		game.Systems.CreateSystems();
+		game.Initiate();
 		if (!MapData.UseMenu)
 		{
-			CreatePlayer(true);
-			game.Systems.CurrentGameState = SystemManager.GameState.Game;
+			game.CreateFullPlayer(true, "local", true, 0, Characters.Peppermin);
+			game.Systems.ChangeState(game, SystemManager.GameState.Game);
 			MenuObject.SetActive(false);
 			game.CurrentRandom = new System.Random();
-        }
+		}
 		else
 		{
 			if (MapData.QuickJoin)
 			{
-				game.Systems.CurrentGameState = SystemManager.GameState.QuickJoin;
+				game.Systems.ChangeState(game, SystemManager.GameState.QuickJoin);
 				MenuObject.SetActive(false);
 			}
 			else
 			{
 				MenuObject.SetActive(true);
-				game.Systems.CurrentGameState = SystemManager.GameState.Menu;
+				game.Systems.ChangeState(game, SystemManager.GameState.Menu);
 			}
 		}
-		game.Systems.CreateSystems();
-		game.Initiate();
 	}
 
 	public void CreatePlayer(bool owner)
@@ -218,6 +220,7 @@ public class GameUnity : MonoBehaviour
 		MiniMapBoundryY = MapData.MiniMapBoundryY;
 		FullWidth = MapWidth + (WidhtBound * 2);
 		FullHeight = MapHeight + (HeightBound * 2) + BottomBoundOffset + TopBoundOffset;
+		PerlinZoom = MapData.PerlinZoom;
 
 	}
     void LateUpdate()
