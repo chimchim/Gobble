@@ -41,7 +41,7 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entity);
 
-				var playerGameObject = GameObject.Instantiate(GetCharacterObject(game, player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+				var playerGameObject = GameObject.Instantiate(game.GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 				playerGameObject.tag = "Player";
 				ent.gameObject = playerGameObject;
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();

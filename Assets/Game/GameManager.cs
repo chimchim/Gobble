@@ -33,6 +33,32 @@ namespace Game
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
 
+		public void CreateFullPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
+		{
+			Entity ent = new Entity(reservedID);
+			this.Entities.addEntity(ent);
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
+			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+			ent.AddComponent(ActionQueue.Make(ent.ID));
+			ent.AddComponent(Game.Component.Movement.Make(ent.ID));
+			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
+			ent.AddComponent(Game.Component.Input.Make(ent.ID));
+
+			var player = Entities.GetComponentOf<Player>(ent.ID);
+			var resources = Entities.GetComponentOf<Game.Component.Resources>(ent.ID);
+
+			var playerGameObject = GameObject.Instantiate(GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+			playerGameObject.tag = "Player";
+			ent.gameObject = playerGameObject;
+			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
+			playerGameObject.transform.position = new Vector3(50, 50, 0);
+
+			GameObject Ropes = new GameObject();
+			Ropes.AddComponent<GraphicRope>();
+			Ropes.GetComponent<GraphicRope>().MakeRopes();
+			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
+		}
+
 		public void SetMainPlayer(GameObject player)
 		{
 			_gameUnity.SetMainPlayer(player);
@@ -63,5 +89,26 @@ namespace Game
             Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 		}
+
+		public GameObject GetCharacterObject(Characters character)
+		{
+			switch (character)
+			{
+				case Characters.Milton:
+					return GameResources.Prefabs.Milton;
+
+				case Characters.Peppermin:
+					return GameResources.Prefabs.Peppermin;
+
+				case Characters.Yolanda:
+					return GameResources.Prefabs.Yolanda;
+
+				case Characters.Schmillo:
+					return GameResources.Prefabs.Schmillo;
+
+			}
+			return GameResources.Prefabs.Milton;
+		}
+
 	}
 }

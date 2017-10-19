@@ -18,21 +18,24 @@ namespace Game.Systems
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int e in entities)
 			{
-				var entityGameObject = game.Entities.GetEntity(e).gameObject;
+				var entity = game.Entities.GetEntity(e);
+				var entityGameObject = entity.gameObject;
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
+				if (entity.Animator == null)
+					continue;
 
 				float signDir = movement.CurrentVelocity.x + movement.ForceVelocity.x;
 				if (Mathf.Abs(signDir) > 0.1f)
 				{
 					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
-					movement.Animator.transform.eulerAngles = new Vector3(movement.Animator.transform.eulerAngles.x, mult * 180, movement.Animator.transform.eulerAngles.z);
+					entity.Animator.transform.eulerAngles = new Vector3(entity.Animator.transform.eulerAngles.x, mult * 180, entity.Animator.transform.eulerAngles.z);
 
 				}
 
 				int currentStateIndex = (int)movement.CurrentState;
-				movement.States[currentStateIndex].Update(game, movement, e, entityGameObject);
+				movement.States[currentStateIndex].Update(game, movement, e, entity);
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
 			}
 		}
@@ -108,7 +111,6 @@ namespace Game.Systems
 				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
 				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(e);
 
-				movement.Animator = game.Entities.GetEntity(e).Animator;
 				Debug.Log("initiate aniamtor");
 				if (player.Owner)
 				{

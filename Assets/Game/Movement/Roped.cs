@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using Game;
 using UnityEngine;
+using Game.GEntity;
 
 namespace Game.Movement
 {
 	public class Roped : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}
@@ -35,16 +36,17 @@ namespace Game.Movement
 			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeIndex);
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entityID);
-			var animator = movement.Animator;
+			var animator = entity.Animator;
 			animator.SetBool("Roped", true);
 			animator.SetBool("Run", false);
+			var entityGameObject = entity.gameObject;
 			Vector2 playerPos = entityGameObject.transform.position;
-			
+
 			Vector2 currentTranslate = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
 			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;
@@ -302,7 +304,7 @@ namespace Game.Movement
 			}
 			return false;
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}

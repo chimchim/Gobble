@@ -17,7 +17,7 @@ namespace Game.Systems
 		MenuComponent _menu;
 		public void Update(GameManager game)
 		{
-
+			
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
 			foreach (int entity in players)
 			{
@@ -38,17 +38,21 @@ namespace Game.Systems
 				}
 
 			}
-
+			if (UnityEngine.Input.GetKeyDown(KeyCode.G))
+			{
+				game.Client.SendStartGame();
+			}
 			game.Client._currentByteData.Clear();
 		}
 
 		private void CheckStartGame(GameManager game, MenuComponent menu, byte[] byteData)
 		{
+			if (game.Systems.CurrentGameState == SystemManager.GameState.Game)
+				return;
 			int randomSeed = BitConverter.ToInt32(byteData, 1);
 			game.CurrentRandom = new System.Random(randomSeed);
 			Debug.Log("START GAME randomSeed " + randomSeed);
 			game.Systems.ChangeState(game, SystemManager.GameState.Game);
-			_menu.Menu.gameObject.SetActive(false);
 		}
 
 		private void SendLogout(GameManager game)
@@ -96,7 +100,12 @@ namespace Game.Systems
 				{
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
-					game.CreateEmptyPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
+					if (game.Systems.CurrentGameState == SystemManager.GameState.QuickJoin)
+						game.CreateEmptyPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
+					else
+					{
+						game.CreateFullPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
+					}
 
 
 				}

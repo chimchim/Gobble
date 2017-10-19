@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using Game;
 using UnityEngine;
+using Game.GEntity;
 
 namespace Game.Movement
 {
 	public class Floating : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
+			var entityGameObject = entity.gameObject;
 
 			movement.CurrentVelocity.y = movement.CurrentVelocity.y - GameUnity.Gravity;
 			movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
@@ -59,7 +61,7 @@ namespace Game.Movement
 				Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 			}
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}

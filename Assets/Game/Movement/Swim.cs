@@ -5,19 +5,21 @@ using System.Text;
 using Game;
 using UnityEngine;
 using Game.Actions;
+using Game.GEntity;
 
 namespace Game.Movement
 {
 	public class Swim : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
+			var entityGameObject = entity.gameObject;
 
 			movement.CurrentVelocity.y += GameUnity.WaterGravity + (input.Axis.y * GameUnity.SwimSpeed);
 			movement.CurrentVelocity.y = Mathf.Clamp(movement.CurrentVelocity.y, -GameUnity.MaxWaterSpeed, GameUnity.SwimUpExtraSpeed + GameUnity.MaxWaterSpeed);
@@ -93,7 +95,7 @@ namespace Game.Movement
 				Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 			}
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}

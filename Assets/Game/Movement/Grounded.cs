@@ -5,20 +5,23 @@ using System.Text;
 using Game;
 using UnityEngine;
 using Game.Actions;
+using Game.GEntity;
 
 namespace Game.Movement
 {
 	public class Grounded : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
-			var animator = movement.Animator;
+			var animator = entity.Animator;
+			var entityGameObject = entity.gameObject;
+
 			animator.SetBool("Run", false);
 			animator.SetBool("Roped", false);
 			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
@@ -112,7 +115,7 @@ namespace Game.Movement
 			}
 
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, GameObject entityGameObject)
+		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
 		{
 
 		}

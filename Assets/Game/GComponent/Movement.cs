@@ -18,7 +18,7 @@ namespace Game.Component
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
 		public int RopeIndex;
-		public Animator Animator;
+
 		public struct RopedData
 		{
 			public float Vel;
@@ -65,7 +65,6 @@ namespace Game.Component
 			ForceVelocity = Vector2.zero;
 			RopeList.Clear();
 			RopeIndex = 0;
-			Animator = null;
 			_pool.Recycle(this);
 		}
 		public static Movement Make(int entityID)
