@@ -15,6 +15,7 @@ using System.Text;
 			ChangeChar,
 			RandomTeam,
 			StartGame,
+			SendToOthers,
 			Null        //No command
 		}
 

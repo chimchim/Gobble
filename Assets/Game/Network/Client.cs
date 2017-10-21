@@ -26,6 +26,7 @@ public class OtherClient
 		public int MyID = -1;
 		public List<OtherClient> Others = new List<OtherClient>();
 
+		public List<byte[]> _byteDataBuffer = new List<byte[]>();
 		public List<byte[]> _currentByteData = new List<byte[]>();
 		public List<byte> _currentByteArray = new List<byte>();
 		byte[] byteData = new byte[1024];
@@ -120,6 +121,17 @@ public class OtherClient
 			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
 		}
 
+		public void SendInput(int id, byte[] byteData)
+		{
+			//List<byte> _currentByteArray = new List<byte>();
+			//_currentByteArray.Clear();
+			//_currentByteArray.Add((byte)Data.Command.ChangeTeam);
+			//_currentByteArray.AddRange(BitConverter.GetBytes(id));
+			////_currentByteArray.AddRange(BitConverter.GetBytes(team));
+			//var byteData = _currentByteArray.ToArray();
+			clientSocket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, epServer, new AsyncCallback(OnSend), null);
+		}
+
 		private void OnSend(IAsyncResult ar)
 		{
 			try
@@ -132,16 +144,18 @@ public class OtherClient
 				Console.Write("failed to Send");
 			}
 		}
-
+		//public struct 
 		private void OnReceive(IAsyncResult ar)
 		{
 			try
 			{
 				clientSocket.EndReceive(ar);
 				Data.Command cmd = (Data.Command)byteData[0];
-				Debug.Log("Recive " + cmd);
-				_currentByteData.Add(byteData);
+				var byteDataToList = byteData.ToArray();
+				_currentByteData.Add(byteDataToList);
 
+			
+			//Debug.Log("Recieve byteData " + cmd);
 				clientSocket.BeginReceiveFrom(byteData, 0, byteData.Length, SocketFlags.None, ref epServer,
 										   new AsyncCallback(OnReceive), null);
 			}

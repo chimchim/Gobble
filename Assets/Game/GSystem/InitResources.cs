@@ -15,13 +15,14 @@ namespace Game.Systems
 
 		public void Update(GameManager game)
 		{
+			//game.Client._byteDataBuffer.AddRange(game.Client._currentByteData);
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int entity in entities)
 			{
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				if (player.Owner)
 				{
-
+					
 				}
 			}
 		}

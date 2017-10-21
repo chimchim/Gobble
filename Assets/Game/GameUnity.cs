@@ -89,6 +89,7 @@ public class GameUnity : MonoBehaviour
 	private bool _miniMapActive = true;
 	void Start () 
 	{
+		Application.targetFrameRate = 80;
 		SetVariables();
 		Application.runInBackground = true;
 		StartingPosition = StartPos.position;

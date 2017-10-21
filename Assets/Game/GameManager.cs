@@ -69,7 +69,12 @@ namespace Game
 		}
 
         public void Update(float delta)
-        { 
+        {
+			if (Client != null)
+			{
+				Client._byteDataBuffer.AddRange(Client._currentByteData);
+				Client._currentByteData.Clear();
+			}
 			_systemManager.NormalUpdate(this, delta);
 
 			if (GameUnity.CreateWater && TileMap != null)

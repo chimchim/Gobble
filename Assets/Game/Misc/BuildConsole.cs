@@ -63,6 +63,7 @@ public class BuildConsole : MonoBehaviour
 			}
 			_texts.Clear();
 			_isScrolled = false;
+			
 		}
 	}
 	void OnEnable()

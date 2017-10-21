@@ -15,6 +15,7 @@ namespace Game.Systems
 
 		public void Update(GameManager game)
 		{
+			//game.Client._currentByteData.Clear();
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int entity in entities)
 			{

@@ -19,7 +19,34 @@ namespace Game.Systems
 		public void Update(GameManager game)
 		{
 			var monoMenu = _menu.Menu;
+			if (monoMenu.LeaveLobby.Clicked)
+			{
+				monoMenu.LeaveLobby.Clicked = false;
+				SendLogout(game);
+			}
+			if (monoMenu.Local.Clicked)
+			{
+				monoMenu.Local.Clicked = false;
+				monoMenu.gameObject.SetActive(false);
+				game.Systems.ChangeState(game, SystemManager.GameState.Game);
+				game.CreateEmptyPlayer(true, "local", true, 0, Characters.Schmillo);
+				game.CurrentRandom = new System.Random();
+			}
+			if (monoMenu.Join.Clicked)
+			{
+				monoMenu.Join.Clicked = false;
+				Debug.Log("Join game");
+				string ip = _menu.Menu.IP.text;
+				int port = int.Parse(_menu.Menu.Port.text);
+				string name = _menu.Menu.Name.text;
 
+				game.Client = new Client();
+				game.Client.TryJoin(ip, port, name);
+				game.Client.BeginToRecieve();
+
+			}
+			if (game.Client == null)
+				return;
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
 			foreach (int entity in players)
 			{
@@ -72,42 +99,17 @@ namespace Game.Systems
 			}
 
 			#region CheckBytes
-			for (int i = 0; i < game.Client._currentByteData.Count; i++)
+			for (int i = 0; i < game.Client._byteDataBuffer.Count; i++)
 			{
-				byte[] byteData = game.Client._currentByteData[i];
+				byte[] byteData = game.Client._byteDataBuffer[i];
 				int arrayIndex = byteData[0];
 				_menu.ActionArray[arrayIndex].Invoke(game, _menu, byteData);
 
-			} 
+			}
 			#endregion
-			game.Client._currentByteData.Clear();
-			
-			if (monoMenu.LeaveLobby.Clicked)
-			{
-				monoMenu.LeaveLobby.Clicked = false;
-				SendLogout(game);
-			}
-			if (monoMenu.Local.Clicked)
-			{
-				monoMenu.Local.Clicked = false;
-				monoMenu.gameObject.SetActive(false);
-				game.Systems.ChangeState(game, SystemManager.GameState.Game);
-				game.CreateEmptyPlayer(true, "local", true, 0, Characters.Schmillo);
-				game.CurrentRandom = new System.Random();
-			}
-			if (monoMenu.Join.Clicked)
-			{
-				monoMenu.Join.Clicked = false;
-				Debug.Log("Join game");
-				string ip = _menu.Menu.IP.text;
-				int port = int.Parse(_menu.Menu.Port.text);
-				string name = _menu.Menu.Name.text;
+			game.Client._byteDataBuffer.Clear();
 
-				game.Client = new Client();
-				game.Client.TryJoin(ip, port, name);
-				game.Client.BeginToRecieve();
-				
-			}
+
 		}
 
 		private void SendLogout(GameManager game)
@@ -268,7 +270,6 @@ namespace Game.Systems
 			ent.AddComponent(menu);
 			menu.Menu = GameObject.FindObjectOfType<MenuGUI>();
 			_menu = menu;
-			game.Client = new Client();
 
 			var actionArray = new Action<GameManager, MenuComponent, byte[]>[7];
 			actionArray[0] = null;

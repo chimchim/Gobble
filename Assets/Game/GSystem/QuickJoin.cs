@@ -17,36 +17,45 @@ namespace Game.Systems
 		MenuComponent _menu;
 		public void Update(GameManager game)
 		{
-			
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
 			foreach (int entity in players)
 			{
 				var player = game.Entities.GetComponentOf<Player>(entity);
 
 			}
-			for (int i = 0; i < game.Client._currentByteData.Count; i++)
+			for (int i = game.Client._byteDataBuffer.Count - 1; i >= 0; i--)
 			{
-				byte[] byteData = game.Client._currentByteData[i];
+
+				byte[] byteData = game.Client._byteDataBuffer[i];
+
 				Data.Command cmd = (Data.Command)byteData[0];
+				
 				if (cmd == Data.Command.List)
 				{
+					Debug.Log("recieve List ");
 					CheckList(game, _menu, byteData);
+					game.Client._byteDataBuffer.RemoveAt(i);
+					continue;
 				}
 				if (cmd == Data.Command.StartGame)
 				{
 					CheckStartGame(game, _menu, byteData);
+					game.Client._byteDataBuffer.RemoveAt(i);
+					continue;
 				}
+				
 
 			}
 			if (UnityEngine.Input.GetKeyDown(KeyCode.G))
 			{
 				game.Client.SendStartGame();
 			}
-			game.Client._currentByteData.Clear();
+
 		}
 
 		private void CheckStartGame(GameManager game, MenuComponent menu, byte[] byteData)
 		{
+			Debug.Log("game.Systems.CurrentGameState " + game.Systems.CurrentGameState);
 			if (game.Systems.CurrentGameState == SystemManager.GameState.Game)
 				return;
 			int randomSeed = BitConverter.ToInt32(byteData, 1);
