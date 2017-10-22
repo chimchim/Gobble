@@ -22,14 +22,22 @@ namespace Game.Systems
 			int currentByteIndex = sizeof(int) + 1;
 
 			float xInput = BitConverter.ToSingle(byteData, currentByteIndex);
-			
+			currentByteIndex += sizeof(float);
+			float yInput = BitConverter.ToSingle(byteData, currentByteIndex);
 			currentByteIndex += sizeof(float);
 			bool spaceInput = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
-			int packCounter = BitConverter.ToInt32(byteData, currentByteIndex);
+			bool grounded = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
+			int packCounter = BitConverter.ToInt32(byteData, currentByteIndex);
+			currentByteIndex += sizeof(int);
+			if(spaceInput)
+				Debug.Log("Packet counter recieved" + packCounter + " buffer count " + game.Client._byteDataBuffer.Count);
+
+			input.GameLogicPackets.Add(Client.CreateGameLogic(byteData));
 			input.Axis.x = xInput;
-			input.Space = spaceInput;
+			input.Axis.y = yInput;
+			input.Space = spaceInput || input.Space;
 			
 		}
 		public void Update(GameManager game)
@@ -48,12 +56,9 @@ namespace Game.Systems
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					input.Axis = new Vector2(x, y);
-					if (!input.Space)
-					{
-						input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space);
-						if (input.Space)
-							Debug.Log("fps" + (1 / Time.deltaTime));
-					}
+
+					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
+
 					if (!input.RightClick)
 					{
 						
@@ -77,23 +82,27 @@ namespace Game.Systems
 						_currentByteArray.Add((byte)Data.Command.SendToOthers);
 						_currentByteArray.AddRange(BitConverter.GetBytes(player.EntityID));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.Axis.x));
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.Axis.y));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.Space));
+						_currentByteArray.AddRange(BitConverter.GetBytes(movement.Grounded));
 						_currentByteArray.AddRange(BitConverter.GetBytes(packetCounter));
-						packetCounter++;
+						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.x));
+						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.y));
 						var byteData = _currentByteArray.ToArray();
 						game.Client.SendInput(player.EntityID, byteData);
-						
-						for (int i = game.Client._byteDataBuffer.Count-1; i >= 0; i--)
+						if (input.Space)
+						{
+							Debug.Log("Packet counter Jump" + packetCounter);
+						}
+						packetCounter++;
+						for (int i = 0; i < game.Client._byteDataBuffer.Count; i++)
 						{
 							var byteDataRecieve = game.Client._byteDataBuffer[i];
-
-							int arrayIndex = byteDataRecieve[0];
 							if ((Data.Command)byteDataRecieve[0] == Data.Command.SendToOthers)
 							{
-								SetInput(game, byteDataRecieve);
-								game.Client._byteDataBuffer.RemoveAt(i);
+
+								input.GameLogicPackets.Add(Client.CreateGameLogic(byteDataRecieve));
 							}
-							
 						}
 					}
 				}

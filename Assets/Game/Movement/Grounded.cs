@@ -19,6 +19,7 @@ namespace Game.Movement
 		{
 			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
+			var player = game.Entities.GetComponentOf<Game.Component.Player>(entityID);
 			var animator = entity.Animator;
 			var entityGameObject = entity.gameObject;
 
@@ -53,10 +54,9 @@ namespace Game.Movement
 			{
 				animator.SetBool("Run", true);
 			}
-			if (input.Space && movement.Grounded)
+			if (input.Space && movement.Grounded && player.Owner)
 			{
-				movement.CurrentVelocity.y = GameUnity.JumpSpeed;
-				animator.SetBool("Jump", true);
+				Game.Systems.Movement.DoJump(game, player.EntityID);
 			}
 
 			float yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);

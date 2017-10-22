@@ -31,6 +31,49 @@ public class OtherClient
 		public List<byte> _currentByteArray = new List<byte>();
 		byte[] byteData = new byte[1024];
 
+		public struct GameLogicPacket
+		{
+			public int PlayerID;
+			public int PacketCounter;
+
+			public float InputAxisX;
+			public float InputAxisY;
+			public bool InputSpace;
+
+			public bool Grounded;
+		}
+		
+		public static GameLogicPacket CreateGameLogic(byte[] byteData)
+		{
+			int currentByteIndex =  1;
+			int id = BitConverter.ToInt32(byteData, currentByteIndex);
+			currentByteIndex += sizeof(int);
+
+			float xInput = BitConverter.ToSingle(byteData, currentByteIndex);
+			currentByteIndex += sizeof(float);
+			float yInput = BitConverter.ToSingle(byteData, currentByteIndex);
+			currentByteIndex += sizeof(float);
+			bool spaceInput = BitConverter.ToBoolean(byteData, currentByteIndex);
+			currentByteIndex += sizeof(bool);
+			bool grounded = BitConverter.ToBoolean(byteData, currentByteIndex);
+			currentByteIndex += sizeof(bool);
+			int packCounter = BitConverter.ToInt32(byteData, currentByteIndex);
+			currentByteIndex += sizeof(int);
+
+			var gameLogic = new GameLogicPacket()
+			{
+				PlayerID = id,
+				PacketCounter = packCounter,
+
+				InputAxisX = xInput,
+				InputAxisY = yInput,
+				InputSpace = spaceInput,
+
+				Grounded = grounded
+			};
+			return gameLogic;
+		}
+
 		public void TryJoin(string serverIP, int port, string name)
 		{
 

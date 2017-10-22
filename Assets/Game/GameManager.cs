@@ -76,7 +76,10 @@ namespace Game
 				Client._currentByteData.Clear();
 			}
 			_systemManager.NormalUpdate(this, delta);
-
+			if (Client != null)
+			{
+				Client._byteDataBuffer.Clear();
+			}
 			if (GameUnity.CreateWater && TileMap != null)
 			{
 				TileMap.UpdateWater();

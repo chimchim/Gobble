@@ -39,7 +39,15 @@ namespace Game.Systems
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
 			}
 		}
+		public static void DoJump(GameManager game, int id)
+		{
+			var animator = game.Entities.GetEntity(id).Animator;
+			var movement = game.Entities.GetComponentOf<Game.Component.Movement>(id);
 
+			movement.CurrentVelocity.y = GameUnity.JumpSpeed;
+			animator.SetBool("Jump", true);
+
+		}
 		public static Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, out bool grounded)
 		{
 			float fullRayDistance = yoffset + Mathf.Abs(y);

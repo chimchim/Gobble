@@ -102,6 +102,7 @@
     <Compile Include="Assets\Game\GSystem\MenuSystem.cs" />
     <Compile Include="Assets\Game\GSystem\Movement.cs" />
     <Compile Include="Assets\Game\GSystem\QuickJoin.cs" />
+    <Compile Include="Assets\Game\GSystem\ReadGamePackets.cs" />
     <Compile Include="Assets\Game\GSystem\ResetInput.cs" />
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GameManager.cs" />
