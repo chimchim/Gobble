@@ -54,7 +54,7 @@ namespace Game
 			playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 
 			GameObject Ropes = new GameObject();
-			Ropes.AddComponent<GraphicRope>();
+			Ropes.AddComponent<GraphicRope>().Owner = owner;
 			Ropes.GetComponent<GraphicRope>().MakeRopes();
 			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 		}

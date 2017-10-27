@@ -29,13 +29,43 @@ namespace Game.Systems
 					{
 						var pack = input.GameLogicPackets[i];
 						int otherPlayerID = pack.PlayerID;
+						var otherEntity = game.Entities.GetEntity(otherPlayerID);
+						var otherTransform = otherEntity.gameObject.transform;
 						var otherInput = game.Entities.GetComponentOf<Game.Component.Input>(otherPlayerID);
-						otherInput.Axis = new Vector2(pack.InputAxisX, pack.InputAxisY);
+						var otherResource = game.Entities.GetComponentOf<Game.Component.Resources>(otherPlayerID);
+						var otherMovement = game.Entities.GetComponentOf<Game.Component.Movement>(otherPlayerID);
 
+						var otherPacketPosition = pack.Position;
+						var otherRightClick = pack.RightClick;
+						var otherMousePos = pack.MousePos;
+						var otherMovestate = (Component.Movement.MoveState)pack.MovementState;
+						var diff = otherPacketPosition - new Vector2(otherTransform.position.x, otherTransform.position.y);
+
+						otherInput.MousePos = otherMousePos;
+						// Snap Position
+						if (diff.magnitude > 1)
+						{
+							otherTransform.position = otherPacketPosition;
+						}
+						// Do Jump
 						if (pack.Grounded && pack.InputSpace && !jumped)
 						{
 							jumped = true;
 							Game.Systems.Movement.DoJump(game, otherPlayerID);
+						}
+						// Set MoveAxis
+						otherInput.Axis = new Vector2(pack.InputAxisX, pack.InputAxisY);
+
+						if (otherRightClick && otherMovestate != Component.Movement.MoveState.Roped)
+						{
+							otherResource.GraphicRope.ThrowRope(game, otherPlayerID, otherMovement, otherInput);
+						}
+						else if (otherRightClick && otherMovestate == Component.Movement.MoveState.Roped)
+						{
+							otherResource.GraphicRope.DeActivate();
+							otherMovement.RopeList.Clear();
+							otherMovement.RopeIndex = 0;
+							otherMovement.CurrentState = Component.Movement.MoveState.Grounded;
 						}
 					}
 					input.GameLogicPackets.Clear();

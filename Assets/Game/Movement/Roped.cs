@@ -18,7 +18,11 @@ namespace Game.Movement
 		{
 			int positionAmount = (movement.RopeIndex * 2) + 2;
 			Vector2[] drawPositions = new Vector2[positionAmount];
-
+			if (movement.RopeList.Count == 0)
+			{
+				Debug.LogError("ROPE HAS 0 COUNT");
+				return;
+			}
 			drawPositions[0] = movement.RopeList[0].origin;
 			drawPositions[1] = position;
 

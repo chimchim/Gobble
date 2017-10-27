@@ -148,6 +148,7 @@ public class GameUnity : MonoBehaviour
 	}
 
 	bool buildConsoleActive;
+	int normal = 0;
 	void Update () 
 	{
         game.Update(Time.deltaTime);
@@ -164,6 +165,7 @@ public class GameUnity : MonoBehaviour
 	}
 	void FixedUpdate()
 	{
+		normal = 0;
 		game.FixedUpdate(Time.deltaTime);
 	}
 

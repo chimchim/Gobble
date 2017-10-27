@@ -53,7 +53,7 @@ namespace Game.Systems
 				}
 
 				GameObject Ropes = new GameObject();
-				Ropes.AddComponent<GraphicRope>();
+				Ropes.AddComponent<GraphicRope>().Owner = player.Owner;
 				Ropes.GetComponent<GraphicRope>().MakeRopes();
 				resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 			}

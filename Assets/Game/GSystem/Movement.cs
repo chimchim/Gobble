@@ -23,6 +23,8 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
+				var rope = game.Entities.GetComponentOf<Game.Component.Resources>(e).GraphicRope;
+				rope.UpdateRope();
 				if (entity.Animator == null)
 					continue;
 

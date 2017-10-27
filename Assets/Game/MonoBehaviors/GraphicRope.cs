@@ -9,6 +9,7 @@ public class GraphicRope : MonoBehaviour {
 	// Player
 	Transform PlayerTransform;
 	Movement PlayerMovement;
+	Game.Component.Input PlayerInput;
 	// Draw
 	public int drawIndex = 0;
 	List<Transform> Ropes;
@@ -19,9 +20,11 @@ public class GraphicRope : MonoBehaviour {
 	Vector2 NewRopePosition;
 	Vector2 NewRopeDirection;
 	public bool UpdateNewRope;
+	public bool Owner;
 	Vector2 CurrentVelocity;
 	Vector2[] DrawThrowPositions = new Vector2[2];
 	GameObject RopeFab;
+
 	void Start ()
 	{
 		UpdateFront = true;
@@ -30,7 +33,7 @@ public class GraphicRope : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-		UpdateRope();
+		//UpdateRope();
 	}
 	public void DeActivate()
 	{
@@ -59,6 +62,7 @@ public class GraphicRope : MonoBehaviour {
 		Ropes = ropes;
 	}
 
+	//public 
 	public void UpdateRope()
 	{
 		if (UpdateNewRope)
@@ -69,19 +73,30 @@ public class GraphicRope : MonoBehaviour {
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 			Vector2 playerPos = new Vector2(PlayerTransform.position.x, PlayerTransform.position.y);
 			Vector2 currentL = (NewRopePosition - playerPos);
+
 			RaycastHit2D hit = Physics2D.Raycast(playerPos, currentL.normalized, (currentMove.magnitude + currentL.magnitude), layerMask);
 			if (hit.collider != null)
 			{
 				float ropeL = (playerPos - hit.point).magnitude;
-				PlayerMovement.CurrentState = Movement.MoveState.Roped;
-
-				PlayerMovement.CurrentRoped = new Movement.RopedData()
+				if (Owner)
 				{
-					RayCastOrigin = ((0.05f * hit.normal) + hit.point),
-					origin = hit.point,
-					Length = ropeL,
-					Damp = GameUnity.RopeDamping
-				};
+					PlayerMovement.CurrentState = Movement.MoveState.Roped;
+					PlayerMovement.CurrentRoped = new Movement.RopedData()
+					{
+						RayCastOrigin = ((0.05f * hit.normal) + hit.point),
+						origin = hit.point,
+						Length = ropeL,
+						Damp = GameUnity.RopeDamping
+					};
+
+					PlayerInput.RopeConnected = new Game.Component.Input.NetworkRopeConnected()
+					{
+						RayCastOrigin = ((0.05f * hit.normal) + hit.point),
+						Position = playerPos,
+						Origin = hit.point,
+						Length = ropeL
+					};
+				}
 				UpdateNewRope = false;
 				UpdateFront = true;
 				PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
@@ -94,15 +109,13 @@ public class GraphicRope : MonoBehaviour {
 			DrawRope(DrawThrowPositions, playerPos, 0);
 		}
 	}
-	public void ThrowRope(GameManager game, int entity, Movement movement)
+	public void ThrowRope(GameManager game, int entity, Movement movement, Game.Component.Input input)
 	{
 		DeActivate();
-		
+		PlayerInput = input;
 		PlayerTransform  = game.Entities.GetEntity(entity).gameObject.transform;
 		PlayerMovement = movement;
-		Vector2 mousePos = UnityEngine.Input.mousePosition;
-		mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-		Vector2 direction = mousePos - new Vector2(PlayerTransform.position.x, PlayerTransform.position.y);
+		Vector2 direction = input.MousePos - new Vector2(PlayerTransform.position.x, PlayerTransform.position.y);
 		NewRopePosition = PlayerTransform.position;
 		NewRopeDirection = direction.normalized;
 		UpdateNewRope = true;
