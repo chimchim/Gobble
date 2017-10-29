@@ -6,7 +6,7 @@ namespace Game
 	public interface ISystem
 	{
 
-		void Update(GameManager game);
+		void Update(GameManager game, float time);
 
         void Initiate(GameManager game);
 

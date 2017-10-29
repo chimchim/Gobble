@@ -16,7 +16,7 @@ namespace Game.Systems
 		private readonly Bitmask _menuBitmask = Bitmask.MakeFromComponents<MenuComponent>();
 
 		MenuComponent _menu;
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
 			var monoMenu = _menu.Menu;
 			if (monoMenu.LeaveLobby.Clicked)

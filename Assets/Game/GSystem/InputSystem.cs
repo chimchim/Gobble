@@ -10,11 +10,9 @@ namespace Game.Systems
 	public class InputSystem : ISystem
 	{
 		// gör en input translator?
-		int packetCounter = 0;
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
-		List<byte> _currentByteArray = new List<byte>();
 
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
             var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			
@@ -39,33 +37,6 @@ namespace Game.Systems
 
 					if (game.Client != null)
 					{
-						_currentByteArray.Clear();
-						_currentByteArray.Add((byte)Data.Command.SendToOthers);
-						_currentByteArray.AddRange(BitConverter.GetBytes(packetCounter));
-						_currentByteArray.AddRange(BitConverter.GetBytes(player.EntityID));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.Axis.x));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.Axis.y));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.Space));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.RightClick));
-						_currentByteArray.AddRange(BitConverter.GetBytes(movement.Grounded));
-						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.x));
-						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.y));
-						_currentByteArray.AddRange(BitConverter.GetBytes(((int)movement.CurrentState)));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.x));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.y));
-
-						bool ropeConnected = input.RopeConnected.Length > 0;
-						_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected));
-						if (ropeConnected)
-						{
-							CreateRopeConnected(_currentByteArray, input.RopeConnected);
-							input.RopeConnected.Length = 0;
-						}
-
-						var byteData = _currentByteArray.ToArray();
-						game.Client.SendInput(player.EntityID, byteData);
-
-						packetCounter++;
 						for (int i = 0; i < game.Client._byteDataBuffer.Count; i++)
 						{
 							var byteDataRecieve = game.Client._byteDataBuffer[i];
@@ -95,8 +66,9 @@ namespace Game.Systems
 					{
 						resources.GraphicRope.ThrowRope(game, entity, movement, input);
 					}
-					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
+					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped && !input.NetworkRopeKill)
 					{
+						input.NetworkRopeKill = true;
 						input.RightClick = false;
 						resources.GraphicRope.DeActivate();
 						movement.RopeList.Clear();
@@ -105,16 +77,6 @@ namespace Game.Systems
 					}
 				}
 			}
-		}
-		private void CreateRopeConnected(List<byte> currentByteArray, InputComponent.NetworkRopeConnected ropeConnected)
-		{
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.x));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.y));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Origin.x));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Origin.y));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Position.x));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Position.y));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Length));
 		}
 
 		public void Initiate(GameManager game)

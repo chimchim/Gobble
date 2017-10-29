@@ -12,7 +12,7 @@ namespace Game.Systems
     public class ActionApplier : ISystem
     {
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<ActionQueue>();
-        public void Update(GameManager game)
+        public void Update(GameManager game, float delta)
         {
             var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
             foreach (int e in entities)

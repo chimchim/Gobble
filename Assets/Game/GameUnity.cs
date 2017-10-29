@@ -32,6 +32,7 @@ public class GameUnity : MonoBehaviour
 	public static float ExtraFallSpeedAfter;
 	public static float ForceDamper;
 	public static Vector2 GroundHitBox;
+	public static float NetworkLerpSpeed;
 
 	[Header("Rope Variables")]
 	public static float RopeGravity;
@@ -89,7 +90,7 @@ public class GameUnity : MonoBehaviour
 	private bool _miniMapActive = true;
 	void Start () 
 	{
-		Application.targetFrameRate = 80;
+		//Application.targetFrameRate = 80;
 		SetVariables();
 		Application.runInBackground = true;
 		StartingPosition = StartPos.position;
@@ -166,7 +167,7 @@ public class GameUnity : MonoBehaviour
 	void FixedUpdate()
 	{
 		normal = 0;
-		game.FixedUpdate(Time.deltaTime);
+		game.FixedUpdate(Time.fixedDeltaTime);
 	}
 
 	private void SetVariables()
@@ -179,6 +180,7 @@ public class GameUnity : MonoBehaviour
 		Weight = GroundData.Weight;
 		ForceDamper = GroundData.ForceDamper;
 		GroundHitBox = GroundData.GroundHitBox;
+		NetworkLerpSpeed = GroundData.NetworkLerpSpeed;
 
 		RopeGravity = RopeData.RopeGravity;
 		RopeSpeedMult = RopeData.RopeSpeedMult;

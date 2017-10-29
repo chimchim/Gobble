@@ -15,15 +15,15 @@ namespace Game.Movement
 		{
 
 		}
-		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 
 			movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed * 3;
 			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 3;
-			float yMovement = movement.CurrentVelocity.y * Time.deltaTime;
-			float xMovement = movement.CurrentVelocity.x * Time.deltaTime;
+			float yMovement = movement.CurrentVelocity.y * delta;
+			float xMovement = movement.CurrentVelocity.x * delta;
 
 			entity.gameObject.transform.position += new Vector3(xMovement, yMovement, 0);
 		}

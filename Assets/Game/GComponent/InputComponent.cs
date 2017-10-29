@@ -15,6 +15,7 @@ namespace Game.Component
 		public NetworkRopeConnected RopeConnected;
 
 		public bool NetworkJump;
+		public bool NetworkRopeKill;
 		public Vector2 NetworkPosition;
 		public struct NetworkRopeConnected
 		{

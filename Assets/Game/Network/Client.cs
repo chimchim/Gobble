@@ -46,6 +46,7 @@ public class OtherClient
 			public int MovementState;
 			public bool Grounded;
 			public NetworkRopeConnected RopeConnected;
+			public bool KillRope;
 		}
 		
 		public static GameLogicPacket CreateGameLogic(byte[] byteData)
@@ -63,6 +64,8 @@ public class OtherClient
 			bool spaceInput = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
 			bool rightClick = BitConverter.ToBoolean(byteData, currentByteIndex);
+			currentByteIndex += sizeof(bool);
+			bool killRope = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
 			bool grounded = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
@@ -112,11 +115,11 @@ public class OtherClient
 					Position = new Vector2(positionX, positionY),
 					Length = l,
 				};
-			} 
+			}
 		#endregion
 
-		var gameLogic = new GameLogicPacket()
-		{
+			var gameLogic = new GameLogicPacket()
+			{
 				PlayerID = id,
 				PacketCounter = packCounter,
 
@@ -128,7 +131,8 @@ public class OtherClient
 				MousePos = new Vector2(mousePosX, mousePosY),
 				Grounded = grounded,
 				MovementState = movementState,
-				RopeConnected = ropeConnect
+				RopeConnected = ropeConnect,
+				KillRope = killRope
 			};
 			return gameLogic;
 		}

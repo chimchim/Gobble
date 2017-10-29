@@ -13,7 +13,7 @@ namespace Game.Systems
 
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent>();
 		
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
         {
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int e in entities)
@@ -29,7 +29,7 @@ namespace Game.Systems
 					continue;
 
 				float signDir = movement.CurrentVelocity.x + movement.ForceVelocity.x;
-				if (Mathf.Abs(signDir) > 0.1f)
+				if (Mathf.Abs(signDir) > 0.3f)
 				{
 					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
 					entity.Animator.transform.eulerAngles = new Vector3(entity.Animator.transform.eulerAngles.x, mult * 180, entity.Animator.transform.eulerAngles.z);
@@ -37,7 +37,7 @@ namespace Game.Systems
 				}
 
 				int currentStateIndex = (int)movement.CurrentState;
-				movement.States[currentStateIndex].Update(game, movement, e, entity);
+				movement.States[currentStateIndex].Update(game, movement, e, entity, delta);
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
 			}
 		}

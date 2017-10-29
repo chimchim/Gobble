@@ -11,7 +11,7 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		bool[,] foundTile;
 
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
 			if(GameUnity.ShowMiniMap)
 				UpdateMiniMap(game);

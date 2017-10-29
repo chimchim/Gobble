@@ -15,7 +15,7 @@ namespace Game.Systems
 		private readonly Bitmask _playerBitmask = Bitmask.MakeFromComponents<Player>();
 
 		MenuComponent _menu;
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
 			foreach (int entity in players)

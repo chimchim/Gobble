@@ -13,7 +13,7 @@ namespace Game.Systems
 
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
 
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int entity in entities)
@@ -25,6 +25,7 @@ namespace Game.Systems
 					input.Space = false;
 					input.RightClick = false;
 				}
+				input.NetworkRopeKill = false;
 				input.NetworkJump = false;
 			}
 		}

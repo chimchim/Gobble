@@ -11,8 +11,9 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		bool[,] foundTile;
 
-		public float lerpStep = 0.1f;
-		public void Update(GameManager game)
+		public float lerpStep = 0.05f;
+		public float LerpSpeed;
+		public void Update(GameManager game, float delta)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			float xOffset = GameUnity.GroundHitBox.x;
@@ -27,13 +28,17 @@ namespace Game.Systems
 					var otherTransform = game.Entities.GetEntity(e).gameObject.transform;
 					var otherPosition = new Vector2(otherTransform.position.x, otherTransform.position.y);
 					var networkPosition = input.NetworkPosition;
+					Debug.DrawLine(otherPosition, networkPosition, Color.green);
 
 					Vector2 diff = networkPosition - otherPosition;
-					float step = Mathf.Min(lerpStep, diff.magnitude);
-					if (step < lerpStep)
-						continue;
-					float stepX = (diff.normalized * step).x;
-					float stepY = (diff.normalized * step).y;
+					Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
+					if (translate.magnitude > diff.magnitude)
+					{
+						translate = diff;
+					}
+
+					float stepX = translate.x;// (diff.normalized * step).x;
+					float stepY = translate.y;//(diff.normalized * step).y;
 
 					bool vertGrounded = false;
 					bool horGrounded = false;

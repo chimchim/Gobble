@@ -28,7 +28,7 @@ namespace Game
 			}
 			foreach(ISystem system in _update[CurrentGameState])
 			{
-                system.Update(game);
+                system.Update(game, delta);
 			}
 		}
 
@@ -36,7 +36,7 @@ namespace Game
 		{
 			foreach (ISystem system in _fixedUpdate[CurrentGameState])
 			{
-				system.Update(game);
+				system.Update(game, delta);
 			}
 		}
 
@@ -67,9 +67,11 @@ namespace Game
 			_update[GameState.Menu].Add(new MenuSystem());
 			_update[GameState.Game].Add(new Map());
 			_update[GameState.Game].Add(new InitResources());
+			_update[GameState.Game].Add(new ReadgamePackets());
 			_update[GameState.Game].Add(new InputSystem());
-			_fixedUpdate[GameState.Game].Add(new ReadgamePackets());
-			_fixedUpdate[GameState.Game].Add(new DeadReckoning());
+			_update[GameState.Game].Add(new DeadReckoning());
+
+			_fixedUpdate[GameState.Game].Add(new SendGamePackets());
 			_fixedUpdate[GameState.Game].Add(new Game.Systems.Movement());
 			_fixedUpdate[GameState.Game].Add(new ResetInput()); 
 			#endregion

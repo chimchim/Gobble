@@ -41,7 +41,7 @@ namespace Game.Movement
 			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeIndex);
 
 		}
-		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Stats>(entityID);
@@ -52,7 +52,7 @@ namespace Game.Movement
 			var entityGameObject = entity.gameObject;
 			Vector2 playerPos = entityGameObject.transform.position;
 
-			Vector2 currentTranslate = (movement.CurrentVelocity * Time.deltaTime) + (movement.ForceVelocity * Time.deltaTime);
+			Vector2 currentTranslate = (movement.CurrentVelocity * delta) + (movement.ForceVelocity * delta);
 			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;
 
@@ -65,7 +65,7 @@ namespace Game.Movement
 			float yMovement = 0;
 			float xMovement = 0;
 			float lastAngle = 0;
-			float deltaTimeMult = 1 / Time.deltaTime;
+			float deltaTimeMult = 1 / delta;
 			//Debug.Log((movement.RopeIndex > 0) + " + " + (diff > len) + " + " + (movement.CurrentRoped.FirstAngle) + " + " + ((currentTranslate.y < 0 && playerPos.y < origin.y)) + " + " + !movement.Grounded);
 			if ((oldRoped || movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
 			{
@@ -99,7 +99,7 @@ namespace Game.Movement
 					float velYDir = newYVel * Mathf.Sign(Mathf.Sin(angle));
 					
 					float newSpeed = velXDir + velYDir;
-					movement.CurrentRoped.Vel = (newSpeed * Time.deltaTime/len);
+					movement.CurrentRoped.Vel = (newSpeed * delta / len);
 					float ropeDirection = Mathf.Sign(newSpeed);
 
 					float tempAngle = movement.CurrentRoped.Vel + angle;
@@ -128,6 +128,7 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
+				//Debug.Log("current L " + new Vector2(xMovement, yMovement).magnitude);
 				//Debug.Log("currentSpeed  " + new Vector2(xMovement, yMovement).magnitude * deltaTimeMult + " current Vel " + movement.CurrentRoped.Vel);
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
@@ -151,7 +152,7 @@ namespace Game.Movement
 				#endregion
 				float gravityDivier = Math.Max(1, len);
 				
-				aAcc = (-1 * gravity / gravityDivier) * Mathf.Sin(angle) * Time.deltaTime;
+				aAcc = (-1 * gravity / gravityDivier) * Mathf.Sin(angle) * delta;
 
 				movement.CurrentRoped.Vel += aAcc;
 				movement.CurrentRoped.Vel *= movement.CurrentRoped.Damp;
@@ -171,8 +172,8 @@ namespace Game.Movement
 				movement.ForceVelocity.x = movement.ForceVelocity.x * GameUnity.ForceDamper;
 				movement.ForceVelocity.y = movement.ForceVelocity.y * GameUnity.ForceDamper;
 
-				yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
-				xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
+				yMovement = movement.CurrentVelocity.y * delta + (movement.ForceVelocity.y * delta);
+				xMovement = movement.CurrentVelocity.x * delta + (movement.ForceVelocity.x * delta);
 				animator.SetBool("Roped", false);
 				animator.SetBool("Jump", false);
 				if(input.Axis.x != 0)
@@ -191,7 +192,7 @@ namespace Game.Movement
 				
 			} 
 			#endregion
-			stats.OxygenSeconds += Time.deltaTime;
+			stats.OxygenSeconds += delta;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
 			float xOffset = GameUnity.RopeHitBox.x;

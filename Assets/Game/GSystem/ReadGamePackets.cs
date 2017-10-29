@@ -11,7 +11,7 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		bool[,] foundTile;
 
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			int fullWidhth = GameUnity.FullWidth;
@@ -44,12 +44,7 @@ namespace Game.Systems
 
 						otherInput.MousePos = otherMousePos;
 						otherInput.NetworkPosition = otherPacketPosition;
-						//Vector2 positionXDiff = otherPlayerPos - otherPacketPosition;
-						//if (diff.magnitude > 0.3f)
-						//{
-						//	Debug.Log("snap ");
-						//	otherTransform.position = otherPacketPosition;
-						//}
+
 						// Do Jump
 						if (pack.Grounded && pack.InputSpace && !jumped)
 						{
@@ -63,7 +58,7 @@ namespace Game.Systems
 						{
 							otherResource.GraphicRope.ThrowRope(game, otherPlayerID, otherMovement, otherInput);
 						}
-						else if (otherRightClick && otherMovestate == MovementComponent.MoveState.Roped)
+						else if (pack.KillRope)
 						{
 							otherResource.GraphicRope.DeActivate();
 							otherMovement.RopeList.Clear();

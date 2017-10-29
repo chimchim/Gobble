@@ -105,6 +105,7 @@
     <Compile Include="Assets\Game\GSystem\QuickJoin.cs" />
     <Compile Include="Assets\Game\GSystem\ReadGamePackets.cs" />
     <Compile Include="Assets\Game\GSystem\ResetInput.cs" />
+    <Compile Include="Assets\Game\GSystem\SendGamePackets.cs" />
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameResources.cs" />

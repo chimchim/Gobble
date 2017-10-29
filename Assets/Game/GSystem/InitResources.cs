@@ -13,7 +13,7 @@ namespace Game.Systems
 
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player>();
 
-		public void Update(GameManager game)
+		public void Update(GameManager game, float delta)
 		{
 			//game.Client._byteDataBuffer.AddRange(game.Client._currentByteData);
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);

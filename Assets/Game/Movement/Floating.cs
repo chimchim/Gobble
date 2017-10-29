@@ -15,7 +15,7 @@ namespace Game.Movement
 		{
 
 		}
-		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
@@ -26,11 +26,11 @@ namespace Game.Movement
 			movement.CurrentVelocity.x += input.Axis.x * GameUnity.SwimSpeed;
 			movement.CurrentVelocity.x = Mathf.Clamp(movement.CurrentVelocity.x, -GameUnity.MaxWaterSpeed, GameUnity.MaxWaterSpeed);
 
-			stats.OxygenSeconds += Time.deltaTime;
+			stats.OxygenSeconds += delta;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
-			float yMovement = movement.CurrentVelocity.y * Time.deltaTime;
-			float xMovement = movement.CurrentVelocity.x * Time.deltaTime;
+			float yMovement = movement.CurrentVelocity.y * delta;
+			float xMovement = movement.CurrentVelocity.x * delta;
 
 			float xOffset = 0.35f;
 			float yOffset = 0.65f;

@@ -16,7 +16,7 @@ namespace Game.Movement
 		{
 
 		}
-		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
@@ -48,7 +48,7 @@ namespace Game.Movement
 				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 			}
 
-			stats.OxygenSeconds += Time.deltaTime;
+			stats.OxygenSeconds += delta;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
 
 			if (movement.Grounded && input.Axis.x != 0)
@@ -60,8 +60,8 @@ namespace Game.Movement
 				Game.Systems.Movement.DoJump(game, player.EntityID);
 			}
 
-			float yMovement = movement.CurrentVelocity.y * Time.deltaTime + (movement.ForceVelocity.y * Time.deltaTime);
-			float xMovement = movement.CurrentVelocity.x * Time.deltaTime + (movement.ForceVelocity.x * Time.deltaTime);
+			float yMovement = movement.CurrentVelocity.y * delta + (movement.ForceVelocity.y * delta);
+			float xMovement = movement.CurrentVelocity.x * delta + (movement.ForceVelocity.x * delta);
 
 			float xOffset = GameUnity.GroundHitBox.x;
 			float yOffset = GameUnity.GroundHitBox.y;
@@ -97,7 +97,7 @@ namespace Game.Movement
 				animator.SetBool("Jump", true);
 				if (movement.CurrentVelocity.y < 0)
 				{
-					movement.FallingTime += Time.deltaTime;
+					movement.FallingTime += delta;
 				}
 			}
 
