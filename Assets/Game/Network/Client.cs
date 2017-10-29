@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
-using NetworkRopeConnected = Game.Component.Input.NetworkRopeConnected;
+using NetworkRopeConnected = Game.Component.InputComponent.NetworkRopeConnected;
 
 public class OtherClient
 	{

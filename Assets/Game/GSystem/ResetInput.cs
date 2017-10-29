@@ -11,21 +11,21 @@ namespace Game.Systems
 	{
 		// gör en input translator?
 
-		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Game.Component.Input, Player, ActionQueue>();
+		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
 
 		public void Update(GameManager game)
 		{
-			//game.Client._currentByteData.Clear();
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int entity in entities)
 			{
 				var player = game.Entities.GetComponentOf<Player>(entity);
+				var input = game.Entities.GetComponentOf<InputComponent>(entity);
 				if (player.Owner)
 				{
-					var input = game.Entities.GetComponentOf<Game.Component.Input>(entity);
 					input.Space = false;
 					input.RightClick = false;
 				}
+				input.NetworkJump = false;
 			}
 		}
 

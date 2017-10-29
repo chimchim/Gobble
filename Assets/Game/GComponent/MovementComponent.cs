@@ -3,9 +3,9 @@ using UnityEngine;
 using Game.Movement;
 namespace Game.Component
 {
-    public class Movement : GComponent
+    public class MovementComponent : GComponent
     {
-        private static ObjectPool<Movement> _pool = new ObjectPool<Movement>(10);
+        private static ObjectPool<MovementComponent> _pool = new ObjectPool<MovementComponent>(10);
 		// Swim
 		public int FloatingCounter;
 		public bool FloatJump;
@@ -46,7 +46,7 @@ namespace Game.Component
 		//public MovementState CurrentState;
 		public bool Grounded;
 		public float FallingTime;
-		public Movement()
+		public MovementComponent()
         {
             
         }
@@ -67,9 +67,9 @@ namespace Game.Component
 			RopeIndex = 0;
 			_pool.Recycle(this);
 		}
-		public static Movement Make(int entityID)
+		public static MovementComponent Make(int entityID)
         {
-            Movement comp = _pool.GetNext();
+			MovementComponent comp = _pool.GetNext();
             comp.EntityID = entityID;
 			comp.OxygenDeplationTick = 1;
 			comp.States = new MovementState[5];

@@ -8,8 +8,8 @@ public class GraphicRope : MonoBehaviour {
 
 	// Player
 	Transform PlayerTransform;
-	Movement PlayerMovement;
-	Game.Component.Input PlayerInput;
+	MovementComponent PlayerMovement;
+	InputComponent PlayerInput;
 	// Draw
 	public int drawIndex = 0;
 	List<Transform> Ropes;
@@ -80,8 +80,8 @@ public class GraphicRope : MonoBehaviour {
 				float ropeL = (playerPos - hit.point).magnitude;
 				if (Owner)
 				{
-					PlayerMovement.CurrentState = Movement.MoveState.Roped;
-					PlayerMovement.CurrentRoped = new Movement.RopedData()
+					PlayerMovement.CurrentState = MovementComponent.MoveState.Roped;
+					PlayerMovement.CurrentRoped = new MovementComponent.RopedData()
 					{
 						RayCastOrigin = ((0.05f * hit.normal) + hit.point),
 						origin = hit.point,
@@ -89,17 +89,18 @@ public class GraphicRope : MonoBehaviour {
 						Damp = GameUnity.RopeDamping
 					};
 
-					PlayerInput.RopeConnected = new Game.Component.Input.NetworkRopeConnected()
+					PlayerInput.RopeConnected = new InputComponent.NetworkRopeConnected()
 					{
 						RayCastOrigin = ((0.05f * hit.normal) + hit.point),
 						Position = playerPos,
 						Origin = hit.point,
 						Length = ropeL
 					};
+					PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
 				}
 				UpdateNewRope = false;
 				UpdateFront = true;
-				PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
+				
 				return;
 			}
 			NewRopePosition += currentMove;
@@ -109,7 +110,7 @@ public class GraphicRope : MonoBehaviour {
 			DrawRope(DrawThrowPositions, playerPos, 0);
 		}
 	}
-	public void ThrowRope(GameManager game, int entity, Movement movement, Game.Component.Input input)
+	public void ThrowRope(GameManager game, int entity, MovementComponent movement, InputComponent input)
 	{
 		DeActivate();
 		PlayerInput = input;

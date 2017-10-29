@@ -6,18 +6,19 @@ using Game;
 using UnityEngine;
 using Game.Actions;
 using Game.GEntity;
+using Game.Component;
 
 namespace Game.Movement
 {
 	public class Swim : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
+			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var entityGameObject = entity.gameObject;
 
@@ -91,11 +92,11 @@ namespace Game.Movement
 				}
 				movement.SwimTime = 0;
 				movement.OxygenDeplationTick = 0;
-				movement.CurrentState = Component.Movement.MoveState.Floating;
+				movement.CurrentState = MovementComponent.MoveState.Floating;
 				Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 			}
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
 		}

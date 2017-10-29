@@ -4,15 +4,18 @@ using UnityEngine;
 
 namespace Game.Component
 {
-	public class Input : GComponent
+	public class InputComponent : GComponent
 	{
-		private static ObjectPool<Input> _pool = new ObjectPool<Input>(10);
+		private static ObjectPool<InputComponent> _pool = new ObjectPool<InputComponent>(10);
 		public Vector2 Axis;
 		public Vector2 MousePos;
 		public bool Space;
 		public bool RightClick;
 		public List<Client.GameLogicPacket> GameLogicPackets = new List<Client.GameLogicPacket>();
 		public NetworkRopeConnected RopeConnected;
+
+		public bool NetworkJump;
+		public Vector2 NetworkPosition;
 		public struct NetworkRopeConnected
 		{
 			public Vector2 RayCastOrigin;
@@ -30,13 +33,13 @@ namespace Game.Component
 			GameLogicPackets = new List<Client.GameLogicPacket>();
 			_pool.Recycle(this);
 		}
-		public Input()
+		public InputComponent()
 		{
 
 		}
-		public static Input Make(int entityID)
+		public static InputComponent Make(int entityID)
 		{
-			Input comp = _pool.GetNext();
+			InputComponent comp = _pool.GetNext();
 			comp.EntityID = entityID;
 			return comp;
 		}

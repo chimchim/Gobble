@@ -6,18 +6,19 @@ using Game;
 using UnityEngine;
 using Game.Actions;
 using Game.GEntity;
+using Game.Component;
 
 namespace Game.Movement
 {
 	public class Grounded : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
+			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var player = game.Entities.GetComponentOf<Game.Component.Player>(entityID);
 			var animator = entity.Animator;
@@ -54,7 +55,7 @@ namespace Game.Movement
 			{
 				animator.SetBool("Run", true);
 			}
-			if (input.Space && movement.Grounded && player.Owner)
+			if ((input.Space && movement.Grounded && player.Owner) || input.NetworkJump)
 			{
 				Game.Systems.Movement.DoJump(game, player.EntityID);
 			}
@@ -110,12 +111,12 @@ namespace Game.Movement
 			if (hit.collider != null)
 			{
 				movement.FallingTime = 0;
-				movement.CurrentState = Component.Movement.MoveState.Swimming;
+				movement.CurrentState = MovementComponent.MoveState.Swimming;
 				Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 			}
 
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
 		}

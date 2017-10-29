@@ -11,7 +11,7 @@ namespace Game.Systems
     {
         private float _gravity = 20;
 
-        private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Game.Component.Input>();
+        private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent>();
 		
 		public void Update(GameManager game)
         {
@@ -20,10 +20,10 @@ namespace Game.Systems
 			{
 				var entity = game.Entities.GetEntity(e);
 				var entityGameObject = entity.gameObject;
-				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
+				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
-				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
-				var rope = game.Entities.GetComponentOf<Game.Component.Resources>(e).GraphicRope;
+				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
+				var rope = game.Entities.GetComponentOf<ResourcesComponent>(e).GraphicRope;
 				rope.UpdateRope();
 				if (entity.Animator == null)
 					continue;
@@ -44,7 +44,7 @@ namespace Game.Systems
 		public static void DoJump(GameManager game, int id)
 		{
 			var animator = game.Entities.GetEntity(id).Animator;
-			var movement = game.Entities.GetComponentOf<Game.Component.Movement>(id);
+			var movement = game.Entities.GetComponentOf<MovementComponent>(id);
 
 			movement.CurrentVelocity.y = GameUnity.JumpSpeed;
 			animator.SetBool("Jump", true);
@@ -117,16 +117,16 @@ namespace Game.Systems
 			{
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var player = game.Entities.GetComponentOf<Game.Component.Player>(e);
-				var input = game.Entities.GetComponentOf<Game.Component.Input>(e);
-				var movement = game.Entities.GetComponentOf<Game.Component.Movement>(e);
-				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(e);
+				var input = game.Entities.GetComponentOf<InputComponent>(e);
+				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
+				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 
 				Debug.Log("initiate aniamtor");
 				if (player.Owner)
 				{
 					if (GameUnity.DebugMode)
 					{
-						movement.CurrentState = Component.Movement.MoveState.FlyingDebug;
+						movement.CurrentState = MovementComponent.MoveState.FlyingDebug;
 					}
 					
 					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();

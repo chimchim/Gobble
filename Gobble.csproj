@@ -89,13 +89,14 @@
     <Compile Include="Assets\Game\Entity\EntityManager.cs" />
     <Compile Include="Assets\Game\GComponent\ActionQueue.cs" />
     <Compile Include="Assets\Game\GComponent\GComponent.cs" />
-    <Compile Include="Assets\Game\GComponent\Input.cs" />
+    <Compile Include="Assets\Game\GComponent\InputComponent.cs" />
     <Compile Include="Assets\Game\GComponent\MenuComponent.cs" />
-    <Compile Include="Assets\Game\GComponent\Movement.cs" />
+    <Compile Include="Assets\Game\GComponent\MovementComponent.cs" />
     <Compile Include="Assets\Game\GComponent\Player.cs" />
-    <Compile Include="Assets\Game\GComponent\Resources.cs" />
+    <Compile Include="Assets\Game\GComponent\ResourcesComponent.cs" />
     <Compile Include="Assets\Game\GComponent\Stats.cs" />
     <Compile Include="Assets\Game\GSystem\ActionApplier.cs" />
+    <Compile Include="Assets\Game\GSystem\DeadReckoning.cs" />
     <Compile Include="Assets\Game\GSystem\InitResources.cs" />
     <Compile Include="Assets\Game\GSystem\InputSystem.cs" />
     <Compile Include="Assets\Game\GSystem\Map.cs" />

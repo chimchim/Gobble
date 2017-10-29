@@ -5,16 +5,17 @@ using System.Text;
 using Game;
 using UnityEngine;
 using Game.GEntity;
+using Game.Component;
 
 namespace Game.Movement
 {
 	public class Roped : MovementState
 	{
-		public override void EnterState(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
 		}
-		private void DrawRopes(GameManager game, Component.Movement movement, Game.Component.Resources resources, Vector2 position)
+		private void DrawRopes(GameManager game, MovementComponent movement, ResourcesComponent resources, Vector2 position)
 		{
 			int positionAmount = (movement.RopeIndex * 2) + 2;
 			Vector2[] drawPositions = new Vector2[positionAmount];
@@ -40,11 +41,11 @@ namespace Game.Movement
 			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeIndex);
 
 		}
-		public override void Update(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-			var input = game.Entities.GetComponentOf<Game.Component.Input>(entityID);
-			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
-			var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entityID);
+			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
+			var stats = game.Entities.GetComponentOf<Stats>(entityID);
+			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entityID);
 			var animator = entity.Animator;
 			animator.SetBool("Roped", true);
 			animator.SetBool("Run", false);
@@ -243,7 +244,7 @@ namespace Game.Movement
 			RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 			if (hit.collider != null)
 			{
-				movement.CurrentState = Component.Movement.MoveState.Grounded;
+				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				resources.GraphicRope.DeActivate();
 				movement.RopeList.Clear();
 				movement.RopeIndex = 0;
@@ -255,7 +256,7 @@ namespace Game.Movement
 			return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) > 0;
 		}
 		bool oldRoped = false;
-		private bool CheckRopeCollision(Vector2 oldPos, Vector2 playerPos, Component.Movement movement, float lastAngle)
+		private bool CheckRopeCollision(Vector2 oldPos, Vector2 playerPos, MovementComponent movement, float lastAngle)
 		{
 
 			if (movement.RopeList.Count > 1)
@@ -290,7 +291,7 @@ namespace Game.Movement
 					if (ropeL < 0.9f)
 						return false;
 					movement.CurrentRoped.RayCastCollideOldPos = oldPos;
-					movement.CurrentRoped = new Component.Movement.RopedData()
+					movement.CurrentRoped = new MovementComponent.RopedData()
 					{
 						RayCastOrigin = ((0.05f * secondHit.normal) + secondHit.point),
 						origin = secondHit.point,
@@ -308,7 +309,7 @@ namespace Game.Movement
 			}
 			return false;
 		}
-		public override void LeaveState(GameManager game, Component.Movement movement, int entityID, Entity entity)
+		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
 		}

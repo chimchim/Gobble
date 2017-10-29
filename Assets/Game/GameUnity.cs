@@ -125,10 +125,10 @@ public class GameUnity : MonoBehaviour
 		Entity ent = new Entity();
 		game.Entities.addEntity(ent);
 		ent.AddComponent(ActionQueue.Make(ent.ID));
-		ent.AddComponent(Game.Component.Movement.Make(ent.ID));
+		ent.AddComponent(MovementComponent.Make(ent.ID));
 		ent.AddComponent(Stats.Make(ent.ID, 100, OxygenTime, OxygenTime));
-		ent.AddComponent(Game.Component.Input.Make(ent.ID));
-		ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+		ent.AddComponent(InputComponent.Make(ent.ID));
+		ent.AddComponent(ResourcesComponent.Make(ent.ID));
 		ent.AddComponent(Player.Make(ent.ID, owner));
 		var player = Instantiate(PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 		player.tag = "Player";

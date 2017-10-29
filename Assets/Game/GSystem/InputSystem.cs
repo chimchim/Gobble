@@ -11,7 +11,7 @@ namespace Game.Systems
 	{
 		// gör en input translator?
 		int packetCounter = 0;
-        private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Game.Component.Input, Player, ActionQueue>();
+        private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
 		List<byte> _currentByteArray = new List<byte>();
 
 		public void Update(GameManager game)
@@ -23,9 +23,9 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				if (player.Owner)
 				{	
-					var input = game.Entities.GetComponentOf<Game.Component.Input>(entity);
-					var movement = game.Entities.GetComponentOf<Game.Component.Movement>(entity);
-					var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entity);
+					var input = game.Entities.GetComponentOf<InputComponent>(entity);
+					var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
+					var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 					var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
@@ -75,38 +75,38 @@ namespace Game.Systems
 								input.GameLogicPackets.Add(gameLogic);
 								if (gameLogic.RopeConnected.Length > 0)
 								{
-									var otherMovement = game.Entities.GetComponentOf<Game.Component.Movement>(gameLogic.PlayerID);
+									var otherMovement = game.Entities.GetComponentOf<MovementComponent>(gameLogic.PlayerID);
 									var otherTransform = game.Entities.GetEntity(gameLogic.PlayerID).gameObject.transform;
-									otherMovement.CurrentState = Game.Component.Movement.MoveState.Roped;
+									otherMovement.CurrentState = MovementComponent.MoveState.Roped;
 									otherTransform.transform.position = gameLogic.RopeConnected.Position;
-									Debug.Log("Recieve .RopeConnected " + gameLogic.Position.x);
-									otherMovement.CurrentRoped = new Game.Component.Movement.RopedData()
+									otherMovement.CurrentRoped = new MovementComponent.RopedData()
 									{
 										RayCastOrigin = gameLogic.RopeConnected.RayCastOrigin,
 										origin = gameLogic.RopeConnected.Origin,
 										Length = gameLogic.RopeConnected.Length,
 										Damp = GameUnity.RopeDamping
 									};
+									otherMovement.RopeList.Add(otherMovement.CurrentRoped);
 								}
 							}
 						}
 					}
-					if (input.RightClick && movement.CurrentState != Component.Movement.MoveState.Roped)
+					if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
 					{
 						resources.GraphicRope.ThrowRope(game, entity, movement, input);
 					}
-					else if (input.RightClick && movement.CurrentState == Component.Movement.MoveState.Roped)
+					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
 					{
 						input.RightClick = false;
 						resources.GraphicRope.DeActivate();
 						movement.RopeList.Clear();
 						movement.RopeIndex = 0;
-						movement.CurrentState = Component.Movement.MoveState.Grounded;
+						movement.CurrentState = MovementComponent.MoveState.Grounded;
 					}
 				}
 			}
 		}
-		private void CreateRopeConnected(List<byte> currentByteArray, Game.Component.Input.NetworkRopeConnected ropeConnected)
+		private void CreateRopeConnected(List<byte> currentByteArray, InputComponent.NetworkRopeConnected ropeConnected)
 		{
 			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.x));
 			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.y));

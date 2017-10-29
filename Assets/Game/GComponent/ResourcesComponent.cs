@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Game.Component
 {
-	public class Resources : GComponent
+	public class ResourcesComponent : GComponent
 	{
-		private static ObjectPool<Resources> _pool = new ObjectPool<Resources>(10);
+		private static ObjectPool<ResourcesComponent> _pool = new ObjectPool<ResourcesComponent>(10);
 		public GraphicRope GraphicRope;
 		public string Character;
 
@@ -15,13 +15,13 @@ namespace Game.Component
 			Character = "";
 			_pool.Recycle(this);
 		}
-		public Resources()
+		public ResourcesComponent()
 		{
 
 		}
-		public static Resources Make(int entityID)
+		public static ResourcesComponent Make(int entityID)
 		{
-			Resources comp = _pool.GetNext();
+			ResourcesComponent comp = _pool.GetNext();
 			comp.EntityID = entityID;
 			return comp;
 		}

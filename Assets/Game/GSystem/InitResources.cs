@@ -35,12 +35,12 @@ namespace Game.Systems
 			{
 				var ent = game.Entities.GetEntity(entity);
 				ent.AddComponent(ActionQueue.Make(ent.ID));
-				ent.AddComponent(Game.Component.Movement.Make(ent.ID));
+				ent.AddComponent(MovementComponent.Make(ent.ID));
 				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
-				ent.AddComponent(Game.Component.Input.Make(ent.ID));
+				ent.AddComponent(InputComponent.Make(ent.ID));
 
 				var player = game.Entities.GetComponentOf<Player>(entity);
-				var resources = game.Entities.GetComponentOf<Game.Component.Resources>(entity);
+				var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 
 				var playerGameObject = GameObject.Instantiate(game.GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 				playerGameObject.tag = "Player";

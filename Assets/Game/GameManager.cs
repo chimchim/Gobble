@@ -29,7 +29,7 @@ namespace Game
 			this.Entities.addEntity(ent);
 			
 			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
-			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
 
@@ -38,14 +38,14 @@ namespace Game
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
 			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
-			ent.AddComponent(Game.Component.Resources.Make(ent.ID));
+			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			ent.AddComponent(ActionQueue.Make(ent.ID));
-			ent.AddComponent(Game.Component.Movement.Make(ent.ID));
+			ent.AddComponent(MovementComponent.Make(ent.ID));
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
-			ent.AddComponent(Game.Component.Input.Make(ent.ID));
+			ent.AddComponent(InputComponent.Make(ent.ID));
 
 			var player = Entities.GetComponentOf<Player>(ent.ID);
-			var resources = Entities.GetComponentOf<Game.Component.Resources>(ent.ID);
+			var resources = Entities.GetComponentOf<ResourcesComponent>(ent.ID);
 
 			var playerGameObject = GameObject.Instantiate(GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 			playerGameObject.tag = "Player";
