@@ -43,12 +43,13 @@ namespace Game.Systems
 						var diff = otherPacketPosition - new Vector2(otherTransform.position.x, otherTransform.position.y);
 
 						otherInput.MousePos = otherMousePos;
-						Vector2 positionXDiff = otherPlayerPos - otherPacketPosition;
-						if (diff.magnitude > 0.3f)
-						{
-							Debug.Log("snap ");
-							otherTransform.position = otherPacketPosition;
-						}
+						otherInput.NetworkPosition = otherPacketPosition;
+						//Vector2 positionXDiff = otherPlayerPos - otherPacketPosition;
+						//if (diff.magnitude > 0.3f)
+						//{
+						//	Debug.Log("snap ");
+						//	otherTransform.position = otherPacketPosition;
+						//}
 						// Do Jump
 						if (pack.Grounded && pack.InputSpace && !jumped)
 						{

@@ -69,6 +69,7 @@ namespace Game
 			_update[GameState.Game].Add(new InitResources());
 			_update[GameState.Game].Add(new InputSystem());
 			_fixedUpdate[GameState.Game].Add(new ReadgamePackets());
+			_fixedUpdate[GameState.Game].Add(new DeadReckoning());
 			_fixedUpdate[GameState.Game].Add(new Game.Systems.Movement());
 			_fixedUpdate[GameState.Game].Add(new ResetInput()); 
 			#endregion
