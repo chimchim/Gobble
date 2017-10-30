@@ -101,7 +101,7 @@ public class GameUnity : MonoBehaviour
 		game.Initiate();
 		if (!MapData.UseMenu)
 		{
-			game.CreateFullPlayer(true, "local", true, 0, Characters.Peppermin);
+			game.CreateFullPlayer(true, "local", true, 0, Characters.Schmillo);
 			game.Systems.ChangeState(game, SystemManager.GameState.Game);
 			MenuObject.SetActive(false);
 			game.CurrentRandom = new System.Random();

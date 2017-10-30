@@ -221,35 +221,35 @@ public partial class TileMap
 
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleMat;
+						CreateMineral(game, x, y, _rockMiddleMat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddle2Mat;
+						CreateMineral(game, x, y, _rockMiddle2Mat);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddle3Mat;
+						CreateMineral(game, x, y, _rockMiddle3Mat);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleLeftMat;
+						CreateMineral(game, x, y, _rockMiddleLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockMiddleRightMat;
+						CreateMineral(game, x, y, _rockMiddleRightMat);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockTopMat;
+						CreateMineral(game, x, y, _rockTopMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockTopLeftMat;
+						CreateMineral(game, x, y, _rockTopLeftMat);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						Blocks[x, y].GetComponent<SpriteRenderer>().sprite = _rockTopRightMat;
+						CreateMineral(game, x, y, _rockTopRightMat);
 					}
 				}
 			}
