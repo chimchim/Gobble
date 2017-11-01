@@ -78,6 +78,10 @@ namespace Game.Systems
 						movement.CurrentState = MovementComponent.MoveState.Grounded;
 					}
 				}
+				bool dont = (entity.Animator.transform.eulerAngles.y > 6) && (input.MousePos.x > entityTransform.position.x);
+				dont = (entity.Animator.transform.eulerAngles.y < 6) && (input.MousePos.x < entityTransform.position.x) || dont;
+				if (dont)
+					continue;
 				Vector2 direction = (input.MousePos - new Vector2(entityTransform.position.x, entityTransform.position.y)).normalized;
 				resources.FreeArm.up = -direction;
 				if (entity.Animator.transform.eulerAngles.y > 6)
