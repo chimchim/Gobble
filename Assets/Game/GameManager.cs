@@ -57,6 +57,7 @@ namespace Game
 			Ropes.AddComponent<GraphicRope>().Owner = owner;
 			Ropes.GetComponent<GraphicRope>().MakeRopes();
 			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
+			resources.FreeArm = playerGameObject.transform.Find("free_arm");
 		}
 
 		public void SetMainPlayer(GameObject player)

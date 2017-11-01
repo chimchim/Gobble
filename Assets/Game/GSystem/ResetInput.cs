@@ -25,7 +25,6 @@ namespace Game.Systems
 					input.Space = false;
 					input.RightClick = false;
 				}
-				input.NetworkRopeKill = false;
 				input.NetworkJump = false;
 			}
 		}

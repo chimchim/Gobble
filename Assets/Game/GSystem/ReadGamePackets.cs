@@ -58,7 +58,7 @@ namespace Game.Systems
 						{
 							otherResource.GraphicRope.ThrowRope(game, otherPlayerID, otherMovement, otherInput);
 						}
-						else if (pack.KillRope)
+						else if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && otherMovestate != MovementComponent.MoveState.Roped)
 						{
 							otherResource.GraphicRope.DeActivate();
 							otherMovement.RopeList.Clear();
@@ -66,12 +66,34 @@ namespace Game.Systems
 							otherMovement.CurrentState = MovementComponent.MoveState.Grounded;
 						}
 
+						RopeSync(pack, otherEntity, otherMovement);
 					}
 					input.GameLogicPackets.Clear();
 				}
 			}
 		}
 
+		private void RopeSync(Client.GameLogicPacket packet, Entity entity, MovementComponent otherMovement)
+		{
+			if (packet.RopeConnected.Length > 0)
+			{
+				var otherTransform = entity.gameObject.transform;
+				otherMovement.CurrentState = MovementComponent.MoveState.Roped;
+				otherTransform.transform.position = packet.RopeConnected.Position;
+				otherMovement.CurrentRoped = new MovementComponent.RopedData()
+				{
+					RayCastOrigin = packet.RopeConnected.RayCastOrigin,
+					origin = packet.RopeConnected.Origin,
+					Length = packet.RopeConnected.Length,
+					Damp = GameUnity.RopeDamping
+				};
+				otherMovement.RopeList.Add(otherMovement.CurrentRoped);
+			}
+			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped)
+			{
+
+			}
+		}
 		public void Initiate(GameManager game)
 		{
 			

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Component;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -47,10 +48,14 @@ public class OtherClient
 			public bool Grounded;
 			public NetworkRopeConnected RopeConnected;
 			public bool KillRope;
+			
+			public MovementComponent.RopedData[] RopeList;
 		}
 		
 		public static GameLogicPacket CreateGameLogic(byte[] byteData)
 		{
+			var gameLogic = new GameLogicPacket();
+
 			int currentByteIndex =  1;
 			int packCounter = BitConverter.ToInt32(byteData, currentByteIndex);
 			currentByteIndex += sizeof(int);
@@ -64,8 +69,6 @@ public class OtherClient
 			bool spaceInput = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
 			bool rightClick = BitConverter.ToBoolean(byteData, currentByteIndex);
-			currentByteIndex += sizeof(bool);
-			bool killRope = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
 			bool grounded = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
@@ -83,13 +86,6 @@ public class OtherClient
 			bool ropeConnected = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
 			#region RopeConnected
-			NetworkRopeConnected ropeConnect = new NetworkRopeConnected
-			{
-				RayCastOrigin = Vector2.zero,
-				Origin = Vector2.zero,
-				Position = Vector2.zero,
-				Length = 0,
-			};
 			if (ropeConnected)
 			{
 				#region Sync RopeConnect
@@ -108,32 +104,97 @@ public class OtherClient
 			float l = BitConverter.ToSingle(byteData, currentByteIndex);
 			currentByteIndex += sizeof(float);
 			#endregion
-				ropeConnect = new NetworkRopeConnected
+				var ropeConnect = new NetworkRopeConnected
 				{
 					RayCastOrigin = new Vector2(rayCastOriginX, rayCastOriginY),
 					Origin = new Vector2(originX, originY),
 					Position = new Vector2(positionX, positionY),
 					Length = l,
 				};
+				gameLogic.RopeConnected = ropeConnect;
 			}
-		#endregion
-
-			var gameLogic = new GameLogicPacket()
+			if ((MovementComponent.MoveState)movementState == MovementComponent.MoveState.Roped)
 			{
-				PlayerID = id,
-				PacketCounter = packCounter,
+				int ropeCount = BitConverter.ToInt32(byteData, currentByteIndex);
+				currentByteIndex += sizeof(int);
+				MovementComponent.RopedData[] roped = new MovementComponent.RopedData[ropeCount - 1];
+				for (int i = 1; i < ropeCount; i++)
+				{
+					float vel = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float angle = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float originx = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float originy = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float rayCastOriginx = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float rayCastOriginy = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float rayCastCollideOldPosx = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float rayCastCollideOldPosy = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float oldRopeCollidePosx = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					float oldRopeCollidePosy = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					bool newRopeIsLeft = BitConverter.ToBoolean(byteData, currentByteIndex);
+					currentByteIndex += sizeof(bool);
+					float length = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					bool firstAngle = BitConverter.ToBoolean(byteData, currentByteIndex);
+					currentByteIndex += sizeof(bool);
+					float damp = BitConverter.ToSingle(byteData, currentByteIndex);
+					currentByteIndex += sizeof(float);
+					roped[i - 1] = new MovementComponent.RopedData()
+					{
+						Vel = vel,
+						Angle = angle,
+						origin = new Vector2(originx, originy),
+						RayCastOrigin = new Vector2(rayCastOriginx, rayCastOriginy),
+						RayCastCollideOldPos = new Vector2(rayCastCollideOldPosx, rayCastCollideOldPosy),
+						OldRopeCollidePos = new Vector2(oldRopeCollidePosx, oldRopeCollidePosy),
+						NewRopeIsLeft = newRopeIsLeft,
+						Length = length,
+						FirstAngle = firstAngle,
+						Damp = damp
+					};
+						
+				}
+				gameLogic.RopeList = roped;
 
-				InputAxisX = xInput,
-				InputAxisY = yInput,
-				InputSpace = spaceInput,
-				RightClick = rightClick,
-				Position = new Vector2(posX, posY),
-				MousePos = new Vector2(mousePosX, mousePosY),
-				Grounded = grounded,
-				MovementState = movementState,
-				RopeConnected = ropeConnect,
-				KillRope = killRope
-			};
+			}
+			#endregion
+			gameLogic.PlayerID = id;
+			gameLogic.PacketCounter = packCounter;
+			gameLogic.InputAxisX = xInput;
+			gameLogic.InputAxisY = yInput;
+			gameLogic.InputSpace = spaceInput;
+			gameLogic.RightClick = rightClick;
+			gameLogic.Position = new Vector2(posX, posY);
+			gameLogic.MousePos = new Vector2(mousePosX, mousePosY);
+			gameLogic.Grounded = grounded;
+			gameLogic.MovementState = movementState;
+
+
+			//var gameLogic = new GameLogicPacket()
+			//{
+			//	PlayerID = id,
+			//	PacketCounter = packCounter,
+			//
+			//	InputAxisX = xInput,
+			//	InputAxisY = yInput,
+			//	InputSpace = spaceInput,
+			//	RightClick = rightClick,
+			//	Position = new Vector2(posX, posY),
+			//	MousePos = new Vector2(mousePosX, mousePosY),
+			//	Grounded = grounded,
+			//	MovementState = movementState,
+			//	RopeConnected = ropeConnect,
+			//	KillRope = killRope
+			//};
 			return gameLogic;
 		}
 

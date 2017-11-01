@@ -46,21 +46,21 @@ namespace Game.Systems
 							{
 								var gameLogic = Client.CreateGameLogic(byteDataRecieve);
 								input.GameLogicPackets.Add(gameLogic);
-								if (gameLogic.RopeConnected.Length > 0)
-								{
-									var otherMovement = game.Entities.GetComponentOf<MovementComponent>(gameLogic.PlayerID);
-									var otherTransform = game.Entities.GetEntity(gameLogic.PlayerID).gameObject.transform;
-									otherMovement.CurrentState = MovementComponent.MoveState.Roped;
-									otherTransform.transform.position = gameLogic.RopeConnected.Position;
-									otherMovement.CurrentRoped = new MovementComponent.RopedData()
-									{
-										RayCastOrigin = gameLogic.RopeConnected.RayCastOrigin,
-										origin = gameLogic.RopeConnected.Origin,
-										Length = gameLogic.RopeConnected.Length,
-										Damp = GameUnity.RopeDamping
-									};
-									otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-								}
+								//if (gameLogic.RopeConnected.Length > 0)
+								//{
+								//	var otherMovement = game.Entities.GetComponentOf<MovementComponent>(gameLogic.PlayerID);
+								//	var otherTransform = game.Entities.GetEntity(gameLogic.PlayerID).gameObject.transform;
+								//	otherMovement.CurrentState = MovementComponent.MoveState.Roped;
+								//	otherTransform.transform.position = gameLogic.RopeConnected.Position;
+								//	otherMovement.CurrentRoped = new MovementComponent.RopedData()
+								//	{
+								//		RayCastOrigin = gameLogic.RopeConnected.RayCastOrigin,
+								//		origin = gameLogic.RopeConnected.Origin,
+								//		Length = gameLogic.RopeConnected.Length,
+								//		Damp = GameUnity.RopeDamping
+								//	};
+								//	otherMovement.RopeList.Add(otherMovement.CurrentRoped);
+								//}
 							}
 						}
 					}
@@ -68,9 +68,8 @@ namespace Game.Systems
 					{
 						resources.GraphicRope.ThrowRope(game, e, movement, input);
 					}
-					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped && !input.NetworkRopeKill)
+					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
 					{
-						input.NetworkRopeKill = true;
 						input.RightClick = false;
 						resources.GraphicRope.DeActivate();
 						movement.RopeList.Clear();
@@ -78,6 +77,7 @@ namespace Game.Systems
 						movement.CurrentState = MovementComponent.MoveState.Grounded;
 					}
 				}
+
 				bool dont = (entity.Animator.transform.eulerAngles.y > 6) && (input.MousePos.x > entityTransform.position.x);
 				dont = (entity.Animator.transform.eulerAngles.y < 6) && (input.MousePos.x < entityTransform.position.x) || dont;
 				if (dont)
