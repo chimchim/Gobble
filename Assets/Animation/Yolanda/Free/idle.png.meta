@@ -1,12 +1,11 @@
 fileFormatVersion: 2
-guid: 020e65718ab480e4ab1b4f51bef1f21b
-timeCreated: 1509397868
+guid: 51c22077499a55d43aa88b3fadce95da
+timeCreated: 1509483395
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: free_starlord_jump_0
-    21300002: free_starlord_jump_1
-    21300004: free_starlord_jump_2
+    21300000: idle_0
+    21300002: idle_1
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -73,25 +72,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: free_starlord_jump_0
+      name: idle_0
       rect:
         serializedVersion: 2
-        x: 42
-        y: 140
-        width: 51
-        height: 101
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: free_starlord_jump_1
-      rect:
-        serializedVersion: 2
-        x: 173
-        y: 140
-        width: 43
+        x: 40
+        y: 143
+        width: 52
         height: 98
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -99,13 +85,13 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: free_starlord_jump_2
+      name: idle_1
       rect:
         serializedVersion: 2
-        x: 43
-        y: 16
-        width: 65
-        height: 108
+        x: 40
+        y: 15
+        width: 52
+        height: 98
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

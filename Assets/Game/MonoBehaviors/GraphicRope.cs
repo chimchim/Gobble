@@ -48,6 +48,8 @@ public class GraphicRope : MonoBehaviour {
 	}			 
 	public void MakeRopes()
 	{
+		var ropeParent = new GameObject();
+		ropeParent.name = "RopeParent";
 		List<Transform> ropes = new List<Transform>();
 		FrontRope = (GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/RopeFront", typeof(GameObject))) as GameObject).transform;
 		RopeFab = GameObject.Instantiate(UnityEngine.Resources.Load("Prefabs/Rope", typeof(GameObject))) as GameObject;
@@ -56,6 +58,7 @@ public class GraphicRope : MonoBehaviour {
 		for (int i = 0; i < 60; i++)
 		{
 			var newRope = GameObject.Instantiate(RopeFab);
+			newRope.transform.parent = ropeParent.transform;
 			newRope.SetActive(true);
 			ropes.Add(newRope.transform);
 		}

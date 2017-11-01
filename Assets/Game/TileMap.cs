@@ -97,6 +97,7 @@ public partial class TileMap
 	private bool[,] _enlisted;
 	private int _extraIron;
 	private int _extraCopper;
+	private Transform _mineralParent;
 	public void InitiateMap(GameManager game)
 	{
 		minsVariables = GameObject.FindObjectOfType<GameUnity>().MineralsGen;
@@ -112,7 +113,7 @@ public partial class TileMap
 
 		GameObject parentCube = new GameObject();
 		parentCube.name = "Tiles";
-
+		_mineralParent = parentCube.transform;
 		for (int x = 0; x < fullWidhth; x++)
 		{
 			for (int y = 0; y < fullHeight; y++)
@@ -346,6 +347,7 @@ public partial class TileMap
 		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
 		go.transform.position = new Vector3(x * 1.28f, y * 1.28f, -0.2f);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
+		go.transform.parent = _mineralParent;
 		if (Minerals[x, y] != null)
 		{
 			GameObject.Destroy(Minerals[x, y].gameObject);

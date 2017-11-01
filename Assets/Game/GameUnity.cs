@@ -101,7 +101,7 @@ public class GameUnity : MonoBehaviour
 		game.Initiate();
 		if (!MapData.UseMenu)
 		{
-			game.CreateFullPlayer(true, "local", true, 0, Characters.Schmillo);
+			game.CreateEmptyPlayer(true, "local", true, 0, Characters.Schmillo);
 			game.Systems.ChangeState(game, SystemManager.GameState.Game);
 			MenuObject.SetActive(false);
 			game.CurrentRandom = new System.Random();
@@ -121,27 +121,6 @@ public class GameUnity : MonoBehaviour
 		}
 	}
 
-	public void CreatePlayer(bool owner)
-	{
-		Entity ent = new Entity();
-		game.Entities.addEntity(ent);
-		ent.AddComponent(ActionQueue.Make(ent.ID));
-		ent.AddComponent(MovementComponent.Make(ent.ID));
-		ent.AddComponent(Stats.Make(ent.ID, 100, OxygenTime, OxygenTime));
-		ent.AddComponent(InputComponent.Make(ent.ID));
-		ent.AddComponent(ResourcesComponent.Make(ent.ID));
-		ent.AddComponent(Player.Make(ent.ID, owner));
-		var player = Instantiate(PrefabData.Peppermin, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-		player.tag = "Player";
-		ent.gameObject = player;
-		ent.Animator = player.GetComponentInChildren<Animator>();
-
-		if (owner)
-		{
-			GetComponent<FollowCamera>().player = player;
-			MiniMap.player = player;
-		}
-	}
 	public void SetMainPlayer(GameObject player)
 	{
 		GetComponent<FollowCamera>().player = player;

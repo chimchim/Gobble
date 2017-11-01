@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 877905282afdfda478fee5eeb4678d6e
-timeCreated: 1509397875
+guid: 20026ef1b9439f24aa8b6e38becb38e3
+timeCreated: 1509483441
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: free_starlord_run_0
-    21300002: free_starlord_run_1
-    21300004: free_starlord_run_2
-    21300006: free_starlord_run_3
-    21300008: free_starlord_run_4
-    21300010: free_starlord_run_5
+    21300000: run_0
+    21300002: run_1
+    21300004: run_2
+    21300006: run_3
+    21300008: run_4
+    21300010: run_5
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -76,12 +76,25 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: free_starlord_run_0
+      name: run_0
       rect:
         serializedVersion: 2
-        x: 45
+        x: 26
+        y: 272
+        width: 63
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: run_1
+      rect:
+        serializedVersion: 2
+        x: 154
         y: 268
-        width: 45
+        width: 63
         height: 100
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -89,12 +102,25 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: free_starlord_run_1
+      name: run_2
       rect:
         serializedVersion: 2
-        x: 153
-        y: 274
-        width: 80
+        x: 27
+        y: 142
+        width: 64
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: run_3
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 143
+        width: 69
         height: 98
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -102,52 +128,26 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: free_starlord_run_2
+      name: run_4
       rect:
         serializedVersion: 2
-        x: 46
-        y: 140
-        width: 40
-        height: 102
+        x: 23
+        y: 14
+        width: 66
+        height: 98
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: free_starlord_run_3
+      name: run_5
       rect:
         serializedVersion: 2
-        x: 172
-        y: 140
-        width: 44
-        height: 104
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: free_starlord_run_4
-      rect:
-        serializedVersion: 2
-        x: 34
-        y: 20
-        width: 63
-        height: 96
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: free_starlord_run_5
-      rect:
-        serializedVersion: 2
-        x: 174
-        y: 12
-        width: 40
-        height: 102
+        x: 154
+        y: 14
+        width: 65
+        height: 97
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

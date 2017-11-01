@@ -7,6 +7,7 @@ namespace Game.Component
 	{
 		private static ObjectPool<ResourcesComponent> _pool = new ObjectPool<ResourcesComponent>(10);
 		public GraphicRope GraphicRope;
+		public Transform FreeArm;
 		public string Character;
 
 		public override void Recycle()

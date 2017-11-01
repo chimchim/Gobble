@@ -16,15 +16,17 @@ namespace Game.Systems
 		{
             var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			
-			foreach (int entity in entities)
+			foreach (int e in entities)
 			{
-				var player = game.Entities.GetComponentOf<Player>(entity);
+				var player = game.Entities.GetComponentOf<Player>(e);
+				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
+				var input = game.Entities.GetComponentOf<InputComponent>(e);
+				var entityTransform = game.Entities.GetEntity(e).gameObject.transform;
+				var entity = game.Entities.GetEntity(e);
 				if (player.Owner)
 				{	
-					var input = game.Entities.GetComponentOf<InputComponent>(entity);
-					var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-					var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-					var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
+					var movement = game.Entities.GetComponentOf<MovementComponent>(e);
+					
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					Vector2 mousePos = UnityEngine.Input.mousePosition;
@@ -64,7 +66,7 @@ namespace Game.Systems
 					}
 					if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
 					{
-						resources.GraphicRope.ThrowRope(game, entity, movement, input);
+						resources.GraphicRope.ThrowRope(game, e, movement, input);
 					}
 					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped && !input.NetworkRopeKill)
 					{
@@ -76,6 +78,14 @@ namespace Game.Systems
 						movement.CurrentState = MovementComponent.MoveState.Grounded;
 					}
 				}
+				Vector2 direction = (input.MousePos - new Vector2(entityTransform.position.x, entityTransform.position.y)).normalized;
+				resources.FreeArm.up = -direction;
+				if (entity.Animator.transform.eulerAngles.y > 6)
+				{
+					resources.FreeArm.up = direction;
+					resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+				}
+				
 			}
 		}
 
