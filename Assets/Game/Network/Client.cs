@@ -47,8 +47,9 @@ public class OtherClient
 			public int MovementState;
 			public bool Grounded;
 			public NetworkRopeConnected RopeConnected;
-			public bool KillRope;
+
 			public float RopeVel;
+			public float RopeAngle;
 			public MovementComponent.RopedData[] RopeList;
 		}
 		
@@ -76,13 +77,22 @@ public class OtherClient
 			currentByteIndex += sizeof(float);
 			float posY = BitConverter.ToSingle(byteData, currentByteIndex);
 			currentByteIndex += sizeof(float);
-			int movementState = BitConverter.ToInt32(byteData, currentByteIndex);
-			currentByteIndex += sizeof(int);
 			float mousePosX = BitConverter.ToSingle(byteData, currentByteIndex);
 			currentByteIndex += sizeof(float);
 			float mousePosY = BitConverter.ToSingle(byteData, currentByteIndex);
 			currentByteIndex += sizeof(float);
+			int movementState = BitConverter.ToInt32(byteData, currentByteIndex);
+			currentByteIndex += sizeof(int);
+			
+			if ((MovementComponent.MoveState)movementState == MovementComponent.MoveState.Roped)
+			{
 
+				gameLogic.RopeAngle = BitConverter.ToSingle(byteData, currentByteIndex);
+				currentByteIndex += sizeof(float);
+				gameLogic.RopeVel = BitConverter.ToSingle(byteData, currentByteIndex);
+				currentByteIndex += sizeof(float);
+			}
+			
 			bool ropeConnected = BitConverter.ToBoolean(byteData, currentByteIndex);
 			currentByteIndex += sizeof(bool);
 			#region RopeConnected
@@ -113,7 +123,7 @@ public class OtherClient
 				};
 				gameLogic.RopeConnected = ropeConnect;
 			}
-		#region RopeSync
+			#region RopeSync
 		//if ((MovementComponent.MoveState)movementState == MovementComponent.MoveState.Roped)
 		//{
 		//
@@ -170,9 +180,9 @@ public class OtherClient
 		//	}
 		//	gameLogic.RopeList = roped;
 		//} 
-		#endregion
-		#endregion
-		gameLogic.PlayerID = id;
+			#endregion
+			#endregion
+			gameLogic.PlayerID = id;
 			gameLogic.PacketCounter = packCounter;
 			gameLogic.InputAxisX = xInput;
 			gameLogic.InputAxisY = yInput;

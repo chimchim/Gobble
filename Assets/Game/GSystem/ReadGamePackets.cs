@@ -24,6 +24,18 @@ namespace Game.Systems
 				{
 					var input = game.Entities.GetComponentOf<InputComponent>(e);
 					bool jumped = false;
+					if (game.Client != null)
+					{
+						for (int i = 0; i < game.Client._byteDataBuffer.Count; i++)
+						{
+							var byteDataRecieve = game.Client._byteDataBuffer[i];
+							if ((Data.Command)byteDataRecieve[0] == Data.Command.SendToOthers)
+							{
+								var gameLogic = Client.CreateGameLogic(byteDataRecieve);
+								input.GameLogicPackets.Add(gameLogic);
+							}
+						}
+					}
 					//Debug.Log("input.GameLogicPackets.Count " + input.GameLogicPackets.Count);
 					for (int i = 0; i < input.GameLogicPackets.Count; i++)
 					{
@@ -68,7 +80,7 @@ namespace Game.Systems
 
 						RopeSync(pack, otherEntity, otherMovement);
 					}
-					input.GameLogicPackets.Clear();
+					
 				}
 			}
 		}
@@ -88,24 +100,6 @@ namespace Game.Systems
 					Damp = GameUnity.RopeDamping
 				};
 				otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-			}
-
-			Vector2 diff = packet.Position - new Vector2(entity.gameObject.transform.position.x, entity.gameObject.transform.position.y);
-			
-			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && diff.magnitude > 0.5f)
-			{
-				Debug.Log("ROpesync");
-				//entity.gameObject.transform.position = packet.Position;
-				//otherMovement.CurrentRoped.Vel = packet.RopeVel;
-				//otherMovement.RopeList.Clear();
-				//for (int i = 0; i < packet.RopeList.Length; i++)
-				//{
-				//	var rope = packet.RopeList[i];
-				//	otherMovement.CurrentRoped = rope;
-				//
-				//	otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-				//	otherMovement.RopeIndex++;
-				//}
 			}
 		}
 		public void Initiate(GameManager game)

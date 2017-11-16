@@ -41,9 +41,15 @@ namespace Game.Systems
 						_currentByteArray.AddRange(BitConverter.GetBytes(movement.Grounded));
 						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.x));
 						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.y));
-						_currentByteArray.AddRange(BitConverter.GetBytes(((int)movement.CurrentState)));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.x));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.y));
+						_currentByteArray.AddRange(BitConverter.GetBytes(((int)movement.CurrentState)));
+						if (movement.CurrentState == MovementComponent.MoveState.Roped)
+						{
+							_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Angle));
+							_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Vel));
+						}
+						
 
 						bool ropeConnected = input.RopeConnected.Length > 0;
 						_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected));

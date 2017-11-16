@@ -67,8 +67,7 @@ namespace Game.Movement
 			float xMovement = 0;
 			float lastAngle = 0;
 			float deltaTimeMult = 1 / delta;
-			//Debug.Log((movement.RopeIndex > 0) + " + " + (diff > len) + " + " + (movement.CurrentRoped.FirstAngle) + " + " + ((currentTranslate.y < 0 && playerPos.y < origin.y)) + " + " + !movement.Grounded);
-			if ((oldRoped || movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
+			if ((movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
 			{
 				#region First Angle
 				if (!movement.CurrentRoped.FirstAngle)
@@ -97,10 +96,10 @@ namespace Game.Movement
 					Vector2 combinedVelocity = movement.CurrentVelocity + movement.ForceVelocity;
 					float newXVel = combinedVelocity.x * cosed;
 					float newYVel = combinedVelocity.y * sinned;
-					
+
 					float velXDir = newXVel * -Mathf.Sign(Mathf.Cos(angle));
 					float velYDir = newYVel * Mathf.Sign(Mathf.Sin(angle));
-					
+
 					float newSpeed = velXDir + velYDir;
 					movement.CurrentRoped.Vel = (newSpeed * delta / len);
 					float ropeDirection = Mathf.Sign(newSpeed);
@@ -114,7 +113,7 @@ namespace Game.Movement
 					float velDivider = movement.CurrentRoped.Vel / ropeSpeed;
 					float newVel = Mathf.Abs(velDivider) * Mathf.Abs(newSpeed) * ropeDirection; // 6 = New ropeSpeed
 					movement.CurrentRoped.Vel = newVel;
-					
+
 					angle += newVel;
 					movement.CurrentVelocity = Vector2.zero;
 					xMovement = playerPos.x - entityGameObject.transform.position.x;
@@ -131,8 +130,6 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
-				//Debug.Log("current L " + new Vector2(xMovement, yMovement).magnitude);
-				//Debug.Log("currentSpeed  " + new Vector2(xMovement, yMovement).magnitude * deltaTimeMult + " current Vel " + movement.CurrentRoped.Vel);
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
 
@@ -142,19 +139,19 @@ namespace Game.Movement
 				{
 					if (input.Axis.x > 0)
 					{
-						gravity += gravity * GameUnity.PlayerSpeed/6 * GameUnity.RopeSpeedMult;
+						gravity += gravity * GameUnity.PlayerSpeed / 6 * GameUnity.RopeSpeedMult;
 					}
 				}
 				if (playerPos.x > origin.x)
 				{
 					if (input.Axis.x < 0)
 					{
-						gravity += gravity * GameUnity.PlayerSpeed/6 * GameUnity.RopeSpeedMult;
+						gravity += gravity * GameUnity.PlayerSpeed / 6 * GameUnity.RopeSpeedMult;
 					}
 				}
 				#endregion
 				float gravityDivier = Math.Max(1, len);
-				
+
 				aAcc = (-1 * gravity / gravityDivier) * Mathf.Sin(angle) * delta;
 
 				movement.CurrentRoped.Vel += aAcc;
@@ -167,8 +164,8 @@ namespace Game.Movement
 			{
 				movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 				movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
-				if(movement.Grounded)
-				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+				if (movement.Grounded)
+					movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 
 				movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
 				movement.ForceVelocity.y = Mathf.Clamp(movement.ForceVelocity.y, -15, 15);
@@ -179,7 +176,7 @@ namespace Game.Movement
 				xMovement = movement.CurrentVelocity.x * delta + (movement.ForceVelocity.x * delta);
 				animator.SetBool("Roped", false);
 				animator.SetBool("Jump", false);
-				if(input.Axis.x != 0)
+				if (input.Axis.x != 0)
 					animator.SetBool("Run", true);
 				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, yMovement);
 				if (input.Space && movement.Grounded)
@@ -192,12 +189,43 @@ namespace Game.Movement
 					movement.Grounded = false;
 					return;
 				}
-				
-			} 
+
+			}
 			#endregion
 			stats.OxygenSeconds += delta;
 			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
+			var moveVec = new Vector2(xMovement, yMovement);
+			int iterations = (int)(moveVec.magnitude / 0.7f);
+			
+			for (int i = 0; i < iterations; i++)
+			{
+				xMovement = ((moveVec.normalized) * 0.7f).x;
+				yMovement = ((moveVec.normalized) * 0.7f).y;
+				MoveCharacter(entityGameObject, lastAngle, xMovement, yMovement, movement);
+			}
+			float lastMove = ((moveVec.magnitude) - (iterations * 0.7f));
 
+            xMovement = ((moveVec.normalized) * lastMove).x;
+			yMovement = ((moveVec.normalized) * lastMove).y;
+			MoveCharacter(entityGameObject, lastAngle, xMovement, yMovement, movement);
+			DrawRopes(game, movement, resources, playerPos);
+
+			movement.FallingTime = 0;
+			var layerMask = 1 << LayerMask.NameToLayer("Water");
+			var topRayPos = new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y + 0.65f);
+			RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, GameUnity.RopeHitBox.y, layerMask);
+			if (hit.collider != null)
+			{
+				movement.CurrentState = MovementComponent.MoveState.Grounded;
+				resources.GraphicRope.DeActivate();
+				movement.RopeList.Clear();
+				movement.RopeIndex = 0;
+			}
+
+		}
+
+		public bool MoveCharacter(GameObject entityGameObject, float lastAngle, float xMovement, float yMovement, MovementComponent movement)
+		{
 			float xOffset = GameUnity.RopeHitBox.x;
 			float yOffset = GameUnity.RopeHitBox.y;
 
@@ -218,7 +246,6 @@ namespace Game.Movement
 				bool horVertGrounded = vertGrounded2 || horGrounded2;
 				if (!horVertGrounded)
 				{
-					Debug.Log("THIS HAPPEND");
 					vertGrounded = vertGrounded2;
 					horGrounded = horGrounded2;
 					tempPos = tempPos2;
@@ -243,12 +270,13 @@ namespace Game.Movement
 				}
 			}
 			else
-			{	if (movement.Grounded)
+			{
+				if (movement.Grounded)
 				{
 					movement.CurrentRoped.FirstAngle = false;
 				}
 				movement.Grounded = false;
-				
+
 			}
 			if (horGrounded && !vertGrounded)
 			{
@@ -257,29 +285,16 @@ namespace Game.Movement
 				movement.CurrentRoped.Angle = lastAngle;
 				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 			}
-			oldRoped = false;
-			
+			//oldRoped = false;
 			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
-			
-			DrawRopes(game, movement, resources, playerPos);
-			movement.FallingTime = 0;
-			var layerMask = 1 << LayerMask.NameToLayer("Water");
-			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
-			RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
-			if (hit.collider != null)
-			{
-				movement.CurrentState = MovementComponent.MoveState.Grounded;
-				resources.GraphicRope.DeActivate();
-				movement.RopeList.Clear();
-				movement.RopeIndex = 0;
-			}
+			return vertGrounded || horGrounded;
+        }
 
-		}
 		public bool IsLeft(Vector2 a, Vector2 b, Vector2 c)
 		{
 			return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) > 0;
 		}
-		bool oldRoped = false;
+		//bool oldRoped = false;
 		private bool CheckRopeCollision(Vector2 oldPos, Vector2 playerPos, MovementComponent movement, float lastAngle)
 		{
 
@@ -295,7 +310,7 @@ namespace Game.Movement
 					movement.CurrentRoped.Vel = vel;
 					movement.RopeList.RemoveAt(movement.RopeIndex);
 					movement.RopeIndex--;
-					oldRoped = true;
+					//oldRoped = true;
 					return false;
 				}
 				//Debug.DrawLine(oldRope.RayCastOrigin, movement.CurrentRoped.RayCastCollideOldPos, Color.blue);
