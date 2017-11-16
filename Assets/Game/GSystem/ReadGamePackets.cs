@@ -36,7 +36,7 @@ namespace Game.Systems
 							}
 						}
 					}
-					//Debug.Log("input.GameLogicPackets.Count " + input.GameLogicPackets.Count);
+
 					for (int i = 0; i < input.GameLogicPackets.Count; i++)
 					{
 						var pack = input.GameLogicPackets[i];
