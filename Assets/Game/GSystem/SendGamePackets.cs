@@ -52,10 +52,10 @@ namespace Game.Systems
 							CreateRopeConnected(_currentByteArray, input.RopeConnected);
 							input.RopeConnected.Length = 0;
 						}
-						if (movement.CurrentState == MovementComponent.MoveState.Roped)
-						{
-							SyncRope(_currentByteArray, movement);
-						}
+						//if (movement.CurrentState == MovementComponent.MoveState.Roped)
+						//{
+						//	SyncRope(_currentByteArray, movement);
+						//}
 						var byteData = _currentByteArray.ToArray();
 						game.Client.SendInput(player.EntityID, byteData);
 
@@ -67,7 +67,8 @@ namespace Game.Systems
 		private void SyncRope(List<byte> currentByteArray, MovementComponent movement)
 		{
 			_currentByteArray.AddRange(BitConverter.GetBytes(movement.RopeList.Count));
-			for (int i = 1; i < movement.RopeList.Count; i++)
+			_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Vel));
+			for (int i = 0; i < movement.RopeList.Count; i++)
 			{
 				var ropeData = movement.RopeList[i];
 				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Vel));

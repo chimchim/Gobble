@@ -89,9 +89,23 @@ namespace Game.Systems
 				};
 				otherMovement.RopeList.Add(otherMovement.CurrentRoped);
 			}
-			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped)
-			{
 
+			Vector2 diff = packet.Position - new Vector2(entity.gameObject.transform.position.x, entity.gameObject.transform.position.y);
+			
+			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && diff.magnitude > 0.5f)
+			{
+				Debug.Log("ROpesync");
+				//entity.gameObject.transform.position = packet.Position;
+				//otherMovement.CurrentRoped.Vel = packet.RopeVel;
+				//otherMovement.RopeList.Clear();
+				//for (int i = 0; i < packet.RopeList.Length; i++)
+				//{
+				//	var rope = packet.RopeList[i];
+				//	otherMovement.CurrentRoped = rope;
+				//
+				//	otherMovement.RopeList.Add(otherMovement.CurrentRoped);
+				//	otherMovement.RopeIndex++;
+				//}
 			}
 		}
 		public void Initiate(GameManager game)

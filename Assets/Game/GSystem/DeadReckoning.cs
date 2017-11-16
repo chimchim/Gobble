@@ -22,8 +22,8 @@ namespace Game.Systems
 			{
 				var player = game.Entities.GetComponentOf<Player>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
-
-				if (!player.Owner)
+				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
+				if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 				{
 					var otherTransform = game.Entities.GetEntity(e).gameObject.transform;
 					var otherPosition = new Vector2(otherTransform.position.x, otherTransform.position.y);

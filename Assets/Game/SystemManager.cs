@@ -73,7 +73,7 @@ namespace Game
 
 			_fixedUpdate[GameState.Game].Add(new SendGamePackets());
 			_fixedUpdate[GameState.Game].Add(new Game.Systems.Movement());
-			//_fixedUpdate[GameState.Game].Add(new DeadReckoning());
+			_fixedUpdate[GameState.Game].Add(new DeadReckoning());
 			_fixedUpdate[GameState.Game].Add(new ResetInput()); 
 			#endregion
 		}

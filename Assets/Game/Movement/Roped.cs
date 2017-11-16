@@ -43,6 +43,7 @@ namespace Game.Movement
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
+			var player = game.Entities.GetComponentOf<Player>(entityID);
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Stats>(entityID);
 			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entityID);
@@ -75,7 +76,9 @@ namespace Game.Movement
 					if (movement.RopeIndex == 0)
 						movement.CurrentRoped.Length = (playerPos - origin).magnitude;
 
+
 					len = movement.CurrentRoped.Length;
+					//Debug.Log("ROPE LEN " + len);
 					float angle2 = Vector2.Angle((origin - playerPos).normalized, (-Vector2.up));
 					if (origin.x > playerPos.x)
 					{
@@ -204,7 +207,25 @@ namespace Game.Movement
 			Vector3 tempPos = entityGameObject.transform.position;
 			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
 			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+			bool vertHorGrounded = vertGrounded || horGrounded;
+			if (vertHorGrounded)
+			{
+				bool vertGrounded2 = false;
+				bool horGrounded2 = false;
+				var tempPos2 = oldPos;
+				tempPos2 = Game.Systems.Movement.HorizontalMovement(tempPos2, xMovement, xOffset, yOffset, out horGrounded2);
+				tempPos2 = Game.Systems.Movement.VerticalMovement(tempPos2, yMovement, xOffset, yOffset, out vertGrounded2);
+				bool horVertGrounded = vertGrounded2 || horGrounded2;
+				if (!horVertGrounded)
+				{
+					Debug.Log("THIS HAPPEND");
+					vertGrounded = vertGrounded2;
+					horGrounded = horGrounded2;
+					tempPos = tempPos2;
+				}
+			}
 			entityGameObject.transform.position = tempPos;
+
 			if (vertGrounded && yMovement != 0)
 			{
 				if (yMovement > 0)
@@ -237,7 +258,9 @@ namespace Game.Movement
 				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 			}
 			oldRoped = false;
+			
 			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
+			
 			DrawRopes(game, movement, resources, playerPos);
 			movement.FallingTime = 0;
 			var layerMask = 1 << LayerMask.NameToLayer("Water");

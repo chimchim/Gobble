@@ -27,7 +27,12 @@ namespace Game.Systems
 			{
 
 				byte[] byteData = game.Client._byteDataBuffer[i];
-
+				if (byteData == null)
+				{
+					game.Client._byteDataBuffer.RemoveAt(i);
+					Debug.LogError("ByteData was NULL ");
+					continue;
+				}
 				Data.Command cmd = (Data.Command)byteData[0];
 				
 				if (cmd == Data.Command.List)
