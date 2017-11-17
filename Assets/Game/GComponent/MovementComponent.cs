@@ -17,7 +17,6 @@ namespace Game.Component
 		public RopedData CurrentRoped;
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
-		public int RopeIndex;
 
 		public struct RopedData
 		{
@@ -64,7 +63,6 @@ namespace Game.Component
 			CurrentVelocity = Vector2.zero;
 			ForceVelocity = Vector2.zero;
 			RopeList.Clear();
-			RopeIndex = 0;
 			_pool.Recycle(this);
 		}
 		public static MovementComponent Make(int entityID)

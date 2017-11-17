@@ -52,10 +52,10 @@ namespace Game.Systems
 							CreateRopeConnected(_currentByteArray, input.RopeConnected);
 							input.RopeConnected.Length = 0;
 						}
-						//if (movement.CurrentState == MovementComponent.MoveState.Roped)
-						//{
-						//	SyncRope(_currentByteArray, movement);
-						//}
+						if (movement.CurrentState == MovementComponent.MoveState.Roped)
+						{
+							SyncRope(_currentByteArray, movement);
+						}
 						var byteData = _currentByteArray.ToArray();
 						game.Client.SendInput(player.EntityID, byteData);
 

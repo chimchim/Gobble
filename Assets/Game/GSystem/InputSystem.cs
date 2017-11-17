@@ -73,7 +73,6 @@ namespace Game.Systems
 						input.RightClick = false;
 						resources.GraphicRope.DeActivate();
 						movement.RopeList.Clear();
-						movement.RopeIndex = 0;
 						movement.CurrentState = MovementComponent.MoveState.Grounded;
 					}
 				}

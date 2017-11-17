@@ -17,7 +17,7 @@ namespace Game.Movement
 		}
 		private void DrawRopes(GameManager game, MovementComponent movement, ResourcesComponent resources, Vector2 position)
 		{
-			int positionAmount = (movement.RopeIndex * 2) + 2;
+			int positionAmount = ((movement.RopeList.Count - 1) * 2) + 2;
 			Vector2[] drawPositions = new Vector2[positionAmount];
 			if (movement.RopeList.Count == 0)
 			{
@@ -38,7 +38,7 @@ namespace Game.Movement
 				drawPositions[currentIndex] = position;
 
 			}
-			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeIndex);
+			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeList.Count - 1);
 
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
@@ -57,6 +57,22 @@ namespace Game.Movement
 			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;
 
+			if (!player.Owner)
+			{
+				Vector2 syncDiff = input.NetworkPosition - playerPos;
+				if (syncDiff.magnitude > 3)
+				{
+					var oldposer = entityGameObject.transform.position;
+					int iterations = (int)(syncDiff.magnitude / 0.1f);
+					var move = new Vector3((syncDiff.normalized * 0.1f).x, (syncDiff.normalized * 0.1f).y, 0);
+					for (int i = 0; i < iterations; i++)
+					{
+						entityGameObject.transform.position += move;
+						CheckRopeCollision(oldposer, entityGameObject.transform.position, movement);
+					}
+				}
+			}
+
 			float len = movement.CurrentRoped.Length;
 			float diff = (playerPosFirstMove - origin).magnitude;
 			float vel = movement.CurrentRoped.Vel;
@@ -67,13 +83,13 @@ namespace Game.Movement
 			float xMovement = 0;
 			float lastAngle = 0;
 			float deltaTimeMult = 1 / delta;
-			//Debug.Log((movement.RopeIndex > 0) + " + " + (diff > len) + " + " + (movement.CurrentRoped.FirstAngle) + " + " + ((currentTranslate.y < 0 && playerPos.y < origin.y)) + " + " + !movement.Grounded);
-			if ((oldRoped || movement.RopeIndex > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
+
+			if ((oldRoped || movement.RopeList.Count - 1 > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
 			{
 				#region First Angle
 				if (!movement.CurrentRoped.FirstAngle)
 				{
-					if (movement.RopeIndex == 0)
+					if (movement.RopeList.Count - 1 == 0)
 						movement.CurrentRoped.Length = (playerPos - origin).magnitude;
 
 
@@ -131,8 +147,6 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
-				//Debug.Log("current L " + new Vector2(xMovement, yMovement).magnitude);
-				//Debug.Log("currentSpeed  " + new Vector2(xMovement, yMovement).magnitude * deltaTimeMult + " current Vel " + movement.CurrentRoped.Vel);
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
 
@@ -259,7 +273,7 @@ namespace Game.Movement
 			}
 			oldRoped = false;
 			
-			var collided = CheckRopeCollision(oldPos, tempPos, movement, lastAngle);
+			var collided = CheckRopeCollision(oldPos, tempPos, movement);
 			
 			DrawRopes(game, movement, resources, playerPos);
 			movement.FallingTime = 0;
@@ -271,7 +285,6 @@ namespace Game.Movement
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				resources.GraphicRope.DeActivate();
 				movement.RopeList.Clear();
-				movement.RopeIndex = 0;
 			}
 
 		}
@@ -280,12 +293,12 @@ namespace Game.Movement
 			return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) > 0;
 		}
 		bool oldRoped = false;
-		private bool CheckRopeCollision(Vector2 oldPos, Vector2 playerPos, MovementComponent movement, float lastAngle)
+		private bool CheckRopeCollision(Vector2 oldPos, Vector2 playerPos, MovementComponent movement)
 		{
 
 			if (movement.RopeList.Count > 1)
 			{
-				var oldRope = movement.RopeList[movement.RopeIndex  - 1];
+				var oldRope = movement.RopeList[movement.RopeList.Count - 2];
 				var isLeft = IsLeft(oldRope.RayCastOrigin, ((movement.CurrentRoped.RayCastCollideOldPos - oldRope.RayCastOrigin).normalized * 30) + oldRope.RayCastOrigin, playerPos);
 
 				if(isLeft == movement.CurrentRoped.NewRopeIsLeft)
@@ -293,8 +306,7 @@ namespace Game.Movement
 					float vel = movement.CurrentRoped.Vel;
 					movement.CurrentRoped = oldRope;
 					movement.CurrentRoped.Vel = vel;
-					movement.RopeList.RemoveAt(movement.RopeIndex);
-					movement.RopeIndex--;
+					movement.RopeList.RemoveAt(movement.RopeList.Count - 1);
 					oldRoped = true;
 					return false;
 				}
@@ -326,7 +338,6 @@ namespace Game.Movement
 						OldRopeCollidePos = hit.point
 					};
 					movement.RopeList.Add(movement.CurrentRoped);
-					movement.RopeIndex++;
 				}
 				
 				return true;

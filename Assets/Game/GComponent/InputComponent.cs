@@ -11,9 +11,9 @@ namespace Game.Component
 		public Vector2 MousePos;
 		public bool Space;
 		public bool RightClick;
+
 		public List<Client.GameLogicPacket> GameLogicPackets = new List<Client.GameLogicPacket>();
 		public NetworkRopeConnected RopeConnected;
-
 		public bool NetworkJump;
 		public Vector2 NetworkPosition;
 		public struct NetworkRopeConnected

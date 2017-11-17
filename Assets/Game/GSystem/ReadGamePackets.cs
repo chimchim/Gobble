@@ -62,7 +62,6 @@ namespace Game.Systems
 						{
 							otherResource.GraphicRope.DeActivate();
 							otherMovement.RopeList.Clear();
-							otherMovement.RopeIndex = 0;
 							otherMovement.CurrentState = MovementComponent.MoveState.Grounded;
 						}
 
@@ -92,20 +91,18 @@ namespace Game.Systems
 
 			Vector2 diff = packet.Position - new Vector2(entity.gameObject.transform.position.x, entity.gameObject.transform.position.y);
 			
-			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && diff.magnitude > 0.5f)
+			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && diff.magnitude > 3.0f)
 			{
-				Debug.Log("ROpesync");
-				//entity.gameObject.transform.position = packet.Position;
-				//otherMovement.CurrentRoped.Vel = packet.RopeVel;
-				//otherMovement.RopeList.Clear();
-				//for (int i = 0; i < packet.RopeList.Length; i++)
-				//{
-				//	var rope = packet.RopeList[i];
-				//	otherMovement.CurrentRoped = rope;
-				//
-				//	otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-				//	otherMovement.RopeIndex++;
-				//}
+				entity.gameObject.transform.position = packet.Position;
+				otherMovement.RopeList.Clear();
+				for (int i = 0; i < packet.RopeList.Length; i++)
+				{
+					var rope = packet.RopeList[i];
+					otherMovement.CurrentRoped = rope;
+				
+					otherMovement.RopeList.Add(otherMovement.CurrentRoped);
+				}
+				otherMovement.CurrentRoped.Vel = packet.RopeVel;
 			}
 		}
 		public void Initiate(GameManager game)
