@@ -23,14 +23,15 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
+				var otherTransform = game.Entities.GetEntity(e).gameObject.transform;
+				var otherPosition = new Vector2(otherTransform.position.x, otherTransform.position.y);
+				var networkPosition = input.NetworkPosition;
+				Debug.DrawLine(otherPosition, networkPosition, Color.green);
+
+				Vector2 diff = networkPosition - otherPosition;
 				if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 				{
-					var otherTransform = game.Entities.GetEntity(e).gameObject.transform;
-					var otherPosition = new Vector2(otherTransform.position.x, otherTransform.position.y);
-					var networkPosition = input.NetworkPosition;
-					Debug.DrawLine(otherPosition, networkPosition, Color.green);
-
-					Vector2 diff = networkPosition - otherPosition;
+					
 					Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
 					if (translate.magnitude > diff.magnitude)
 					{
@@ -61,6 +62,16 @@ namespace Game.Systems
 					{
 						otherTransform.position += new Vector3(stepX, stepY, 0);
 					}
+				}
+				if (!player.Owner && movement.CurrentState == MovementComponent.MoveState.Roped)
+				{
+					//if (diff.magnitude > 1)
+					//{
+					//	movement.RopeList.Clear();
+					//	movement.RopeList.AddRange(input.RopeList);
+					//	input.RopeList.Clear();
+					//	otherTransform.position = networkPosition;
+					//}
 				}
 			}
 		}

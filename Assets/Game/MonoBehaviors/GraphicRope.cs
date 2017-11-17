@@ -175,7 +175,8 @@ public class GraphicRope : MonoBehaviour {
 				newRope.SetActive(true);
 				Ropes.Add(newRope.transform);
 			}
-			Ropes[drawIndex].position = first + (direction * 0.51f * (ropeAmount -1)) + (direction * 0.255f) + (direction * 0.255f) + (direction * extra/2);
+			var pos = first +(direction * 0.51f * (ropeAmount - 1)) + (direction * 0.255f) + (direction * 0.255f) + (direction * extra / 2);
+			Ropes[drawIndex].position = pos;
 			Ropes[drawIndex].name = "jerry";
 			Ropes[drawIndex].localScale = new Vector3(extra / 0.51f, Ropes[drawIndex].localScale.y, Ropes[drawIndex].localScale.z);
 			Ropes[drawIndex].right = direction;

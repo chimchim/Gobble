@@ -37,33 +37,6 @@ namespace Game.Systems
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
 
-					if (game.Client != null)
-					{
-						for (int i = 0; i < game.Client._byteDataBuffer.Count; i++)
-						{
-							var byteDataRecieve = game.Client._byteDataBuffer[i];
-							if ((Data.Command)byteDataRecieve[0] == Data.Command.SendToOthers)
-							{
-								var gameLogic = Client.CreateGameLogic(byteDataRecieve);
-								input.GameLogicPackets.Add(gameLogic);
-								//if (gameLogic.RopeConnected.Length > 0)
-								//{
-								//	var otherMovement = game.Entities.GetComponentOf<MovementComponent>(gameLogic.PlayerID);
-								//	var otherTransform = game.Entities.GetEntity(gameLogic.PlayerID).gameObject.transform;
-								//	otherMovement.CurrentState = MovementComponent.MoveState.Roped;
-								//	otherTransform.transform.position = gameLogic.RopeConnected.Position;
-								//	otherMovement.CurrentRoped = new MovementComponent.RopedData()
-								//	{
-								//		RayCastOrigin = gameLogic.RopeConnected.RayCastOrigin,
-								//		origin = gameLogic.RopeConnected.Origin,
-								//		Length = gameLogic.RopeConnected.Length,
-								//		Damp = GameUnity.RopeDamping
-								//	};
-								//	otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-								//}
-							}
-						}
-					}
 					if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
 					{
 						resources.GraphicRope.ThrowRope(game, e, movement, input);

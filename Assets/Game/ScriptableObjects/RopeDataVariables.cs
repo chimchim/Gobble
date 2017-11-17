@@ -5,7 +5,7 @@ using System.Collections;
 public class RopeDataVariables : ScriptableObject
 {
 	public float RopeGravity = 0.5f;
-	public float RopeSpeedMult = 0.5f;
+	public float RopeSpeedMult = 0.3f;
 	public float RopeDamping = 0.995f;
 	public float RopeLength = 30;
 	public float RopeThrowStartSpeed = 35f;

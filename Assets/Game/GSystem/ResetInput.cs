@@ -26,6 +26,7 @@ namespace Game.Systems
 					input.RightClick = false;
 				}
 				input.NetworkJump = false;
+				//input.GameLogicPackets.Clear();
 			}
 		}
 

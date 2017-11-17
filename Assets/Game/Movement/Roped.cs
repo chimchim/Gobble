@@ -83,7 +83,6 @@ namespace Game.Movement
 			float xMovement = 0;
 			float lastAngle = 0;
 			float deltaTimeMult = 1 / delta;
-
 			if ((oldRoped || movement.RopeList.Count - 1 > 0 || diff > len || movement.CurrentRoped.FirstAngle || (currentTranslate.y < 0 && playerPos.y < origin.y)) && !movement.Grounded)
 			{
 				#region First Angle
@@ -147,9 +146,19 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 
+				if ((input.Space || input.NetworkJump))
+				{
+					var move = new Vector2(xMovement, yMovement);
+					movement.CurrentVelocity.y += GameUnity.JumpSpeed;
+					movement.CurrentVelocity.y = Mathf.Clamp(movement.CurrentVelocity.y, GameUnity.JumpSpeed / 2, (GameUnity.JumpSpeed + GameUnity.JumpSpeed / 2));
+
+					resources.GraphicRope.DeActivate();
+					movement.RopeList.Clear();
+					movement.CurrentState = MovementComponent.MoveState.Grounded;
+					return;
+				}
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
-
 				float gravity = GameUnity.RopeGravity;
 				#region Rope Input
 				if (playerPos.x < origin.x)
@@ -182,7 +191,7 @@ namespace Game.Movement
 				movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 				movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
 				if(movement.Grounded)
-				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+					movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 
 				movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
 				movement.ForceVelocity.y = Mathf.Clamp(movement.ForceVelocity.y, -15, 15);
@@ -196,7 +205,7 @@ namespace Game.Movement
 				if(input.Axis.x != 0)
 					animator.SetBool("Run", true);
 				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, yMovement);
-				if (input.Space && movement.Grounded)
+				if ((input.Space && movement.Grounded) || input.NetworkJump)
 				{
 					movement.CurrentVelocity.y = GameUnity.JumpSpeed;
 				}
@@ -232,7 +241,6 @@ namespace Game.Movement
 				bool horVertGrounded = vertGrounded2 || horGrounded2;
 				if (!horVertGrounded)
 				{
-					Debug.Log("THIS HAPPEND");
 					vertGrounded = vertGrounded2;
 					horGrounded = horGrounded2;
 					tempPos = tempPos2;
@@ -274,7 +282,7 @@ namespace Game.Movement
 			oldRoped = false;
 			
 			var collided = CheckRopeCollision(oldPos, tempPos, movement);
-			
+
 			DrawRopes(game, movement, resources, playerPos);
 			movement.FallingTime = 0;
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
