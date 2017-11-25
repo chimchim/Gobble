@@ -41,6 +41,46 @@ namespace Game.Movement
 			resources.GraphicRope.DrawRope(drawPositions, position, movement.RopeList.Count - 1);
 
 		}
+
+		public static float GetAngle(Vector2 position, Vector2 origin)
+		{
+			float angle2 = Vector2.Angle((origin - position).normalized, (-Vector2.up));
+			float angle = 0;
+			if (origin.x > position.x)
+			{
+				angle = (Mathf.PI / 180f) * (180 - angle2);
+			}
+			else
+			{
+				angle = (Mathf.PI / 180f) * -(180 - angle2);
+			}
+			return angle;
+		}
+
+		public static void ReleaseRope(ResourcesComponent resources, MovementComponent movement, Vector2 playerPos, Vector2 transformPos)
+		{
+			var diff1 = playerPos - transformPos;
+			float speed = diff1.y * (1/Time.fixedDeltaTime);
+			Debug.Log("speed " + speed);
+			float clampedSpeed = Math.Min(speed, 20);
+			float jumpSpeedMult = clampedSpeed / 20;
+			jumpSpeedMult = 0.5f;
+			if (speed > 10)
+			{
+				jumpSpeedMult = clampedSpeed / 20;
+
+			}
+			if (speed < 1)
+			{
+				jumpSpeedMult = 0;
+			}
+			movement.CurrentVelocity.y += GameUnity.JumpSpeed * jumpSpeedMult;
+			movement.CurrentVelocity.y = Mathf.Clamp(movement.CurrentVelocity.y, 0, (GameUnity.JumpSpeed + GameUnity.JumpSpeed));
+			movement.ForceVelocity.x = diff1.x * (1 / Time.fixedDeltaTime);
+			resources.GraphicRope.DeActivate();
+			movement.RopeList.Clear();
+			movement.CurrentState = MovementComponent.MoveState.Grounded;
+		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
 			var player = game.Entities.GetComponentOf<Player>(entityID);
@@ -56,7 +96,7 @@ namespace Game.Movement
 			Vector2 currentTranslate = (movement.CurrentVelocity * delta) + (movement.ForceVelocity * delta);
 			Vector2 playerPosFirstMove = playerPos + currentTranslate;
 			Vector2 origin = movement.CurrentRoped.origin;
-
+			
 			if (!player.Owner)
 			{
 				Vector2 syncDiff = input.NetworkPosition - playerPos;
@@ -94,15 +134,8 @@ namespace Game.Movement
 
 					len = movement.CurrentRoped.Length;
 					//Debug.Log("ROPE LEN " + len);
-					float angle2 = Vector2.Angle((origin - playerPos).normalized, (-Vector2.up));
-					if (origin.x > playerPos.x)
-					{
-						angle = (Mathf.PI / 180f) * (180 - angle2);
-					}
-					else
-					{
-						angle = (Mathf.PI / 180f) * -(180 - angle2);
-					}
+					angle = GetAngle(playerPos, origin);
+					
 					movement.CurrentRoped.Angle = angle;
 					movement.CurrentRoped.FirstAngle = true;
 					movement.CurrentRoped.Vel = 1;
@@ -139,24 +172,19 @@ namespace Game.Movement
 				}
 				#endregion
 
+				
 				playerPos.x = origin.x + (-len * Mathf.Sin(angle));
 				playerPos.y = origin.y + (-len * Mathf.Cos(angle));
 				lastAngle = angle - movement.CurrentRoped.Vel;
-
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
-
+				Debug.DrawLine(playerPos, playerPos+(Vector2.up * 4), Color.red);
 				if ((input.Space || input.NetworkJump))
 				{
-					var move = new Vector2(xMovement, yMovement);
-					movement.CurrentVelocity.y += GameUnity.JumpSpeed;
-					movement.CurrentVelocity.y = Mathf.Clamp(movement.CurrentVelocity.y, GameUnity.JumpSpeed / 2, (GameUnity.JumpSpeed + GameUnity.JumpSpeed / 2));
-
-					resources.GraphicRope.DeActivate();
-					movement.RopeList.Clear();
-					movement.CurrentState = MovementComponent.MoveState.Grounded;
+					ReleaseRope(resources, movement, playerPos, new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y));
 					return;
 				}
+
 				movement.CurrentVelocity.y = deltaTimeMult * yMovement;
 				movement.ForceVelocity = (deltaTimeMult * new Vector2(xMovement, 0));
 				float gravity = GameUnity.RopeGravity;
@@ -247,7 +275,7 @@ namespace Game.Movement
 				}
 			}
 			entityGameObject.transform.position = tempPos;
-
+			
 			if (vertGrounded && yMovement != 0)
 			{
 				if (yMovement > 0)
@@ -255,7 +283,7 @@ namespace Game.Movement
 					movement.CurrentVelocity.y = 0;
 					tempPos = oldPos;
 					entityGameObject.transform.position = oldPos;
-					movement.CurrentRoped.Angle = lastAngle;
+					movement.CurrentRoped.Angle = GetAngle(new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y), origin);
 					movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 				}
 				else
@@ -274,9 +302,10 @@ namespace Game.Movement
 			}
 			if (horGrounded && !vertGrounded)
 			{
+				movement.CurrentVelocity.y = 0;
 				tempPos = oldPos;
 				entityGameObject.transform.position = oldPos;
-				movement.CurrentRoped.Angle = lastAngle;
+				movement.CurrentRoped.Angle = GetAngle(new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y), origin); ;
 				movement.CurrentRoped.Vel = -movement.CurrentRoped.Vel * GameUnity.RopeBouncy;
 			}
 			oldRoped = false;

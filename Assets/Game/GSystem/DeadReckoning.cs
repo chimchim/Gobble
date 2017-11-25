@@ -31,7 +31,7 @@ namespace Game.Systems
 				Vector2 diff = networkPosition - otherPosition;
 				if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 				{
-					
+					float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude/ GameUnity.NetworkLerpSpeed));
 					Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
 					if (translate.magnitude > diff.magnitude)
 					{
@@ -54,7 +54,7 @@ namespace Game.Systems
 					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, out vertGrounded);
 					bool horVertGrounded = vertGrounded || horGrounded;
 
-					if ((vertHorGrounded && horVertGrounded) || diff.magnitude > 2)
+					if ((vertHorGrounded && horVertGrounded) || diff.magnitude > 8)
 					{
 						otherTransform.position = networkPosition;
 					}

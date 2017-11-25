@@ -49,6 +49,7 @@ public class OtherClient
 			public NetworkRopeConnected RopeConnected;
 			public bool KillRope;
 			public float RopeVel;
+			public float RopeAngle;
 			public MovementComponent.RopedData[] RopeList;
 		}
 		
@@ -122,6 +123,9 @@ public class OtherClient
 			currentByteIndex += sizeof(int);
 			float ropeVel = BitConverter.ToSingle(byteData, currentByteIndex);
 			currentByteIndex += sizeof(float);
+			float ropeAngle = BitConverter.ToSingle(byteData, currentByteIndex);
+			currentByteIndex += sizeof(float);
+			gameLogic.RopeAngle = ropeAngle;
 			gameLogic.RopeVel = ropeVel;
 			MovementComponent.RopedData[] roped = new MovementComponent.RopedData[ropeCount];
 			for (int i = 0; i < ropeCount; i++)

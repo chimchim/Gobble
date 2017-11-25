@@ -71,6 +71,11 @@ namespace Game.Systems
 					}
 					else if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && pack.InputSpace)
 					{
+						var playerPosX = otherMovement.CurrentRoped.origin.x + (-otherMovement.CurrentRoped.Length * Mathf.Sin(pack.RopeAngle));
+						var playerPosY = otherMovement.CurrentRoped.origin.y + (-otherMovement.CurrentRoped.Length * Mathf.Cos(pack.RopeAngle));
+						otherTransform.position = otherPacketPosition;
+						Game.Movement.Roped.ReleaseRope(otherResource, otherMovement, new Vector2(playerPosX, playerPosY), otherPacketPosition);
+						
 						otherInput.NetworkJump = true;
 					}
 					else if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && otherMovestate != MovementComponent.MoveState.Roped)
