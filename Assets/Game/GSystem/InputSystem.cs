@@ -21,6 +21,7 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(e);
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
+				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
 				var entityTransform = game.Entities.GetEntity(e).gameObject.transform;
 				var entity = game.Entities.GetEntity(e);
 				if (player.Owner)
@@ -37,16 +38,11 @@ namespace Game.Systems
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
 
-					if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
+					foreach (Item item in itemHolder.Items)
 					{
-						resources.GraphicRope.ThrowRope(game, e, movement, input);
-					}
-					else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
-					{
-						input.RightClick = false;
-						resources.GraphicRope.DeActivate();
-						movement.RopeList.Clear();
-						movement.CurrentState = MovementComponent.MoveState.Grounded;
+						if (!item.Active)
+							continue;
+						item.Input(game, e);
 					}
 				}
 

@@ -43,7 +43,7 @@ namespace Game
 			ent.AddComponent(MovementComponent.Make(ent.ID));
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 			ent.AddComponent(InputComponent.Make(ent.ID));
-
+			ent.AddComponent(ItemHolder.Make(ent.ID));
 			var player = Entities.GetComponentOf<Player>(ent.ID);
 			var resources = Entities.GetComponentOf<ResourcesComponent>(ent.ID);
 

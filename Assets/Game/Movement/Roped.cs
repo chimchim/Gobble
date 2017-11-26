@@ -61,7 +61,7 @@ namespace Game.Movement
 		{
 			var diff1 = playerPos - transformPos;
 			float speed = diff1.y * (1/Time.fixedDeltaTime);
-			Debug.Log("speed " + speed);
+
 			float clampedSpeed = Math.Min(speed, 20);
 			float jumpSpeedMult = clampedSpeed / 20;
 			jumpSpeedMult = 0.5f;

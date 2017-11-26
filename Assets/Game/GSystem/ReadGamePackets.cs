@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
+using System;
 
 namespace Game.Systems
 {
@@ -26,105 +27,55 @@ namespace Game.Systems
 					{
 						var gameLogic = Client.CreateGameLogic(byteDataRecieve);
 						var input = game.Entities.GetComponentOf<InputComponent>(gameLogic.PlayerID);
-						input.GameLogicPackets.Add(gameLogic);
+						input.MousePos = gameLogic.MousePos;
+						input.NetworkPosition = gameLogic.Position;
+
+						// Do Jump
+						if (gameLogic.Grounded && gameLogic.InputSpace && !input.NetworkJump)
+						{
+							input.NetworkJump = true;
+						}
+						input.Axis = new Vector2(gameLogic.InputAxisX, gameLogic.InputAxisY);
+
+						var itemHolder = game.Entities.GetComponentOf<ItemHolder>(gameLogic.PlayerID);
+						int currentIndex = gameLogic.CurrentByteIndex;
+						for (int j = 0; j < ItemHolder.ActiveItemsCount; j++)
+						{
+							int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex); currentIndex += sizeof(int);
+							itemHolder.Items[itemID].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
+						}
 					}
 				}
 			}
 
-			foreach (int e in entities)
-			{
-				var player = game.Entities.GetComponentOf<Player>(e);
-
-				var input = game.Entities.GetComponentOf<InputComponent>(e);
-
-				for (int i = 0; i < input.GameLogicPackets.Count; i++)
-				{
-					var pack = input.GameLogicPackets[i];
-					int otherPlayerID = pack.PlayerID;
-					var otherEntity = game.Entities.GetEntity(otherPlayerID);
-					var otherTransform = otherEntity.gameObject.transform;
-					var otherPlayerPos = new Vector2(otherTransform.position.x, otherTransform.position.y);
-					var otherInput = game.Entities.GetComponentOf<InputComponent>(otherPlayerID);
-					var otherResource = game.Entities.GetComponentOf<ResourcesComponent>(otherPlayerID);
-					var otherMovement = game.Entities.GetComponentOf<MovementComponent>(otherPlayerID);
-
-					var otherPacketPosition = pack.Position;
-					var otherRightClick = pack.RightClick;
-					var otherMousePos = pack.MousePos;
-					var otherMovestate = (MovementComponent.MoveState)pack.MovementState;
-					var diff = otherPacketPosition - new Vector2(otherTransform.position.x, otherTransform.position.y);
-
-					otherInput.MousePos = otherMousePos;
-					otherInput.NetworkPosition = otherPacketPosition;
-
-					// Do Jump
-					if (pack.Grounded && pack.InputSpace && !otherInput.NetworkJump)
-					{
-						otherInput.NetworkJump = true;
-					}
-					// Set MoveAxis
-					otherInput.Axis = new Vector2(pack.InputAxisX, pack.InputAxisY);
-
-					if (otherRightClick && otherMovestate != MovementComponent.MoveState.Roped)
-					{
-						otherResource.GraphicRope.ThrowRope(game, otherPlayerID, otherMovement, otherInput);
-					}
-					else if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && pack.InputSpace)
-					{
-						var playerPosX = otherMovement.CurrentRoped.origin.x + (-otherMovement.CurrentRoped.Length * Mathf.Sin(pack.RopeAngle));
-						var playerPosY = otherMovement.CurrentRoped.origin.y + (-otherMovement.CurrentRoped.Length * Mathf.Cos(pack.RopeAngle));
-						otherTransform.position = otherPacketPosition;
-						Game.Movement.Roped.ReleaseRope(otherResource, otherMovement, new Vector2(playerPosX, playerPosY), otherPacketPosition);
-						
-						otherInput.NetworkJump = true;
-					}
-					else if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && otherMovestate != MovementComponent.MoveState.Roped)
-					{
-						otherResource.GraphicRope.DeActivate();
-						otherMovement.RopeList.Clear();
-						otherMovement.CurrentState = MovementComponent.MoveState.Grounded;
-					}
-
-					RopeSync(pack, otherEntity, otherMovement, otherInput);
-				}
-				input.GameLogicPackets.Clear();
-				
-			}
+			//foreach (int e in entities)
+			//{
+			//	var player = game.Entities.GetComponentOf<Player>(e);
+			//
+			//	var input = game.Entities.GetComponentOf<InputComponent>(e);
+			//
+			//	for (int i = 0; i < input.GameLogicPackets.Count; i++)
+			//	{
+			//		var pack = input.GameLogicPackets[i];
+			//		var otherInput = game.Entities.GetComponentOf<InputComponent>(pack.PlayerID);
+			//
+			//		otherInput.MousePos = pack.MousePos;
+			//		otherInput.NetworkPosition = pack.Position;
+			//
+			//		// Do Jump
+			//		if (pack.Grounded && pack.InputSpace && !otherInput.NetworkJump)
+			//		{
+			//			otherInput.NetworkJump = true;
+			//		}
+			//		// Set MoveAxis
+			//		otherInput.Axis = new Vector2(pack.InputAxisX, pack.InputAxisY);
+			//
+			//	}
+			//	input.GameLogicPackets.Clear();
+			//	
+			//}
 		}
 
-		private void RopeSync(Client.GameLogicPacket packet, Entity entity, MovementComponent otherMovement, InputComponent input)
-		{
-			if (packet.RopeConnected.Length > 0)
-			{
-				var otherTransform = entity.gameObject.transform;
-				otherMovement.CurrentState = MovementComponent.MoveState.Roped;
-				otherTransform.transform.position = packet.RopeConnected.Position;
-				otherMovement.CurrentRoped = new MovementComponent.RopedData()
-				{
-					RayCastOrigin = packet.RopeConnected.RayCastOrigin,
-					origin = packet.RopeConnected.Origin,
-					Length = packet.RopeConnected.Length,
-					Damp = GameUnity.RopeDamping
-				};
-				otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-			}
-
-			Vector2 diff = packet.Position - new Vector2(entity.gameObject.transform.position.x, entity.gameObject.transform.position.y);
-			
-			if (otherMovement.CurrentState == MovementComponent.MoveState.Roped && diff.magnitude > 2)
-			{
-				entity.gameObject.transform.position = packet.Position;
-
-				otherMovement.RopeList.Clear();
-				for (int i = 0; i < packet.RopeList.Length; i++)
-				{
-					var rope = packet.RopeList[i];
-					otherMovement.CurrentRoped = rope;
-					
-					otherMovement.RopeList.Add(otherMovement.CurrentRoped);
-				}
-			}
-		}
 		public void Initiate(GameManager game)
 		{
 			

@@ -26,6 +26,7 @@ namespace Game.Systems
 					var input = game.Entities.GetComponentOf<InputComponent>(entity);
 					var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 					var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+					var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 					var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
 
 					if (game.Client != null)
@@ -44,21 +45,23 @@ namespace Game.Systems
 						_currentByteArray.AddRange(BitConverter.GetBytes(((int)movement.CurrentState)));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.x));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.y));
-						if (input.Space)
+						foreach (Item item in itemHolder.Items)
 						{
-							Debug.Log("space pos " + movement.CurrentRoped.Angle);
+							if (!item.Active)
+								continue;
+							item.Serialize(game, player.EntityID, _currentByteArray);
 						}
-						bool ropeConnected = input.RopeConnected.Length > 0;
-						_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected));
-						if (ropeConnected)
-						{
-							CreateRopeConnected(_currentByteArray, input.RopeConnected);
-							input.RopeConnected.Length = 0;
-						}
-						if (movement.CurrentState == MovementComponent.MoveState.Roped)
-						{
-							SyncRope(_currentByteArray, movement);
-						}
+						//bool ropeConnected = input.RopeConnected.Length > 0;
+						//_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected));
+						//if (ropeConnected)
+						//{
+						//	CreateRopeConnected(_currentByteArray, input.RopeConnected);
+						//	input.RopeConnected.Length = 0;
+						//}
+						//if (movement.CurrentState == MovementComponent.MoveState.Roped)
+						//{
+						//	SyncRope(_currentByteArray, movement);
+						//}
 						var byteData = _currentByteArray.ToArray();
 						game.Client.SendInput(player.EntityID, byteData);
 
@@ -67,41 +70,41 @@ namespace Game.Systems
 				}
 			}
 		}
-		private void SyncRope(List<byte> currentByteArray, MovementComponent movement)
-		{
-			_currentByteArray.AddRange(BitConverter.GetBytes(movement.RopeList.Count));
-			_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Vel));
-			_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Angle));
-			for (int i = 0; i < movement.RopeList.Count; i++)
-			{
-				var ropeData = movement.RopeList[i];
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Vel));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Angle));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.origin.x));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.origin.y));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastOrigin.x));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastOrigin.y));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastCollideOldPos.x));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastCollideOldPos.y));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.OldRopeCollidePos.x));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.OldRopeCollidePos.y));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.NewRopeIsLeft));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Length));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.FirstAngle));
-				_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Damp));
-			}
-		}
-
-		private void CreateRopeConnected(List<byte> currentByteArray, InputComponent.NetworkRopeConnected ropeConnected)
-		{
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.x));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.y));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Origin.x));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Origin.y));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Position.x));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Position.y));
-			_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Length));
-		}
+		//private void SyncRope(List<byte> currentByteArray, MovementComponent movement)
+		//{
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(movement.RopeList.Count));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Vel));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(movement.CurrentRoped.Angle));
+		//	for (int i = 0; i < movement.RopeList.Count; i++)
+		//	{
+		//		var ropeData = movement.RopeList[i];
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Vel));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Angle));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.origin.x));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.origin.y));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastOrigin.x));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastOrigin.y));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastCollideOldPos.x));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.RayCastCollideOldPos.y));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.OldRopeCollidePos.x));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.OldRopeCollidePos.y));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.NewRopeIsLeft));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Length));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.FirstAngle));
+		//		_currentByteArray.AddRange(BitConverter.GetBytes(ropeData.Damp));
+		//	}
+		//}
+		//
+		//private void CreateRopeConnected(List<byte> currentByteArray, InputComponent.NetworkRopeConnected ropeConnected)
+		//{
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.x));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.RayCastOrigin.y));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Origin.x));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Origin.y));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Position.x));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Position.y));
+		//	_currentByteArray.AddRange(BitConverter.GetBytes(ropeConnected.Length));
+		//}
 
 		public void Initiate(GameManager game)
 		{
