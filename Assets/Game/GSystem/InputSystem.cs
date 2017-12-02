@@ -37,7 +37,7 @@ namespace Game.Systems
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
-
+					input.LeftClick = UnityEngine.Input.GetKey(KeyCode.Mouse0) || input.LeftClick;
 					foreach (Item item in itemHolder.Items)
 					{
 						if (!item.Active)
@@ -46,10 +46,10 @@ namespace Game.Systems
 					}
 				}
 
-				bool dont = (entity.Animator.transform.eulerAngles.y > 6) && (input.MousePos.x > entityTransform.position.x);
-				dont = (entity.Animator.transform.eulerAngles.y < 6) && (input.MousePos.x < entityTransform.position.x) || dont;
-				if (dont)
-					continue;
+				//bool dont = (entity.Animator.transform.eulerAngles.y > 6) && (input.MousePos.x > entityTransform.position.x);
+				//dont = (entity.Animator.transform.eulerAngles.y < 6) && (input.MousePos.x < entityTransform.position.x) || dont;
+				//if (dont)
+				//	continue;
 				Vector2 direction = (input.MousePos - new Vector2(entityTransform.position.x, entityTransform.position.y)).normalized;
 				resources.FreeArm.up = -direction;
 				if (entity.Animator.transform.eulerAngles.y > 6)

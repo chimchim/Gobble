@@ -51,6 +51,7 @@ namespace Game
 			playerGameObject.tag = "Player";
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
+			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 			playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 
 			GameObject Ropes = new GameObject();
@@ -97,6 +98,7 @@ namespace Game
 			GameResources.Prefabs = _gameUnity.PrefabData;
             Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
+			
 		}
 
 		public GameObject GetCharacterObject(Characters character)

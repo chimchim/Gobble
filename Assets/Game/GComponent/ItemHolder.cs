@@ -20,7 +20,9 @@ namespace Game.Component
 		{
 			ItemHolder comp = _pool.GetNext();
 			comp.EntityID = entityID;
+			comp.Items.Add(ItemCreator.Make());
 			comp.Items.Add(Rope.Make());
+			comp.Items.Add(PickAxe.Make());
 			return comp;
 		}
 	}

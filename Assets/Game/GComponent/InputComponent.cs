@@ -9,8 +9,10 @@ namespace Game.Component
 		private static ObjectPool<InputComponent> _pool = new ObjectPool<InputComponent>(10);
 		public Vector2 Axis;
 		public Vector2 MousePos;
+
 		public bool Space;
 		public bool RightClick;
+		public bool LeftClick;
 
 		public List<Client.GameLogicPacket> GameLogicPackets = new List<Client.GameLogicPacket>();
 		public NetworkRopeConnected RopeConnected;

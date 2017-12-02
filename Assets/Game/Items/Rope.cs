@@ -30,13 +30,28 @@ public class Rope : Item
 	public static Rope Make()
 	{
 		Rope item = _pool.GetNext();
-		item.ID = 0;
-		item.Active = true;
+		item.Active = false;
 		return item;
+	}
+	public static void MakeItem(GameManager game, Vector3 position, Vector2 force)
+	{
+		var go = GameObject.Instantiate(game.GameResources.Prefabs.Rope);
+		go.transform.position = position;
+
+		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
+		{
+			var itemHolder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
+			itemHolder.Items[(int)Item.ItemID.Rope].OnPickup(game, EntityID);
+			SetInHand(game, EntityID, go);
+		};
+		go.GetComponent<VisibleItem>().Force = force;
+	}
+	public override void OnPickup(GameManager game, int entity)
+	{
+		Active = true;
 	}
 	public override void Input(GameManager game, int entity)
 	{
-		ID = 0;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
@@ -214,7 +229,8 @@ public class Rope : Item
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
-		byteArray.AddRange(BitConverter.GetBytes(ID));
+		int id = (int)Item.ItemID.Pickaxe;
+		byteArray.AddRange(BitConverter.GetBytes(id));
 		bool ropeConnected = input.RopeConnected.Length > 0;
 		byteArray.AddRange(BitConverter.GetBytes(ropeConnected));
 		if (ropeConnected)

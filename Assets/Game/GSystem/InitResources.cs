@@ -46,6 +46,7 @@ namespace Game.Systems
 				playerGameObject.tag = "Player";
 				ent.gameObject = playerGameObject;
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
+				playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 				playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 				if (player.Owner)
 				{
@@ -57,6 +58,8 @@ namespace Game.Systems
 				Ropes.GetComponent<GraphicRope>().MakeRopes();
 				resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 				resources.FreeArm = playerGameObject.transform.Find("free_arm");
+				resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
+				resources.Hand = resources.FreeArmAnimator.transform.Find("hand");
 			}
 		}
 

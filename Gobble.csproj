@@ -111,8 +111,10 @@
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameResources.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
-    <Compile Include="Assets\Game\LogicState\Item.cs" />
-    <Compile Include="Assets\Game\LogicState\Rope.cs" />
+    <Compile Include="Assets\Game\Items\Item.cs" />
+    <Compile Include="Assets\Game\Items\ItemCreator.cs" />
+    <Compile Include="Assets\Game\Items\PickAxe.cs" />
+    <Compile Include="Assets\Game\Items\Rope.cs" />
     <Compile Include="Assets\Game\Misc\Bitmask.cs" />
     <Compile Include="Assets\Game\Misc\BuildConsole.cs" />
     <Compile Include="Assets\Game\Misc\IDGiver.cs" />
@@ -143,9 +145,11 @@
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ParallaxingGroup.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ParallaxingObject.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GraphicRope.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\IdHolder.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpack.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryMain.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\VisibleItem.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
     <Compile Include="Assets\Game\Movement\Floating.cs" />
     <Compile Include="Assets\Game\Movement\FlyingDebug.cs" />
@@ -161,6 +165,7 @@
     <Compile Include="Assets\Game\ScriptableObjects\MineralsGenVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\PrefabsVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\RopeDataVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\ScriptableItem.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\StatsVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\SwimVariables.cs" />
     <Compile Include="Assets\Game\SystemManager.cs" />
@@ -171,7 +176,6 @@
   <ItemGroup>
     <None Include="Assets\Graphics\Shaders\Shader.shader" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
