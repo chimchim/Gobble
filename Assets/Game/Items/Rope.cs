@@ -41,28 +41,19 @@ public class Rope : Item
 
 		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
 		{
-			var itemHolder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-			itemHolder.Items[(int)Item.ItemID.Rope].OnPickup(game, EntityID, go);
-			SetInHand(game, EntityID, go);
+			var player = game.Entities.GetComponentOf<Player>(EntityID);
+			if (player.Owner)
+			{
+				var item = Make();
+				item.OnPickup(game, EntityID, go);
+			}
 		};
 		go.GetComponent<VisibleItem>().Force = force;
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		if (CurrentGameObject == null)
-		{
-			CurrentGameObject = gameObject;
-		}
-		else
-		{
-			GameObject.Destroy(gameObject);
-		}
 		var player = game.Entities.GetComponentOf<Player>(entity);
-		if (player.Owner)
-		{
-			SetInInventory(game, entity, game.GameResources.AllItems.Rope);
-		}
-		Active = true;
+		CheckMain(game, entity, game.GameResources.AllItems.Rope, gameObject);
 	}
 	public override void Input(GameManager game, int entity)
 	{

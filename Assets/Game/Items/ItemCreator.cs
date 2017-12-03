@@ -57,8 +57,10 @@ public class ItemCreator : Item
 			forceX = forceXNeg == 1 ? -forceX : forceX;
 			int forceY = game.CurrentRandom.Next(0, 10);
 			var force = new Vector2(forceX, forceY);
-
-			PickAxe.MakeItem(game, position, force);
+			var itemrand = game.CurrentRandom.Next(0, 2);
+			
+			if(itemrand == 0)PickAxe.MakeItem(game, position, force);
+			if (itemrand == 1) Rope.MakeItem(game, position, force);
 		}
 		//position = position + new Vector3(60, 40, 0)
 		//PickAxe.MakeItem(game, new Vector3(60, 40, 0));

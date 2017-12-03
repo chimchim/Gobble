@@ -71,7 +71,6 @@ public class InventoryMain : MonoBehaviour {
 			{
 				Items[i].Active = false;
 				Items[i].CurrentGameObject.SetActive(false);
-				break;
 			}
 		}
 	}
