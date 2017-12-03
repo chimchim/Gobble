@@ -44,6 +44,8 @@ namespace Game
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 			ent.AddComponent(InputComponent.Make(ent.ID));
 			ent.AddComponent(ItemHolder.Make(ent.ID));
+			var inventory = InventoryComponent.Make(ent.ID);
+			ent.AddComponent(inventory);
 			var player = Entities.GetComponentOf<Player>(ent.ID);
 			var resources = Entities.GetComponentOf<ResourcesComponent>(ent.ID);
 
@@ -61,9 +63,10 @@ namespace Game
 			resources.FreeArm = playerGameObject.transform.Find("free_arm");
 		}
 
-		public void SetMainPlayer(GameObject player)
+		public void SetMainPlayer(GameObject player, InventoryComponent inventory)
 		{
-			_gameUnity.SetMainPlayer(player);
+			_gameUnity.SetMainPlayer(player, inventory);
+
 		}
 		public GameManager()
 		{
@@ -96,7 +99,9 @@ namespace Game
 			_gameUnity = GameObject.FindObjectOfType<GameUnity>();
 			GameResources = new GameResources();
 			GameResources.Prefabs = _gameUnity.PrefabData;
-            Debug.Log("Initiate GameManager");
+			GameResources.AllItems = _gameUnity.AllItemsData;
+
+			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 			
 		}

@@ -7,16 +7,25 @@ public class InventoryMain : MonoBehaviour {
 
 	// Use this for initialization
 	public int InventorySize;
-	public Image BackGround;
 	public GameObject Template;
-	private List<Image> _items = new List<Image>();
+	public List<Item> Items = new List<Item>();
+	public List<ItemImage> ItemImage = new List<ItemImage>();
 	private int _selected;
 	void Start ()
 	{
+
 		Template.SetActive(true);
-		SetMainInventorySlots(InventorySize);
+		SetMainInventorySlots(GameUnity.MainInventorySize);
 	}
 
+	public void SetItemInMain(ScriptableItem scriptable, Item item)
+	{
+		if (Items.Count < GameUnity.MainInventorySize)
+		{
+			ItemImage[Items.Count].SetImage(scriptable.Sprite);
+			Items.Add(item);
+		}
+	}
 	// Update is called once per frame
 	public void SetMainInventorySlots(int slots)
 	{
@@ -25,32 +34,13 @@ public class InventoryMain : MonoBehaviour {
 			var go = Instantiate(Template);
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
-			_items.Add(go.GetComponent<Image>());
+			ItemImage.Add(go.GetComponent<ItemImage>());
 		}
-		Template.SetActive(false);
+		Destroy(Template);
+		//Template.SetActive(false);
 	}
-	void Update () {
-
-		for (int i = 49; i < (InventorySize+ 49); i++)
-		{
-			KeyCode e = (KeyCode)i;
-			if (Input.GetKeyDown(e))
-			{
-				int current = i - 49;
-				_items[current].color = Color.red;
-				_selected = current;
-				ResetOther();
-			}
-		}
-	}
-
-	private void ResetOther()
+	void Update()
 	{
-		for (int i = 0; i < _items.Count; i++)
-		{
-			if (i == _selected)
-				continue;
-			_items[i].GetComponent<Image>().color = Color.white;
-		}
+
 	}
 }

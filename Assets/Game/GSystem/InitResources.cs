@@ -39,6 +39,8 @@ namespace Game.Systems
 				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 				ent.AddComponent(InputComponent.Make(ent.ID));
 				ent.AddComponent(ItemHolder.Make(ent.ID));
+				var inventory = InventoryComponent.Make(ent.ID);
+				ent.AddComponent(inventory);
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 
@@ -50,7 +52,7 @@ namespace Game.Systems
 				playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 				if (player.Owner)
 				{
-					game.SetMainPlayer(playerGameObject);
+					game.SetMainPlayer(playerGameObject, inventory);
 				}
 
 				GameObject Ropes = new GameObject();

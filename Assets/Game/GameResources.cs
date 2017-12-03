@@ -8,5 +8,6 @@ namespace Game
 	public class GameResources
 	{
 		public PrefabsVariables Prefabs;
+		public AllScriptableItems AllItems;
 	}
 }

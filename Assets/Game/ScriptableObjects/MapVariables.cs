@@ -6,6 +6,7 @@ public class MapVariables : ScriptableObject
 {
 	public bool GenerateIslands = true;
 	public bool ShowMiniMap = true;
+	public bool RotateArm = true;
 	public bool DebugMode = true;
 	public bool CreateWater = true;
 	public bool GenerateSmallIsland = false;

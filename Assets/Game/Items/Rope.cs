@@ -35,19 +35,32 @@ public class Rope : Item
 	}
 	public static void MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
-		var go = GameObject.Instantiate(game.GameResources.Prefabs.Rope);
+		var go = GameObject.Instantiate(game.GameResources.AllItems.Rope.Prefab);
 		go.transform.position = position;
 
 		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
 		{
 			var itemHolder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-			itemHolder.Items[(int)Item.ItemID.Rope].OnPickup(game, EntityID);
+			itemHolder.Items[(int)Item.ItemID.Rope].OnPickup(game, EntityID, go);
 			SetInHand(game, EntityID, go);
 		};
 		go.GetComponent<VisibleItem>().Force = force;
 	}
-	public override void OnPickup(GameManager game, int entity)
+	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
+		if (CurrentGameObject == null)
+		{
+			CurrentGameObject = gameObject;
+		}
+		else
+		{
+			GameObject.Destroy(gameObject);
+		}
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		if (player.Owner)
+		{
+			SetInInventory(game, entity, game.GameResources.AllItems.Rope);
+		}
 		Active = true;
 	}
 	public override void Input(GameManager game, int entity)

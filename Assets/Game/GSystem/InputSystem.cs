@@ -25,15 +25,26 @@ namespace Game.Systems
 				var entityTransform = game.Entities.GetEntity(e).gameObject.transform;
 				var entity = game.Entities.GetEntity(e);
 				if (player.Owner)
-				{	
+				{
 					var movement = game.Entities.GetComponentOf<MovementComponent>(e);
-					
+
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					Vector2 mousePos = UnityEngine.Input.mousePosition;
 					mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
 
+					Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
+					Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
+					screenDirection.Normalize();
+					resources.FreeArm.up = -screenDirection;
+					if (entity.Animator.transform.eulerAngles.y > 6)
+					{
+						resources.FreeArm.up = screenDirection;
+						resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+					}
+
 					input.MousePos = mousePos;
+					input.ArmDirection = screenDirection;
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
@@ -44,20 +55,21 @@ namespace Game.Systems
 							continue;
 						item.Input(game, e);
 					}
-				}
 
-				//bool dont = (entity.Animator.transform.eulerAngles.y > 6) && (input.MousePos.x > entityTransform.position.x);
-				//dont = (entity.Animator.transform.eulerAngles.y < 6) && (input.MousePos.x < entityTransform.position.x) || dont;
-				//if (dont)
-				//	continue;
-				Vector2 direction = (input.MousePos - new Vector2(entityTransform.position.x, entityTransform.position.y)).normalized;
-				resources.FreeArm.up = -direction;
-				if (entity.Animator.transform.eulerAngles.y > 6)
-				{
-					resources.FreeArm.up = direction;
-					resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
 				}
-				
+				else
+				{
+					resources.FreeArm.up = input.ArmDirection;
+				}
+				//Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
+				//Vector2 screenDirection = input.ScreenMousePos - middleScreen;
+				//screenDirection.Normalize();
+				//resources.FreeArm.up = -screenDirection;
+				//if (entity.Animator.transform.eulerAngles.y > 6)
+				//{
+				//	resources.FreeArm.up = screenDirection;
+				//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+				//}
 			}
 		}
 

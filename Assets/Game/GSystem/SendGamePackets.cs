@@ -45,6 +45,8 @@ namespace Game.Systems
 						_currentByteArray.AddRange(BitConverter.GetBytes(((int)movement.CurrentState)));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.x));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.y));
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.ArmDirection.x));
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.ArmDirection.y));
 						foreach (Item item in itemHolder.Items)
 						{
 							if (!item.Active)

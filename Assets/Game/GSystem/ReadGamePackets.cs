@@ -28,6 +28,7 @@ namespace Game.Systems
 						var gameLogic = Client.CreateGameLogic(byteDataRecieve);
 						var input = game.Entities.GetComponentOf<InputComponent>(gameLogic.PlayerID);
 						input.MousePos = gameLogic.MousePos;
+						input.ArmDirection = gameLogic.ArmDirection;
 						input.NetworkPosition = gameLogic.Position;
 
 						// Do Jump

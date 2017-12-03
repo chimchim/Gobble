@@ -35,10 +35,10 @@ public class ItemCreator : Item
 		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
 		{
 			var itemHolder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-			itemHolder.Items[(int)Item.ItemID.ItemCreator].OnPickup(game, EntityID);
+			itemHolder.Items[(int)Item.ItemID.ItemCreator].OnPickup(game, EntityID, go);
 		};
 	}
-	public override void OnPickup(GameManager game, int entity)
+	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		Active = false;
 	}

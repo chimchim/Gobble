@@ -8,13 +8,12 @@ public class InventoryBackpack : MonoBehaviour
 
 	// Use this for initialization
 	public int InventorySize;
-	public Image BackGround;
 	public GameObject Template;
 	private List<Image> _items = new List<Image>();
 	private int _selected;
 	void Start()
 	{
-
+		SetMainInventorySlots(InventorySize);
 	}
 
 	// Update is called once per frame

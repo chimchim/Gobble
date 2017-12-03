@@ -15,6 +15,7 @@ public class GameUnity : MonoBehaviour
 {
 	GameManager game = new GameManager();
 
+	public AllScriptableItems AllItemsData;
 	public SwimVariables SwimData;
 	public GroundVariables GroundData;
 	public MapVariables MapData;
@@ -60,6 +61,7 @@ public class GameUnity : MonoBehaviour
 	public static float MaxHP;
 
 	[Header("Map Variables")]
+	public static bool RotateArm;
 	public static bool DebugMode;
 	public static bool CreateWater;
 	public static bool GenerateIslands;
@@ -81,6 +83,9 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryY;
 	public static float PerlinZoom;
 
+	public static int MainInventorySize = 3;
+	public InventoryBackpack InventoryBackpack;
+	public InventoryMain MainInventory;
 	public GameObject BuildConsole;
 	public GameObject MenuObject;
 	public GameObject MiniMapCanvas;
@@ -121,10 +126,12 @@ public class GameUnity : MonoBehaviour
 		}
 	}
 
-	public void SetMainPlayer(GameObject player)
+	public void SetMainPlayer(GameObject player, InventoryComponent inventory)
 	{
 		GetComponent<FollowCamera>().player = player;
 		MiniMap.player = player;
+		inventory.InventoryBackpack = InventoryBackpack;
+		inventory.MainInventory = MainInventory;
 	}
 
 	bool buildConsoleActive;
@@ -185,6 +192,7 @@ public class GameUnity : MonoBehaviour
 		MaxHP = StatsData.MaxHP;
 
 		//Map
+		RotateArm = MapData.RotateArm;
 		DebugMode = MapData.DebugMode;
 		CreateWater = MapData.CreateWater;
 		GenerateIslands = MapData.GenerateIslands;
