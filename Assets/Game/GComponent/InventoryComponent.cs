@@ -9,6 +9,7 @@ namespace Game.Component
 		private static ObjectPool<InventoryComponent> _pool = new ObjectPool<InventoryComponent>(10);
 		public InventoryBackpack InventoryBackpack;
 		public InventoryMain MainInventory;
+		public int CurrentItemIndex;
 		public override void Recycle()
 		{
 

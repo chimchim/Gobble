@@ -24,6 +24,7 @@ public class PickAxe : Item
 	{
 		PickAxe item = _pool.GetNext();
 		item.Active = false;
+		item.ID = ItemID.Pickaxe;
 		return item;
 	}
 
@@ -31,32 +32,22 @@ public class PickAxe : Item
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.PickAxe.Prefab);
 		go.transform.position = position;
-
+		
 		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
 		{
-			var itemHolder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-			var item = itemHolder.Items[(int)Item.ItemID.Pickaxe];
-			item.OnPickup(game, EntityID, go);
-			SetInHand(game, EntityID, go);
+			var player = game.Entities.GetComponentOf<Player>(EntityID);
+			if (player.Owner)
+			{
+				var item = Make();
+				item.OnPickup(game, EntityID, go);
+			}
 		};
 		go.GetComponent<VisibleItem>().Force = force;
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		if (CurrentGameObject == null)
-		{
-			CurrentGameObject = gameObject;
-		}
-		else
-		{
-			GameObject.Destroy(gameObject);
-		}
 		var player = game.Entities.GetComponentOf<Player>(entity);
-		if (player.Owner)
-		{
-			SetInInventory(game, entity, game.GameResources.AllItems.PickAxe);
-		}
-		Active = true;
+		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
 
 	public override void Input(GameManager game, int entity)

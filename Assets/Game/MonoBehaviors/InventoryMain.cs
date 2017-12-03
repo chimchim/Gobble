@@ -6,11 +6,12 @@ using UnityEngine.UI;
 public class InventoryMain : MonoBehaviour {
 
 	// Use this for initialization
-	public int InventorySize;
+	public int CurrenItemsAmount;
 	public GameObject Template;
-	public List<Item> Items = new List<Item>();
-	public List<ItemImage> ItemImage = new List<ItemImage>();
-	private int _selected;
+	public Item[] Items = new Item[GameUnity.MainInventorySize];
+	private List<ItemImage> ItemImage = new List<ItemImage>();
+
+
 	void Start ()
 	{
 
@@ -18,15 +19,39 @@ public class InventoryMain : MonoBehaviour {
 		SetMainInventorySlots(GameUnity.MainInventorySize);
 	}
 
-	public void SetItemInMain(ScriptableItem scriptable, Item item)
+	public int SetItemInMain(ScriptableItem scriptable, Item item)
 	{
-		if (Items.Count < GameUnity.MainInventorySize)
+		int index = 0;
+		for (int i = 0; i < Items.Length; i++)
 		{
-			ItemImage[Items.Count].SetImage(scriptable.Sprite);
-			Items.Add(item);
+			if (Items[i] == null)
+			{
+				CurrenItemsAmount++;
+				Items[i] = item;
+				ItemImage[i].SetImage(scriptable.Sprite);
+				index = i;
+				break;
+			}
 		}
+		return index;
 	}
 	// Update is called once per frame
+	public Item GetItem(int index)
+	{
+		if (index < Items.Length)
+		{
+			return Items[index];
+		}
+		return null;
+	}
+
+	public void RemoveItem(int index)
+	{
+		CurrenItemsAmount--;
+		Items[index] = null;
+		ItemImage[index].UnsetImage();
+	}
+
 	public void SetMainInventorySlots(int slots)
 	{
 		for (int i = 0; i < slots; i++)
@@ -37,7 +62,18 @@ public class InventoryMain : MonoBehaviour {
 			ItemImage.Add(go.GetComponent<ItemImage>());
 		}
 		Destroy(Template);
-		//Template.SetActive(false);
+	}
+	public void ResetAll()
+	{
+		for (int i = 0; i < Items.Length; i++)
+		{
+			if (Items[i] != null)
+			{
+				Items[i].Active = false;
+				Items[i].CurrentGameObject.SetActive(false);
+				break;
+			}
+		}
 	}
 	void Update()
 	{

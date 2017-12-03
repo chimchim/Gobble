@@ -13,9 +13,14 @@ public abstract class Item
 		Rope,
 		Pickaxe
 	}
+	public ItemID ID;
+
 	public GameObject CurrentGameObject;
 	public bool Active;
-	public ScriptableItem Scriptable;
+	//public bool[] CurrentSlots = new bool[GameUnity.MainInventorySize];
+	public Sprite Sprite;
+
+	public int Quantity;
 
 	public abstract void OnPickup(Game.GameManager game, int entity, GameObject gameObject);
 	public abstract void Input(Game.GameManager game, int entity);
@@ -23,12 +28,65 @@ public abstract class Item
 	public abstract void Serialize(Game.GameManager game, int entity, List<byte> byteArray);
 	public abstract void Recycle();
 
+	public virtual void CreateItemInSlot(Game.GameManager game, int entity, Sprite sprite)
+	{
+
+	}
+	public virtual void CheckMain(Game.GameManager game, int entity, ScriptableItem scriptable, GameObject go)
+	{
+		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		var items = inventoryMain.MainInventory.Items;
+		int amount = inventoryMain.MainInventory.CurrenItemsAmount;
+		if (amount < GameUnity.MainInventorySize)
+		{
+			holder.Items.Add(this);
+			int index = inventoryMain.MainInventory.SetItemInMain(scriptable, this);
+			SetInHand(game, entity, go);
+			CurrentGameObject = go;
+			if (inventoryMain.CurrentItemIndex == index)
+			{
+				Active = true;
+			}
+			else
+			{
+				CurrentGameObject.SetActive(false);
+			}
+		}
+	} 
+
+	public virtual void ThrowItem(Game.GameManager game, int entity)
+	{
+		Debug.Log("ThrowItem");
+		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		var visibleItem = CurrentGameObject.GetComponent<VisibleItem>();
+		visibleItem.enabled = true;
+		visibleItem.CallBack = (EntityID) =>
+		{
+			OnPickup(game, EntityID, CurrentGameObject);
+			//SetInHand(game, EntityID, CurrentGameObject);
+		};
+		var force = input.ArmDirection * 5;
+		visibleItem.Force = force;
+		Active = false;
+		CurrentGameObject.transform.parent = null;
+		CurrentGameObject.transform.position += new Vector3(input.ArmDirection.x, input.ArmDirection.y, 0)*2;
+		inventoryMain.MainInventory.RemoveItem(inventoryMain.CurrentItemIndex);
+
+
+	}
+	public virtual void SetActive()
+	{
+		Active = true;
+		CurrentGameObject.SetActive(true);
+	}
 	public virtual void SetInInventory(Game.GameManager game, int entity, ScriptableItem itemscript)
 	{
-		var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
-		var items = inventory.MainInventory.Items;
-
-		inventory.MainInventory.SetItemInMain(itemscript, this);
+		//var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		////var items = inventory.MainInventory.Items;
+		//
+		//inventory.MainInventory.SetItemInMain(itemscript, this);
 		
 	}
 	public static void SetInHand(Game.GameManager game, int entity, GameObject item)

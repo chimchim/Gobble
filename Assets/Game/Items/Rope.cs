@@ -31,6 +31,7 @@ public class Rope : Item
 	{
 		Rope item = _pool.GetNext();
 		item.Active = false;
+		item.ID = ItemID.Rope;
 		return item;
 	}
 	public static void MakeItem(GameManager game, Vector3 position, Vector2 force)
