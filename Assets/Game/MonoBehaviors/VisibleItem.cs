@@ -23,7 +23,7 @@ public class VisibleItem : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		if (grounded && Math.Abs(Force.x) <= 0)
+		if (grounded && (Math.Abs(Force.x) <= 0 || !grounded))
 			return;
 		Force.y += -GameUnity.Gravity * GameUnity.Weight;
 		Force.x = Force.x * GameUnity.ForceDamper;

@@ -17,7 +17,6 @@ public abstract class Item
 
 	public GameObject CurrentGameObject;
 	public bool Active;
-	//public bool[] CurrentSlots = new bool[GameUnity.MainInventorySize];
 	public Sprite Sprite;
 
 	public int Quantity;
