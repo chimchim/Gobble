@@ -5,8 +5,10 @@ using Game;
 using UnityEngine;
 using Game.Component;
 
-public class NetItemPickup : BaseNetEvent<NetItemPickup>
+public class NetItemPickup : NetEvent
 {
+	private static ObjectPool<NetItemPickup> _pool = new ObjectPool<NetItemPickup>(10);
+
 	public int ItemID;
 	public int Player;
 
@@ -35,19 +37,23 @@ public class NetItemPickup : BaseNetEvent<NetItemPickup>
 		}
 	}
 
+	public static NetItemPickup Make()
+	{
+		return _pool.GetNext();
+	}
 
 	public static NetItemPickup Make(int player, int netEventID, int itemID)
 	{
-		var evt = GetNext();
+		var evt = _pool.GetNext();
 		evt.NetEventID = netEventID;
 		evt.ItemID = itemID;
 		evt.Player = player;
 		return evt;
 	}
 
-	protected override void Reset()
+	public override void Recycle()
 	{
-		base.Reset();
+		_pool.Recycle(this);
 	}
 
 	protected override void InnerNetDeserialize(GameManager game, byte[] byteData, int index)
@@ -58,7 +64,7 @@ public class NetItemPickup : BaseNetEvent<NetItemPickup>
 		index += sizeof(int);
 		int itemID = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
-		Debug.Log("netEventID " + netEventID + " itemID " + itemID);
+
 		NetEventID = netEventID;
 		Player = player;
 		ItemID = itemID;
@@ -66,6 +72,7 @@ public class NetItemPickup : BaseNetEvent<NetItemPickup>
 
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
+		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetItemPickup));
 		outgoing.AddRange(BitConverter.GetBytes(12));
 		outgoing.AddRange(BitConverter.GetBytes(NetEventID));
 		outgoing.AddRange(BitConverter.GetBytes(Player));

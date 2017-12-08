@@ -4,12 +4,19 @@ using System.Collections.Generic;
 using Game;
 using UnityEngine;
 
-public class NetCreateItem : BaseNetEvent<NetCreateItem>
+public class NetCreateItem : NetEvent
 {
+	private static ObjectPool<NetCreateItem> _pool = new ObjectPool<NetCreateItem>(10);
+
 	public Item.ItemID ItemID;
 	public Vector2 Force;
 	public Vector2 Position;
 	public int Creator;
+
+	public override void Recycle()
+	{
+		_pool.Recycle(this);
+    }
 	public override void Handle(GameManager game)
 	{
 		
@@ -29,10 +36,14 @@ public class NetCreateItem : BaseNetEvent<NetCreateItem>
 		game.WorldItems.Add(visible);
 	}
 
-
-	public static NetCreateItem Make(int creator, int netEventID, Item.ItemID itemID, Vector3 position, Vector2 force)
+	public static NetCreateItem Make()
 	{
-		var evt = GetNext();
+		return _pool.GetNext();
+	}
+
+    public static NetCreateItem Make(int creator, int netEventID, Item.ItemID itemID, Vector3 position, Vector2 force)
+	{
+		var evt = _pool.GetNext();
 		evt.NetEventID = netEventID;
 		evt.ItemID = itemID;
 		evt.Force = force;
@@ -41,18 +52,13 @@ public class NetCreateItem : BaseNetEvent<NetCreateItem>
 		return evt;
 	}
 
-	protected override void Reset()
-	{
-		base.Reset();
-	}
 
 	protected override void InnerNetDeserialize(GameManager game, byte[] byteData, int index)
 	{
-		int id = BitConverter.ToInt32(byteData, index);
-		index += sizeof(int);
 		int netEventID = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
-
+		int id = BitConverter.ToInt32(byteData, index);
+		index += sizeof(int);
 		int creator = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
 		float posX = BitConverter.ToSingle(byteData, index);
@@ -73,9 +79,10 @@ public class NetCreateItem : BaseNetEvent<NetCreateItem>
 
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
+		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetCreateItem));
 		outgoing.AddRange(BitConverter.GetBytes(28));
-		outgoing.AddRange(BitConverter.GetBytes((int)ItemID));
 		outgoing.AddRange(BitConverter.GetBytes(NetEventID));
+		outgoing.AddRange(BitConverter.GetBytes((int)ItemID));
 		outgoing.AddRange(BitConverter.GetBytes(Creator));
 		outgoing.AddRange(BitConverter.GetBytes(Position.x));
 		outgoing.AddRange(BitConverter.GetBytes(Position.y));

@@ -36,6 +36,8 @@ public class PickAxe : Item
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		visible.Item = item;
+		visible.Force = force;
+
 		visible.CallBack = (EntityID) =>
 		{
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
@@ -43,14 +45,12 @@ public class PickAxe : Item
 			{		
 				item.OnPickup(game, EntityID, go);
 				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
-				Debug.Log("CurrentEventID " + netComp.CurrentEventID + " item.ItemNetID " + item.ItemNetID);
 				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
 				netComp.CurrentEventID++;
 				netComp.NetEvents.Add(pickup);
 			}
 		};
 		
-		visible.Force = force;
 		return go.GetComponent<VisibleItem>();
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)

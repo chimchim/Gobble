@@ -70,8 +70,9 @@ namespace Game.Systems
 				Debug.Log("currentNetEventID " + currentNetEventID + " netComp.CurrentEventID " + netComp.CurrentEventID + " netEventCount.count " + netEventCount);
 				if (currentNetEventID > netComp.CurrentEventID)
 				{
-					
-					var netEvent = NetEvent.MakeFromIncoming(game, netEventTypeID, byteData, currentIndex);
+
+					var netEvent = NetEvent.MakeEmpties[netEventTypeID]();//MakeFromIncoming(game, netEventTypeID, byteData, currentIndex);
+
 					netEvent.Handle(game);
 					netEvent.Recycle();
 					netComp.CurrentEventID++;
