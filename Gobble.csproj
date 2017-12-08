@@ -165,6 +165,7 @@
     <Compile Include="Assets\Game\Network\Data.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEvent.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetEventRope.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetItemPickup.cs" />
     <Compile Include="Assets\Game\Network\Utility.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\AllScriptableItems.cs" />

@@ -58,19 +58,19 @@ public class ItemCreator : Item
 			forceX = forceXNeg == 1 ? -forceX : forceX;
 			int forceY = game.CurrentRandom.Next(0, 10);
 			var force = new Vector2(forceX, forceY);
-			var itemrand = game.CurrentRandom.Next(0, 1);
+			var itemrand = game.CurrentRandom.Next(0, 2);
 			force = input.ArmDirection * 5;
 			if (itemrand == 0)
 			{
-				netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, ItemID.Pickaxe, position, force));
 				netEvents.CurrentEventID++;
+				netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, ItemID.Pickaxe, position, force));
+
 			}
-			//PickAxe.MakeItem(game, position, force);
 			if (itemrand == 1)
 			{
-				netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, ItemID.Rope, position, force));
 				netEvents.CurrentEventID++;
-			} //Rope.MakeItem(game, position, force);
+				netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, ItemID.Rope, position, force));
+			} 
 		}
 
 	}

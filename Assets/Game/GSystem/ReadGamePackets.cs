@@ -41,12 +41,12 @@ namespace Game.Systems
 						var itemHolder = game.Entities.GetComponentOf<ItemHolder>(gameLogic.PlayerID);
 						int currentIndex = gameLogic.CurrentByteIndex;
 						ReadNetEvents(game, gameLogic.PlayerID, byteDataRecieve, ref currentIndex);
-						//for (int j = 0; j < ItemHolder.ActiveItemsCount; j++)
-						//{
-						//	int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
-						//	currentIndex += sizeof(int);
-						//	itemHolder.Items[itemID].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
-						//}
+						for (int j = 0; j < ItemHolder.ActiveItemsCount; j++)
+						{
+							int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+							currentIndex += sizeof(int);
+							itemHolder.Items[itemID].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
+						}
 					}
 				}
 			}
@@ -58,24 +58,24 @@ namespace Game.Systems
 
 			int netEventCount = BitConverter.ToInt32(byteData, currentIndex);
 			currentIndex += sizeof(int);
-			int currentNetEventID = BitConverter.ToInt32(byteData, currentIndex);
-			currentIndex += sizeof(int);
 
 			for (int i = 0; i < netEventCount; i++)
 			{
+				int netEventID = BitConverter.ToInt32(byteData, currentIndex);
+				currentIndex += sizeof(int);
 				int netEventTypeID = BitConverter.ToInt32(byteData, currentIndex);
 				currentIndex += sizeof(int);
 				int netEventByteSize = BitConverter.ToInt32(byteData, currentIndex);
 				currentIndex += sizeof(int);
-				Debug.Log("currentNetEventID " + currentNetEventID + " netComp.CurrentEventID " + netComp.CurrentEventID + " netEventCount.count " + netEventCount);
-				if (currentNetEventID > netComp.CurrentEventID)
+
+				if (netEventID > netComp.CurrentEventID)
 				{
-
-					var netEvent = NetEvent.MakeEmpties[netEventTypeID]();//MakeFromIncoming(game, netEventTypeID, byteData, currentIndex);
-
+					var netEvent = NetEvent.MakeEmpties[netEventTypeID]();
+					netEvent.NetDeserialize(game, byteData, currentIndex);
+					netEvent.NetEventID = netEventID;
 					netEvent.Handle(game);
 					netEvent.Recycle();
-					netComp.CurrentEventID++;
+					netComp.CurrentEventID = netEventID;
 				}
 
 				currentIndex += netEventByteSize;

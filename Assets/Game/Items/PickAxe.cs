@@ -45,13 +45,13 @@ public class PickAxe : Item
 			{		
 				item.OnPickup(game, EntityID, go);
 				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
-				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
 				netComp.CurrentEventID++;
+				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
 				netComp.NetEvents.Add(pickup);
 			}
 		};
 		
-		return go.GetComponent<VisibleItem>();
+		return visible;
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{

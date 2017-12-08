@@ -73,6 +73,7 @@ namespace Game.Systems
 		public void ItemChangeInput(GameManager game, int entity, ItemHolder itemHolder, InputComponent input)
 		{
 			var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
+			var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
 			var maininv = inventory.MainInventory;
 
 			if (Input.GetKeyDown(KeyCode.Q))
@@ -88,6 +89,10 @@ namespace Game.Systems
 			{
 				if (Input.GetKeyDown(AlphaKeys[i]))
 				{
+					for (int j = 0; j < holder.ActiveItems.Count; j++)
+					{
+						holder.ActiveItems[j].DeActivate(game, entity);
+					}
 					maininv.ResetAll();
 					maininv.SetChoosen(i);
 					var item = maininv.GetItem(i);
@@ -95,7 +100,7 @@ namespace Game.Systems
 
 					if (item != null)
 					{
-						item.SetActive();
+						item.Activate(game, entity);
 					}
 				}
 			}

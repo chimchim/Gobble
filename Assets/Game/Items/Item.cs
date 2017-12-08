@@ -21,6 +21,21 @@ public abstract class Item
 	public int ItemNetID;
 	public int Quantity;
 
+	public virtual void Activate(Game.GameManager game, int entity)
+	{
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Add(this);
+		CurrentGameObject.SetActive(true);
+		Active = true;
+	}
+	public virtual void DeActivate(Game.GameManager game, int entity)
+	{
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Remove(this);
+		CurrentGameObject.SetActive(false); 
+		Active = false;
+	}
+
 	public abstract void OnPickup(Game.GameManager game, int entity, GameObject gameObject);
 	public abstract void Input(Game.GameManager game, int entity);
 	public abstract void Sync(Game.GameManager game, Client.GameLogicPacket packet, byte[] byteData, ref int currentIndex);
@@ -38,14 +53,16 @@ public abstract class Item
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		var items = inventoryMain.MainInventory.Items;
 		int amount = inventoryMain.MainInventory.CurrenItemsAmount;
+		game.WorldItems.Remove(CurrentGameObject.GetComponent<VisibleItem>());
 		holder.Items.Add(this);
+		
 		if (amount < GameUnity.MainInventorySize)
 		{
 			int index = inventoryMain.MainInventory.SetItemInMain(scriptable, this);
 			SetInHand(game, entity, go);
 			if (inventoryMain.CurrentItemIndex == index)
 			{
-				Active = true;
+				Activate(game, entity);
 			}
 			else
 			{
@@ -60,7 +77,6 @@ public abstract class Item
 
 	public virtual void ThrowItem(Game.GameManager game, int entity)
 	{
-		Debug.Log("ThrowItem");
 		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var visibleItem = CurrentGameObject.GetComponent<VisibleItem>();
@@ -68,20 +84,14 @@ public abstract class Item
 		visibleItem.CallBack = (EntityID) =>
 		{
 			OnPickup(game, EntityID, CurrentGameObject);
-			//SetInHand(game, EntityID, CurrentGameObject);
 		};
 		var force = input.ArmDirection * 5;
 		visibleItem.Force = force;
-		Active = false;
+
+		DeActivate(game, entity);
 		CurrentGameObject.transform.parent = null;
 		CurrentGameObject.transform.position += new Vector3(input.ArmDirection.x, input.ArmDirection.y, 0)*2;
 		inventoryMain.MainInventory.RemoveItem(inventoryMain.CurrentItemIndex);
-	}
-
-	public virtual void SetActive()
-	{
-		Active = true;
-		CurrentGameObject.SetActive(true);
 	}
 
 	public static void SetInHand(Game.GameManager game, int entity, GameObject item)

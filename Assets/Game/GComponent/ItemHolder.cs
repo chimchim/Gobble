@@ -7,6 +7,7 @@ namespace Game.Component
 		public static int ActiveItemsCount = 1;
 		private static ObjectPool<ItemHolder> _pool = new ObjectPool<ItemHolder>(10);
 		public List<Item> Items = new List<Item>();
+		public List<Item> ActiveItems = new List<Item>();
 		public override void Recycle()
 		{
 			_pool.Recycle(this);

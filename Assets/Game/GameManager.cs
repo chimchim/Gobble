@@ -66,6 +66,8 @@ namespace Game
 			Ropes.GetComponent<GraphicRope>().MakeRopes();
 			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 			resources.FreeArm = playerGameObject.transform.Find("free_arm");
+			resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
+			resources.Hand = resources.FreeArmAnimator.transform.Find("hand");
 		}
 
 		public void SetMainPlayer(GameObject player, InventoryComponent inventory)

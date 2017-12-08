@@ -15,13 +15,13 @@ public class NetCreateItem : NetEvent
 
 	public override void Recycle()
 	{
+		Iterations = 0;
 		_pool.Recycle(this);
     }
 	public override void Handle(GameManager game)
 	{
-		
 		int itemNetID = (Creator * 200000) + NetEventID;
-		//Debug.Log("Creator  " + Creator + " NetEventID " + NetEventID);
+		//Debug.Log("Create item itemNetID " + itemNetID + " ItemID  " + ItemID);
 		VisibleItem visible = null;
 		if (ItemID == Item.ItemID.Pickaxe)
 		{
@@ -31,6 +31,7 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Rope.MakeItem(game, Position, Force);
 		}
+
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;
 		game.WorldItems.Add(visible);
@@ -55,8 +56,6 @@ public class NetCreateItem : NetEvent
 
 	protected override void InnerNetDeserialize(GameManager game, byte[] byteData, int index)
 	{
-		int netEventID = BitConverter.ToInt32(byteData, index);
-		index += sizeof(int);
 		int id = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
 		int creator = BitConverter.ToInt32(byteData, index);
@@ -72,7 +71,6 @@ public class NetCreateItem : NetEvent
 
 		Creator = creator;
 		ItemID = (Item.ItemID)id;
-		NetEventID = netEventID;
 		Position = new Vector2(posX, posY);
 		Force = new Vector2(forceX, forceY);
 	}
@@ -80,8 +78,7 @@ public class NetCreateItem : NetEvent
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
 		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetCreateItem));
-		outgoing.AddRange(BitConverter.GetBytes(28));
-		outgoing.AddRange(BitConverter.GetBytes(NetEventID));
+		outgoing.AddRange(BitConverter.GetBytes(24));
 		outgoing.AddRange(BitConverter.GetBytes((int)ItemID));
 		outgoing.AddRange(BitConverter.GetBytes(Creator));
 		outgoing.AddRange(BitConverter.GetBytes(Position.x));

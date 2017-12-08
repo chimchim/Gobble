@@ -10,13 +10,15 @@ public abstract class NetEvent
 	public enum NetEventType
 	{
 		NetCreateItem,
-		NetItemPickup
+		NetItemPickup,
+		NetRopeEvent
 	}
 
 	public static Func<NetEvent>[] MakeEmpties = new Func<NetEvent>[]
 	{
 		NetCreateItem.Make,
-		NetItemPickup.Make
+		NetItemPickup.Make,
+		NetEventRope.Make
 	};
 
 	// Default Accessability is Aspect
@@ -29,6 +31,7 @@ public abstract class NetEvent
 
 	public void NetSerialize(object gameState, List<byte> outgoing)
 	{
+		outgoing.AddRange(BitConverter.GetBytes(NetEventID));
 		InnerNetSerialize((Game.GameManager)gameState, outgoing);
 	}
 

@@ -54,7 +54,7 @@ public class VisibleItem : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D other)
 	{
 		var idholder = other.GetComponent<IdHolder>();
-		if (idholder != null)
+		if (idholder != null && CallBack != null)
 		{
 			if (idholder.Owner)
 			{

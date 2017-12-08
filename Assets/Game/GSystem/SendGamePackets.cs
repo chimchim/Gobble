@@ -50,17 +50,15 @@ namespace Game.Systems
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.ArmDirection.y));
 
 						_currentByteArray.AddRange(BitConverter.GetBytes(netEvents.NetEvents.Count));
-						_currentByteArray.AddRange(BitConverter.GetBytes(netEvents.CurrentEventID));
+						//_currentByteArray.AddRange(BitConverter.GetBytes(netEvents.CurrentEventID));
 						foreach (NetEvent netevent in netEvents.NetEvents)
 						{
 							netevent.NetSerialize(game, _currentByteArray);
 						}
 
-						foreach (Item item in itemHolder.Items)
+						foreach (Item item in itemHolder.ActiveItems)
 						{
-							if (!item.Active)
-								continue;
-							//item.Serialize(game, player.EntityID, _currentByteArray);
+							item.Serialize(game, player.EntityID, _currentByteArray);
 						}
 						
 						var byteData = _currentByteArray.ToArray();
