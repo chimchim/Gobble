@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Game;
+using UnityEngine;
+
+public class NetCreateItem : BaseNetEvent<NetCreateItem>
+{
+	public Item.ItemID ItemID;
+	public Vector2 Force;
+	public Vector2 Position;
+	public int Creator;
+	public override void Handle(GameManager game)
+	{
+		
+		int itemNetID = (Creator * 200000) + NetEventID;
+		//Debug.Log("Creator  " + Creator + " NetEventID " + NetEventID);
+		VisibleItem visible = null;
+		if (ItemID == Item.ItemID.Pickaxe)
+		{
+			visible = PickAxe.MakeItem(game, Position, Force);
+		}
+		if (ItemID == Item.ItemID.Rope)
+		{
+			visible = Rope.MakeItem(game, Position, Force);
+		}
+		visible.Item.ItemNetID = itemNetID;
+		visible.Item.CurrentGameObject = visible.gameObject;
+		game.WorldItems.Add(visible);
+	}
+
+
+	public static NetCreateItem Make(int creator, int netEventID, Item.ItemID itemID, Vector3 position, Vector2 force)
+	{
+		var evt = GetNext();
+		evt.NetEventID = netEventID;
+		evt.ItemID = itemID;
+		evt.Force = force;
+		evt.Position = position;
+		evt.Creator = creator;
+		return evt;
+	}
+
+	protected override void Reset()
+	{
+		base.Reset();
+	}
+
+	protected override void InnerNetDeserialize(GameManager game, byte[] byteData, int index)
+	{
+		int id = BitConverter.ToInt32(byteData, index);
+		index += sizeof(int);
+		int netEventID = BitConverter.ToInt32(byteData, index);
+		index += sizeof(int);
+
+		int creator = BitConverter.ToInt32(byteData, index);
+		index += sizeof(int);
+		float posX = BitConverter.ToSingle(byteData, index);
+		index += sizeof(float);
+		float posY = BitConverter.ToSingle(byteData, index);
+		index += sizeof(float);
+		float forceX = BitConverter.ToSingle(byteData, index);
+		index += sizeof(float);
+		float forceY = BitConverter.ToSingle(byteData, index);
+		index += sizeof(float);
+
+		Creator = creator;
+		ItemID = (Item.ItemID)id;
+		NetEventID = netEventID;
+		Position = new Vector2(posX, posY);
+		Force = new Vector2(forceX, forceY);
+	}
+
+	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
+	{
+		outgoing.AddRange(BitConverter.GetBytes(28));
+		outgoing.AddRange(BitConverter.GetBytes((int)ItemID));
+		outgoing.AddRange(BitConverter.GetBytes(NetEventID));
+		outgoing.AddRange(BitConverter.GetBytes(Creator));
+		outgoing.AddRange(BitConverter.GetBytes(Position.x));
+		outgoing.AddRange(BitConverter.GetBytes(Position.y));
+		outgoing.AddRange(BitConverter.GetBytes(Force.x));
+		outgoing.AddRange(BitConverter.GetBytes(Force.y));
+	}
+}

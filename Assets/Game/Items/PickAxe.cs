@@ -28,21 +28,30 @@ public class PickAxe : Item
 		return item;
 	}
 
-	public static void MakeItem(GameManager game, Vector3 position, Vector2 force)
+	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.PickAxe.Prefab);
 		go.transform.position = position;
-		
-		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
+
+		var visible = go.AddComponent<VisibleItem>();
+		var item = Make();
+		visible.Item = item;
+		visible.CallBack = (EntityID) =>
 		{
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
-			{
-				var item = Make();
+			{		
 				item.OnPickup(game, EntityID, go);
+				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
+				Debug.Log("CurrentEventID " + netComp.CurrentEventID + " item.ItemNetID " + item.ItemNetID);
+				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
+				netComp.CurrentEventID++;
+				netComp.NetEvents.Add(pickup);
 			}
 		};
-		go.GetComponent<VisibleItem>().Force = force;
+		
+		visible.Force = force;
+		return go.GetComponent<VisibleItem>();
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
@@ -77,7 +86,7 @@ public class PickAxe : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		int id = (int)Item.ItemID.ItemCreator;
+		int id = (int)Item.ItemID.Pickaxe;
 		byteArray.AddRange(BitConverter.GetBytes(id));
 	}
 }

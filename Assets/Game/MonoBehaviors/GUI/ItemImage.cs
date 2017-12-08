@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ItemImage : MonoBehaviour {
 
+	public Image Chosen;
 	public Image Image;
 	public bool IsSet;
 	public void SetImage(Sprite sprite)

@@ -48,6 +48,7 @@ public class ItemCreator : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
 
 		if (UnityEngine.Input.GetKeyDown(KeyCode.E))
 		{
@@ -57,14 +58,20 @@ public class ItemCreator : Item
 			forceX = forceXNeg == 1 ? -forceX : forceX;
 			int forceY = game.CurrentRandom.Next(0, 10);
 			var force = new Vector2(forceX, forceY);
-			var itemrand = game.CurrentRandom.Next(0, 2);
-			
-			if(itemrand == 0)PickAxe.MakeItem(game, position, force);
-			if (itemrand == 1) Rope.MakeItem(game, position, force);
+			var itemrand = game.CurrentRandom.Next(0, 1);
+			force = input.ArmDirection * 5;
+			if (itemrand == 0)
+			{
+				netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, ItemID.Pickaxe, position, force));
+				netEvents.CurrentEventID++;
+			}
+			//PickAxe.MakeItem(game, position, force);
+			if (itemrand == 1)
+			{
+				netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, ItemID.Rope, position, force));
+				netEvents.CurrentEventID++;
+			} //Rope.MakeItem(game, position, force);
 		}
-		//position = position + new Vector3(60, 40, 0)
-		//PickAxe.MakeItem(game, new Vector3(60, 40, 0));
-		//Rope.MakeItem(game, new Vector3(64, 40, 0));
 
 	}
 
@@ -85,7 +92,8 @@ public class ItemCreator : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		int id = (int)Item.ItemID.Pickaxe;
+		int id = (int)Item.ItemID.ItemCreator;
+		byteArray.AddRange(BitConverter.GetBytes(id));
 	}
 }
 

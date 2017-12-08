@@ -34,26 +34,46 @@ public class Rope : Item
 		item.ID = ItemID.Rope;
 		return item;
 	}
-	public static void MakeItem(GameManager game, Vector3 position, Vector2 force)
+	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.Rope.Prefab);
 		go.transform.position = position;
 
-		go.AddComponent<VisibleItem>().CallBack = (EntityID) =>
+		var visible = go.AddComponent<VisibleItem>();
+		var item = Make();
+		visible.Item = item;
+		visible.CallBack = (EntityID) =>
 		{
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
-				var item = Make();
 				item.OnPickup(game, EntityID, go);
+				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
+				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
+				netComp.CurrentEventID++;
+				netComp.NetEvents.Add(pickup);
 			}
 		};
-		go.GetComponent<VisibleItem>().Force = force;
+		visible.Force = force;
+		return visible;
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		CheckMain(game, entity, game.GameResources.AllItems.Rope, gameObject);
+	}
+	public override void ThrowItem(GameManager game, int entity)
+	{
+		base.ThrowItem(game, entity);
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+
+		input.RightClick = false;
+		resources.GraphicRope.DeActivate();
+		movement.RopeList.Clear();
+		movement.CurrentState = MovementComponent.MoveState.Grounded;
+		
 	}
 	public override void Input(GameManager game, int entity)
 	{
@@ -234,7 +254,8 @@ public class Rope : Item
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
-		int id = (int)Item.ItemID.Pickaxe;
+
+		int id = (int)Item.ItemID.Rope;
 		byteArray.AddRange(BitConverter.GetBytes(id));
 		bool ropeConnected = input.RopeConnected.Length > 0;
 		byteArray.AddRange(BitConverter.GetBytes(ropeConnected));

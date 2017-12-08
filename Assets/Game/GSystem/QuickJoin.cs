@@ -114,14 +114,15 @@ namespace Game.Systems
 				{
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
+					Debug.Log("Create player " + id + " isOwner " + isOwner);
 					if (game.Systems.CurrentGameState == SystemManager.GameState.QuickJoin)
+					{
 						game.CreateEmptyPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
+					}
 					else
 					{
 						game.CreateFullPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
 					}
-
-
 				}
 			}
 			menu.PlayerAmount = clientCount;

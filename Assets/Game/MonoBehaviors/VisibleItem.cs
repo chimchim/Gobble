@@ -56,8 +56,11 @@ public class VisibleItem : MonoBehaviour
 		var idholder = other.GetComponent<IdHolder>();
 		if (idholder != null)
 		{
-			enabled = false;
-			CallBack.Invoke(idholder.ID);
+			if (idholder.Owner)
+			{
+				enabled = false;
+				CallBack.Invoke(idholder.ID);
+			}
 		}
 	}
 }

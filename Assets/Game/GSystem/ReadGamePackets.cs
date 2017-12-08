@@ -40,43 +40,47 @@ namespace Game.Systems
 
 						var itemHolder = game.Entities.GetComponentOf<ItemHolder>(gameLogic.PlayerID);
 						int currentIndex = gameLogic.CurrentByteIndex;
-						for (int j = 0; j < ItemHolder.ActiveItemsCount; j++)
-						{
-							int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex); currentIndex += sizeof(int);
-							itemHolder.Items[itemID].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
-						}
+						ReadNetEvents(game, gameLogic.PlayerID, byteDataRecieve, ref currentIndex);
+						//for (int j = 0; j < ItemHolder.ActiveItemsCount; j++)
+						//{
+						//	int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+						//	currentIndex += sizeof(int);
+						//	itemHolder.Items[itemID].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
+						//}
 					}
 				}
 			}
-
-			//foreach (int e in entities)
-			//{
-			//	var player = game.Entities.GetComponentOf<Player>(e);
-			//
-			//	var input = game.Entities.GetComponentOf<InputComponent>(e);
-			//
-			//	for (int i = 0; i < input.GameLogicPackets.Count; i++)
-			//	{
-			//		var pack = input.GameLogicPackets[i];
-			//		var otherInput = game.Entities.GetComponentOf<InputComponent>(pack.PlayerID);
-			//
-			//		otherInput.MousePos = pack.MousePos;
-			//		otherInput.NetworkPosition = pack.Position;
-			//
-			//		// Do Jump
-			//		if (pack.Grounded && pack.InputSpace && !otherInput.NetworkJump)
-			//		{
-			//			otherInput.NetworkJump = true;
-			//		}
-			//		// Set MoveAxis
-			//		otherInput.Axis = new Vector2(pack.InputAxisX, pack.InputAxisY);
-			//
-			//	}
-			//	input.GameLogicPackets.Clear();
-			//	
-			//}
 		}
 
+		void ReadNetEvents(GameManager game, int entity, byte[] byteData, ref int currentIndex)
+		{
+			var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+
+			int netEventCount = BitConverter.ToInt32(byteData, currentIndex);
+			currentIndex += sizeof(int);
+			int currentNetEventID = BitConverter.ToInt32(byteData, currentIndex);
+			currentIndex += sizeof(int);
+
+			for (int i = 0; i < netEventCount; i++)
+			{
+				int netEventTypeID = BitConverter.ToInt32(byteData, currentIndex);
+				currentIndex += sizeof(int);
+				int netEventByteSize = BitConverter.ToInt32(byteData, currentIndex);
+				currentIndex += sizeof(int);
+				Debug.Log("currentNetEventID " + currentNetEventID + " netComp.CurrentEventID " + netComp.CurrentEventID + " netEventCount.count " + netEventCount);
+				if (currentNetEventID > netComp.CurrentEventID)
+				{
+					
+					var netEvent = NetEvent.MakeFromIncoming(game, netEventTypeID, byteData, currentIndex);
+					netEvent.Handle(game);
+					netEvent.Recycle();
+					netComp.CurrentEventID++;
+				}
+
+				currentIndex += netEventByteSize;
+			}
+
+		}
 		public void Initiate(GameManager game)
 		{
 			

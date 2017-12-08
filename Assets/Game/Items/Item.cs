@@ -18,7 +18,7 @@ public abstract class Item
 	public GameObject CurrentGameObject;
 	public bool Active;
 	public Sprite Sprite;
-
+	public int ItemNetID;
 	public int Quantity;
 
 	public abstract void OnPickup(Game.GameManager game, int entity, GameObject gameObject);
@@ -31,18 +31,18 @@ public abstract class Item
 	{
 
 	}
+
 	public virtual void CheckMain(Game.GameManager game, int entity, ScriptableItem scriptable, GameObject go)
 	{
 		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		var items = inventoryMain.MainInventory.Items;
 		int amount = inventoryMain.MainInventory.CurrenItemsAmount;
+		holder.Items.Add(this);
 		if (amount < GameUnity.MainInventorySize)
 		{
-			holder.Items.Add(this);
 			int index = inventoryMain.MainInventory.SetItemInMain(scriptable, this);
 			SetInHand(game, entity, go);
-			CurrentGameObject = go;
 			if (inventoryMain.CurrentItemIndex == index)
 			{
 				Active = true;
@@ -51,6 +51,10 @@ public abstract class Item
 			{
 				CurrentGameObject.SetActive(false);
 			}
+		}
+		else
+		{
+			CurrentGameObject.SetActive(false);
 		}
 	} 
 
@@ -72,22 +76,14 @@ public abstract class Item
 		CurrentGameObject.transform.parent = null;
 		CurrentGameObject.transform.position += new Vector3(input.ArmDirection.x, input.ArmDirection.y, 0)*2;
 		inventoryMain.MainInventory.RemoveItem(inventoryMain.CurrentItemIndex);
-
-
 	}
+
 	public virtual void SetActive()
 	{
 		Active = true;
 		CurrentGameObject.SetActive(true);
 	}
-	public virtual void SetInInventory(Game.GameManager game, int entity, ScriptableItem itemscript)
-	{
-		//var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
-		////var items = inventory.MainInventory.Items;
-		//
-		//inventory.MainInventory.SetItemInMain(itemscript, this);
-		
-	}
+
 	public static void SetInHand(Game.GameManager game, int entity, GameObject item)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);

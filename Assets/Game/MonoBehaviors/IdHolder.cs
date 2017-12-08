@@ -5,5 +5,6 @@ using UnityEngine;
 public class IdHolder : MonoBehaviour
 {
 	public int ID;
+	public bool Owner;
 	
 }

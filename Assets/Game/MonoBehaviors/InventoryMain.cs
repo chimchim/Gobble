@@ -67,12 +67,18 @@ public class InventoryMain : MonoBehaviour {
 	{
 		for (int i = 0; i < Items.Length; i++)
 		{
+			ItemImage[i].Chosen.enabled = false;
 			if (Items[i] != null)
-			{
+			{	
 				Items[i].Active = false;
 				Items[i].CurrentGameObject.SetActive(false);
 			}
 		}
+	}
+
+	public void SetChoosen(int index)
+	{
+		ItemImage[index].Chosen.enabled = true;
 	}
 	void Update()
 	{

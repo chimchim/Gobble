@@ -23,6 +23,8 @@ namespace Game
 		private GameUnity _gameUnity;
 		public Client Client;
 		public System.Random CurrentRandom;
+
+		public List<VisibleItem> WorldItems = new List<VisibleItem>();
 		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
@@ -30,6 +32,7 @@ namespace Game
 			
 			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
+			
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
 
@@ -44,6 +47,7 @@ namespace Game
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 			ent.AddComponent(InputComponent.Make(ent.ID));
 			ent.AddComponent(ItemHolder.Make(ent.ID));
+			ent.AddComponent(NetEventComponent.Make(ent.ID));
 			var inventory = InventoryComponent.Make(ent.ID);
 			ent.AddComponent(inventory);
 			var player = Entities.GetComponentOf<Player>(ent.ID);
@@ -54,6 +58,7 @@ namespace Game
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
+			playerGameObject.GetComponent<IdHolder>().Owner = owner;
 			playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 
 			GameObject Ropes = new GameObject();

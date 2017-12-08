@@ -47,12 +47,8 @@ public class Client
 		public int MovementState;
 		public bool Grounded;
 		public int CurrentByteIndex;
-
-		//public NetworkRopeConnected RopeConnected;
-		//public bool KillRope;
-		//public float RopeVel;
-		//public float RopeAngle;
-		//public MovementComponent.RopedData[] RopeList;
+		public int CurrentNetEventCount;
+		public int CurrentNetEventID;
 	}
 	
 	public static GameLogicPacket CreateGameLogic(byte[] byteData)
@@ -89,9 +85,12 @@ public class Client
 		currentByteIndex += sizeof(float);
 		float armDirectiony = BitConverter.ToSingle(byteData, currentByteIndex);
 		currentByteIndex += sizeof(float);
+		//int currentNetEvents = BitConverter.ToInt32(byteData, currentByteIndex);
+		//currentByteIndex += sizeof(int);
+		//int currentNetEventid = BitConverter.ToInt32(byteData, currentByteIndex);
+		//currentByteIndex += sizeof(int);
 
-
-	gameLogic.PlayerID = id;
+		gameLogic.PlayerID = id;
 		gameLogic.PacketCounter = packCounter;
 		gameLogic.InputAxisX = xInput;
 		gameLogic.InputAxisY = yInput;
@@ -103,6 +102,8 @@ public class Client
 		gameLogic.Grounded = grounded;
 		gameLogic.MovementState = movementState;
 		gameLogic.CurrentByteIndex = currentByteIndex;
+		//gameLogic.CurrentNetEventCount = currentNetEvents;
+		//gameLogic.CurrentNetEventID = currentNetEventid;
 		return gameLogic;
 	}
 

@@ -10,6 +10,10 @@ namespace Game.Component
      * olika hastigheter när man har vissa vapen
 
 	 Turnaround time på vapen?*/
+	public interface SerielizeComponent
+	{
+
+	}
 	public abstract class GComponent
 	{
 		protected GComponent()

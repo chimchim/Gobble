@@ -31,6 +31,7 @@ namespace Game.Systems
 		public void Initiate(GameManager game)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
+			int players = 0;
 			foreach (int entity in entities)
 			{
 				var ent = game.Entities.GetEntity(entity);
@@ -39,6 +40,7 @@ namespace Game.Systems
 				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 				ent.AddComponent(InputComponent.Make(ent.ID));
 				ent.AddComponent(ItemHolder.Make(ent.ID));
+				ent.AddComponent(NetEventComponent.Make(ent.ID));
 				var inventory = InventoryComponent.Make(ent.ID);
 				ent.AddComponent(inventory);
 				var player = game.Entities.GetComponentOf<Player>(entity);
@@ -49,6 +51,7 @@ namespace Game.Systems
 				ent.gameObject = playerGameObject;
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 				playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
+				playerGameObject.GetComponent<IdHolder>().Owner = player.Owner;
 				playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 				if (player.Owner)
 				{

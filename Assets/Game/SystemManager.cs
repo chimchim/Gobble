@@ -71,8 +71,8 @@ namespace Game
 			_update[GameState.Game].Add(new ReadgamePackets());
 			_update[GameState.Game].Add(new DeadReckoning());
 
+			_fixedUpdate[GameState.Game].Add(new HandleNetEventSystem());
 			_fixedUpdate[GameState.Game].Add(new SendGamePackets());
-
 			_fixedUpdate[GameState.Game].Add(new Systems.Movement());
 			_fixedUpdate[GameState.Game].Add(new ResetInput()); 
 			#endregion

@@ -29,7 +29,7 @@ namespace Game.Systems
 				monoMenu.Local.Clicked = false;
 				monoMenu.gameObject.SetActive(false);
 				game.Systems.ChangeState(game, SystemManager.GameState.Game);
-				game.CreateEmptyPlayer(true, "local", true, 0, Characters.Schmillo);
+				game.CreateEmptyPlayer(true, "local", true, 0, Characters.Yolanda);
 				game.CurrentRandom = new System.Random();
 			}
 			if (monoMenu.Join.Clicked)
@@ -246,7 +246,6 @@ namespace Game.Systems
 					bool isOwner = i == (clientCount - 1) && menu.PlayerAmount == 0;
 					menu.IsHost = isHost;
 					game.CreateEmptyPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
-					
 
 				}
 			}

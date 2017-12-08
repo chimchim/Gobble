@@ -11,7 +11,12 @@ namespace Game.Systems
 	{
 		// gör en input translator?
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
-
+		private KeyCode[] AlphaKeys = new KeyCode[]
+			{
+				KeyCode.Alpha1,
+				KeyCode.Alpha2,
+				KeyCode.Alpha3
+			};
 		public void Update(GameManager game, float delta)
 		{
             var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
@@ -68,42 +73,30 @@ namespace Game.Systems
 		public void ItemChangeInput(GameManager game, int entity, ItemHolder itemHolder, InputComponent input)
 		{
 			var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
+			var maininv = inventory.MainInventory;
+
 			if (Input.GetKeyDown(KeyCode.Q))
 			{
-				var item = inventory.MainInventory.GetItem(inventory.CurrentItemIndex);
+				var item = maininv.GetItem(inventory.CurrentItemIndex);
 				if (item != null)
 				{
 					item.ThrowItem(game, entity);
 				}
 			}
-			if (Input.GetKeyDown(KeyCode.Alpha1))
+
+			for (int i = 0; i < AlphaKeys.Length; i++)
 			{
-				inventory.MainInventory.ResetAll();
-				var item = inventory.MainInventory.GetItem(0);
-				inventory.CurrentItemIndex = 0;
-				if (item != null)
+				if (Input.GetKeyDown(AlphaKeys[i]))
 				{
-					item.SetActive();
-				}
-			}
-			if (Input.GetKeyDown(KeyCode.Alpha2))
-			{
-				inventory.MainInventory.ResetAll();
-				var item = inventory.MainInventory.GetItem(1);
-				inventory.CurrentItemIndex = 1;
-				if (item != null)
-				{
-					item.SetActive();	
-				}
-			}
-			if (Input.GetKeyDown(KeyCode.Alpha3))
-			{
-				inventory.MainInventory.ResetAll();
-				var item = inventory.MainInventory.GetItem(2);
-				inventory.CurrentItemIndex = 2;
-				if (item != null)
-				{
-					item.SetActive();
+					maininv.ResetAll();
+					maininv.SetChoosen(i);
+					var item = maininv.GetItem(i);
+					inventory.CurrentItemIndex = i;
+
+					if (item != null)
+					{
+						item.SetActive();
+					}
 				}
 			}
 		}
