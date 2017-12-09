@@ -42,6 +42,7 @@ namespace Game.Systems
 						int currentIndex = gameLogic.CurrentByteIndex;
 						ReadNetEvents(game, gameLogic.PlayerID, byteDataRecieve, ref currentIndex);
 						int itemCount = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+						currentIndex += sizeof(int);
 						for (int j = 0; j < itemCount; j++)
 						{
 							int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex);

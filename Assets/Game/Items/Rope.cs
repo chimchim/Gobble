@@ -116,11 +116,11 @@ public class Rope : Item
 			};
 			movement.RopeList.Add(movement.CurrentRoped);
 		}
-		if (pack.RightClick && movestate != MovementComponent.MoveState.Roped)
-		{
-			resources.GraphicRope.ThrowRope(game, entity, movement, input);
-		}
-		else if (movement.CurrentState == MovementComponent.MoveState.Roped && pack.InputSpace)
+		//if (pack.RightClick && movestate != MovementComponent.MoveState.Roped)
+		//{
+		//	resources.GraphicRope.ThrowRope(game, entity, movement, input);
+		//}
+		if (movement.CurrentState == MovementComponent.MoveState.Roped && pack.InputSpace)
 		{
 			float ropeAngle = BitConverter.ToSingle(byteData, currentIndex);
 			var playerPosX = movement.CurrentRoped.origin.x + (-movement.CurrentRoped.Length * Mathf.Sin(ropeAngle));
@@ -164,8 +164,10 @@ public class Rope : Item
 	{
 		var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
 		netComp.CurrentEventID++;
-		var pickup = NetEventRope.Make(entity, netComp.CurrentEventID, ItemNetID, activate);
-		netComp.NetEvents.Add(pickup);
+		var rope = NetEventRope.Make(entity, netComp.CurrentEventID, ItemNetID, activate);
+		rope.Handle(game);
+		rope.Iterations = 1;
+		netComp.NetEvents.Add(rope);
 	}
 
 	public MovementComponent.RopedData[] GetRopes (byte[] byteData, ref int currentByteIndex, MovementComponent movement)

@@ -54,14 +54,7 @@ namespace Game.Systems
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
 					input.LeftClick = UnityEngine.Input.GetKey(KeyCode.Mouse0) || input.LeftClick;
-					foreach (Item item in itemHolder.Items)
-					{
-						if (!item.Active)
-							continue;
-						item.Input(game, e);
-						
-					}
-
+					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
 				}
 				else
 				{

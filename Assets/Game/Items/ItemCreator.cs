@@ -46,11 +46,9 @@ public class ItemCreator : Item
 	{
 		var position = game.Entities.GetEntity(entity).gameObject.transform.position;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
 
-		if (UnityEngine.Input.GetKeyDown(KeyCode.E))
+		if (input.E)
 		{
 			position += new Vector3(0, 2, 0);
 			int forceX = game.CurrentRandom.Next(0, 11);

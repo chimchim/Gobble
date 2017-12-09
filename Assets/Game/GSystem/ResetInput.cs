@@ -25,9 +25,9 @@ namespace Game.Systems
 					input.Space = false;
 					input.RightClick = false;
 					input.LeftClick = false;
+					input.E = false;
 				}
 				input.NetworkJump = false;
-				//input.GameLogicPackets.Clear();
 			}
 		}
 

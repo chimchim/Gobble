@@ -114,6 +114,7 @@
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameResources.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
+    <Compile Include="Assets\Game\GSystem\UpdateItems.cs" />
     <Compile Include="Assets\Game\Items\Item.cs" />
     <Compile Include="Assets\Game\Items\ItemCreator.cs" />
     <Compile Include="Assets\Game\Items\PickAxe.cs" />
