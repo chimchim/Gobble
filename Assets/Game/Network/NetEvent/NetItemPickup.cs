@@ -25,7 +25,7 @@ public class NetItemPickup : NetEvent
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
 				itemHolder.Items.Add(visibles[i].Item);
 				Item.SetInHand(game, Player, visibles[i].Item.CurrentGameObject);
-				visibles[i].Item.CurrentGameObject.SetActive(true);
+				visibles[i].Item.CurrentGameObject.SetActive(false);
 				visibles[i].Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;
 				visibles[i].enabled = false;
 				visibles.RemoveAt(i);

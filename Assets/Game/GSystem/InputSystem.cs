@@ -101,6 +101,19 @@ namespace Game.Systems
 					if (item != null)
 					{
 						item.Activate(game, entity);
+						var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+						netComp.CurrentEventID++;
+						var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, item.ItemNetID, true);
+						pickup.Iterations = 1;
+						netComp.NetEvents.Add(pickup);
+					}
+					else
+					{
+						var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+						netComp.CurrentEventID++;
+						var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, item.ItemNetID, false);
+						pickup.Iterations = 1;
+						netComp.NetEvents.Add(pickup);
 					}
 				}
 			}

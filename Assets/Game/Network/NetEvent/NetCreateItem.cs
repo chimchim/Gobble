@@ -21,7 +21,6 @@ public class NetCreateItem : NetEvent
 	public override void Handle(GameManager game)
 	{
 		int itemNetID = (Creator * 200000) + NetEventID;
-		//Debug.Log("Create item itemNetID " + itemNetID + " ItemID  " + ItemID);
 		VisibleItem visible = null;
 		if (ItemID == Item.ItemID.Pickaxe)
 		{

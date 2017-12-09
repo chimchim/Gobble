@@ -47,11 +47,11 @@ public class Rope : Item
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
-				item.OnPickup(game, EntityID, go);
 				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
 				netComp.CurrentEventID++;
 				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
 				netComp.NetEvents.Add(pickup);
+				item.OnPickup(game, EntityID, go);
 			}
 		};
 		visible.Force = force;
@@ -59,7 +59,6 @@ public class Rope : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		var player = game.Entities.GetComponentOf<Player>(entity);
 		CheckMain(game, entity, game.GameResources.AllItems.Rope, gameObject);
 	}
 	public override void ThrowItem(GameManager game, int entity)
@@ -69,10 +68,7 @@ public class Rope : Item
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 
-		var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-		netComp.CurrentEventID++;
-		var pickup = NetEventRope.Make(entity, netComp.CurrentEventID, ItemNetID, false);
-		netComp.NetEvents.Add(pickup);
+		CreateNetEventRope(game, entity, false);
 
 	}
 	public override void Input(GameManager game, int entity)
@@ -83,17 +79,11 @@ public class Rope : Item
 
 		if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
 		{
-			var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-			netComp.CurrentEventID++;
-			var pickup = NetEventRope.Make(entity, netComp.CurrentEventID, ItemNetID, true);
-			netComp.NetEvents.Add(pickup);
+			CreateNetEventRope(game, entity, true);
 		}
 		else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
 		{
-			var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-			netComp.CurrentEventID++;
-			var pickup = NetEventRope.Make(entity, netComp.CurrentEventID, ItemNetID, false);
-			netComp.NetEvents.Add(pickup);
+			CreateNetEventRope(game, entity, false);
 		}
 
 	}
@@ -167,6 +157,14 @@ public class Rope : Item
 				}
 			}
 		}
+	}
+
+	private void CreateNetEventRope(Game.GameManager game, int entity, bool activate)
+	{
+		var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+		netComp.CurrentEventID++;
+		var pickup = NetEventRope.Make(entity, netComp.CurrentEventID, ItemNetID, activate);
+		netComp.NetEvents.Add(pickup);
 	}
 
 	public MovementComponent.RopedData[] GetRopes (byte[] byteData, ref int currentByteIndex, MovementComponent movement)

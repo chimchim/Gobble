@@ -43,11 +43,12 @@ public class PickAxe : Item
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{		
-				item.OnPickup(game, EntityID, go);
 				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
 				netComp.CurrentEventID++;
 				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
+				pickup.Iterations = 1;
 				netComp.NetEvents.Add(pickup);
+				item.OnPickup(game, EntityID, go);
 			}
 		};
 		
@@ -55,7 +56,6 @@ public class PickAxe : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		var player = game.Entities.GetComponentOf<Player>(entity);
 		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
 

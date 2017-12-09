@@ -163,6 +163,7 @@
     <Compile Include="Assets\Game\Movement\Swim.cs" />
     <Compile Include="Assets\Game\Network\Client.cs" />
     <Compile Include="Assets\Game\Network\Data.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetActivateItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEvent.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEventRope.cs" />

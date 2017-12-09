@@ -11,14 +11,16 @@ public abstract class NetEvent
 	{
 		NetCreateItem,
 		NetItemPickup,
-		NetRopeEvent
+		NetRopeEvent,
+		NetActivateItem
 	}
 
 	public static Func<NetEvent>[] MakeEmpties = new Func<NetEvent>[]
 	{
 		NetCreateItem.Make,
 		NetItemPickup.Make,
-		NetEventRope.Make
+		NetEventRope.Make,
+		NetActivateItem.Make
 	};
 
 	// Default Accessability is Aspect

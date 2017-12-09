@@ -41,11 +41,12 @@ namespace Game.Systems
 						var itemHolder = game.Entities.GetComponentOf<ItemHolder>(gameLogic.PlayerID);
 						int currentIndex = gameLogic.CurrentByteIndex;
 						ReadNetEvents(game, gameLogic.PlayerID, byteDataRecieve, ref currentIndex);
-						for (int j = 0; j < ItemHolder.ActiveItemsCount; j++)
+						int itemCount = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+						for (int j = 0; j < itemCount; j++)
 						{
 							int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 							currentIndex += sizeof(int);
-							itemHolder.Items[itemID].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
+							itemHolder.ActiveItems[j].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
 						}
 					}
 				}
@@ -76,6 +77,7 @@ namespace Game.Systems
 					netEvent.Handle(game);
 					netEvent.Recycle();
 					netComp.CurrentEventID = netEventID;
+					Debug.Log("New netevent " + netEvent.GetType() + " Id " + netEventID);
 				}
 
 				currentIndex += netEventByteSize;

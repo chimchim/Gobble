@@ -5,9 +5,9 @@ using Game;
 using UnityEngine;
 using Game.Component;
 
-public class NetEventRope : NetEvent
+public class NetActivateItem : NetEvent
 {
-	private static ObjectPool<NetEventRope> _pool = new ObjectPool<NetEventRope>(10);
+	private static ObjectPool<NetActivateItem> _pool = new ObjectPool<NetActivateItem>(10);
 
 	public int ItemID;
 	public int Player;
@@ -15,29 +15,37 @@ public class NetEventRope : NetEvent
 
 	public override void Handle(GameManager game)
 	{
-		var input = game.Entities.GetComponentOf<InputComponent>(Player);
-		var movement = game.Entities.GetComponentOf<MovementComponent>(Player);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(Player);
-
-		if (Activate)
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
+		if (!Activate)
 		{
-			resources.GraphicRope.ThrowRope(game, Player, movement, input);
+			for (int j = 0; j < itemHolder.ActiveItems.Count; j++)
+			{
+				itemHolder.ActiveItems[j].DeActivate(game, Player);
+			}
+			return;
 		}
-		else
+		foreach (Item item in itemHolder.Items)
 		{
-			input.RightClick = false;
-			resources.GraphicRope.DeActivate();
-			movement.RopeList.Clear();
-			movement.CurrentState = MovementComponent.MoveState.Grounded;
+			if (item.ItemNetID == ItemID)
+			{
+				if (Activate)
+				{
+					for (int j = 0; j < itemHolder.ActiveItems.Count; j++)
+					{
+						itemHolder.ActiveItems[j].DeActivate(game, Player);
+					}
+					item.Activate(game, Player);
+				}
+			}
 		}
 	}
 
-	public static NetEventRope Make()
+	public static NetActivateItem Make()
 	{
 		return _pool.GetNext();
 	}
 
-	public static NetEventRope Make(int player, int netEventID, int itemID, bool activate)
+	public static NetActivateItem Make(int player, int netEventID, int itemID, bool activate)
 	{
 		var evt = _pool.GetNext();
 		evt.NetEventID = netEventID;
@@ -69,7 +77,7 @@ public class NetEventRope : NetEvent
 
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
-		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetRopeEvent));
+		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetActivateItem));
 		outgoing.AddRange(BitConverter.GetBytes(9));
 		outgoing.AddRange(BitConverter.GetBytes(Player));
 		outgoing.AddRange(BitConverter.GetBytes(ItemID));

@@ -21,7 +21,14 @@ namespace Game.Systems
 				var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity).NetEvents;
 				if (player.Owner)
 				{
-
+					foreach (NetEvent netevent in netEvents)
+					{
+						if (netevent.Iterations == 0)
+						{
+							netevent.Handle(game);
+						}
+						netevent.Iterations++;
+					}
 					for (int i = netEvents.Count - 1; i >= 0; i--)
 					{
 						if (netEvents[i].Iterations >= 4)
@@ -30,11 +37,6 @@ namespace Game.Systems
 							netEvents.RemoveAt(i);
 							continue;
 						}
-						if (netEvents[i].Iterations == 0)
-						{
-							netEvents[i].Handle(game);
-						}
-						netEvents[i].Iterations++;
 					}
 				}
 			}

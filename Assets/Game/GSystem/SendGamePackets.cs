@@ -55,7 +55,7 @@ namespace Game.Systems
 						{
 							netevent.NetSerialize(game, _currentByteArray);
 						}
-
+						_currentByteArray.AddRange(BitConverter.GetBytes(itemHolder.ActiveItems.Count));
 						foreach (Item item in itemHolder.ActiveItems)
 						{
 							item.Serialize(game, player.EntityID, _currentByteArray);

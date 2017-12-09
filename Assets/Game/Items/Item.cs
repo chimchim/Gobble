@@ -63,6 +63,11 @@ public abstract class Item
 			if (inventoryMain.CurrentItemIndex == index)
 			{
 				Activate(game, entity);
+				var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+				netComp.CurrentEventID++;
+				var activate = NetActivateItem.Make(entity, netComp.CurrentEventID, ItemNetID, true);
+				activate.Iterations = 1;
+				netComp.NetEvents.Add(activate);
 			}
 			else
 			{
@@ -73,7 +78,8 @@ public abstract class Item
 		{
 			CurrentGameObject.SetActive(false);
 		}
-	} 
+	}
+
 
 	public virtual void ThrowItem(Game.GameManager game, int entity)
 	{
