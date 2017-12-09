@@ -18,17 +18,16 @@ namespace Game.Systems
 
 			foreach (int e in entities)
 			{
-				var player = game.Entities.GetComponentOf<Player>(e);
-				
+				var player = game.Entities.GetComponentOf<Player>(e);	
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
+				foreach (Item item in itemHolder.ActiveItems)
+				{
+					item.Input(game, e);
+				}
+
 				if (player.Owner)
 				{
 
-					foreach (Item item in itemHolder.ActiveItems)
-					{
-						item.Input(game, e);
-					}
-					
 					var netEvents = game.Entities.GetComponentOf<NetEventComponent>(e);
 					var input = game.Entities.GetComponentOf<InputComponent>(e);
 					if (input.E)

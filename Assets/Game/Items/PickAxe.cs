@@ -23,7 +23,6 @@ public class PickAxe : Item
 	public static PickAxe Make()
 	{
 		PickAxe item = _pool.GetNext();
-		item.Active = false;
 		item.ID = ItemID.Pickaxe;
 		return item;
 	}
@@ -65,7 +64,7 @@ public class PickAxe : Item
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 
-		resources.FreeArmAnimator.SetBool("Dig", input.LeftClick);
+		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
 
 	}
 

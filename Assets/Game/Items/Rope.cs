@@ -20,6 +20,7 @@ public class Rope : Item
 	private static ObjectPool<Rope> _pool = new ObjectPool<Rope>(10);
 	public override void Recycle()
 	{
+
 		_pool.Recycle(this);
 	}
 
@@ -30,7 +31,6 @@ public class Rope : Item
 	public static Rope Make()
 	{
 		Rope item = _pool.GetNext();
-		item.Active = false;
 		item.ID = ItemID.Rope;
 		return item;
 	}
@@ -62,31 +62,33 @@ public class Rope : Item
 	{
 		CheckMain(game, entity, game.GameResources.AllItems.Rope, gameObject);
 	}
+
+
 	public override void ThrowItem(GameManager game, int entity)
 	{
-		base.ThrowItem(game, entity);
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-
+		base.ThrowItem(game, entity);
 		CreateNetEventRope(game, entity, false);
-
+		
 	}
 	public override void Input(GameManager game, int entity)
 	{
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 
-		if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		if (player.Owner)
 		{
-			CreateNetEventRope(game, entity, true);
-		}
-		else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
-		{
-			CreateNetEventRope(game, entity, false);
-		}
+			var input = game.Entities.GetComponentOf<InputComponent>(entity);
+			var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 
+			if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
+			{
+				CreateNetEventRope(game, entity, true);
+			}
+			else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
+			{
+				CreateNetEventRope(game, entity, false);
+			}
+		}
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
@@ -116,10 +118,7 @@ public class Rope : Item
 			};
 			movement.RopeList.Add(movement.CurrentRoped);
 		}
-		//if (pack.RightClick && movestate != MovementComponent.MoveState.Roped)
-		//{
-		//	resources.GraphicRope.ThrowRope(game, entity, movement, input);
-		//}
+
 		if (movement.CurrentState == MovementComponent.MoveState.Roped && pack.InputSpace)
 		{
 			float ropeAngle = BitConverter.ToSingle(byteData, currentIndex);

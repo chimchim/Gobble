@@ -30,7 +30,7 @@ namespace Game.Systems
 						input.MousePos = gameLogic.MousePos;
 						input.ArmDirection = gameLogic.ArmDirection;
 						input.NetworkPosition = gameLogic.Position;
-
+						input.LeftDown = gameLogic.LeftDown;
 						// Do Jump
 						if (gameLogic.Grounded && gameLogic.InputSpace && !input.NetworkJump)
 						{

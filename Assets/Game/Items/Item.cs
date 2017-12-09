@@ -16,24 +16,21 @@ public abstract class Item
 	public ItemID ID;
 
 	public GameObject CurrentGameObject;
-	public bool Active;
-	public Sprite Sprite;
 	public int ItemNetID;
 	public int Quantity;
 
 	public virtual void Activate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		itemHolder.ActiveItems.Add(this);
+		if(!itemHolder.ActiveItems.Contains(this))
+			itemHolder.ActiveItems.Add(this);
 		CurrentGameObject.SetActive(true);
-		Active = true;
 	}
 	public virtual void DeActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		itemHolder.ActiveItems.Remove(this);
 		CurrentGameObject.SetActive(false); 
-		Active = false;
 	}
 
 	public abstract void OnPickup(Game.GameManager game, int entity, GameObject gameObject);

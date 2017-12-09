@@ -49,11 +49,11 @@ namespace Game.Systems
 					}
 					ItemChangeInput(game, e, itemHolder, input);
 					input.MousePos = mousePos;
-					input.ArmDirection = screenDirection;
+					input.ArmDirection = resources.FreeArm.up;
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
-					input.LeftClick = UnityEngine.Input.GetKey(KeyCode.Mouse0) || input.LeftClick;
+					input.LeftDown = UnityEngine.Input.GetKey(KeyCode.Mouse0);
 					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
 				}
 				else

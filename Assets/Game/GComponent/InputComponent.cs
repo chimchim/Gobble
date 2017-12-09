@@ -13,7 +13,7 @@ namespace Game.Component
 		
 		public bool Space;
 		public bool RightClick;
-		public bool LeftClick;
+		public bool LeftDown;
 		public bool E;
 
 		public List<Client.GameLogicPacket> GameLogicPackets = new List<Client.GameLogicPacket>();

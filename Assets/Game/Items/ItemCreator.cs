@@ -23,7 +23,6 @@ public class ItemCreator : Item
 	public static ItemCreator Make()
 	{
 		ItemCreator item = _pool.GetNext();
-		item.Active = true;
 		return item;
 	}
 
@@ -40,7 +39,6 @@ public class ItemCreator : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		Active = false;
 	}
 	public override void Input(GameManager game, int entity)
 	{
