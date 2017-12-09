@@ -82,9 +82,9 @@ namespace Game.Systems
 			{
 				if (Input.GetKeyDown(AlphaKeys[i]))
 				{
-					for (int j = 0; j < holder.ActiveItems.Count; j++)
+					for (int k = itemHolder.ActiveItems.Count - 1; k >= 0; k--)
 					{
-						holder.ActiveItems[j].DeActivate(game, entity);
+						itemHolder.ActiveItems[k].DeActivate(game, entity);	
 					}
 					maininv.ResetAll();
 					maininv.SetChoosen(i);
@@ -94,20 +94,20 @@ namespace Game.Systems
 					if (item != null)
 					{
 						item.Activate(game, entity);
-						var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-						netComp.CurrentEventID++;
-						var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, item.ItemNetID, true);
-						pickup.Iterations = 1;
-						netComp.NetEvents.Add(pickup);
+						//var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+						//netComp.CurrentEventID++;
+						//var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, item.ItemNetID, true);
+						//pickup.Iterations = 1;
+						//netComp.NetEvents.Add(pickup);
 					}
-					else
-					{
-						var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-						netComp.CurrentEventID++;
-						var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, -1, false);
-						pickup.Iterations = 1;
-						netComp.NetEvents.Add(pickup);
-					}
+					//else
+					//{
+					//	var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+					//	netComp.CurrentEventID++;
+					//	var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, -1, false);
+					//	pickup.Iterations = 1;
+					//	netComp.NetEvents.Add(pickup);
+					//}
 				}
 			}
 		}

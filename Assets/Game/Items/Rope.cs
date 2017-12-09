@@ -258,8 +258,7 @@ public class Rope : Item
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
 
-		int id = (int)Item.ItemID.Rope;
-		byteArray.AddRange(BitConverter.GetBytes(id));
+		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
 		bool ropeConnected = input.RopeConnected.Length > 0;
 		byteArray.AddRange(BitConverter.GetBytes(ropeConnected));
 		if (ropeConnected)

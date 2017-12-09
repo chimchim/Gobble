@@ -22,6 +22,7 @@ namespace Game.Systems
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
 				foreach (Item item in itemHolder.ActiveItems)
 				{
+					item.GotUpdated = false;
 					item.Input(game, e);
 				}
 

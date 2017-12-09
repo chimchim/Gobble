@@ -85,8 +85,7 @@ public class PickAxe : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		int id = (int)Item.ItemID.Pickaxe;
-		byteArray.AddRange(BitConverter.GetBytes(id));
+		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
 	}
 }
 

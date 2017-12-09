@@ -43,17 +43,33 @@ namespace Game.Systems
 						ReadNetEvents(game, gameLogic.PlayerID, byteDataRecieve, ref currentIndex);
 						int itemCount = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 						currentIndex += sizeof(int);
+
 						for (int j = 0; j < itemCount; j++)
 						{
-							int itemID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+							int itemNetID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 							currentIndex += sizeof(int);
-							itemHolder.ActiveItems[j].Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
+							var item = itemHolder.Items[itemNetID];
+							
+							if (!itemHolder.ActiveItems.Contains(item))
+							{
+								item.Activate(game, gameLogic.PlayerID);
+								itemHolder.ActiveItems.Add(item);
+							}
+							item.GotUpdated = true;
+							item.Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
+						}
+						for (int k = itemHolder.ActiveItems.Count - 1; k >= 0; k--)
+						{
+							if (!itemHolder.ActiveItems[k].GotUpdated)
+							{
+								itemHolder.ActiveItems[k].DeActivate(game, gameLogic.PlayerID);
+							}
 						}
 					}
 				}
 			}
 		}
-
+		
 		void ReadNetEvents(GameManager game, int entity, byte[] byteData, ref int currentIndex)
 		{
 			var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
@@ -78,7 +94,6 @@ namespace Game.Systems
 					netEvent.Handle(game);
 					netEvent.Recycle();
 					netComp.CurrentEventID = netEventID;
-					Debug.Log("New netevent " + netEvent.GetType() + " Id " + netEventID);
 				}
 
 				currentIndex += netEventByteSize;

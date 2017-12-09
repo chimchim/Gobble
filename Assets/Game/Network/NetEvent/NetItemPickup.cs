@@ -22,7 +22,7 @@ public class NetItemPickup : NetEvent
 			if (visibles[i].Item.ItemNetID == ItemID)
 			{
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
-				itemHolder.Items.Add(visibles[i].Item);
+				itemHolder.Items.Add(ItemID, visibles[i].Item);
 				Item.SetInHand(game, Player, visibles[i].Item.CurrentGameObject);
 				visibles[i].Item.CurrentGameObject.SetActive(false);
 				visibles[i].Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;

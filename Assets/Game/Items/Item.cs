@@ -18,12 +18,14 @@ public abstract class Item
 	public GameObject CurrentGameObject;
 	public int ItemNetID;
 	public int Quantity;
+	public int Index;
 
+
+	public bool GotUpdated;
 	public virtual void Activate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		if(!itemHolder.ActiveItems.Contains(this))
-			itemHolder.ActiveItems.Add(this);
+		itemHolder.ActiveItems.Add(this);
 		CurrentGameObject.SetActive(true);
 	}
 	public virtual void DeActivate(Game.GameManager game, int entity)
@@ -51,20 +53,16 @@ public abstract class Item
 		var items = inventoryMain.MainInventory.Items;
 		int amount = inventoryMain.MainInventory.CurrenItemsAmount;
 		game.WorldItems.Remove(CurrentGameObject.GetComponent<VisibleItem>());
-		holder.Items.Add(this);
+		holder.Items.Add(ItemNetID, this);
 		
 		if (amount < GameUnity.MainInventorySize)
 		{
 			int index = inventoryMain.MainInventory.SetItemInMain(scriptable, this);
+			Index = index;
 			SetInHand(game, entity, go);
 			if (inventoryMain.CurrentItemIndex == index)
 			{
 				Activate(game, entity);
-				var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-				netComp.CurrentEventID++;
-				var activate = NetActivateItem.Make(entity, netComp.CurrentEventID, ItemNetID, true);
-				activate.Iterations = 1;
-				netComp.NetEvents.Add(activate);
 			}
 			else
 			{

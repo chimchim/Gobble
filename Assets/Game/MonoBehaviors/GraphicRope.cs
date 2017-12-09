@@ -46,8 +46,6 @@ public class GraphicRope : MonoBehaviour {
 		FrontRope.position = Vector3.zero;
 		FrontRope.localScale = new Vector3(1, 1, 1);
 
-		
-		Debug.Log("Deactivate rope ");
 	}			 
 	public void MakeRopes()
 	{

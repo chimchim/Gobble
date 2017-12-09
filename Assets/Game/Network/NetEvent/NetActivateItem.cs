@@ -16,28 +16,28 @@ public class NetActivateItem : NetEvent
 	public override void Handle(GameManager game)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
-		if (!Activate)
-		{
-			for (int j = 0; j < itemHolder.ActiveItems.Count; j++)
-			{
-				itemHolder.ActiveItems[j].DeActivate(game, Player);
-			}
-			return;
-		}
-		foreach (Item item in itemHolder.Items)
-		{
-			if (item.ItemNetID == ItemID)
-			{
-				if (Activate)
-				{
-					for (int j = 0; j < itemHolder.ActiveItems.Count; j++)
-					{
-						itemHolder.ActiveItems[j].DeActivate(game, Player);
-					}
-					item.Activate(game, Player);
-				}
-			}
-		}
+		//if (!Activate)
+		//{
+		//	foreach (Item item in itemHolder.ActiveItems.Values)
+		//	{
+		//		item.DeActivate(game, Player);
+		//	}
+		//	return;
+		//}
+		//foreach (Item item in itemHolder.Items)
+		//{
+		//	if (item.ItemNetID == ItemID)
+		//	{
+		//		if (Activate)
+		//		{
+		//			for (int j = 0; j < itemHolder.ActiveItems.Count; j++)
+		//			{
+		//				itemHolder.ActiveItems[j].DeActivate(game, Player);
+		//			}
+		//			item.Activate(game, Player);
+		//		}
+		//	}
+		//}
 	}
 
 	public static NetActivateItem Make()
