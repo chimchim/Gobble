@@ -50,6 +50,7 @@ public class Rope : Item
 				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
 				netComp.CurrentEventID++;
 				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
+				pickup.Iterations = 1;
 				netComp.NetEvents.Add(pickup);
 				item.OnPickup(game, EntityID, go);
 			}

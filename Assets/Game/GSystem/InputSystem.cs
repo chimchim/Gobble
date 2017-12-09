@@ -111,7 +111,7 @@ namespace Game.Systems
 					{
 						var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
 						netComp.CurrentEventID++;
-						var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, item.ItemNetID, false);
+						var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, -1, false);
 						pickup.Iterations = 1;
 						netComp.NetEvents.Add(pickup);
 					}
