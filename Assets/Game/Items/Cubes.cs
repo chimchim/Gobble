@@ -59,8 +59,19 @@ public class Cubes : Item
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
-		var go = GameObject.Instantiate(game.GameResources.AllItems.Cubes.Prefab);
-		go.transform.position = position;
+		//throw
+		//{
+			var go = GameObject.Instantiate(game.GameResources.AllItems.Cubes.Prefab);
+		if (go == null)
+		{
+			Debug.Log("GO NULL");
+		}
+			go.transform.position = position;
+		//}
+		//catch (Exception e)
+		//{
+		//	Debug.log(e);
+		//}
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
