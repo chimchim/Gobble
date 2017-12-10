@@ -30,7 +30,10 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Rope.MakeItem(game, Position, Force);
 		}
-
+		if (ItemID == Item.ItemID.Cubes)
+		{
+			visible = Cubes.MakeItem(game, Position, Force);
+		}
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;
 		game.WorldItems.Add(visible);
@@ -57,7 +60,7 @@ public class NetCreateItem : NetEvent
 	{
 		int id = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
-		int creator = BitConverter.ToInt32(byteData, index);
+		Creator = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
 		float posX = BitConverter.ToSingle(byteData, index);
 		index += sizeof(float);
@@ -68,7 +71,6 @@ public class NetCreateItem : NetEvent
 		float forceY = BitConverter.ToSingle(byteData, index);
 		index += sizeof(float);
 
-		Creator = creator;
 		ItemID = (Item.ItemID)id;
 		Position = new Vector2(posX, posY);
 		Force = new Vector2(forceX, forceY);

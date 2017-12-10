@@ -15,7 +15,6 @@ namespace Game.Systems
 
 		public void Update(GameManager game, float delta)
 		{
-			//game.Client._byteDataBuffer.AddRange(game.Client._currentByteData);
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int entity in entities)
 			{
@@ -64,6 +63,7 @@ namespace Game.Systems
 				resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 				resources.FreeArm = playerGameObject.transform.Find("free_arm");
 				resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
+				resources.ArmEvents = resources.FreeArmAnimator.GetComponent<AnimationEvents>();
 				resources.Hand = resources.FreeArmAnimator.transform.Find("hand");
 			}
 		}

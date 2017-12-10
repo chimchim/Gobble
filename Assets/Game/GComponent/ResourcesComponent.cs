@@ -10,6 +10,7 @@ namespace Game.Component
 		public Transform FreeArm;
 		public Transform Hand;
 		public Animator FreeArmAnimator;
+		public AnimationEvents ArmEvents;
 		public string Character;
 
 		public override void Recycle()

@@ -9,9 +9,9 @@ public partial class TileMap
 	{
 		Normal,
 		Rock,
+		Copper,
 		Iron,
-		Gold,
-		Copper
+		Gold
 	}
 	public enum TileType
 	{
@@ -39,7 +39,7 @@ public partial class TileMap
 	private int[,] BlockIslandSize;
 	public GameObject[,] Blocks;
 	public Transform[,] Minerals;
-
+	private int[] Mods = new int[5];
 	private MineralsGenVariables minsVariables;
 
 	#region SpriteVariables
@@ -97,15 +97,25 @@ public partial class TileMap
 	private int _extraCopper;
 	private Transform _mineralParent;
 
-	public GameObject CreateBlock()
+
+	public GameObject CreateBlock(int x, int y)
 	{
 		GameObject cube = new GameObject();
+		GameObject crackObj = new GameObject();
+		crackObj.transform.parent = cube.transform;
+		crackObj.AddComponent<SpriteRenderer>();
+		crackObj.transform.localPosition = new Vector3(0, 0, -0.3f);
 		cube.AddComponent<SpriteRenderer>();
 		cube.GetComponent<SpriteRenderer>().material = diffMat;
 		cube.AddComponent<BoxCollider2D>();
 		cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
 		cube.AddComponent<BlockComponent>().MineralType  = MineralType.Normal;
+		cube.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
+		cube.GetComponent<BlockComponent>().X = x;
+		cube.GetComponent<BlockComponent>().Y = y;
+		cube.GetComponent<BlockComponent>().Renderer = crackObj.GetComponent<SpriteRenderer>();
 		cube.layer = LayerMask.NameToLayer("Collideable");
+		cube.tag = "cube";
 		return cube;
 	}
 	public void InitiateMap(GameManager game)
@@ -120,7 +130,11 @@ public partial class TileMap
 		MineralTypes = new MineralType[fullWidhth, fullHeight];
 		_enlisted = new bool[GameUnity.FullWidth, GameUnity.FullHeight];
 		BlockIslandSize = new int[fullWidhth, fullHeight];
-
+		Mods[0] = minsVariables.NormalMod;
+		Mods[1] = minsVariables.RocksMod;
+		Mods[2] = minsVariables.CopperMod;
+		Mods[3] = minsVariables.IronMod;
+		Mods[4] = minsVariables.GoldMod;
 		GameObject parentCube = new GameObject();
 		parentCube.name = "Tiles";
 		_mineralParent = parentCube.transform;
@@ -134,7 +148,7 @@ public partial class TileMap
 				int topLayerBound = (GameUnity.MapHeight + GameUnity.HeightBound) + GameUnity.BottomBoundOffset + GameUnity.TopBoundOffset - 1;
 				if ((x < GameUnity.WidhtBound || x > rightLayerBound) || (y < GameUnity.HeightBound || y > topLayerBound))
 				{
-					var cube = CreateBlock();
+					var cube = CreateBlock(x, y);
 					cube.GetComponent<BlockComponent>().TileType = TileType.Boundry;
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
@@ -160,7 +174,7 @@ public partial class TileMap
 				int posY = y + startY;
 				if (noise < 0.16f && GameUnity.GenerateSmallIsland)
 				{
-					var cube = CreateBlock();
+					var cube = CreateBlock(posX, posY);
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 					Blocks[posX, posY] = cube;
@@ -170,21 +184,18 @@ public partial class TileMap
 				}
 				else if (noise < 0.9f && noise > 0.5f)
 				{
-					var cube = CreateBlock();
+					var cube = CreateBlock(posX, posY);
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 					Blocks[posX, posY] = cube;
 				}
 				else
 				{
-					var cube = CreateBlock();
+					var cube = CreateBlock(posX, posY);
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 					Blocks[posX, posY] = cube;
 				}
-
-
-
 			}
 
 		SetBlockType();
@@ -342,6 +353,7 @@ public partial class TileMap
 	{
 		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
 		var parent = Blocks[x, y].transform;
+		Blocks[x, y].GetComponent<BlockComponent>().Mod = Mods[(int)type];
 		Blocks[x, y].GetComponent<BlockComponent>().MineralType = type;
 		go.transform.parent = parent;
 		go.transform.localPosition = new Vector3(0, 0, -0.1f);
@@ -544,12 +556,7 @@ public partial class TileMap
 			}
 		}
 	}
-	// räkna med islands här, ge varje tile en island count
-	//public int ExtraGoldStones(int x, int y, TileType type)
-	//{
-	//
-	//}
-	// Island
+
 	private List<List<Vector2>> GetIslandLevel(List<Vector2> island)
 	{
 		var innerIsland = new List<List<Vector2>>();

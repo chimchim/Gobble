@@ -23,6 +23,7 @@ public class GameUnity : MonoBehaviour
 	public MineralsGenVariables MineralsGen;
 	public RopeDataVariables RopeData;
 	public PrefabsVariables PrefabData;
+	public ScriptableResources ResourceData;
 	[SerializeField]
 	[Header("Gounded Variables")]
 	public static float Weight;

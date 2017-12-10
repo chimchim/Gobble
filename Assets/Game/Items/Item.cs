@@ -10,7 +10,8 @@ public abstract class Item
 	public enum ItemID
 	{
 		Rope,
-		Pickaxe
+		Pickaxe,
+		Cubes
 	}
 	public ItemID ID;
 

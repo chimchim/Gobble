@@ -9,5 +9,6 @@ namespace Game
 	{
 		public PrefabsVariables Prefabs;
 		public AllScriptableItems AllItems;
+		public ScriptableResources ScriptResources;
 	}
 }

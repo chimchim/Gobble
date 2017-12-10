@@ -21,4 +21,10 @@ public class MineralsGenVariables : ScriptableObject
 
 	public int CopperRandomOneIn = 6;
 	public int CopperSideOneIn = 10;
+
+	public int NormalMod = 2;
+	public int RocksMod = 3;
+	public int CopperMod = 3;
+	public int IronMod = 4;
+	public int GoldMod = 5;
 }

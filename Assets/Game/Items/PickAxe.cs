@@ -11,8 +11,11 @@ public class PickAxe : Item
 {
 
 	private static ObjectPool<PickAxe> _pool = new ObjectPool<PickAxe>(10);
+
+	Transform HitPointer;
 	public override void Recycle()
 	{
+		HitPointer = null;
 		_pool.Recycle(this);
 	}
 
@@ -26,11 +29,73 @@ public class PickAxe : Item
 		item.ID = ItemID.Pickaxe;
 		return item;
 	}
+
+	public override void OwnerActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		HitPointer = CurrentGameObject.transform.Find("point");
+		resources.ArmEvents.OnArmHit = () =>
+		{
+			TryPick(game, entity);
+		};
+		base.OwnerActivate(game, entity);
+	}
+
+	public override void ClientActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		HitPointer = CurrentGameObject.transform.Find("point");
+		resources.ArmEvents.OnArmHit = () =>
+		{
+			TryPick(game, entity);
+		};
+		base.ClientActivate(game, entity);
+	}
+
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", false);
 		base.OwnerDeActivate(game, entity);
+	}
+
+	private void TryPick(GameManager game, int entity)
+	{
+		var trans = game.Entities.GetEntity(entity).gameObject.transform;
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		Vector3 screendir3d = new Vector3(input.ScreenDirection.x, input.ScreenDirection.y, 0);
+		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+		Debug.DrawLine(HitPointer.position, HitPointer.position + (HitPointer.right * 1.4f), Color.blue);
+		var hit = Physics2D.Raycast(HitPointer.position, HitPointer.right, 0.2f, layerMask);
+		if (hit.transform == null)
+			return;
+
+		var bc = hit.transform.GetComponent<BlockComponent>();
+		if (bc != null && !bc.Destroyed)
+		{
+			bc.HitsTaken++;
+			var diff = bc.HitsTaken / bc.Mod;
+			if (diff > 3 && player.Owner)
+			{
+				bc.Destroyed = true;
+				var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+				netComp.CurrentEventID++;
+				var destroy = NetDestroyCube.Make(bc.X, bc.Y, netComp.CurrentEventID);
+				netComp.NetEvents.Add(destroy);
+				var position = bc.transform.position;
+				netComp.CurrentEventID++;
+				netComp.NetEvents.Add(NetCreateItem.Make(entity, netComp.CurrentEventID, Item.ItemID.Cubes, position, Vector2.zero));
+			}
+			bc.StartCoroutine(bc.Shake());
+			int mod = bc.HitsTaken % bc.Mod;
+			
+			if (mod == 0)
+			{
+				bc.SetResource(game);
+			}
+		}
+		
 	}
 	public override void ThrowItem(GameManager game, int entity)
 	{
@@ -79,13 +144,10 @@ public class PickAxe : Item
 
 	public override void Input(GameManager game, int entity)
 	{
-		var trans = game.Entities.GetEntity(entity).gameObject.transform;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
-		Vector3 screendir3d = new Vector3(input.ScreenDirection.x, input.ScreenDirection.y, 0);
-		Debug.DrawLine(trans.position, trans.position + (screendir3d * 5), Color.blue);
-
+		
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)

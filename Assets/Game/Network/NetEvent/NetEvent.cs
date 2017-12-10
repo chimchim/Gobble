@@ -12,7 +12,8 @@ public abstract class NetEvent
 		NetCreateItem,
 		NetItemPickup,
 		NetRopeEvent,
-		NetDestroyItem
+		NetDestroyItem,
+		NetDestroyCube
 	}
 
 	public static Func<NetEvent>[] MakeEmpties = new Func<NetEvent>[]
@@ -20,7 +21,8 @@ public abstract class NetEvent
 		NetCreateItem.Make,
 		NetItemPickup.Make,
 		NetEventRope.Make,
-		NetDestroyItem.Make
+		NetDestroyItem.Make,
+		NetDestroyCube.Make
 	};
 
 	// Default Accessability is Aspect

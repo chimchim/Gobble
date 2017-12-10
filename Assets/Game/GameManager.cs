@@ -67,6 +67,7 @@ namespace Game
 			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 			resources.FreeArm = playerGameObject.transform.Find("free_arm");
 			resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
+			resources.ArmEvents = resources.FreeArmAnimator.GetComponent<AnimationEvents>();
 			resources.Hand = resources.FreeArmAnimator.transform.Find("hand");
 		}
 
@@ -107,6 +108,7 @@ namespace Game
 			GameResources = new GameResources();
 			GameResources.Prefabs = _gameUnity.PrefabData;
 			GameResources.AllItems = _gameUnity.AllItemsData;
+			GameResources.ScriptResources = _gameUnity.ResourceData;
 
 			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
