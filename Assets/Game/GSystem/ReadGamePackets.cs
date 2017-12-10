@@ -29,6 +29,7 @@ namespace Game.Systems
 						var input = game.Entities.GetComponentOf<InputComponent>(gameLogic.PlayerID);
 						input.MousePos = gameLogic.MousePos;
 						input.ArmDirection = gameLogic.ArmDirection;
+						input.ScreenDirection = gameLogic.ScreenDirection;
 						input.NetworkPosition = gameLogic.Position;
 						input.LeftDown = gameLogic.LeftDown;
 						// Do Jump
@@ -48,12 +49,12 @@ namespace Game.Systems
 						{
 							int itemNetID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 							currentIndex += sizeof(int);
+
 							var item = itemHolder.Items[itemNetID];
 							
 							if (!itemHolder.ActiveItems.Contains(item))
 							{
-								item.Activate(game, gameLogic.PlayerID);
-								itemHolder.ActiveItems.Add(item);
+								item.ClientActivate(game, gameLogic.PlayerID);
 							}
 							item.GotUpdated = true;
 							item.Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
@@ -62,7 +63,7 @@ namespace Game.Systems
 						{
 							if (!itemHolder.ActiveItems[k].GotUpdated)
 							{
-								itemHolder.ActiveItems[k].DeActivate(game, gameLogic.PlayerID);
+								itemHolder.ActiveItems[k].ClientDeActivate(game, gameLogic.PlayerID);
 							}
 						}
 					}
@@ -94,6 +95,7 @@ namespace Game.Systems
 					netEvent.Handle(game);
 					netEvent.Recycle();
 					netComp.CurrentEventID = netEventID;
+					Debug.Log("make Event " + netEvent.GetType()  + " netEventID " + netEventID);
 				}
 
 				currentIndex += netEventByteSize;

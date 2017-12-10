@@ -50,6 +50,7 @@ namespace Game.Systems
 					ItemChangeInput(game, e, itemHolder, input);
 					input.MousePos = mousePos;
 					input.ArmDirection = resources.FreeArm.up;
+					input.ScreenDirection = screenDirection;
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
@@ -84,7 +85,7 @@ namespace Game.Systems
 				{
 					for (int k = itemHolder.ActiveItems.Count - 1; k >= 0; k--)
 					{
-						itemHolder.ActiveItems[k].DeActivate(game, entity);	
+						itemHolder.ActiveItems[k].OwnerDeActivate(game, entity);	
 					}
 					maininv.ResetAll();
 					maininv.SetChoosen(i);
@@ -93,21 +94,9 @@ namespace Game.Systems
 
 					if (item != null)
 					{
-						item.Activate(game, entity);
-						//var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-						//netComp.CurrentEventID++;
-						//var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, item.ItemNetID, true);
-						//pickup.Iterations = 1;
-						//netComp.NetEvents.Add(pickup);
+						item.SetChoosenSlot(game, entity);
+						item.OwnerActivate(game, entity);
 					}
-					//else
-					//{
-					//	var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-					//	netComp.CurrentEventID++;
-					//	var pickup = NetActivateItem.Make(entity, netComp.CurrentEventID, -1, false);
-					//	pickup.Iterations = 1;
-					//	netComp.NetEvents.Add(pickup);
-					//}
 				}
 			}
 		}

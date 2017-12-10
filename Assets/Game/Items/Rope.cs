@@ -17,10 +17,11 @@ public class Rope : Item
 		public float Length;
 	}
 
+	public bool SemiActive;
 	private static ObjectPool<Rope> _pool = new ObjectPool<Rope>(10);
 	public override void Recycle()
 	{
-
+		SemiActive = false;
 		_pool.Recycle(this);
 	}
 
@@ -34,6 +35,7 @@ public class Rope : Item
 		item.ID = ItemID.Rope;
 		return item;
 	}
+
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.Rope.Prefab);
@@ -62,15 +64,61 @@ public class Rope : Item
 	{
 		CheckMain(game, entity, game.GameResources.AllItems.Rope, gameObject);
 	}
-
-
+	public override void OwnerActivate(GameManager game, int entity)
+	{
+		SemiActive = false;
+		base.OwnerActivate(game, entity);
+	}
+	public override void OwnerDeActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		if (resources.GraphicRope.RopeItem != this)
+		{
+			var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+			itemHolder.ActiveItems.Remove(this);
+		}
+		else
+		{
+			SemiActive = true;
+		}
+		CurrentGameObject.SetActive(false);
+	}
+	public override void ClientDeActivate(GameManager game, int entity)
+	{
+		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
+		if (movement.CurrentState == MovementComponent.MoveState.Roped)
+		{
+			var input = game.Entities.GetComponentOf<InputComponent>(entity);
+			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+			input.RightClick = false;
+			resources.GraphicRope.DeActivate();
+			movement.RopeList.Clear();
+			movement.CurrentState = MovementComponent.MoveState.Grounded;
+		}
+		base.ClientDeActivate(game, entity);
+	}
 	public override void ThrowItem(GameManager game, int entity)
 	{
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		if (resources.GraphicRope.RopeItem == this)
+		{
+			return;
+		}
+
 		base.ThrowItem(game, entity);
-		CreateNetEventRope(game, entity, false);
-		
+		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+
+		var position = game.Entities.GetEntity(entity).gameObject.transform.position;
+		position.y += 0.3f;
+		var itemrand = game.CurrentRandom.Next(0, 2);
+		var force = input.ScreenDirection * 5;
+
+		netEvents.CurrentEventID++;
+		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Rope, position, force));
 	}
+
 	public override void Input(GameManager game, int entity)
 	{
 
@@ -79,13 +127,18 @@ public class Rope : Item
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entity);
 			var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-
+			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 			if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
 			{
 				CreateNetEventRope(game, entity, true);
+				resources.GraphicRope.RopeItem = this;
 			}
-			else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped)
+			else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped && !SemiActive)
 			{
+				if (resources.GraphicRope.RopeItem != null && resources.GraphicRope.RopeItem != this)
+				{
+					resources.GraphicRope.RopeItem.Remove = true;
+				}
 				CreateNetEventRope(game, entity, false);
 			}
 		}
@@ -103,6 +156,15 @@ public class Rope : Item
 		var movestate = (MovementComponent.MoveState)pack.MovementState;
 		var otherEntity = game.Entities.GetEntity(entity);
 		var otherTransform = otherEntity.gameObject.transform;
+		bool semiActive = BitConverter.ToBoolean(byteData, currentIndex); currentIndex += sizeof(bool);
+		if (semiActive && !CurrentGameObject.activeSelf)
+		{
+			CurrentGameObject.SetActive(true);
+		}
+		else if (!semiActive && CurrentGameObject.activeSelf)
+		{
+			CurrentGameObject.SetActive(false);
+		}
 		bool ropeConnected = BitConverter.ToBoolean(byteData, currentIndex); currentIndex += sizeof(bool);
 		if (ropeConnected)
 		{
@@ -118,14 +180,16 @@ public class Rope : Item
 			};
 			movement.RopeList.Add(movement.CurrentRoped);
 		}
-
+		
 		if (movement.CurrentState == MovementComponent.MoveState.Roped && pack.InputSpace)
 		{
+			
 			float ropeAngle = BitConverter.ToSingle(byteData, currentIndex);
 			var playerPosX = movement.CurrentRoped.origin.x + (-movement.CurrentRoped.Length * Mathf.Sin(ropeAngle));
 			var playerPosY = movement.CurrentRoped.origin.y + (-movement.CurrentRoped.Length * Mathf.Cos(ropeAngle));
 			otherTransform.position = pack.Position;
 			Game.Movement.Roped.ReleaseRope(resources, movement, new Vector2(playerPosX, playerPosY), pack.Position);
+			GetRopes(byteData, ref currentIndex, movement);
 
 		}
 		else if (movement.CurrentState == MovementComponent.MoveState.Roped && movestate != MovementComponent.MoveState.Roped)
@@ -133,6 +197,7 @@ public class Rope : Item
 			resources.GraphicRope.DeActivate();
 			movement.RopeList.Clear();
 			movement.CurrentState = MovementComponent.MoveState.Grounded;
+			GetRopes(byteData, ref currentIndex, movement);
 		}
 	
 		RopeSync(pack, otherEntity, movement, byteData, ref currentIndex);
@@ -259,6 +324,7 @@ public class Rope : Item
 		var entityTransform = game.Entities.GetEntity(entity).gameObject.transform;
 
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
+		byteArray.AddRange(BitConverter.GetBytes(CurrentGameObject.activeSelf));
 		bool ropeConnected = input.RopeConnected.Length > 0;
 		byteArray.AddRange(BitConverter.GetBytes(ropeConnected));
 		if (ropeConnected)

@@ -26,7 +26,26 @@ public class PickAxe : Item
 		item.ID = ItemID.Pickaxe;
 		return item;
 	}
+	public override void OwnerDeActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.FreeArmAnimator.SetBool("Dig", false);
+		base.OwnerDeActivate(game, entity);
+	}
+	public override void ThrowItem(GameManager game, int entity)
+	{
+		base.ThrowItem(game, entity);
+		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
+		var position = game.Entities.GetEntity(entity).gameObject.transform.position;
+		position.y += 0.3f;
+		var itemrand = game.CurrentRandom.Next(0, 2);
+		var force = input.ScreenDirection * 5;
+
+		netEvents.CurrentEventID++;
+		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Pickaxe, position, force));
+	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.PickAxe.Prefab);
@@ -60,31 +79,25 @@ public class PickAxe : Item
 
 	public override void Input(GameManager game, int entity)
 	{
+		var trans = game.Entities.GetEntity(entity).gameObject.transform;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
+		Vector3 screendir3d = new Vector3(input.ScreenDirection.x, input.ScreenDirection.y, 0);
+		Debug.DrawLine(trans.position, trans.position + (screendir3d * 5), Color.blue);
 
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{
 
-		int entity = pack.PlayerID;
-		var player = game.Entities.GetComponentOf<Player>(entity);
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 
 	}
 
 
 	public override void Serialize(GameManager game, int entity, List<byte> byteArray)
 	{
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
 	}
 }

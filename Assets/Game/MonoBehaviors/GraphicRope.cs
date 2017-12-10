@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class GraphicRope : MonoBehaviour {
 
+	public Rope RopeItem;
 	// Player
 	Transform PlayerTransform;
 	MovementComponent PlayerMovement;
@@ -37,6 +38,7 @@ public class GraphicRope : MonoBehaviour {
 	}
 	public void DeActivate()
 	{
+		RopeItem = null;
 		for (int i = 0; i < Ropes.Count; i++)
 		{
 			Ropes[i].position = Vector3.zero;

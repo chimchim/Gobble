@@ -25,7 +25,14 @@ namespace Game.Systems
 					item.GotUpdated = false;
 					item.Input(game, e);
 				}
-
+				for (int k = itemHolder.ActiveItems.Count - 1; k >= 0; k--)
+				{
+					if (itemHolder.ActiveItems[k].Remove)
+					{
+						itemHolder.ActiveItems[k].Remove = false;
+						itemHolder.ActiveItems[k].OwnerDeActivate(game, e);
+					}
+				}
 				if (player.Owner)
 				{
 
@@ -34,14 +41,9 @@ namespace Game.Systems
 					if (input.E)
 					{
 						var position = game.Entities.GetEntity(e).gameObject.transform.position;
-						position += new Vector3(0, 2, 0);
-						int forceX = game.CurrentRandom.Next(0, 11);
-						int forceXNeg = game.CurrentRandom.Next(0, 2);
-						forceX = forceXNeg == 1 ? -forceX : forceX;
-						int forceY = game.CurrentRandom.Next(0, 10);
-						var force = new Vector2(forceX, forceY);
+						position.y += 0.3f;
 						var itemrand = game.CurrentRandom.Next(0, 2);
-						force = input.ArmDirection * 5;
+						var force = input.ScreenDirection * 5;
 						if (itemrand == 0)
 						{
 							netEvents.CurrentEventID++;

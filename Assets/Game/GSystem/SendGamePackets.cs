@@ -49,7 +49,8 @@ namespace Game.Systems
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.MousePos.y));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.ArmDirection.x));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.ArmDirection.y));
-
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.ScreenDirection.x));
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.ScreenDirection.y));
 						_currentByteArray.AddRange(BitConverter.GetBytes(netEvents.NetEvents.Count));
 						//_currentByteArray.AddRange(BitConverter.GetBytes(netEvents.CurrentEventID));
 						foreach (NetEvent netevent in netEvents.NetEvents)

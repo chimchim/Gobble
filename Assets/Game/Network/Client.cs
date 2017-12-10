@@ -45,6 +45,7 @@ public class Client
 		public Vector2 Position;
 		public Vector2 MousePos;
 		public Vector2 ArmDirection;
+		public Vector2 ScreenDirection;
 		public int MovementState;
 		public bool Grounded;
 		public int CurrentByteIndex;
@@ -88,10 +89,10 @@ public class Client
 		currentByteIndex += sizeof(float);
 		float armDirectiony = BitConverter.ToSingle(byteData, currentByteIndex);
 		currentByteIndex += sizeof(float);
-		//int currentNetEvents = BitConverter.ToInt32(byteData, currentByteIndex);
-		//currentByteIndex += sizeof(int);
-		//int currentNetEventid = BitConverter.ToInt32(byteData, currentByteIndex);
-		//currentByteIndex += sizeof(int);
+		float screenDirX = BitConverter.ToSingle(byteData, currentByteIndex);
+		currentByteIndex += sizeof(float);
+		float screenDirY = BitConverter.ToSingle(byteData, currentByteIndex);
+		currentByteIndex += sizeof(float);
 
 		gameLogic.PlayerID = id;
 		gameLogic.PacketCounter = packCounter;
@@ -106,7 +107,7 @@ public class Client
 		gameLogic.Grounded = grounded;
 		gameLogic.MovementState = movementState;
 		gameLogic.CurrentByteIndex = currentByteIndex;
-
+		gameLogic.ScreenDirection = new Vector2(screenDirX, screenDirY); 
 		return gameLogic;
 	}
 

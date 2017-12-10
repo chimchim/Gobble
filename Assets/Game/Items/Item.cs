@@ -9,7 +9,6 @@ public abstract class Item
 {
 	public enum ItemID
 	{
-		ItemCreator,
 		Rope,
 		Pickaxe
 	}
@@ -20,20 +19,43 @@ public abstract class Item
 	public int Quantity;
 	public int Index;
 
-
+	public bool Remove;
 	public bool GotUpdated;
-	public virtual void Activate(Game.GameManager game, int entity)
+
+	public virtual void ClientActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		itemHolder.ActiveItems.Add(this);
+		if (!itemHolder.ActiveItems.Contains(this))
+		{
+			itemHolder.ActiveItems.Add(this);
+		}
 		CurrentGameObject.SetActive(true);
 	}
-	public virtual void DeActivate(Game.GameManager game, int entity)
+	public virtual void ClientDeActivate(Game.GameManager game, int entity)
+	{
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		if (itemHolder.ActiveItems.Contains(this))
+		{
+			itemHolder.ActiveItems.Remove(this);
+		}
+		CurrentGameObject.SetActive(false); 
+	}
+	public virtual void OwnerActivate(Game.GameManager game, int entity)
+	{
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		if (!itemHolder.ActiveItems.Contains(this))
+		{
+			itemHolder.ActiveItems.Add(this);
+		}
+		CurrentGameObject.SetActive(true);
+	}
+	public virtual void OwnerDeActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		itemHolder.ActiveItems.Remove(this);
-		CurrentGameObject.SetActive(false); 
+		CurrentGameObject.SetActive(false);
 	}
+
 
 	public abstract void OnPickup(Game.GameManager game, int entity, GameObject gameObject);
 	public abstract void Input(Game.GameManager game, int entity);
@@ -41,7 +63,7 @@ public abstract class Item
 	public abstract void Serialize(Game.GameManager game, int entity, List<byte> byteArray);
 	public abstract void Recycle();
 
-	public virtual void CreateItemInSlot(Game.GameManager game, int entity, Sprite sprite)
+	public virtual void SetChoosenSlot(Game.GameManager game, int entity)
 	{
 
 	}
@@ -62,7 +84,7 @@ public abstract class Item
 			SetInHand(game, entity, go);
 			if (inventoryMain.CurrentItemIndex == index)
 			{
-				Activate(game, entity);
+				OwnerActivate(game, entity);
 			}
 			else
 			{
@@ -79,20 +101,18 @@ public abstract class Item
 	public virtual void ThrowItem(Game.GameManager game, int entity)
 	{
 		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var visibleItem = CurrentGameObject.GetComponent<VisibleItem>();
-		visibleItem.enabled = true;
-		visibleItem.CallBack = (EntityID) =>
-		{
-			OnPickup(game, EntityID, CurrentGameObject);
-		};
-		var force = input.ArmDirection * 5;
-		visibleItem.Force = force;
-
-		DeActivate(game, entity);
-		CurrentGameObject.transform.parent = null;
-		CurrentGameObject.transform.position += new Vector3(input.ArmDirection.x, input.ArmDirection.y, 0)*2;
+		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		holder.Items.Remove(ItemNetID);
 		inventoryMain.MainInventory.RemoveItem(inventoryMain.CurrentItemIndex);
+		OwnerDeActivate(game, entity);
+		GameObject.Destroy(CurrentGameObject);
+		Recycle();
+
+		var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+		netComp.CurrentEventID++;
+		var destroy = NetDestroyItem.Make(entity, ItemNetID, netComp.CurrentEventID);
+		destroy.Iterations = 1;
+		netComp.NetEvents.Add(destroy);
 	}
 
 	public static void SetInHand(Game.GameManager game, int entity, GameObject item)

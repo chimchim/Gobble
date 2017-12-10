@@ -10,7 +10,8 @@ public class VisibleItem : MonoBehaviour
 	public Item Item;
 	[HideInInspector]
 	public Vector2 Force;
-
+	[HideInInspector]
+	public float timer;
 	Vector2 _offset;
 	bool grounded;
 
@@ -23,6 +24,7 @@ public class VisibleItem : MonoBehaviour
 
 	public void FixedUpdate()
 	{
+		timer -= Time.deltaTime;
 		if (grounded && (Math.Abs(Force.x) <= 0 || !grounded))
 			return;
 		Force.y += -GameUnity.Gravity * GameUnity.Weight;
@@ -54,7 +56,7 @@ public class VisibleItem : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D other)
 	{
 		var idholder = other.GetComponent<IdHolder>();
-		if (idholder != null && CallBack != null)
+		if (idholder != null && CallBack != null && timer < 0)
 		{
 			if (idholder.Owner)
 			{

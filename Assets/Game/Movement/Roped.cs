@@ -181,6 +181,15 @@ namespace Game.Movement
 				Debug.DrawLine(playerPos, playerPos+(Vector2.up * 4), Color.red);
 				if ((input.Space || input.NetworkJump))
 				{
+					if (player.Owner)
+					{
+						if (resources.GraphicRope.RopeItem.SemiActive)
+						{
+							var rope = resources.GraphicRope.RopeItem;
+							resources.GraphicRope.RopeItem = null;
+							rope.OwnerDeActivate(game, resources.EntityID);
+						}
+					}
 					ReleaseRope(resources, movement, playerPos, new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y));
 					return;
 				}
