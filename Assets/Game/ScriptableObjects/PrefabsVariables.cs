@@ -10,6 +10,5 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Yolanda;
 
 	public GameObject SpriteDiffuse;
-	public GameObject Pickaxe;
-	public GameObject Rope;
+	public GameObject Poof;
 }

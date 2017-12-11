@@ -23,7 +23,9 @@ public class NetDestroyCube : NetEvent
 			Debug.LogError("CUBE DE NULL " + X + " y " + Y);
 			return;
 		}
-
+		var go = GameObject.Instantiate(game.GameResources.Prefabs.Poof);
+		go.transform.position = game.TileMap.Blocks[X, Y].transform.position;
+		GameObject.Destroy(go, 0.8f);
 		GameObject.Destroy(game.TileMap.Blocks[X, Y]);
 
 	}
