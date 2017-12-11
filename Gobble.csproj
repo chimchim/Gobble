@@ -113,7 +113,7 @@
     <Compile Include="Assets\Game\GameManager.cs" />
     <Compile Include="Assets\Game\GameResources.cs" />
     <Compile Include="Assets\Game\GameUnity.cs" />
-    <Compile Include="Assets\Game\Items\Cubes.cs" />
+    <Compile Include="Assets\Game\Items\Ingredient.cs" />
     <Compile Include="Assets\Game\Items\Item.cs" />
     <Compile Include="Assets\Game\Items\PickAxe.cs" />
     <Compile Include="Assets\Game\Items\Rope.cs" />
@@ -173,7 +173,7 @@
     <Compile Include="Assets\Game\Network\Utility.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\AllScriptableItems.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
-    <Compile Include="Assets\Game\ScriptableObjects\Items\CubesScriptable.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\Items\IngredientScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\PickAxeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\RopeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItem.cs" />

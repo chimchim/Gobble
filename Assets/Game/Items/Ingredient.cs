@@ -7,23 +7,23 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class Cubes : Item
+public class Ingredient : Item
 {
 
-	private static ObjectPool<Cubes> _pool = new ObjectPool<Cubes>(10);
+	private static ObjectPool<Ingredient> _pool = new ObjectPool<Ingredient>(10);
 
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
 	}
 
-	public Cubes()
+	public Ingredient()
 	{
 
 	}
-	public static Cubes Make()
+	public static Ingredient Make()
 	{
-		Cubes item = _pool.GetNext();
+		Ingredient item = _pool.GetNext();
 		item.ID = ItemID.Cubes;
 		return item;
 	}
@@ -61,7 +61,7 @@ public class Cubes : Item
 	{
 		//throw
 		//{
-			var go = GameObject.Instantiate(game.GameResources.AllItems.Cubes.Prefab);
+			var go = GameObject.Instantiate(game.GameResources.AllItems.Gravel.Prefab);
 		if (go == null)
 		{
 			Debug.Log("GO NULL");
@@ -96,7 +96,7 @@ public class Cubes : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Cubes, gameObject);
+		CheckMain(game, entity, game.GameResources.AllItems.Gravel, gameObject);
 	}
 
 	public override void Input(GameManager game, int entity)

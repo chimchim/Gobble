@@ -32,8 +32,9 @@ public class NetCreateItem : NetEvent
 		}
 		if (ItemID == Item.ItemID.Cubes)
 		{
-			visible = Cubes.MakeItem(game, Position, Force);
+			visible = Ingredient.MakeItem(game, Position, Force);
 		}
+		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;
 		game.WorldItems.Add(visible);

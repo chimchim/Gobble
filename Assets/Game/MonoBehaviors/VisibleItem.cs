@@ -56,13 +56,28 @@ public class VisibleItem : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D other)
 	{
 		var idholder = other.GetComponent<IdHolder>();
-		if (idholder != null && CallBack != null && timer < 0)
+		if (idholder != null && CallBack != null)
 		{
 			if (idholder.Owner)
 			{
 				enabled = false;
 				CallBack.Invoke(idholder.ID);
 			}
+		}
+	}
+	public IEnumerator TriggerTime()
+	{
+		float ShakeTime = 0.5f;
+		float counter = 0;
+		while (true)
+		{
+			counter += Time.deltaTime;
+			if (counter >= ShakeTime)
+			{
+				GetComponent<BoxCollider2D>().isTrigger = true;
+				yield break;
+			}
+			yield return null;
 		}
 	}
 }

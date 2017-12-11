@@ -6,5 +6,5 @@ public class AllScriptableItems : ScriptableObject
 {
 	public PickAxeScriptable PickAxe;
 	public RopeScriptable Rope;
-	public CubesScriptable Cubes;
+	public IngredientScriptable Gravel;
 }
