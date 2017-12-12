@@ -19,7 +19,9 @@ namespace Game.Systems
 			foreach (int e in entities)
 			{
 				var entity = game.Entities.GetEntity(e);
+				
 				var entityGameObject = entity.gameObject;
+				entity.LastPosition = entityGameObject.transform.position;
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
@@ -39,6 +41,7 @@ namespace Game.Systems
 				int currentStateIndex = (int)movement.CurrentState;
 				movement.States[currentStateIndex].Update(game, movement, e, entity, delta);
 				entityGameObject.transform.position = new Vector3(entityGameObject.transform.position.x, entityGameObject.transform.position.y, -0.2f);
+				entity.PlayerSpeed = (entityGameObject.transform.position - entity.LastPosition) * (1/Time.fixedDeltaTime);
 			}
 		}
 		public static void DoJump(GameManager game, int id)
@@ -66,7 +69,7 @@ namespace Game.Systems
 			Vector3 movement = new Vector3(pos.x, pos.y + y, 0);
 			for (int i = 0; i < hitsY.Length; i++)
 			{
-				if (hitsY[i].collider != null)
+				if (hitsY[i].collider != null && hitsY[i].distance > 0)
 				{
 					float distance = Mathf.Abs(hitsY[i].point.y - pos.y);
 					float moveAmount = (fullRayDistance - distance);
@@ -96,7 +99,7 @@ namespace Game.Systems
 			Vector3 movement = new Vector3(pos.x + x, pos.y, 0);
 			for (int i = 0; i < hitsY.Length; i++)
 			{
-				if (hitsY[i].collider != null)
+				if (hitsY[i].collider != null && hitsY[i].distance > 0)
 				{
 					float distance = Mathf.Abs(hitsY[i].point.x - pos.x);
 					float moveAmount = (fullRayDistance - distance);

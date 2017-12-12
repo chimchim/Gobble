@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlockComponent : MonoBehaviour
 {
 	public TileMap.TileType TileType;
-	public TileMap.MineralType MineralType;
+	public TileMap.IngredientType IngredientType;
 	public int HitsTaken;
 	public SpriteRenderer Renderer;
 	public int Mod;

@@ -16,7 +16,8 @@ namespace Game.GEntity
         public int ID { get { return _id; } }
         public GameObject gameObject;
 		public Animator Animator;
-
+		public Vector3 LastPosition;
+		public Vector2 PlayerSpeed;
 		public void RecycleEntity()
 		{
 			foreach (GComponent comp in _components.Values)

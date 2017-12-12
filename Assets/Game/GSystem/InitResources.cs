@@ -38,7 +38,6 @@ namespace Game.Systems
 				ent.AddComponent(MovementComponent.Make(ent.ID));
 				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 				ent.AddComponent(InputComponent.Make(ent.ID));
-				ent.AddComponent(ItemHolder.Make(ent.ID));
 				ent.AddComponent(NetEventComponent.Make(ent.ID));
 				var inventory = InventoryComponent.Make(ent.ID);
 				ent.AddComponent(inventory);
@@ -65,6 +64,19 @@ namespace Game.Systems
 				resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
 				resources.ArmEvents = resources.FreeArmAnimator.GetComponent<AnimationEvents>();
 				resources.Hand = resources.FreeArmAnimator.transform.Find("hand");
+
+				var itemHolder = ItemHolder.Make(ent.ID);
+				ent.AddComponent(itemHolder);
+				var hands = EmptyHands.Make();
+				hands.ItemNetID = -1;
+				itemHolder.Hands = hands;
+				itemHolder.ActiveItems.Add(hands);
+				if (player.Owner)
+					hands.OwnerActivate(game, itemHolder.EntityID);
+				else
+					hands.ClientActivate(game, itemHolder.EntityID);
+
+
 			}
 		}
 

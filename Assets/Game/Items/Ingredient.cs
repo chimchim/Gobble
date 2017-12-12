@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-
+//using IngredientType = TileMap.IngredientType;
 public class Ingredient : Item
 {
 
 	private static ObjectPool<Ingredient> _pool = new ObjectPool<Ingredient>(10);
-
+	public TileMap.IngredientType IngredientType;
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
@@ -49,25 +49,26 @@ public class Ingredient : Item
 		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
-		var position = game.Entities.GetEntity(entity).gameObject.transform.position;
-		position.y += 0.3f;
-		var itemrand = game.CurrentRandom.Next(0, 2);
-		var force = input.ScreenDirection * 5;
+		var ent = game.Entities.GetEntity(entity);
+		var position = ent.gameObject.transform.position;
+		var force = input.ScreenDirection * 5 + ent.PlayerSpeed;
 
 		netEvents.CurrentEventID++;
-		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Ingredient, position, force));
+		netEvents.NetEvents.Add(NetCreateIngredient.Make(entity, netEvents.CurrentEventID, IngredientType, position, force));
 	}
-	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
+	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
 	{
-		var go = GameObject.Instantiate(game.GameResources.AllItems.Gravel.Prefab);
+		var go = GameObject.Instantiate(game.GameResources.AllItems.Ingredient.Prefab);
 		if (go == null)
 		{
 			Debug.Log("GO NULL");
 		}
 		go.transform.position = position;
-
+		
+		go.GetComponent<SpriteRenderer>().sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)ingredientType];
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.IngredientType = ingredientType;
 		visible.Item = item;
 		visible.Force = force;
 
@@ -89,7 +90,8 @@ public class Ingredient : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Gravel, gameObject);
+		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)IngredientType];
+		CheckMain(game, entity, game.GameResources.AllItems.Ingredient, gameObject);
 	}
 
 	public override void Input(GameManager game, int entity)

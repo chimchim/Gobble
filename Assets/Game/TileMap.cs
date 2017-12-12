@@ -5,7 +5,7 @@ using UnityEngine;
 
 public partial class TileMap
 {
-	public enum MineralType
+	public enum IngredientType
 	{
 		Normal,
 		Rock,
@@ -35,7 +35,7 @@ public partial class TileMap
 
 	private Material[] _darkMats;
 	private TileType[,] BlockTypes;
-	private MineralType[,] MineralTypes;
+	private IngredientType[,] MineralTypes;
 	private int[,] BlockIslandSize;
 	public GameObject[,] Blocks;
 	public Transform[,] Minerals;
@@ -109,7 +109,7 @@ public partial class TileMap
 		cube.GetComponent<SpriteRenderer>().material = diffMat;
 		cube.AddComponent<BoxCollider2D>();
 		cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
-		cube.AddComponent<BlockComponent>().MineralType  = MineralType.Normal;
+		cube.AddComponent<BlockComponent>().IngredientType = IngredientType.Normal;
 		cube.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
 		cube.GetComponent<BlockComponent>().X = x;
 		cube.GetComponent<BlockComponent>().Y = y;
@@ -127,7 +127,7 @@ public partial class TileMap
 		Minerals = new Transform[fullWidhth, fullHeight];
 		Blocks = new GameObject[fullWidhth, fullHeight];
 		BlockTypes = new TileType[fullWidhth, fullHeight];
-		MineralTypes = new MineralType[fullWidhth, fullHeight];
+		MineralTypes = new IngredientType[fullWidhth, fullHeight];
 		_enlisted = new bool[GameUnity.FullWidth, GameUnity.FullHeight];
 		BlockIslandSize = new int[fullWidhth, fullHeight];
 		Mods[0] = minsVariables.NormalMod;
@@ -223,39 +223,39 @@ public partial class TileMap
 				int chance = game.CurrentRandom.Next(0, minsVariables.RockMiddleOneIn);
 				if (chance == 0)
 				{
-					MineralTypes[x, y] = MineralType.Rock;
+					MineralTypes[x, y] = IngredientType.Rock;
 
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
-						CreateMineral(game, x, y, _rockMiddleMat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockMiddleMat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						CreateMineral(game, x, y, _rockMiddle2Mat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockMiddle2Mat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						CreateMineral(game, x, y, _rockMiddle3Mat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockMiddle3Mat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleLeft)
 					{
-						CreateMineral(game, x, y, _rockMiddleLeftMat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockMiddleLeftMat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleRight)
 					{
-						CreateMineral(game, x, y, _rockMiddleRightMat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockMiddleRightMat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						CreateMineral(game, x, y, _rockTopMat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockTopMat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						CreateMineral(game, x, y, _rockTopLeftMat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockTopLeftMat, IngredientType.Rock);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						CreateMineral(game, x, y, _rockTopRightMat, MineralType.Rock);
+						CreateMineral(game, x, y, _rockTopRightMat, IngredientType.Rock);
 					}
 				}
 			}
@@ -286,8 +286,8 @@ public partial class TileMap
 					chance = game.CurrentRandom.Next(0, minsVariables.GoldBotOnIn);
 					if (chance == 0)
 					{
-						CreateMineral(game, x, y, _goldBotMat, MineralType.Gold);
-						MineralTypes[x, y] = MineralType.Gold;
+						CreateMineral(game, x, y, _goldBotMat, IngredientType.Gold);
+						MineralTypes[x, y] = IngredientType.Gold;
 					}
 				}
 				if (type == TileType.BotLeftCorner)
@@ -295,8 +295,8 @@ public partial class TileMap
 					chance = game.CurrentRandom.Next(0, minsVariables.GoldLeftRightBot - extraChance);
 					if (chance == 0)
 					{
-						CreateMineral(game, x, y, _goldBotLeftCornerMat, MineralType.Gold);
-						MineralTypes[x, y] = MineralType.Gold;
+						CreateMineral(game, x, y, _goldBotLeftCornerMat, IngredientType.Gold);
+						MineralTypes[x, y] = IngredientType.Gold;
 					}
 				}
 				if (type == TileType.BotRightCorner)
@@ -304,57 +304,57 @@ public partial class TileMap
 					chance = game.CurrentRandom.Next(0, minsVariables.GoldLeftRightBot - extraChance);
 					if (chance == 0)
 					{
-						CreateMineral(game, x, y, _goldBotRightCornerMat, MineralType.Gold);
-						MineralTypes[x, y] = MineralType.Gold;
+						CreateMineral(game, x, y, _goldBotRightCornerMat, IngredientType.Gold);
+						MineralTypes[x, y] = IngredientType.Gold;
 					}
 				}
 				chance = game.CurrentRandom.Next(0, minsVariables.GoldRandomOneIn);
 				if (chance == 0)
 				{
-					MineralTypes[x, y] = MineralType.Gold;
+					MineralTypes[x, y] = IngredientType.Gold;
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
-						CreateMineral(game, x, y, _goldMiddleMat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldMiddleMat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						CreateMineral(game, x, y, _goldMiddle2Mat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldMiddle2Mat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						CreateMineral(game, x, y, _goldMiddle3Mat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldMiddle3Mat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleLeft)
 					{
-						CreateMineral(game, x, y, _goldMiddleLeftMat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldMiddleLeftMat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleRight)
 					{
-						CreateMineral(game, x, y, _goldMiddleRightMat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldMiddleRightMat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						CreateMineral(game, x, y, _goldTopMat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldTopMat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						CreateMineral(game, x, y, _goldTopLeftMat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldTopLeftMat, IngredientType.Gold);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						CreateMineral(game, x, y, _goldTopRightMat, MineralType.Gold);
+						CreateMineral(game, x, y, _goldTopRightMat, IngredientType.Gold);
 					}
 				}
 			}
 		}
 	}
 
-	private void CreateMineral(GameManager game, int x, int y, Sprite sprite, MineralType type = MineralType.Normal)
+	private void CreateMineral(GameManager game, int x, int y, Sprite sprite, IngredientType type = IngredientType.Normal)
 	{
 		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
 		var parent = Blocks[x, y].transform;
 		Blocks[x, y].GetComponent<BlockComponent>().Mod = Mods[(int)type];
-		Blocks[x, y].GetComponent<BlockComponent>().MineralType = type;
+		Blocks[x, y].GetComponent<BlockComponent>().IngredientType = type;
 		go.transform.parent = parent;
 		go.transform.localPosition = new Vector3(0, 0, -0.1f);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
@@ -398,7 +398,7 @@ public partial class TileMap
 					continue;
 				int chance = 1;
 
-				if (MineralTypes[x, y] == MineralType.Gold)
+				if (MineralTypes[x, y] == IngredientType.Gold)
 				{
 					_extraIron++;
 					continue;
@@ -412,8 +412,8 @@ public partial class TileMap
 
 					if (chance == 0)
 					{
-						MineralTypes[x, y] = MineralType.Iron;
-						CreateMineral(game, x, y, _ironMiddleMat, MineralType.Iron);
+						MineralTypes[x, y] = IngredientType.Iron;
+						CreateMineral(game, x, y, _ironMiddleMat, IngredientType.Iron);
 					}
 					continue;
 				}
@@ -421,46 +421,46 @@ public partial class TileMap
 				chance = game.CurrentRandom.Next(0, minsVariables.IronRandomOneIn);
 				if (chance == 0)
 				{
-					MineralTypes[x, y] = MineralType.Iron;
+					MineralTypes[x, y] = IngredientType.Iron;
 					if (BlockTypes[x, y] == TileType.Bot)
 					{
-						CreateMineral(game, x, y, _ironBotMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironBotMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.BotLeftCorner)
 					{
-						CreateMineral(game, x, y, _ironBotLeftCornerMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironBotLeftCornerMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.BotRightCorner)
 					{
-						CreateMineral(game, x, y, _ironBotRightCornerMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironBotRightCornerMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						CreateMineral(game, x, y, _ironMiddle2Mat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironMiddle2Mat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						CreateMineral(game, x, y, _ironMiddle3Mat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironMiddle3Mat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleLeft)
 					{
-						CreateMineral(game, x, y, _ironMiddleLeftMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironMiddleLeftMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.MiddleRight)
 					{
-						CreateMineral(game, x, y, _ironMiddleRightMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironMiddleRightMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						CreateMineral(game, x, y, _ironTopMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironTopMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						CreateMineral(game, x, y, _ironTopLeftMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironTopLeftMat, IngredientType.Iron);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						CreateMineral(game, x, y, _ironTopRightMat, MineralType.Iron);
+						CreateMineral(game, x, y, _ironTopRightMat, IngredientType.Iron);
 					}
 				}
 			}
@@ -482,7 +482,7 @@ public partial class TileMap
 					continue;
 				int chance = 1;
 
-				if (MineralTypes[x, y] == MineralType.Gold || MineralTypes[x, y] == MineralType.Iron)
+				if (MineralTypes[x, y] == IngredientType.Gold || MineralTypes[x, y] == IngredientType.Iron)
 				{
 					_extraCopper++;
 					continue;
@@ -494,8 +494,8 @@ public partial class TileMap
 
 					if (chance == 0)
 					{
-						CreateMineral(game, x, y, _copperMiddleRightMat, MineralType.Copper);
-						MineralTypes[x, y] = MineralType.Copper;
+						CreateMineral(game, x, y, _copperMiddleRightMat, IngredientType.Copper);
+						MineralTypes[x, y] = IngredientType.Copper;
 					}
 					continue;
 				}
@@ -506,8 +506,8 @@ public partial class TileMap
 
 					if (chance == 0)
 					{
-						CreateMineral(game, x, y, _copperMiddleLeftMat, MineralType.Copper);
-						MineralTypes[x, y] = MineralType.Copper;
+						CreateMineral(game, x, y, _copperMiddleLeftMat, IngredientType.Copper);
+						MineralTypes[x, y] = IngredientType.Copper;
 					}
 					continue;
 				}
@@ -515,42 +515,42 @@ public partial class TileMap
 				chance = game.CurrentRandom.Next(0, minsVariables.CopperRandomOneIn);
 				if (chance == 0)
 				{
-					MineralTypes[x, y] = MineralType.Copper;
+					MineralTypes[x, y] = IngredientType.Copper;
 					if (BlockTypes[x, y] == TileType.Middle)
 					{
-						CreateMineral(game, x, y, _copperMiddleMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperMiddleMat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.Middle2)
 					{
-						CreateMineral(game, x, y, _copperMiddle2Mat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperMiddle2Mat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.Middle3)
 					{
-						CreateMineral(game, x, y, _copperMiddle3Mat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperMiddle3Mat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.Bot)
 					{
-						CreateMineral(game, x, y, _copperBotMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperBotMat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.BotLeftCorner)
 					{
-						CreateMineral(game, x, y, _copperBotLeftCornerMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperBotLeftCornerMat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.BotRightCorner)
 					{
-						CreateMineral(game, x, y, _copperBotRightCornerMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperBotRightCornerMat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.Top)
 					{
-						CreateMineral(game, x, y, _copperTopMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperTopMat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.TopLeft)
 					{
-						CreateMineral(game, x, y, _copperTopLeftMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperTopLeftMat, IngredientType.Copper);
 					}
 					if (BlockTypes[x, y] == TileType.TopRight)
 					{
-						CreateMineral(game, x, y, _copperTopRightMat, MineralType.Copper);
+						CreateMineral(game, x, y, _copperTopRightMat, IngredientType.Copper);
 					}
 				}
 			}

@@ -7,25 +7,23 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class PickAxe : Item
+public class EmptyHands : Item
 {
 
-	private static ObjectPool<PickAxe> _pool = new ObjectPool<PickAxe>(10);
+	private static ObjectPool<EmptyHands> _pool = new ObjectPool<EmptyHands>(10);
 
-	Transform HitPointer;
 	public override void Recycle()
 	{
-		HitPointer = null;
 		_pool.Recycle(this);
 	}
 
-	public PickAxe()
+	public EmptyHands()
 	{
 
 	}
-	public static PickAxe Make()
+	public static EmptyHands Make()
 	{
-		PickAxe item = _pool.GetNext();
+		EmptyHands item = _pool.GetNext();
 		item.ID = ItemID.Pickaxe;
 		return item;
 	}
@@ -33,23 +31,21 @@ public class PickAxe : Item
 	public override void OwnerActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		HitPointer = CurrentGameObject.transform.Find("point");
 		resources.ArmEvents.OnArmHit = () =>
 		{
 			TryPick(game, entity);
 		};
-		base.OwnerActivate(game, entity);
+		//base.OwnerActivate(game, entity);
 	}
 
 	public override void ClientActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		HitPointer = CurrentGameObject.transform.Find("point");
 		resources.ArmEvents.OnArmHit = () =>
 		{
 			TryPick(game, entity);
 		};
-		base.ClientActivate(game, entity);
+		//base.ClientActivate(game, entity);
 	}
 
 	public override void OwnerDeActivate(GameManager game, int entity)
@@ -64,9 +60,11 @@ public class PickAxe : Item
 		var trans = game.Entities.GetEntity(entity).gameObject.transform;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var hand = resources.Hand;
 		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-
-		var hit = Physics2D.Raycast(HitPointer.position, HitPointer.right, 0.2f, layerMask);
+		Debug.DrawLine(hand.position, hand.position + (hand.right * 1.4f), Color.blue);
+		var hit = Physics2D.Raycast(hand.position, hand.right, 0.2f, layerMask);
 		if (hit.transform == null)
 			return;
 
@@ -88,53 +86,19 @@ public class PickAxe : Item
 			}
 			bc.StartCoroutine(bc.Shake());
 			int mod = bc.HitsTaken % bc.Mod;
-			
+
 			if (mod == 0)
 			{
 				bc.SetResource(game);
 			}
 		}
-		
+
 	}
 	public override void ThrowItem(GameManager game, int entity)
 	{
-		base.ThrowItem(game, entity);
-		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
-		var ent = game.Entities.GetEntity(entity);
-		var position = ent.gameObject.transform.position;
-		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
-
-		netEvents.CurrentEventID++;
-		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Pickaxe, position, force));
 	}
-	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
-	{
-		var go = GameObject.Instantiate(game.GameResources.AllItems.PickAxe.Prefab);
-		go.transform.position = position;
 
-		var visible = go.AddComponent<VisibleItem>();
-		var item = Make();
-		visible.Item = item;
-		visible.Force = force;
-
-		visible.CallBack = (EntityID) =>
-		{
-			var player = game.Entities.GetComponentOf<Player>(EntityID);
-			if (player.Owner)
-			{		
-				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
-				netComp.CurrentEventID++;
-				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
-				pickup.Iterations = 1;
-				netComp.NetEvents.Add(pickup);
-				item.OnPickup(game, EntityID, go);
-			}
-		};
-		
-		return visible;
-	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
@@ -145,7 +109,7 @@ public class PickAxe : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
-		
+
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)

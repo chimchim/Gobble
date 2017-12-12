@@ -110,10 +110,9 @@ public class Rope : Item
 		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
-		var position = game.Entities.GetEntity(entity).gameObject.transform.position;
-		position.y += 0.3f;
-		var itemrand = game.CurrentRandom.Next(0, 2);
-		var force = input.ScreenDirection * 5;
+		var ent = game.Entities.GetEntity(entity);
+		var position = ent.gameObject.transform.position;
+		var force = input.ScreenDirection * 5 + ent.PlayerSpeed;
 
 		netEvents.CurrentEventID++;
 		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Rope, position, force));
