@@ -76,6 +76,7 @@ namespace Game.Systems
 				if (item != null)
 				{
 					item.ThrowItem(game, entity);
+					holder.Hands.OwnerActivate(game, entity);
 				}
 			}
 
@@ -94,8 +95,13 @@ namespace Game.Systems
 
 					if (item != null)
 					{
+						holder.Hands.OwnerDeActivate(game, entity);
 						item.SetChoosenSlot(game, entity);
 						item.OwnerActivate(game, entity);
+					}
+					else
+					{
+						holder.Hands.OwnerActivate(game, entity);
 					}
 				}
 			}

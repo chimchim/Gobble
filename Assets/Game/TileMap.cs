@@ -358,12 +358,12 @@ public partial class TileMap
 		go.transform.parent = parent;
 		go.transform.localPosition = new Vector3(0, 0, -0.1f);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
+
 		if (Minerals[x, y] != null)
 		{
 			GameObject.Destroy(Minerals[x, y].gameObject);
 		}
 		Minerals[x, y] = go.transform;
-		//go.transform.position = new Vector3(x * 1.28f, y * 1.28f, -0.2f);
 	}
 
 	public void CreateIron(GameManager game)
@@ -824,17 +824,17 @@ public partial class TileMap
 		}
 		diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
 		
-		_rockBotMat = Resources.Load("Tiles/Rocks/Bot", typeof(Sprite)) as Sprite;
-		_rockBotLeftCornerMat = Resources.Load("Tiles/Rocks/BotLeftCorner", typeof(Sprite)) as Sprite;
-		_rockBotRightCornerMat = Resources.Load("Tiles/Rocks/BotRightCorner", typeof(Sprite)) as Sprite;
-		_rockMiddleMat = Resources.Load("Tiles/Rocks/Middle", typeof(Sprite)) as Sprite;
-		_rockMiddle2Mat = Resources.Load("Tiles/Rocks/Middle2", typeof(Sprite)) as Sprite;
-		_rockMiddle3Mat = Resources.Load("Tiles/Rocks/Middle3", typeof(Sprite)) as Sprite;
-		_rockMiddleLeftMat = Resources.Load("Tiles/Rocks/MiddleLeft", typeof(Sprite)) as Sprite;
-		_rockMiddleRightMat = Resources.Load("Tiles/Rocks/MiddleRight", typeof(Sprite)) as Sprite;
-		_rockTopMat = Resources.Load("Tiles/Rocks/Top", typeof(Sprite)) as Sprite;
-		_rockTopLeftMat = Resources.Load("Tiles/Rocks/TopLeft", typeof(Sprite)) as Sprite;
-		_rockTopRightMat = Resources.Load("Tiles/Rocks/TopRight", typeof(Sprite)) as Sprite;
+		_rockBotMat = Resources.Load("Tiles/Minerals/Rocks/Bot", typeof(Sprite)) as Sprite;
+		_rockBotLeftCornerMat = Resources.Load("Tiles/Minerals/Rocks/BotLeftCorner", typeof(Sprite)) as Sprite;
+		_rockBotRightCornerMat = Resources.Load("Tiles/Minerals/Rocks/BotRightCorner", typeof(Sprite)) as Sprite;
+		_rockMiddleMat = Resources.Load("Tiles/Minerals/Rocks/Middle", typeof(Sprite)) as Sprite;
+		_rockMiddle2Mat = Resources.Load("Tiles/Minerals/Rocks/Middle2", typeof(Sprite)) as Sprite;
+		_rockMiddle3Mat = Resources.Load("Tiles/Minerals/Rocks/Middle3", typeof(Sprite)) as Sprite;
+		_rockMiddleLeftMat = Resources.Load("Tiles/Minerals/Rocks/MiddleLeft", typeof(Sprite)) as Sprite;
+		_rockMiddleRightMat = Resources.Load("Tiles/Minerals/Rocks/MiddleRight", typeof(Sprite)) as Sprite;
+		_rockTopMat = Resources.Load("Tiles/Minerals/Rocks/Top", typeof(Sprite)) as Sprite;
+		_rockTopLeftMat = Resources.Load("Tiles/Minerals/Rocks/TopLeft", typeof(Sprite)) as Sprite;
+		_rockTopRightMat = Resources.Load("Tiles/Minerals/Rocks/TopRight", typeof(Sprite)) as Sprite;
 
 		_goldBotMat = Resources.Load("Tiles/Minerals/Gold/Bot", typeof(Sprite)) as Sprite;
 		_goldBotLeftCornerMat = Resources.Load("Tiles/Minerals/Gold/BotLeftCorner", typeof(Sprite)) as Sprite;

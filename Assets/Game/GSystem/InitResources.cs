@@ -69,8 +69,8 @@ namespace Game.Systems
 				ent.AddComponent(itemHolder);
 				var hands = EmptyHands.Make();
 				hands.ItemNetID = -1;
+				itemHolder.Items.Add(hands.ItemNetID, hands);
 				itemHolder.Hands = hands;
-				itemHolder.ActiveItems.Add(hands);
 				if (player.Owner)
 					hands.OwnerActivate(game, itemHolder.EntityID);
 				else

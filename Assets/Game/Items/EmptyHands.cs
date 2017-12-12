@@ -35,7 +35,8 @@ public class EmptyHands : Item
 		{
 			TryPick(game, entity);
 		};
-		//base.OwnerActivate(game, entity);
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Add(this);
 	}
 
 	public override void ClientActivate(GameManager game, int entity)
@@ -45,16 +46,24 @@ public class EmptyHands : Item
 		{
 			TryPick(game, entity);
 		};
-		//base.ClientActivate(game, entity);
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Add(this);
 	}
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Remove(this);
 		resources.FreeArmAnimator.SetBool("Dig", false);
-		base.OwnerDeActivate(game, entity);
 	}
-
+	public override void ClientDeActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Remove(this);
+		resources.FreeArmAnimator.SetBool("Dig", false);
+	}
 	private void TryPick(GameManager game, int entity)
 	{
 		var trans = game.Entities.GetEntity(entity).gameObject.transform;

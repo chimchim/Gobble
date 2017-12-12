@@ -86,6 +86,7 @@ public abstract class Item
 			if (inventoryMain.CurrentItemIndex == index)
 			{
 				OwnerActivate(game, entity);
+				holder.Hands.OwnerDeActivate(game, entity);
 			}
 			else
 			{
@@ -120,9 +121,9 @@ public abstract class Item
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		item.transform.parent = resources.Hand.transform;
-		item.transform.localPosition = new Vector3(3, -1, 0);
+
 		item.transform.localEulerAngles = new Vector3(0, 0, -90);
-		item.transform.localPosition = new Vector3(3, -1, 0);
+		item.transform.localPosition = new Vector3(0, 0, 0);
 	}
 }
 
