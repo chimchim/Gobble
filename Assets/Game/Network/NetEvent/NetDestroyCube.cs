@@ -23,10 +23,12 @@ public class NetDestroyCube : NetEvent
 			Debug.LogError("CUBE DE NULL " + X + " y " + Y);
 			return;
 		}
+		var cube = game.TileMap.Blocks[X, Y];
 		var go = GameObject.Instantiate(game.GameResources.Prefabs.Poof);
-		go.transform.position = game.TileMap.Blocks[X, Y].transform.position;
+		go.transform.position = cube.transform.position;
+
 		GameObject.Destroy(go, 0.8f);
-		GameObject.Destroy(game.TileMap.Blocks[X, Y]);
+		GameObject.Destroy(cube);
 
 	}
 

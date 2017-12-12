@@ -25,8 +25,8 @@ public class VisibleItem : MonoBehaviour
 	public void FixedUpdate()
 	{
 		timer -= Time.deltaTime;
-		if (grounded && (Math.Abs(Force.x) <= 0 || !grounded))
-			return;
+		//if (grounded && (Math.Abs(Force.x) <= 0 || !grounded))
+		//	return;
 		Force.y += -GameUnity.Gravity * GameUnity.Weight;
 		Force.x = Force.x * GameUnity.ForceDamper;
 		Force.x = Math.Abs(Force.x) < 0.5f ? 0 : Force.x;

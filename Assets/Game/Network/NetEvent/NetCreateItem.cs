@@ -30,7 +30,7 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Rope.MakeItem(game, Position, Force);
 		}
-		if (ItemID == Item.ItemID.Cubes)
+		if (ItemID == Item.ItemID.Ingredient)
 		{
 			visible = Ingredient.MakeItem(game, Position, Force);
 		}

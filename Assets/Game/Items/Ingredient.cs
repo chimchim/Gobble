@@ -24,7 +24,7 @@ public class Ingredient : Item
 	public static Ingredient Make()
 	{
 		Ingredient item = _pool.GetNext();
-		item.ID = ItemID.Cubes;
+		item.ID = ItemID.Ingredient;
 		return item;
 	}
 
@@ -55,23 +55,16 @@ public class Ingredient : Item
 		var force = input.ScreenDirection * 5;
 
 		netEvents.CurrentEventID++;
-		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Cubes, position, force));
+		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Ingredient, position, force));
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
-		//throw
-		//{
-			var go = GameObject.Instantiate(game.GameResources.AllItems.Gravel.Prefab);
+		var go = GameObject.Instantiate(game.GameResources.AllItems.Gravel.Prefab);
 		if (go == null)
 		{
 			Debug.Log("GO NULL");
 		}
-			go.transform.position = position;
-		//}
-		//catch (Exception e)
-		//{
-		//	Debug.log(e);
-		//}
+		go.transform.position = position;
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
