@@ -7,40 +7,74 @@ public class InventoryBackpack : MonoBehaviour
 {
 
 	// Use this for initialization
-	public int InventorySize;
+	public int CurrenItemsAmount;
 	public GameObject Template;
-	private List<Image> _items = new List<Image>();
-	private int _selected;
+	public Item[] Items = new Item[GameUnity.BackpackInventorySize];
+	private List<ItemImage> ItemImage = new List<ItemImage>();
+
+
 	void Start()
 	{
-		SetMainInventorySlots(InventorySize);
+
+		Template.SetActive(true);
+		SetMainInventorySlots(GameUnity.BackpackInventorySize);
 	}
 
+	public void SetQuantity(Item item)
+	{
+		for (int i = 0; i < Items.Length; i++)
+		{
+			if (Items[i] == item)
+			{
+				ItemImage[i].SetQuantity(item.Quantity);
+				break;
+			}
+		}
+	}
+
+	public int SetItemInMain(ScriptableItem scriptable, Item item)
+	{
+		int index = 0;
+		for (int i = 0; i < Items.Length; i++)
+		{
+			if (Items[i] == null)
+			{
+				CurrenItemsAmount++;
+				Items[i] = item;
+				ItemImage[i].SetImage(scriptable.Sprite);
+				ItemImage[i].SetQuantity(item.Quantity);
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
 	// Update is called once per frame
+	public Item GetItem(int index)
+	{
+		if (index < Items.Length)
+		{
+			return Items[index];
+		}
+		return null;
+	}
+
+	public void RemoveItem(int index)
+	{
+		CurrenItemsAmount--;
+		Items[index] = null;
+		ItemImage[index].UnsetImage();
+	}
+
 	public void SetMainInventorySlots(int slots)
 	{
-		Template.SetActive(true);
 		for (int i = 0; i < slots; i++)
 		{
 			var go = Instantiate(Template);
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
-			_items.Add(go.GetComponent<Image>());
+			ItemImage.Add(go.GetComponent<ItemImage>());
 		}
-		Template.SetActive(false);
-	}
-	void Update()
-	{
-
-	}
-
-	private void ResetOther()
-	{
-		for (int i = 0; i < _items.Count; i++)
-		{
-			if (i == _selected)
-				continue;
-			_items[i].GetComponent<Image>().color = Color.white;
-		}
+		Destroy(Template);
 	}
 }

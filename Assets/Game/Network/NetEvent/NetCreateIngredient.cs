@@ -12,7 +12,7 @@ public class NetCreateIngredient : NetEvent
 	public Vector2 Force;
 	public Vector2 Position;
 	public int Creator;
-
+	public int Quantity;
 	public override void Recycle()
 	{
 		Iterations = 0;
@@ -24,7 +24,7 @@ public class NetCreateIngredient : NetEvent
 		VisibleItem visible = null;
 
 		visible = Ingredient.MakeItem(game, Position, Force, IngredientType);
-		
+		visible.Item.Quantity = Quantity;
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;
@@ -36,7 +36,7 @@ public class NetCreateIngredient : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetCreateIngredient Make(int creator, int netEventID, TileMap.IngredientType IngredientType, Vector3 position, Vector2 force)
+	public static NetCreateIngredient Make(int creator, int netEventID, int q, TileMap.IngredientType IngredientType, Vector3 position, Vector2 force)
 	{
 		var evt = _pool.GetNext();
 		evt.NetEventID = netEventID;
@@ -44,6 +44,7 @@ public class NetCreateIngredient : NetEvent
 		evt.Force = force;
 		evt.Position = position;
 		evt.Creator = creator;
+		evt.Quantity = q;
 		return evt;
 	}
 
@@ -62,21 +63,25 @@ public class NetCreateIngredient : NetEvent
 		index += sizeof(float);
 		int ingredient = BitConverter.ToInt32(byteData, index);
 		index += sizeof(int);
+		int quantity = BitConverter.ToInt32(byteData, index);
+		index += sizeof(int);
 
 		IngredientType = (TileMap.IngredientType)ingredient;
 		Position = new Vector2(posX, posY);
 		Force = new Vector2(forceX, forceY);
+		Quantity = quantity;
 	}
 
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
 		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetCreateIngredient));
-		outgoing.AddRange(BitConverter.GetBytes(24));
+		outgoing.AddRange(BitConverter.GetBytes(28));
 		outgoing.AddRange(BitConverter.GetBytes(Creator));
 		outgoing.AddRange(BitConverter.GetBytes(Position.x));
 		outgoing.AddRange(BitConverter.GetBytes(Position.y));
 		outgoing.AddRange(BitConverter.GetBytes(Force.x));
 		outgoing.AddRange(BitConverter.GetBytes(Force.y));
 		outgoing.AddRange(BitConverter.GetBytes((int)IngredientType));
+		outgoing.AddRange(BitConverter.GetBytes(Quantity));
 	}
 }

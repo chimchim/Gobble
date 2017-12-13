@@ -84,7 +84,7 @@ public class PickAxe : Item
 				netComp.NetEvents.Add(destroy);
 				var position = bc.transform.position;
 				netComp.CurrentEventID++;
-				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, bc.IngredientType, position, Vector2.zero));
+				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, 1, bc.IngredientType, position, Vector2.zero));
 			}
 			bc.StartCoroutine(bc.Shake());
 			int mod = bc.HitsTaken % bc.Mod;

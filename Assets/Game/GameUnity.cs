@@ -85,6 +85,7 @@ public class GameUnity : MonoBehaviour
 	public static float PerlinZoom;
 
 	public static int MainInventorySize = 3;
+	public static int BackpackInventorySize = 9;
 	public InventoryBackpack InventoryBackpack;
 	public InventoryMain MainInventory;
 	public GameObject BuildConsole;

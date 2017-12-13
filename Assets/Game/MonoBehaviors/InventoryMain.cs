@@ -19,6 +19,18 @@ public class InventoryMain : MonoBehaviour {
 		SetMainInventorySlots(GameUnity.MainInventorySize);
 	}
 
+	public void SetQuantity(Item item)
+	{
+		for (int i = 0; i < Items.Length; i++)
+		{
+			if (Items[i] == item)
+			{
+				ItemImage[i].SetQuantity(item.Quantity);
+				break;
+			}
+		}
+	}
+
 	public int SetItemInMain(ScriptableItem scriptable, Item item)
 	{
 		int index = 0;
@@ -29,6 +41,7 @@ public class InventoryMain : MonoBehaviour {
 				CurrenItemsAmount++;
 				Items[i] = item;
 				ItemImage[i].SetImage(scriptable.Sprite);
+				ItemImage[i].SetQuantity(item.Quantity);
 				index = i;
 				break;
 			}
@@ -50,6 +63,7 @@ public class InventoryMain : MonoBehaviour {
 		CurrenItemsAmount--;
 		Items[index] = null;
 		ItemImage[index].UnsetImage();
+		ItemImage[index].Quantity.text = "";
 	}
 
 	public void SetMainInventorySlots(int slots)
@@ -74,9 +88,5 @@ public class InventoryMain : MonoBehaviour {
 	public void SetChoosen(int index)
 	{
 		ItemImage[index].Chosen.enabled = true;
-	}
-	void Update()
-	{
-
 	}
 }

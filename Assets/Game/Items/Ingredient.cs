@@ -30,17 +30,35 @@ public class Ingredient : Item
 
 	public override void OwnerActivate(GameManager game, int entity)
 	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.ArmEvents.OnArmHit = () =>
+		{
+			TryPick(game, entity);
+		};
 		base.OwnerActivate(game, entity);
 	}
 
 	public override void ClientActivate(GameManager game, int entity)
 	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.ArmEvents.OnArmHit = () =>
+		{
+			TryPick(game, entity);
+		};
 		base.ClientActivate(game, entity);
 	}
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.FreeArmAnimator.SetBool("Dig", false);
 		base.OwnerDeActivate(game, entity);
+	}
+	public override void ClientDeActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.FreeArmAnimator.SetBool("Dig", false);
+		base.ClientDeActivate(game, entity);
 	}
 
 	public override void ThrowItem(GameManager game, int entity)
@@ -54,7 +72,7 @@ public class Ingredient : Item
 		var force = input.ScreenDirection * 5 + ent.PlayerSpeed;
 
 		netEvents.CurrentEventID++;
-		netEvents.NetEvents.Add(NetCreateIngredient.Make(entity, netEvents.CurrentEventID, IngredientType, position, force));
+		netEvents.NetEvents.Add(NetCreateIngredient.Make(entity, netEvents.CurrentEventID, Quantity, IngredientType, position, force));
 	}
 
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
@@ -84,6 +102,9 @@ public class Ingredient : Item
 				{
 					if (stackable.TryStack(game, item))
 					{
+						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
+						inv.InventoryBackpack.SetQuantity(stackable);
+						inv.MainInventory.SetQuantity(stackable);
 						netComp.CurrentEventID++;
 						var destroy = NetDestroyWorldItem.Make(item.ItemNetID, netComp.CurrentEventID);
 						netComp.NetEvents.Add(destroy);
@@ -105,12 +126,50 @@ public class Ingredient : Item
 		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)IngredientType];
 		CheckMain(game, entity, game.GameResources.AllItems.Ingredient, gameObject);
 	}
+	private void TryPick(GameManager game, int entity)
+	{
+		var trans = game.Entities.GetEntity(entity).gameObject.transform;
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var hand = resources.Hand;
+		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+		Debug.DrawLine(hand.position, hand.position + (hand.right * 1.4f), Color.blue);
+		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
+		if (hit.transform == null)
+			return;
 
+		var bc = hit.transform.GetComponent<BlockComponent>();
+		if (bc != null && !bc.Destroyed)
+		{
+			bc.HitsTaken++;
+			var diff = bc.HitsTaken / bc.Mod;
+			if (diff > 3 && player.Owner)
+			{
+				bc.Destroyed = true;
+				var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
+				netComp.CurrentEventID++;
+				var destroy = NetDestroyCube.Make(bc.X, bc.Y, netComp.CurrentEventID);
+				netComp.NetEvents.Add(destroy);
+				var position = bc.transform.position;
+				netComp.CurrentEventID++;
+				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, 1, bc.IngredientType, position, Vector2.zero));
+			}
+			bc.StartCoroutine(bc.Shake());
+			int mod = bc.HitsTaken % bc.Mod;
+
+			if (mod == 0)
+			{
+				bc.SetResource(game);
+			}
+		}
+
+	}
 	public override void Input(GameManager game, int entity)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		//resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
+		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
 
 	}
 

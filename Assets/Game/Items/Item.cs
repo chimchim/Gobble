@@ -78,7 +78,13 @@ public abstract class Item
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		var items = inventoryMain.MainInventory.Items;
 		int amount = inventoryMain.MainInventory.CurrenItemsAmount;
+		int backPackAmount = inventoryMain.InventoryBackpack.CurrenItemsAmount;
 		game.WorldItems.Remove(CurrentGameObject.GetComponent<VisibleItem>());
+		if (holder.Items.ContainsKey(ItemNetID))
+		{
+			Debug.Log("Already contains " + ItemNetID);
+			return;
+		}
 		holder.Items.Add(ItemNetID, this);
 		
 		if (amount < GameUnity.MainInventorySize)
@@ -95,8 +101,9 @@ public abstract class Item
 				CurrentGameObject.SetActive(false);
 			}
 		}
-		else
+		else if (backPackAmount < GameUnity.BackpackInventorySize)
 		{
+			inventoryMain.InventoryBackpack.SetItemInMain(scriptable, this);
 			CurrentGameObject.SetActive(false);
 		}
 	}

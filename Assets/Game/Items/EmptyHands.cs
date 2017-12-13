@@ -73,7 +73,7 @@ public class EmptyHands : Item
 		var hand = resources.Hand;
 		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 		Debug.DrawLine(hand.position, hand.position + (hand.right * 1.4f), Color.blue);
-		var hit = Physics2D.Raycast(hand.position, hand.right, 0.2f, layerMask);
+		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
 		if (hit.transform == null)
 			return;
 
@@ -91,7 +91,7 @@ public class EmptyHands : Item
 				netComp.NetEvents.Add(destroy);
 				var position = bc.transform.position;
 				netComp.CurrentEventID++;
-				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, bc.IngredientType, position, Vector2.zero));
+				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, 1, bc.IngredientType, position, Vector2.zero));
 			}
 			bc.StartCoroutine(bc.Shake());
 			int mod = bc.HitsTaken % bc.Mod;
