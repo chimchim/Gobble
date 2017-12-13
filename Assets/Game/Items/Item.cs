@@ -17,8 +17,7 @@ public abstract class Item
 
 	public GameObject CurrentGameObject;
 	public int ItemNetID;
-	public int Quantity;
-	public int Index;
+	public int Quantity = 1;
 
 	public bool Remove;
 	public bool GotUpdated;
@@ -64,6 +63,10 @@ public abstract class Item
 	public abstract void Serialize(Game.GameManager game, int entity, List<byte> byteArray);
 	public abstract void Recycle();
 
+	public virtual bool TryStack(Game.GameManager game, Item item)
+	{
+		return false;
+	}
 	public virtual void SetChoosenSlot(Game.GameManager game, int entity)
 	{
 
@@ -81,7 +84,6 @@ public abstract class Item
 		if (amount < GameUnity.MainInventorySize)
 		{
 			int index = inventoryMain.MainInventory.SetItemInMain(scriptable, this);
-			Index = index;
 			SetInHand(game, entity, go);
 			if (inventoryMain.CurrentItemIndex == index)
 			{

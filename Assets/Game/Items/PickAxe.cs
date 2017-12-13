@@ -65,7 +65,7 @@ public class PickAxe : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-
+		
 		var hit = Physics2D.Raycast(HitPointer.position, HitPointer.right, 0.2f, layerMask);
 		if (hit.transform == null)
 			return;
@@ -118,8 +118,7 @@ public class PickAxe : Item
 		var item = Make();
 		visible.Item = item;
 		visible.Force = force;
-
-		visible.CallBack = (EntityID) =>
+        visible.CallBack = (EntityID) =>
 		{
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)

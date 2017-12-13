@@ -14,7 +14,6 @@ public class NetItemPickup : NetEvent
 
 	public override void Handle(GameManager game)
 	{
-		var player = game.Entities.GetComponentOf<Player>(Player);
 		var visibles = game.WorldItems;
 		
 		for (int i = visibles.Count - 1; i > -1; i--)

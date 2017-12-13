@@ -56,6 +56,7 @@ public class Ingredient : Item
 		netEvents.CurrentEventID++;
 		netEvents.NetEvents.Add(NetCreateIngredient.Make(entity, netEvents.CurrentEventID, IngredientType, position, force));
 	}
+
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.Ingredient.Prefab);
@@ -77,7 +78,18 @@ public class Ingredient : Item
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
+				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
 				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
+				foreach (Item stackable in holder.Items.Values)
+				{
+					if (stackable.TryStack(game, item))
+					{
+						netComp.CurrentEventID++;
+						var destroy = NetDestroyWorldItem.Make(item.ItemNetID, netComp.CurrentEventID);
+						netComp.NetEvents.Add(destroy);
+						return;
+					}
+				}
 				netComp.CurrentEventID++;
 				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
 				pickup.Iterations = 1;
@@ -102,6 +114,20 @@ public class Ingredient : Item
 
 	}
 
+	public override bool TryStack(GameManager game, Item item)
+	{
+		Ingredient ingre = item as Ingredient;
+		if (ingre != null)
+		{
+			if (ingre.IngredientType == IngredientType)
+			{
+				Quantity += ingre.Quantity;
+				return true;
+			}
+        }
+
+		return false;
+	}
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{
 

@@ -17,13 +17,12 @@ public class NetDestroyItem : NetEvent
 	}
 	public override void Handle(GameManager game)
 	{
-		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(Player);
 		var holder = game.Entities.GetComponentOf<ItemHolder>(Player);
 		var item = holder.Items[ItemNetID];
 		holder.Items.Remove(ItemNetID);
 		item.ClientDeActivate(game, Player);
-		GameObject.Destroy(item.CurrentGameObject);
-		Recycle();
+		item.Recycle();
+        GameObject.Destroy(item.CurrentGameObject);
 	}
 
 	public static NetDestroyItem Make()
