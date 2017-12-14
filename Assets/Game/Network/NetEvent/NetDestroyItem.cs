@@ -30,10 +30,9 @@ public class NetDestroyItem : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetDestroyItem Make(int player, int itemNetID, int netEventID)
+	public static NetDestroyItem Make(int player, int itemNetID)
 	{
 		var evt = _pool.GetNext();
-		evt.NetEventID = netEventID;
 		evt.Player = player;
 		evt.ItemNetID = itemNetID;
 		return evt;

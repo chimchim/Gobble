@@ -37,10 +37,9 @@ public class NetEventRope : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetEventRope Make(int player, int netEventID, int itemID, bool activate)
+	public static NetEventRope Make(int player, int itemID, bool activate)
 	{
 		var evt = _pool.GetNext();
-		evt.NetEventID = netEventID;
 		evt.ItemID = itemID;
 		evt.Player = player;
 		evt.Activate = activate;

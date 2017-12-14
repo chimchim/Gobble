@@ -1,6 +1,7 @@
 ﻿using Game;
 using Game.Component;
 using Game.GEntity;
+using Game.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,15 +65,13 @@ public class Ingredient : Item
 	public override void ThrowItem(GameManager game, int entity)
 	{
 		base.ThrowItem(game, entity);
-		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
 		var ent = game.Entities.GetEntity(entity);
 		var position = ent.gameObject.transform.position;
 		var force = input.ScreenDirection * 5 + ent.PlayerSpeed;
 
-		netEvents.CurrentEventID++;
-		netEvents.NetEvents.Add(NetCreateIngredient.Make(entity, netEvents.CurrentEventID, Quantity, IngredientType, position, force));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, Quantity, IngredientType, position, force));
 	}
 
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
@@ -97,7 +96,6 @@ public class Ingredient : Item
 			if (player.Owner)
 			{
 				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
 				foreach (Item stackable in holder.Items.Values)
 				{
 					if (stackable.TryStack(game, item))
@@ -105,16 +103,11 @@ public class Ingredient : Item
 						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 						inv.InventoryBackpack.SetQuantity(stackable);
 						inv.MainInventory.SetQuantity(stackable);
-						netComp.CurrentEventID++;
-						var destroy = NetDestroyWorldItem.Make(item.ItemNetID, netComp.CurrentEventID);
-						netComp.NetEvents.Add(destroy);
+						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
 						return;
 					}
 				}
-				netComp.CurrentEventID++;
-				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
-				pickup.Iterations = 1;
-				netComp.NetEvents.Add(pickup);
+				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);
 			}
 		};
@@ -128,32 +121,23 @@ public class Ingredient : Item
 	}
 	private void TryPick(GameManager game, int entity)
 	{
-		var trans = game.Entities.GetEntity(entity).gameObject.transform;
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		var hand = resources.Hand;
+		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
-		Debug.DrawLine(hand.position, hand.position + (hand.right * 1.4f), Color.blue);
 		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
 		if (hit.transform == null)
 			return;
 
 		var bc = hit.transform.GetComponent<BlockComponent>();
-		if (bc != null && !bc.Destroyed)
+		if (bc != null)
 		{
 			bc.HitsTaken++;
 			var diff = bc.HitsTaken / bc.Mod;
 			if (diff > 3 && player.Owner)
 			{
-				bc.Destroyed = true;
-				var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-				netComp.CurrentEventID++;
-				var destroy = NetDestroyCube.Make(bc.X, bc.Y, netComp.CurrentEventID);
-				netComp.NetEvents.Add(destroy);
+				HandleNetEventSystem.AddEvent(game, entity, NetDestroyCube.Make(bc.X, bc.Y));
 				var position = bc.transform.position;
-				netComp.CurrentEventID++;
-				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, 1, bc.IngredientType, position, Vector2.zero));
+				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
 			}
 			bc.StartCoroutine(bc.Shake());
 			int mod = bc.HitsTaken % bc.Mod;

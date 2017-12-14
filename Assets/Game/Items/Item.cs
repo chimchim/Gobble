@@ -1,4 +1,5 @@
 ﻿using Game.Component;
+using Game.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,11 +120,7 @@ public abstract class Item
 		GameObject.Destroy(CurrentGameObject);
 		Recycle();
 
-		var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-		netComp.CurrentEventID++;
-		var destroy = NetDestroyItem.Make(entity, ItemNetID, netComp.CurrentEventID);
-		destroy.Iterations = 1;
-		netComp.NetEvents.Add(destroy);
+		HandleNetEventSystem.AddEventIgnoreOwner(game, entity, NetDestroyItem.Make(entity, ItemNetID));
 	}
 
 	public static void SetInHand(Game.GameManager game, int entity, GameObject item)

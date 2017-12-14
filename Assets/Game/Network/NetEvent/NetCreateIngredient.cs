@@ -36,10 +36,9 @@ public class NetCreateIngredient : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetCreateIngredient Make(int creator, int netEventID, int q, TileMap.IngredientType IngredientType, Vector3 position, Vector2 force)
+	public static NetCreateIngredient Make(int creator, int q, TileMap.IngredientType IngredientType, Vector3 position, Vector2 force)
 	{
 		var evt = _pool.GetNext();
-		evt.NetEventID = netEventID;
 		evt.IngredientType = IngredientType;
 		evt.Force = force;
 		evt.Position = position;

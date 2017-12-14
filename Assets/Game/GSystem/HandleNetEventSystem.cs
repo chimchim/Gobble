@@ -42,6 +42,32 @@ namespace Game.Systems
 			}
 		}
 
+		public static void AddEvent(Game.GameManager game, int ent, NetEvent e)
+		{
+			var netComp = game.Entities.GetComponentOf<NetEventComponent>(ent);
+			netComp.CurrentEventID++;
+			e.NetEventID = netComp.CurrentEventID;
+			netComp.NetEvents.Add(e);
+		}
+
+		public static void AddEventAndHandle(Game.GameManager game, int ent, NetEvent e)
+		{
+			var netComp = game.Entities.GetComponentOf<NetEventComponent>(ent);
+			netComp.CurrentEventID++;
+			e.Iterations = 1;
+			e.NetEventID = netComp.CurrentEventID;
+			e.Handle(game);
+			netComp.NetEvents.Add(e);
+		}
+
+		public static void AddEventIgnoreOwner(Game.GameManager game, int ent, NetEvent e)
+		{
+			var netComp = game.Entities.GetComponentOf<NetEventComponent>(ent);
+			netComp.CurrentEventID++;
+			e.Iterations = 1;
+			e.NetEventID = netComp.CurrentEventID;
+			netComp.NetEvents.Add(e);
+		}
 
 		public void Initiate(GameManager game)
 		{

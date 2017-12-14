@@ -1,6 +1,7 @@
 ﻿using Game;
 using Game.Component;
 using Game.GEntity;
+using Game.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,8 +62,6 @@ public class PickAxe : Item
 
 	private void TryPick(GameManager game, int entity)
 	{
-		var trans = game.Entities.GetEntity(entity).gameObject.transform;
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 		
@@ -71,20 +70,15 @@ public class PickAxe : Item
 			return;
 
 		var bc = hit.transform.GetComponent<BlockComponent>();
-		if (bc != null && !bc.Destroyed)
+		if (bc != null)
 		{
 			bc.HitsTaken++;
 			var diff = bc.HitsTaken / bc.Mod;
 			if (diff > 3 && player.Owner)
 			{
-				bc.Destroyed = true;
-				var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
-				netComp.CurrentEventID++;
-				var destroy = NetDestroyCube.Make(bc.X, bc.Y, netComp.CurrentEventID);
-				netComp.NetEvents.Add(destroy);
+				HandleNetEventSystem.AddEvent(game, entity, NetDestroyCube.Make(bc.X, bc.Y));
 				var position = bc.transform.position;
-				netComp.CurrentEventID++;
-				netComp.NetEvents.Add(NetCreateIngredient.Make(entity, netComp.CurrentEventID, 1, bc.IngredientType, position, Vector2.zero));
+				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
 			}
 			bc.StartCoroutine(bc.Shake());
 			int mod = bc.HitsTaken % bc.Mod;
@@ -99,15 +93,13 @@ public class PickAxe : Item
 	public override void ThrowItem(GameManager game, int entity)
 	{
 		base.ThrowItem(game, entity);
-		var netEvents = game.Entities.GetComponentOf<NetEventComponent>(entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
 		var ent = game.Entities.GetEntity(entity);
 		var position = ent.gameObject.transform.position;
 		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
 
-		netEvents.CurrentEventID++;
-		netEvents.NetEvents.Add(NetCreateItem.Make(entity, netEvents.CurrentEventID, Item.ItemID.Pickaxe, position, force));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Pickaxe, position, force));
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
@@ -122,12 +114,8 @@ public class PickAxe : Item
 		{
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
-			{		
-				var netComp = game.Entities.GetComponentOf<NetEventComponent>(EntityID);
-				netComp.CurrentEventID++;
-				var pickup = NetItemPickup.Make(EntityID, netComp.CurrentEventID, item.ItemNetID);
-				pickup.Iterations = 1;
-				netComp.NetEvents.Add(pickup);
+			{
+				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);
 			}
 		};

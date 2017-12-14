@@ -35,8 +35,6 @@ namespace Game.Systems
 				}
 				if (player.Owner)
 				{
-
-					var netEvents = game.Entities.GetComponentOf<NetEventComponent>(e);
 					var input = game.Entities.GetComponentOf<InputComponent>(e);
 					if (input.E)
 					{
@@ -46,14 +44,11 @@ namespace Game.Systems
 						var force = input.ScreenDirection * 5;
 						if (itemrand == 0)
 						{
-							netEvents.CurrentEventID++;
-							netEvents.NetEvents.Add(NetCreateItem.Make(e, netEvents.CurrentEventID, Item.ItemID.Pickaxe, position, force));
-
+							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Pickaxe, position, force));
 						}
 						if (itemrand == 1)
 						{
-							netEvents.CurrentEventID++;
-							netEvents.NetEvents.Add(NetCreateItem.Make(e, netEvents.CurrentEventID, Item.ItemID.Rope, position, force));
+							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Rope, position, force));
 						}
 					}
 				}

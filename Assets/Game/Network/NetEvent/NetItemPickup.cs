@@ -37,10 +37,9 @@ public class NetItemPickup : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetItemPickup Make(int player, int netEventID, int itemID)
+	public static NetItemPickup Make(int player, int itemID)
 	{
 		var evt = _pool.GetNext();
-		evt.NetEventID = netEventID;
 		evt.ItemID = itemID;
 		evt.Player = player;
 		return evt;

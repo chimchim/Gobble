@@ -41,10 +41,9 @@ public class NetCreateItem : NetEvent
 		return _pool.GetNext();
 	}
 
-    public static NetCreateItem Make(int creator, int netEventID, Item.ItemID itemID, Vector3 position, Vector2 force)
+    public static NetCreateItem Make(int creator, Item.ItemID itemID, Vector3 position, Vector2 force)
 	{
 		var evt = _pool.GetNext();
-		evt.NetEventID = netEventID;
 		evt.ItemID = itemID;
 		evt.Force = force;
 		evt.Position = position;

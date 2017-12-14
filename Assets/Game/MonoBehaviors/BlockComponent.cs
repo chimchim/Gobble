@@ -13,7 +13,6 @@ public class BlockComponent : MonoBehaviour
 	public int Y;
 	int current;
 
-	public bool Destroyed;
 
 	public void SetResource(Game.GameManager game)
 	{

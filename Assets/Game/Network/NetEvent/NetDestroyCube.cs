@@ -37,10 +37,9 @@ public class NetDestroyCube : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetDestroyCube Make(int x, int y, int netEventID)
+	public static NetDestroyCube Make(int x, int y)
 	{
 		var evt = _pool.GetNext();
-		evt.NetEventID = netEventID;
 		evt.X = x;
 		evt.Y = y;
 		return evt;
