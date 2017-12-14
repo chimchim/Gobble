@@ -284,10 +284,7 @@ public partial class TileMap
 		{
 			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
 			
-			if (i+start == 0)
-			{
-				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_1.gameObject);
-			}
+			if (i+start == 0) go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_1.gameObject);
 			if (i + start == 1)
 			{
 				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_2.gameObject);
@@ -296,20 +293,28 @@ public partial class TileMap
 				{
 					var go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level2_1.gameObject);
 					go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2, 0) * 1.28f;
-					go1.transform.position -= new Vector3(0, 0.49f, 0);
+					go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
 					for (int j = 1; j < 8; j++)
 					{
 						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
-						if (up == TileType.Air)
+						if (up == TileType.Air && j < 7)
 						{
 							int mod = j % 2;
-							if(mod == 1)go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_1.gameObject);
+							if (mod == 1) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_1.gameObject);
 							if (mod == 0) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level4_1.gameObject);
 							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.49f, 0);
+							go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
 						}
 						else
+						{
+							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_2.gameObject);
+							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
+							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
+							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_1.gameObject);
+							go1.transform.position = new Vector3(tops[i].x - 1, tops[i].y + 2 + j, 0) * 1.28f;
+							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
 							break;
+						}	
 					}
 				}
 			}
@@ -321,29 +326,34 @@ public partial class TileMap
 				{
 					var go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level2_2.gameObject);
 					go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2, 0) * 1.28f;
-					go1.transform.position -= new Vector3(0, 0.49f, 0);
+					go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
 					for (int j = 1; j < 8; j++)
 					{
 						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
-						if (up == TileType.Air)
+						if (up == TileType.Air && j <7)
 						{
 							int mod = j % 2;
 							if (mod == 1) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_2.gameObject);
 							if (mod == 0) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level4_2.gameObject);
 							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.49f, 0);
+							go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
 						}
 						else
+						{
+							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_3.gameObject);
+							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
+							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
+							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_4.gameObject);
+							go1.transform.position = new Vector3(tops[i].x + 1, tops[i].y + 2 + j, 0) * 1.28f;
+							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
 							break;
+						}
 					}
 				}
 			}
-			if (i + start == 3)
-			{
-				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_4.gameObject);
-			}
+			if (i + start == 3)go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_4.gameObject);
 			go.transform.position = new Vector3(tops[i].x, tops[i].y + 1, 0) * 1.28f;
-			go.transform.position -= new Vector3(0, 0.49f, 0);
+			go.transform.position -= new Vector3(0, 0.49f, -0.2f);
 		} 
 		#endregion
 
