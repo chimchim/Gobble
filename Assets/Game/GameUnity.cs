@@ -132,6 +132,8 @@ public class GameUnity : MonoBehaviour
 	{
 		GetComponent<FollowCamera>().player = player;
 		MiniMap.player = player;
+		InventoryBackpack.gameObject.SetActive(true);
+		MainInventory.gameObject.SetActive(true);
 		inventory.InventoryBackpack = InventoryBackpack;
 		inventory.MainInventory = MainInventory;
 	}

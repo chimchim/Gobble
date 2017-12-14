@@ -4,6 +4,7 @@ using System.Collections;
 [CreateAssetMenu(fileName = "Data", menuName = "Variables/Minerals", order = 1)]
 public class MineralsGenVariables : ScriptableObject
 {
+	public int TreeOneIn = 8;
 	//Rock
 	public int RockMiddleOneIn = 6;
 
@@ -27,4 +28,6 @@ public class MineralsGenVariables : ScriptableObject
 	public int CopperMod = 3;
 	public int IronMod = 4;
 	public int GoldMod = 5;
+
+	
 }

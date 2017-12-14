@@ -204,8 +204,160 @@ public partial class TileMap
 		CreateGold(game);
 		CreateIron(game);
 		CreateCopper(game);
+		_enlisted = null;
+		MineralTypes = null;
+		BlockIslandSize = null;
+		Minerals = null;
+		CreateTrees(game);
 	}
 
+	public void CreateTrees(GameManager game)
+	{
+		int fullWidhth = GameUnity.FullWidth;
+		int fullHeight = GameUnity.FullHeight;
+		int chance = 0;
+		_enlisted = new bool[GameUnity.FullWidth, GameUnity.FullHeight];
+		List<Vector2> okTops = new List<Vector2>();
+		for (int y = 0; y < fullHeight - 2; y++)
+		{
+			for (int x = 0; x < fullWidhth; x++)
+			{
+				var type = BlockTypes[x, y];
+				
+				var toper = (type == TileType.Top || type == TileType.TopRight || type == TileType.TopLeft) && !_enlisted[x, y];
+				if (toper)
+				{
+					if (CheckAlone(x, y))
+						continue;
+					
+					for (int i = 3; i > 0; i--)
+					{
+						var otherType = BlockTypes[x - i, y];
+						var isTop = (otherType == TileType.Top || otherType == TileType.TopRight || otherType == TileType.TopLeft) && !_enlisted[x - i, y];
+						if (isTop)
+						{
+							chance += 1;
+							okTops.Add(new Vector2(x - i, y));
+						}
+						else
+							okTops.Clear();
+					}
+					okTops.Add(new Vector2(x, y));
+					for (int i = 1; i < 4; i++)
+					{
+						if (okTops.Count == 4)
+							break;
+						var otherType = BlockTypes[x + i, y];
+						var isTop = (otherType == TileType.Top || otherType == TileType.TopRight || otherType == TileType.TopLeft) && !_enlisted[x + i, y];
+						if (isTop)
+						{
+							chance += 1;
+							okTops.Add(new Vector2(x + i, y));
+						}
+						else
+							break;	
+					}
+					int create = game.CurrentRandom.Next(0, minsVariables.TreeOneIn - chance);
+					if ( okTops.Count > 1)
+					{
+						CreateTree(game, okTops);
+					}
+					okTops.Clear();
+					chance = 0;
+				}
+			}
+		}
+	}
+
+	void CreateTree(GameManager game, List<Vector2> tops)
+	{
+		GameObject go = null;
+		var leftType = BlockTypes[(int)tops[0].x -1, (int)tops[0].y + 1];
+		var rightType = BlockTypes[(int)tops[0].x + 1, (int)tops[0].y + 1];
+		int start = 0;
+		if (leftType != TileType.Air)
+		{
+			start = 4 - tops.Count;
+		}
+		#region Ground
+		for (int i = 0; i < tops.Count; i++)
+		{
+			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
+			
+			if (i+start == 0)
+			{
+				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_1.gameObject);
+			}
+			if (i + start == 1)
+			{
+				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_2.gameObject);
+				var up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2];
+				if (up == TileType.Air)
+				{
+					var go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level2_1.gameObject);
+					go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2, 0) * 1.28f;
+					go1.transform.position -= new Vector3(0, 0.49f, 0);
+					for (int j = 1; j < 8; j++)
+					{
+						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
+						if (up == TileType.Air)
+						{
+							int mod = j % 2;
+							if(mod == 1)go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_1.gameObject);
+							if (mod == 0) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level4_1.gameObject);
+							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
+							go1.transform.position -= new Vector3(0, 0.49f, 0);
+						}
+						else
+							break;
+					}
+				}
+			}
+			if (i + start == 2)
+			{
+				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_3.gameObject);
+				var up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2];
+				if (up == TileType.Air)
+				{
+					var go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level2_2.gameObject);
+					go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2, 0) * 1.28f;
+					go1.transform.position -= new Vector3(0, 0.49f, 0);
+					for (int j = 1; j < 8; j++)
+					{
+						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
+						if (up == TileType.Air)
+						{
+							int mod = j % 2;
+							if (mod == 1) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_2.gameObject);
+							if (mod == 0) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level4_2.gameObject);
+							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
+							go1.transform.position -= new Vector3(0, 0.49f, 0);
+						}
+						else
+							break;
+					}
+				}
+			}
+			if (i + start == 3)
+			{
+				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_4.gameObject);
+			}
+			go.transform.position = new Vector3(tops[i].x, tops[i].y + 1, 0) * 1.28f;
+			go.transform.position -= new Vector3(0, 0.49f, 0);
+		} 
+		#endregion
+
+	}
+
+	bool CheckAlone(int x, int y)
+	{
+		var leftType = BlockTypes[x - 1, y];
+		var rightType = BlockTypes[x + 1, y];
+		var right = (rightType == TileType.Top || rightType == TileType.TopRight) && !_enlisted[x + 1, y];
+		var left = (leftType == TileType.Top || leftType == TileType.TopLeft) && !_enlisted[x - 1, y];
+		var alone = !right && !left;
+		return alone;
+	}
 	public void CreateRocks(GameManager game)
 	{
 		int startX = GameUnity.WidhtBound;
@@ -688,7 +840,6 @@ public partial class TileMap
 				}
 			}
 		}
-		_enlisted = null;
 	}
 
 	private void SetBlockType()
@@ -720,21 +871,21 @@ public partial class TileMap
 				{
 					newMat = Resources.Load("Tiles/TopRight", typeof(Sprite)) as Sprite;
 					Blocks[x, y].name = "TopRight";
-					if (BlockTypes[x, y] != TileType.Boundry)
+					//if (BlockTypes[x, y] != TileType.Boundry)
 						BlockTypes[x, y] = TileType.TopRight;
 				}
 				if (!top && !left)
 				{
 					newMat = Resources.Load("Tiles/TopLeft", typeof(Sprite)) as Sprite;
 					Blocks[x, y].name = "TopLeft";
-					if (BlockTypes[x, y] != TileType.Boundry)
+					//if (BlockTypes[x, y] != TileType.Boundry)
 						BlockTypes[x, y] = TileType.TopLeft;
 				}
 				if (!top && right && left)
 				{
 					newMat = Resources.Load("Tiles/Top", typeof(Sprite)) as Sprite;
 					Blocks[x, y].name = "Top";
-					if (BlockTypes[x, y] != TileType.Boundry)
+					//if (BlockTypes[x, y] != TileType.Boundry)
 						BlockTypes[x, y] = TileType.Top;
 				}
 				if (top && right && left && bot)
