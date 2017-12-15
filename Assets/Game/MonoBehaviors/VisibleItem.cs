@@ -49,7 +49,7 @@ public class VisibleItem : MonoBehaviour
 		{
 			Force.x = 0;
 		}
-		transform.position = tempPos;
+		transform.position = new Vector3(tempPos.x, tempPos.y, -0.15f);
 
 
 	}

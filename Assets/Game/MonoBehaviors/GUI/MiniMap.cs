@@ -16,7 +16,8 @@ public class MiniMap : MonoBehaviour
 
 	void LateUpdate()
 	{
-
+		if (player == null)
+			return;
 		transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -12);
 	}
 }

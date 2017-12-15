@@ -123,7 +123,7 @@ public class Ingredient : Item
 	{
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
-		var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
 		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
 		if (hit.transform == null)
 			return;
@@ -139,7 +139,7 @@ public class Ingredient : Item
 				var position = bc.transform.position;
 				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
 			}
-			bc.StartCoroutine(bc.Shake());
+			bc.StartShake();
 			int mod = bc.HitsTaken % bc.Mod;
 
 			if (mod == 0)

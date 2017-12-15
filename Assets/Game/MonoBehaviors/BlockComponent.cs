@@ -16,6 +16,8 @@ public class BlockComponent : MonoBehaviour
 
 	public void SetResource(Game.GameManager game)
 	{
+		if (Renderer == null)
+			return;
 		current++;
 		if (current == 1)
 			Renderer.sprite = game.GameResources.ScriptResources.Crack1;
@@ -25,6 +27,13 @@ public class BlockComponent : MonoBehaviour
 			Renderer.sprite = game.GameResources.ScriptResources.Crack3;
 		if (current == 4)
 			Renderer.sprite = game.GameResources.ScriptResources.Crack4;
+	}
+	public void StartShake()
+	{
+		if (Renderer == null)
+			StartCoroutine(ShakeMain());
+		else
+			StartCoroutine(Shake());
 	}
 	public IEnumerator Shake()
 	{
@@ -46,5 +55,28 @@ public class BlockComponent : MonoBehaviour
 			}
 			yield return null;
 		}
+	}
+	public IEnumerator ShakeMain()
+	{
+		float counter = 0f;
+		Vector3 cameraPosition = transform.position;
+		float maxX = 0.2f;
+		float maxY = 0.2f;
+		float ShakeTime = 0.2f;
+		while (true)
+		{
+			counter += Time.deltaTime;
+			if (counter >= ShakeTime)
+			{
+				transform.position = cameraPosition;
+				yield break;
+			}
+			else
+			{
+				transform.position = cameraPosition + new Vector3((ShakeTime - counter) * Random.Range(-maxX, maxX), (ShakeTime - counter) * Random.Range(-maxY, maxY));
+			}
+			yield return null;
+		}
+		
 	}
 }

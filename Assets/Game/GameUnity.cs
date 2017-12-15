@@ -92,6 +92,7 @@ public class GameUnity : MonoBehaviour
 	public GameObject MenuObject;
 	public GameObject MiniMapCanvas;
 	public MiniMap MiniMap;
+	public GameObject Canvas;
 	public static Vector3 StartingPosition;
 	public Transform StartPos;
 	private bool _miniMapActive = true;
@@ -152,6 +153,10 @@ public class GameUnity : MonoBehaviour
 		{
 			buildConsoleActive = !buildConsoleActive;
 			BuildConsole.SetActive(buildConsoleActive);
+		}
+		if (UnityEngine.Input.GetKeyDown(KeyCode.C))
+		{
+			Canvas.SetActive(false);
 		}
 	}
 	void FixedUpdate()

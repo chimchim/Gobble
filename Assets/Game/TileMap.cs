@@ -11,7 +11,8 @@ public partial class TileMap
 		Rock,
 		Copper,
 		Iron,
-		Gold
+		Gold,
+		TreeChunk
 	}
 	public enum TileType
 	{
@@ -258,7 +259,7 @@ public partial class TileMap
 							break;	
 					}
 					int create = game.CurrentRandom.Next(0, minsVariables.TreeOneIn - chance);
-					if ( okTops.Count > 1)
+					if (okTops.Count > 1)
 					{
 						CreateTree(game, okTops);
 					}
@@ -268,12 +269,21 @@ public partial class TileMap
 			}
 		}
 	}
-
+	void CreateBlockTree(GameManager game, GameObject go, float x, float y)
+	{
+		var go1 = GameObject.Instantiate(go);
+		go1.transform.position = new Vector3(x, y, 0) * 1.28f;
+		go1.transform.position -= new Vector3(0, 0, 0.1f);
+		go1.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
+		go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
+		go1.GetComponent<BlockComponent>().X = (int)x;
+		go1.GetComponent<BlockComponent>().Y = (int)y;
+		Blocks[(int)x, (int)y] = go1;
+	}
 	void CreateTree(GameManager game, List<Vector2> tops)
 	{
 		GameObject go = null;
 		var leftType = BlockTypes[(int)tops[0].x -1, (int)tops[0].y + 1];
-		var rightType = BlockTypes[(int)tops[0].x + 1, (int)tops[0].y + 1];
 		int start = 0;
 		if (leftType != TileType.Air)
 		{
@@ -284,35 +294,28 @@ public partial class TileMap
 		{
 			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
 			
-			if (i+start == 0) go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_1.gameObject);
+			if (i+start == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level1_1.gameObject, tops[i].x, tops[i].y + 1);
 			if (i + start == 1)
 			{
+				CreateBlockTree(game, game.GameResources.Prefabs.Level1_2.gameObject, tops[i].x, tops[i].y + 1);
 				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_2.gameObject);
 				var up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2];
 				if (up == TileType.Air)
 				{
-					var go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level2_1.gameObject);
-					go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2, 0) * 1.28f;
-					go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
+					CreateBlockTree(game, game.GameResources.Prefabs.Level2_1.gameObject, tops[i].x, tops[i].y + 2);
 					for (int j = 1; j < 8; j++)
 					{
 						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
 						if (up == TileType.Air && j < 7)
 						{
 							int mod = j % 2;
-							if (mod == 1) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_1.gameObject);
-							if (mod == 0) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level4_1.gameObject);
-							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
+							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_1.gameObject, tops[i].x, tops[i].y + 2 + j);
+							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_1.gameObject, tops[i].x, tops[i].y + 2 + j);
 						}
 						else
 						{
-							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_2.gameObject);
-							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
-							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_1.gameObject);
-							go1.transform.position = new Vector3(tops[i].x - 1, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
+							CreateBlockTree(game, game.GameResources.Prefabs.Level5_2.gameObject, tops[i].x, tops[i].y + 2 + j);
+							CreateBlockTree(game, game.GameResources.Prefabs.Level5_1.gameObject, tops[i].x - 1, tops[i].y + 2 + j);
 							break;
 						}	
 					}
@@ -320,40 +323,30 @@ public partial class TileMap
 			}
 			if (i + start == 2)
 			{
-				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_3.gameObject);
+				CreateBlockTree(game, game.GameResources.Prefabs.Level1_3.gameObject, tops[i].x, tops[i].y + 1);
 				var up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2];
 				if (up == TileType.Air)
 				{
-					var go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level2_2.gameObject);
-					go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2, 0) * 1.28f;
-					go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
+					CreateBlockTree(game, game.GameResources.Prefabs.Level2_2.gameObject, tops[i].x, tops[i].y + 2);
 					for (int j = 1; j < 8; j++)
 					{
 						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
 						if (up == TileType.Air && j <7)
 						{
 							int mod = j % 2;
-							if (mod == 1) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level3_2.gameObject);
-							if (mod == 0) go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level4_2.gameObject);
-							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.49f, -0.2f);
+							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_2.gameObject, tops[i].x, tops[i].y + 2 + j);
+							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_2.gameObject, tops[i].x, tops[i].y + 2 + j);
 						}
 						else
 						{
-							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_3.gameObject);
-							go1.transform.position = new Vector3(tops[i].x, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
-							go1 = GameObject.Instantiate(game.GameResources.Prefabs.Level5_4.gameObject);
-							go1.transform.position = new Vector3(tops[i].x + 1, tops[i].y + 2 + j, 0) * 1.28f;
-							go1.transform.position -= new Vector3(0, 0.45f, -0.2f);
+							CreateBlockTree(game, game.GameResources.Prefabs.Level5_3.gameObject, tops[i].x, tops[i].y + 2 + j);
+							CreateBlockTree(game, game.GameResources.Prefabs.Level5_4.gameObject, tops[i].x + 1, tops[i].y + 2 + j);
 							break;
 						}
 					}
 				}
 			}
-			if (i + start == 3)go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_4.gameObject);
-			go.transform.position = new Vector3(tops[i].x, tops[i].y + 1, 0) * 1.28f;
-			go.transform.position -= new Vector3(0, 0.49f, -0.2f);
+			if (i + start == 3) CreateBlockTree(game, game.GameResources.Prefabs.Level1_4.gameObject, tops[i].x, tops[i].y + 1);
 		} 
 		#endregion
 
