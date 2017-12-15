@@ -18,6 +18,7 @@ namespace Game
         public EntityManager Entities { get { return _entityManager; } }
 		public SystemManager Systems { get { return _systemManager; } }
 
+		public LayerMasksVariables LayerMasks;
 		public GameResources GameResources;
 		public TileMap TileMap;
 		private GameUnity _gameUnity;
@@ -120,7 +121,7 @@ namespace Game
 			GameResources.Prefabs = _gameUnity.PrefabData;
 			GameResources.AllItems = _gameUnity.AllItemsData;
 			GameResources.ScriptResources = _gameUnity.ResourceData;
-
+			LayerMasks = _gameUnity.LayerMasks;
 			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 			

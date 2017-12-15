@@ -180,6 +180,7 @@
     <Compile Include="Assets\Game\ScriptableObjects\Items\PickAxeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\RopeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItem.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\LayerMasksVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MineralsGenVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\PrefabsVariables.cs" />

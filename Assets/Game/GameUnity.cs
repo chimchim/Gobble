@@ -24,6 +24,7 @@ public class GameUnity : MonoBehaviour
 	public RopeDataVariables RopeData;
 	public PrefabsVariables PrefabData;
 	public ScriptableResources ResourceData;
+	public LayerMasksVariables LayerMasks;
 	[SerializeField]
 	[Header("Gounded Variables")]
 	public static float Weight;

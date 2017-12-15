@@ -60,8 +60,8 @@ public class BlockComponent : MonoBehaviour
 	{
 		float counter = 0f;
 		Vector3 cameraPosition = transform.position;
-		float maxX = 0.2f;
-		float maxY = 0.2f;
+		float maxX = 0.3f;
+		float maxY = 0.3f;
 		float ShakeTime = 0.2f;
 		while (true)
 		{

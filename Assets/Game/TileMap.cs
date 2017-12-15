@@ -269,6 +269,16 @@ public partial class TileMap
 			}
 		}
 	}
+	void CreatTwig(GameManager game, GameObject go, float x, float y)
+	{
+		var go1 = GameObject.Instantiate(go);
+		go1.transform.position = new Vector3(x, y, 0) * 1.28f;
+		go1.transform.position -= new Vector3(0, 0, 0.2f);
+		go1.gameObject.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
+		go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
+		go1.GetComponent<BlockComponent>().X = (int)x;
+		go1.GetComponent<BlockComponent>().Y = (int)y;
+	}
 	void CreateBlockTree(GameManager game, GameObject go, float x, float y)
 	{
 		var go1 = GameObject.Instantiate(go);
@@ -289,6 +299,7 @@ public partial class TileMap
 		{
 			start = 4 - tops.Count;
 		}
+		int treeLength = game.CurrentRandom.Next(4, 12);
 		#region Ground
 		for (int i = 0; i < tops.Count; i++)
 		{
@@ -298,16 +309,17 @@ public partial class TileMap
 			if (i + start == 1)
 			{
 				CreateBlockTree(game, game.GameResources.Prefabs.Level1_2.gameObject, tops[i].x, tops[i].y + 1);
-				go = GameObject.Instantiate(game.GameResources.Prefabs.Level1_2.gameObject);
 				var up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2];
 				if (up == TileType.Air)
 				{
 					CreateBlockTree(game, game.GameResources.Prefabs.Level2_1.gameObject, tops[i].x, tops[i].y + 2);
-					for (int j = 1; j < 8; j++)
+					for (int j = 1; j < treeLength; j++)
 					{
 						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
-						if (up == TileType.Air && j < 7)
+						if (up == TileType.Air && j < treeLength -1)
 						{
+							int twig = game.CurrentRandom.Next(0, 2);
+							if(twig == 0) CreatTwig(game, game.GameResources.Prefabs.TwigLeft.gameObject, tops[i].x, tops[i].y + 2 + j);
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_1.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_1.gameObject, tops[i].x, tops[i].y + 2 + j);
@@ -315,7 +327,8 @@ public partial class TileMap
 						else
 						{
 							CreateBlockTree(game, game.GameResources.Prefabs.Level5_2.gameObject, tops[i].x, tops[i].y + 2 + j);
-							CreateBlockTree(game, game.GameResources.Prefabs.Level5_1.gameObject, tops[i].x - 1, tops[i].y + 2 + j);
+							if (BlockTypes[(int)tops[0].x - 1, (int)tops[0].y + 2 + j] == TileType.Air)
+								CreateBlockTree(game, game.GameResources.Prefabs.Level5_1.gameObject, tops[i].x - 1, tops[i].y + 2 + j);
 							break;
 						}	
 					}
@@ -328,10 +341,10 @@ public partial class TileMap
 				if (up == TileType.Air)
 				{
 					CreateBlockTree(game, game.GameResources.Prefabs.Level2_2.gameObject, tops[i].x, tops[i].y + 2);
-					for (int j = 1; j < 8; j++)
+					for (int j = 1; j < treeLength; j++)
 					{
 						up = BlockTypes[(int)tops[0].x, (int)tops[0].y + 2 + j +2];
-						if (up == TileType.Air && j <7)
+						if (up == TileType.Air && j < treeLength - 1)
 						{
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_2.gameObject, tops[i].x, tops[i].y + 2 + j);
@@ -340,7 +353,8 @@ public partial class TileMap
 						else
 						{
 							CreateBlockTree(game, game.GameResources.Prefabs.Level5_3.gameObject, tops[i].x, tops[i].y + 2 + j);
-							CreateBlockTree(game, game.GameResources.Prefabs.Level5_4.gameObject, tops[i].x + 1, tops[i].y + 2 + j);
+							if(BlockTypes[(int)tops[0].x + 1, (int)tops[0].y + 2 + j] == TileType.Air)
+								CreateBlockTree(game, game.GameResources.Prefabs.Level5_4.gameObject, tops[i].x + 1, tops[i].y + 2 + j);
 							break;
 						}
 					}

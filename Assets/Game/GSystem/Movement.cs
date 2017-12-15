@@ -10,7 +10,12 @@ namespace Game.Systems
     public class Movement : ISystem
     {
         private float _gravity = 20;
-
+		public enum LayerMaskEnum
+		{
+			Grounded,
+			Roped,
+			Rope
+		}
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent>();
 		
 		public void Update(GameManager game, float delta)
@@ -57,6 +62,10 @@ namespace Game.Systems
 		{
 			float fullRayDistance = yoffset + Mathf.Abs(y);
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+			if (y < 0)
+			{
+				layerMask |= (1 << LayerMask.NameToLayer("Platform"));
+			}
 			float sign = Mathf.Sign(y);
 			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, 0, 0) + pos;
 			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, 0, 0) + pos;

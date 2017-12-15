@@ -28,4 +28,6 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Level5_2;
 	public GameObject Level5_3;
 	public GameObject Level5_4;
+	public GameObject TwigLeft;
+	public GameObject TwigRight;
 }
