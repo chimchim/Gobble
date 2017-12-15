@@ -45,13 +45,14 @@ namespace Game.Systems
 					bool horGrounded = false;
 
 					Vector3 tempPos = otherTransform.position;
-					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, out vertGrounded);
+					MappedMasks masks = game.LayerMasks.MappedMasks[movement.CurrentLayer];
+					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, masks, out vertGrounded);
 					tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, stepX, xOffset, yOffset, out horGrounded);
 					bool vertHorGrounded = vertGrounded || horGrounded;
 
 					tempPos = otherTransform.position;
 					tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, stepX, xOffset, yOffset, out horGrounded);
-					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, out vertGrounded);
+					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, masks, out vertGrounded);
 					bool horVertGrounded = vertGrounded || horGrounded;
 
 					if ((vertHorGrounded && horVertGrounded) || diff.magnitude > 8)

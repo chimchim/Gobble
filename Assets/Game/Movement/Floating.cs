@@ -17,6 +17,7 @@ namespace Game.Movement
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
+			movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Grounded;
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var entityGameObject = entity.gameObject;
@@ -39,7 +40,8 @@ namespace Game.Movement
 			bool horGrounded = false;
 
 			Vector3 tempPos = entityGameObject.transform.position;
-			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
+			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer];
+			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
 			entityGameObject.transform.position = tempPos;
 

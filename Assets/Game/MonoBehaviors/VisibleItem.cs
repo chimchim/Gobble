@@ -15,11 +15,26 @@ public class VisibleItem : MonoBehaviour
 	Vector2 _offset;
 	bool grounded;
 
+	MappedMasks Mask;
 	public void OnEnable()
 	{
 		var offset = GetComponent<BoxCollider2D>();
 		_offset.x = offset.size.x / 2;
 		_offset.y = offset.size.y / 2;
+		#region Masks
+		Mask = new MappedMasks
+		{
+			UpLayers = new LayerMask[]
+			{
+				LayerMask.GetMask("Collideable")
+			},
+			DownLayers = new LayerMask[]
+			{
+				LayerMask.GetMask("Collideable"),
+				LayerMask.GetMask("Platform")
+			}
+		}; 
+		#endregion
 	}
 
 	public void FixedUpdate()
@@ -37,7 +52,8 @@ public class VisibleItem : MonoBehaviour
 		Vector3 tempPos = transform.position;
 		bool vertGrounded = false;
 		bool horGrounded = false;
-		tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, _offset.x, _offset.y, out vertGrounded);
+		
+		tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, _offset.x, _offset.y, Mask, out vertGrounded);
 		tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, _offset.x, _offset.y, out horGrounded);
 		if (vertGrounded)
 		{

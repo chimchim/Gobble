@@ -58,14 +58,27 @@ namespace Game.Systems
 			animator.SetBool("Jump", true);
 
 		}
-		public static Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, out bool grounded)
+		public static Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, MappedMasks masks, out bool grounded)
 		{
 			float fullRayDistance = yoffset + Mathf.Abs(y);
-			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+			LayerMask layerMask = 0;
+			#region Layers
 			if (y < 0)
 			{
-				layerMask |= (1 << LayerMask.NameToLayer("Platform"));
+				for (int i = 0; i < masks.DownLayers.Length; i++)
+				{
+					layerMask |= masks.DownLayers[i];
+				}
 			}
+			else
+			{
+				for (int i = 0; i < masks.UpLayers.Length; i++)
+				{
+					layerMask |= masks.UpLayers[i];
+				}
+			} 
+			#endregion
+
 			float sign = Mathf.Sign(y);
 			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, 0, 0) + pos;
 			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, 0, 0) + pos;

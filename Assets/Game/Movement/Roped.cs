@@ -83,6 +83,7 @@ namespace Game.Movement
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
+			movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Roped;
 			var player = game.Entities.GetComponentOf<Player>(entityID);
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Stats>(entityID);
@@ -265,7 +266,9 @@ namespace Game.Movement
 			bool horGrounded = false;
 			Vector3 oldPos = entityGameObject.transform.position;
 			Vector3 tempPos = entityGameObject.transform.position;
-			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, out vertGrounded);
+
+			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer];
+			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
 			bool vertHorGrounded = vertGrounded || horGrounded;
 			if (vertHorGrounded)
@@ -274,7 +277,7 @@ namespace Game.Movement
 				bool horGrounded2 = false;
 				var tempPos2 = oldPos;
 				tempPos2 = Game.Systems.Movement.HorizontalMovement(tempPos2, xMovement, xOffset, yOffset, out horGrounded2);
-				tempPos2 = Game.Systems.Movement.VerticalMovement(tempPos2, yMovement, xOffset, yOffset, out vertGrounded2);
+				tempPos2 = Game.Systems.Movement.VerticalMovement(tempPos2, yMovement, xOffset, yOffset, mask, out vertGrounded2);
 				bool horVertGrounded = vertGrounded2 || horGrounded2;
 				if (!horVertGrounded)
 				{

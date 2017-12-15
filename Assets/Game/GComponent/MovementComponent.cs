@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Game.Movement;
+using LayerMaskEnum = Game.Systems.Movement.LayerMaskEnum;
+
 namespace Game.Component
 {
     public class MovementComponent : GComponent
@@ -18,6 +20,7 @@ namespace Game.Component
 		public RopedData OldRope;
 		public List<RopedData> RopeList;
 
+		public int CurrentLayer;
 		public struct RopedData
 		{
 			public float Vel;
