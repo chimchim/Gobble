@@ -60,8 +60,9 @@ namespace Game.Systems
 		}
 		public static Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, MappedMasks masks, out bool grounded)
 		{
-			float fullRayDistance = yoffset + Mathf.Abs(y);
-			LayerMask layerMask = 0;
+			float half = yoffset - (yoffset/10);
+			float fullRayDistance = yoffset + Mathf.Abs(y) - half;
+			LayerMask layerMask = 0;// = masks.DownLayers[0];
 			#region Layers
 			if (y < 0)
 			{
@@ -80,8 +81,8 @@ namespace Game.Systems
 			#endregion
 
 			float sign = Mathf.Sign(y);
-			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, 0, 0) + pos;
-			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, 0, 0) + pos;
+			Vector3 firstStartY = new Vector3(-Xoffset + 0.05f, half * sign, 0) + pos;
+			Vector3 secondStartY = new Vector3(Xoffset - 0.05f, half * sign, 0) + pos;
 			RaycastHit2D[] hitsY = new RaycastHit2D[2];
 			hitsY[0] = Physics2D.Raycast(firstStartY, Vector3.up * sign, fullRayDistance, layerMask);
 			hitsY[1] = Physics2D.Raycast(secondStartY, Vector3.up * sign, fullRayDistance, layerMask);
@@ -94,8 +95,7 @@ namespace Game.Systems
 				if (hitsY[i].collider != null && hitsY[i].distance > 0)
 				{
 					float distance = Mathf.Abs(hitsY[i].point.y - pos.y);
-					float moveAmount = (fullRayDistance - distance);
-					moveAmount = (distance * sign) + (yoffset * -sign);
+					float moveAmount = (distance * sign) + ((yoffset) * -sign);
 					movement = new Vector3(pos.x, pos.y + (moveAmount), 0);
 					grounded = true;
 					break;
