@@ -25,6 +25,10 @@ namespace Game.Movement
 			var animator = entity.Animator;
 			var entityGameObject = entity.gameObject;
 
+			if (input.Axis.y < 0)
+			{
+				movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Roped;
+			}
 			animator.SetBool("Run", false);
 			animator.SetBool("Roped", false);
 			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
