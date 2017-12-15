@@ -76,7 +76,7 @@ public class GraphicRope : MonoBehaviour {
 			Vector2 currentMove = CurrentVelocity * Time.deltaTime;
 			CurrentVelocity.y += -GameUnity.Gravity;
 
-			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
+			var layerMask = 1 << LayerMask.NameToLayer("Collideable") | 1 << LayerMask.NameToLayer("Treetop");
 			Vector2 playerPos = new Vector2(PlayerTransform.position.x, PlayerTransform.position.y);
 			Vector2 currentL = (NewRopePosition - playerPos);
 
@@ -179,6 +179,11 @@ public class GraphicRope : MonoBehaviour {
 				Ropes.Add(newRope.transform);
 			}
 			var pos = first +(direction * 0.51f * (ropeAmount - 1)) + (direction * 0.255f) + (direction * 0.255f) + (direction * extra / 2);
+			if (float.IsNaN(pos.x))
+			{
+				Debug.LogError("SHIT IS NAN");
+				continue;
+			}
 			Ropes[drawIndex].position = pos;
 			Ropes[drawIndex].name = "jerry";
 			Ropes[drawIndex].localScale = new Vector3(extra / 0.51f, Ropes[drawIndex].localScale.y, Ropes[drawIndex].localScale.z);

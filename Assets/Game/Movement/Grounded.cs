@@ -7,11 +7,14 @@ using UnityEngine;
 using Game.Actions;
 using Game.GEntity;
 using Game.Component;
+using Game.Systems;
 
 namespace Game.Movement
 {
 	public class Grounded : MovementState
 	{
+		bool groundedLast;
+		float groundTimer;
 		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
@@ -60,9 +63,10 @@ namespace Game.Movement
 			{
 				animator.SetBool("Run", true);
 			}
-			if ((input.Space && movement.Grounded && player.Owner) || input.NetworkJump)
+			if ((input.Space && (movement.Grounded || groundTimer < 0.2f) && player.Owner))
 			{
-				Game.Systems.Movement.DoJump(game, player.EntityID);
+				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
+				//Game.Systems.Movement.DoJump(game, player.EntityID);
 			}
 
 			float yMovement = movement.CurrentVelocity.y * delta + (movement.ForceVelocity.y * delta);
@@ -73,13 +77,17 @@ namespace Game.Movement
 
 			bool vertGrounded = false;
 			bool horGrounded = false;
-
+			if (!movement.Grounded)
+			{
+				groundTimer += delta;
+			}
 			Vector3 tempPos = entityGameObject.transform.position;
 			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer];
-			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			entityGameObject.transform.position = tempPos;
 			movement.Grounded = vertGrounded;
+			
 			if (vertGrounded)
 			{
 				animator.SetBool("Jump", false);
@@ -97,6 +105,8 @@ namespace Game.Movement
 				}
 				movement.FallingTime = 0;
 				movement.CurrentVelocity.y = 0;
+				groundedLast = true;
+				groundTimer = 0;
 			}
 			else
 			{
@@ -120,7 +130,7 @@ namespace Game.Movement
 				movement.CurrentState = MovementComponent.MoveState.Swimming;
 				Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
 			}
-
+			
 		}
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{

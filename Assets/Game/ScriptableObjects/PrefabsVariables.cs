@@ -30,4 +30,5 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Level5_4;
 	public GameObject TwigLeft;
 	public GameObject TwigRight;
+	public GameObject TwigMiddle;
 }

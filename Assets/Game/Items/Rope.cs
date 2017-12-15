@@ -190,7 +190,6 @@ public class Rope : Item
 			resources.GraphicRope.DeActivate();
 			movement.RopeList.Clear();
 			movement.CurrentState = MovementComponent.MoveState.Grounded;
-			GetRopes(byteData, ref currentIndex, movement);
 		}
 	
 		RopeSync(pack, otherEntity, movement, byteData, ref currentIndex);

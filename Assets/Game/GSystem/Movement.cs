@@ -66,17 +66,11 @@ namespace Game.Systems
 			#region Layers
 			if (y < 0)
 			{
-				for (int i = 0; i < masks.DownLayers.Length; i++)
-				{
-					layerMask |= masks.DownLayers[i];
-				}
+				layerMask = masks.DownLayers;
 			}
 			else
 			{
-				for (int i = 0; i < masks.UpLayers.Length; i++)
-				{
-					layerMask |= masks.UpLayers[i];
-				}
+				layerMask = masks.UpLayers;
 			} 
 			#endregion
 

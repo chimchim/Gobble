@@ -24,15 +24,8 @@ public class VisibleItem : MonoBehaviour
 		#region Masks
 		Mask = new MappedMasks
 		{
-			UpLayers = new LayerMask[]
-			{
-				LayerMask.GetMask("Collideable")
-			},
-			DownLayers = new LayerMask[]
-			{
-				LayerMask.GetMask("Collideable"),
-				LayerMask.GetMask("Platform")
-			}
+			UpLayers = LayerMask.GetMask("Collideable"),
+			DownLayers = LayerMask.GetMask("Collideable") | LayerMask.GetMask("Platform") | LayerMask.GetMask("Treetop")
 		}; 
 		#endregion
 	}

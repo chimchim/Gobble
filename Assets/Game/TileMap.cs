@@ -300,9 +300,11 @@ public partial class TileMap
 		{
 			start = 4 - tops.Count;
 		}
-		int treeLength = game.CurrentRandom.Next(4, 17);
+		int treeLength = game.CurrentRandom.Next(7, 21);
 		int roofOffset = 2;
 		#region Ground
+
+		int twigAmount = 0;
 		for (int i = 0; i < tops.Count; i++)
 		{
 			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
@@ -320,19 +322,27 @@ public partial class TileMap
 						up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2 + j + roofOffset];
 						if (up == TileType.Air && j < treeLength -1)
 						{
-							int twig = game.CurrentRandom.Next(0, 3);
-							if(twig == 0) CreatTwig(game, game.GameResources.Prefabs.TwigLeft.gameObject, tops[i].x, tops[i].y + 2 + j, 1);
+							int extra = 3 - j;
+							extra = Mathf.Min(extra, 0);
+							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1));
+							if (twig == 0)
+							{
+								twigAmount++;
+								CreatTwig(game, game.GameResources.Prefabs.TwigLeft.gameObject, tops[i].x, tops[i].y + 2 + j, 1);
+							}
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_1.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_1.gameObject, tops[i].x, tops[i].y + 2 + j);
 						}
+						#region LeftTops
 						else
 						{
 							CreateBlockTree(game, game.GameResources.Prefabs.Level5_2.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (BlockTypes[(int)tops[i].x - 1, (int)tops[i].y + 2 + j] == TileType.Air)
 								CreateBlockTree(game, game.GameResources.Prefabs.Level5_1.gameObject, tops[i].x - 1, tops[i].y + 2 + j);
 							break;
-						}	
+						} 
+						#endregion
 					}
 				}
 			}
@@ -348,19 +358,23 @@ public partial class TileMap
 						up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2 + j + roofOffset];
 						if (up == TileType.Air && j < treeLength - 1)
 						{
-							int twig = game.CurrentRandom.Next(0, 3);
+							int extra = 6 - j;
+							extra = Mathf.Min(extra, 0);
+							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1));
 							if (twig == 0) CreatTwig(game, game.GameResources.Prefabs.TwigRight.gameObject, tops[i].x, tops[i].y + 2 + j, -0.8f);
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_2.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_2.gameObject, tops[i].x, tops[i].y + 2 + j);
 						}
+						#region RightTops
 						else
 						{
 							CreateBlockTree(game, game.GameResources.Prefabs.Level5_3.gameObject, tops[i].x, tops[i].y + 2 + j);
-							if(BlockTypes[(int)tops[0].x + 1, (int)tops[0].y + 2 + j] == TileType.Air)
+							if (BlockTypes[(int)tops[0].x + 1, (int)tops[0].y + 2 + j] == TileType.Air)
 								CreateBlockTree(game, game.GameResources.Prefabs.Level5_4.gameObject, tops[i].x + 1, tops[i].y + 2 + j);
 							break;
-						}
+						} 
+						#endregion
 					}
 				}
 			}

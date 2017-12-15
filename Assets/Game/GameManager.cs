@@ -59,7 +59,7 @@ namespace Game
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 			playerGameObject.GetComponent<IdHolder>().Owner = owner;
-			playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
+			playerGameObject.transform.position = new Vector3(10.86f, 83, 0);//new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 
 			GameObject Ropes = new GameObject();
 			Ropes.AddComponent<GraphicRope>().Owner = owner;

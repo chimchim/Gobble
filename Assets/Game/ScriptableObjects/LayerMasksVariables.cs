@@ -14,6 +14,6 @@ public class LayerMasksVariables : ScriptableObject
 public struct MappedMasks
 {
 	public LayerMaskEnum Mask;
-	public LayerMask[] UpLayers;
-	public LayerMask[] DownLayers;
+	public LayerMask UpLayers;
+	public LayerMask DownLayers;
 }
