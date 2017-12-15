@@ -49,7 +49,10 @@ namespace Game.Systems
 						{
 							int itemNetID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 							currentIndex += sizeof(int);
-
+							if (!itemHolder.Items.ContainsKey(itemNetID))
+							{
+								Debug.LogError("Dosent contain " + itemNetID);
+							}
 							var item = itemHolder.Items[itemNetID];
 							
 							if (!itemHolder.ActiveItems.Contains(item))
