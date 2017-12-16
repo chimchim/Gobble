@@ -49,18 +49,22 @@ namespace Game.Systems
 						{
 							int itemNetID = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 							currentIndex += sizeof(int);
-							if (!itemHolder.Items.ContainsKey(itemNetID))
+							try
 							{
-								Debug.LogError("Dosent contain " + itemNetID);
+								var item = itemHolder.Items[itemNetID];
+
+								if (!itemHolder.ActiveItems.Contains(item))
+								{
+									item.ClientActivate(game, gameLogic.PlayerID);
+								}
+								item.GotUpdated = true;
+								item.Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
 							}
-							var item = itemHolder.Items[itemNetID];
+							catch (Exception e)
+							{
+								Debug.LogException(e);
+							}
 							
-							if (!itemHolder.ActiveItems.Contains(item))
-							{
-								item.ClientActivate(game, gameLogic.PlayerID);
-							}
-							item.GotUpdated = true;
-							item.Sync(game, gameLogic, byteDataRecieve, ref currentIndex);
 						}
 						for (int k = itemHolder.ActiveItems.Count - 1; k >= 0; k--)
 						{
