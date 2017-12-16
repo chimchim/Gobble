@@ -24,7 +24,6 @@ namespace Game
 		private GameUnity _gameUnity;
 		public Client Client;
 		public System.Random CurrentRandom;
-
 		public List<VisibleItem> WorldItems = new List<VisibleItem>();
 		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{

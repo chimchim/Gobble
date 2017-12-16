@@ -12,7 +12,8 @@ public partial class TileMap
 		Copper,
 		Iron,
 		Gold,
-		TreeChunk
+		TreeChunk,
+		TreeTwig
 	}
 	public enum TileType
 	{
@@ -42,7 +43,7 @@ public partial class TileMap
 	public Transform[,] Minerals;
 	private int[] Mods = new int[5];
 	private MineralsGenVariables minsVariables;
-
+	public List<GameObject> Twigs = new List<GameObject>();
 	#region SpriteVariables
 	private Sprite _rockBotMat;
 	private Sprite _rockBotLeftCornerMat;
@@ -276,8 +277,8 @@ public partial class TileMap
 		go1.transform.position -= new Vector3(xOffset, 0, 0.2f);
 		go1.gameObject.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
 		go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
-		go1.GetComponent<BlockComponent>().X = (int)x;
-		go1.GetComponent<BlockComponent>().Y = (int)y;
+		go1.GetComponent<BlockComponent>().X = GameUnity.FullWidth;
+		go1.GetComponent<BlockComponent>().Y = GameUnity.FullHeight;
 	}
 	void CreateBlockTree(GameManager game, GameObject go, float x, float y)
 	{
@@ -305,6 +306,9 @@ public partial class TileMap
 		#region Ground
 
 		int twigAmount = 0;
+		int leftHeight = 0;
+		int rightHeight = 0;
+		Vector2 startPos = Vector2.zero;
 		for (int i = 0; i < tops.Count; i++)
 		{
 			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
@@ -316,6 +320,7 @@ public partial class TileMap
 				var up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2];
 				if (up == TileType.Air)
 				{
+					startPos = new Vector2(tops[i].x, tops[i].y + 2);
 					CreateBlockTree(game, game.GameResources.Prefabs.Level2_1.gameObject, tops[i].x, tops[i].y + 2);
 					for (int j = 1; j < treeLength; j++)
 					{
@@ -330,6 +335,7 @@ public partial class TileMap
 								twigAmount++;
 								CreatTwig(game, game.GameResources.Prefabs.TwigLeft.gameObject, tops[i].x, tops[i].y + 2 + j, 1);
 							}
+							leftHeight++;
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_1.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_1.gameObject, tops[i].x, tops[i].y + 2 + j);
@@ -352,16 +358,22 @@ public partial class TileMap
 				var up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2];
 				if (up == TileType.Air)
 				{
+					startPos = new Vector2(tops[i].x, tops[i].y + 2);
 					CreateBlockTree(game, game.GameResources.Prefabs.Level2_2.gameObject, tops[i].x, tops[i].y + 2);
 					for (int j = 1; j < treeLength; j++)
 					{
 						up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2 + j + roofOffset];
 						if (up == TileType.Air && j < treeLength - 1)
 						{
+							rightHeight++;
 							int extra = 6 - j;
 							extra = Mathf.Min(extra, 0);
 							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1));
-							if (twig == 0) CreatTwig(game, game.GameResources.Prefabs.TwigRight.gameObject, tops[i].x, tops[i].y + 2 + j, -0.8f);
+							if (twig == 0)
+							{
+								twigAmount++;
+								CreatTwig(game, game.GameResources.Prefabs.TwigRight.gameObject, tops[i].x, tops[i].y + 2 + j, -0.8f);
+							}
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_2.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_2.gameObject, tops[i].x, tops[i].y + 2 + j);
@@ -379,9 +391,27 @@ public partial class TileMap
 				}
 			}
 			if (i + start == 3) CreateBlockTree(game, game.GameResources.Prefabs.Level1_4.gameObject, tops[i].x, tops[i].y + 1);
-		} 
+		}
 		#endregion
-
+		#region middletwig
+		/*int totalheight = Mathf.Max(rightHeight, leftHeight);
+		int wishtwigAmount = totalheight / 2;
+		int newTwigsAmount = wishtwigAmount - twigAmount;
+		Debug.Log(newTwigsAmount);
+		if (newTwigsAmount > 0)
+		{
+			for (int i = 0; i < newTwigsAmount; i++)
+			{
+				var percent = game.CurrentRandom.NextDouble();
+				float y = (float)(totalheight * percent);
+				var go1 = GameObject.Instantiate(game.GameResources.Prefabs.TwigMiddle);
+				go1.transform.position = new Vector3(startPos.x * 1.28f, startPos.y + y, -0.15f);
+				//go1.transform.position -= new Vector3(xOffset, 0, 0.2f);
+				go1.gameObject.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
+				go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
+			}
+		}*/ 
+		#endregion
 	}
 
 	bool CheckAlone(int x, int y)

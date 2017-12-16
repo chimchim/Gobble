@@ -62,6 +62,7 @@ namespace Game.Systems
 							}
 							catch (Exception e)
 							{
+								Debug.LogError("EXCEPTION item id " + itemNetID);
 								Debug.LogException(e);
 							}
 							
