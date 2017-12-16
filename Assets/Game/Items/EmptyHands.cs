@@ -75,18 +75,18 @@ public class EmptyHands : Item
 		if (hit.transform == null)
 			return;
 
-		var bc = hit.transform.GetComponent<BlockComponent>();
+		var bc = hit.transform.GetComponent<Gatherable>();
 		if (bc != null)
 		{
 			bc.HitsTaken++;
 			var diff = bc.HitsTaken / bc.Mod;
 			if (diff > 3 && player.Owner)
 			{
-				HandleNetEventSystem.AddEvent(game, entity, NetDestroyCube.Make(bc.X, bc.Y));
+				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
 				var position = bc.transform.position;
 				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
 			}
-			bc.StartShake();
+			bc.OnHit();
 			int mod = bc.HitsTaken % bc.Mod;
 
 			if (mod == 0)

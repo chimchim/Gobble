@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-
+using Gatherables;
 
 public abstract class NetEvent 
 {
@@ -16,7 +16,23 @@ public abstract class NetEvent
 		NetDestroyCube,
 		NetCreateIngredient,
 		NetDestroyWorldItem,
-		NetJump
+		NetJump,
+		NetDestroyCustom
+	}
+
+	public static NetEvent GetGatherableEvent(Gatherable gatherable)
+	{
+		if (gatherable.GetType() == typeof(GatherableBlock))
+		{
+			GatherableBlock block = gatherable as GatherableBlock;
+			return NetDestroyCube.Make(block.X, block.Y);
+		}
+		if (gatherable.GetType() == typeof(GatherableCustom))
+		{
+			GatherableCustom custom = gatherable as GatherableCustom;
+			return NetDestroyCustom.Make(custom.CustomIndex);
+		}
+		return null;
 	}
 
 	public static Func<NetEvent>[] MakeEmpties = new Func<NetEvent>[]
@@ -28,7 +44,8 @@ public abstract class NetEvent
 		NetDestroyCube.Make,
 		NetCreateIngredient.Make,
 		NetDestroyWorldItem.Make,
-		NetJump.Make
+		NetJump.Make,
+		NetDestroyCustom.Make
 	};
 
 	// Default Accessability is Aspect

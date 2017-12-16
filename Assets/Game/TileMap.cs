@@ -1,4 +1,5 @@
 ﻿using Game;
+using Gatherables;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,7 +44,8 @@ public partial class TileMap
 	public Transform[,] Minerals;
 	private int[] Mods = new int[5];
 	private MineralsGenVariables minsVariables;
-	public List<GameObject> Twigs = new List<GameObject>();
+	public int CurrentCustomIndex;
+	public Dictionary<int, GameObject> CustomGatherables = new Dictionary<int, GameObject>();
 	#region SpriteVariables
 	private Sprite _rockBotMat;
 	private Sprite _rockBotLeftCornerMat;
@@ -111,11 +113,11 @@ public partial class TileMap
 		cube.GetComponent<SpriteRenderer>().material = diffMat;
 		cube.AddComponent<BoxCollider2D>();
 		cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
-		cube.AddComponent<BlockComponent>().IngredientType = IngredientType.Normal;
-		cube.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
-		cube.GetComponent<BlockComponent>().X = x;
-		cube.GetComponent<BlockComponent>().Y = y;
-		cube.GetComponent<BlockComponent>().Renderer = crackObj.GetComponent<SpriteRenderer>();
+		cube.AddComponent<GatherableBlock>().IngredientType = IngredientType.Normal;
+		cube.GetComponent<GatherableBlock>().Mod = minsVariables.NormalMod;
+		cube.GetComponent<GatherableBlock>().X = x;
+		cube.GetComponent<GatherableBlock>().Y = y;
+		cube.GetComponent<GatherableBlock>().Renderer = crackObj.GetComponent<SpriteRenderer>();
 		cube.layer = LayerMask.NameToLayer("Collideable");
 		cube.tag = "cube";
 		return cube;
@@ -151,7 +153,7 @@ public partial class TileMap
 				if ((x < GameUnity.WidhtBound || x > rightLayerBound) || (y < GameUnity.HeightBound || y > topLayerBound))
 				{
 					var cube = CreateBlock(x, y);
-					cube.GetComponent<BlockComponent>().TileType = TileType.Boundry;
+					cube.GetComponent<Gatherable>().TileType = TileType.Boundry;
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
 					Blocks[x, y] = cube;
@@ -275,22 +277,25 @@ public partial class TileMap
 		var go1 = GameObject.Instantiate(go);
 		go1.transform.position = new Vector3(x, y, 0) * 1.28f;
 		go1.transform.position -= new Vector3(xOffset, 0, 0.2f);
-		go1.gameObject.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
-		go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
-		go1.GetComponent<BlockComponent>().X = GameUnity.FullWidth;
-		go1.GetComponent<BlockComponent>().Y = GameUnity.FullHeight;
+		go1.gameObject.AddComponent<GatherableCustom>().IngredientType = IngredientType.TreeTwig;
+		go1.GetComponent<GatherableCustom>().Mod = minsVariables.NormalMod;
+		go1.GetComponent<GatherableCustom>().CustomIndex = CurrentCustomIndex;
+		CustomGatherables.Add(CurrentCustomIndex, go1);
+		CurrentCustomIndex++;
 	}
+
 	void CreateBlockTree(GameManager game, GameObject go, float x, float y)
 	{
-		var go1 = GameObject.Instantiate(go);
-		go1.name = x.ToString() + "  " + y.ToString();
-		go1.transform.position = new Vector3(x, y, 0) * 1.28f;
-		go1.transform.position -= new Vector3(0, 0, 0.1f);
-		go1.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
-		go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
-		go1.GetComponent<BlockComponent>().X = (int)x;
-		go1.GetComponent<BlockComponent>().Y = (int)y;
-		Blocks[(int)x, (int)y] = go1;
+		var chunk = GameObject.Instantiate(go);
+
+		chunk.name = x.ToString() + "  " + y.ToString();
+		chunk.transform.position = new Vector3(x, y, 0) * 1.28f;
+		chunk.transform.position -= new Vector3(0, 0, 0.1f);
+		chunk.AddComponent<GatherableBlock>().IngredientType = IngredientType.TreeChunk;
+		chunk.GetComponent<GatherableBlock>().Mod = minsVariables.NormalMod;
+		chunk.GetComponent<GatherableBlock>().X = (int)x;
+		chunk.GetComponent<GatherableBlock>().Y = (int)y;
+		Blocks[(int)x, (int)y] = chunk;
 	}
 	void CreateTree(GameManager game, List<Vector2> tops)
 	{
@@ -345,7 +350,7 @@ public partial class TileMap
 						{
 							CreateBlockTree(game, game.GameResources.Prefabs.Level5_2.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (BlockTypes[(int)tops[i].x - 1, (int)tops[i].y + 2 + j] == TileType.Air)
-								CreateBlockTree(game, game.GameResources.Prefabs.Level5_1.gameObject, tops[i].x - 1, tops[i].y + 2 + j);
+								CreatTwig(game, game.GameResources.Prefabs.Level5_1.gameObject, tops[i].x - 1, tops[i].y + 2 + j, 0);
 							break;
 						} 
 						#endregion
@@ -383,7 +388,7 @@ public partial class TileMap
 						{
 							CreateBlockTree(game, game.GameResources.Prefabs.Level5_3.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (BlockTypes[(int)tops[0].x + 1, (int)tops[0].y + 2 + j] == TileType.Air)
-								CreateBlockTree(game, game.GameResources.Prefabs.Level5_4.gameObject, tops[i].x + 1, tops[i].y + 2 + j);
+								CreatTwig(game, game.GameResources.Prefabs.Level5_4.gameObject, tops[i].x + 1, tops[i].y + 2 + j, 0);
 							break;
 						} 
 						#endregion
@@ -570,8 +575,8 @@ public partial class TileMap
 	{
 		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
 		var parent = Blocks[x, y].transform;
-		Blocks[x, y].GetComponent<BlockComponent>().Mod = Mods[(int)type];
-		Blocks[x, y].GetComponent<BlockComponent>().IngredientType = type;
+		Blocks[x, y].GetComponent<Gatherable>().Mod = Mods[(int)type];
+		Blocks[x, y].GetComponent<Gatherable>().IngredientType = type;
 		go.transform.parent = parent;
 		go.transform.localPosition = new Vector3(0, 0, -0.1f);
 		go.GetComponent<SpriteRenderer>().sprite = sprite;
@@ -997,7 +1002,7 @@ public partial class TileMap
 				}
 
 				Blocks[x, y].GetComponent<SpriteRenderer>().sprite = newMat;
-				Blocks[x, y].GetComponent<BlockComponent>().TileType = BlockTypes[x, y];
+				Blocks[x, y].GetComponent<Gatherable>().TileType = BlockTypes[x, y];
 			}
 		}
 
@@ -1027,7 +1032,7 @@ public partial class TileMap
 						BlockTypes[x, y] = TileType.Middle2;
 					}
 				}
-				Blocks[x, y].GetComponent<BlockComponent>().TileType = BlockTypes[x, y];
+				Blocks[x, y].GetComponent<Gatherable>().TileType = BlockTypes[x, y];
 			}
 		}
 	}
