@@ -84,30 +84,33 @@ public class GraphicRope : MonoBehaviour {
 			if (hit.collider != null)
 			{
 				float ropeL = (playerPos - hit.point).magnitude;
-				if (Owner)
+				if (ropeL > 0)
 				{
-					PlayerMovement.CurrentState = MovementComponent.MoveState.Roped;
-					PlayerMovement.CurrentRoped = new MovementComponent.RopedData()
+					if (Owner)
 					{
-						RayCastOrigin = ((0.05f * hit.normal) + hit.point),
-						origin = hit.point,
-						Length = ropeL,
-						Damp = GameUnity.RopeDamping
-					};
+						PlayerMovement.CurrentState = MovementComponent.MoveState.Roped;
+						PlayerMovement.CurrentRoped = new MovementComponent.RopedData()
+						{
+							RayCastOrigin = ((0.05f * hit.normal) + hit.point),
+							origin = hit.point,
+							Length = ropeL,
+							Damp = GameUnity.RopeDamping
+						};
 
-					PlayerInput.RopeConnected = new InputComponent.NetworkRopeConnected()
-					{
-						RayCastOrigin = ((0.05f * hit.normal) + hit.point),
-						Position = playerPos,
-						Origin = hit.point,
-						Length = ropeL
-					};
-					PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
+						PlayerInput.RopeConnected = new InputComponent.NetworkRopeConnected()
+						{
+							RayCastOrigin = ((0.05f * hit.normal) + hit.point),
+							Position = playerPos,
+							Origin = hit.point,
+							Length = ropeL
+						};
+						PlayerMovement.RopeList.Add(PlayerMovement.CurrentRoped);
+					}
+					UpdateNewRope = false;
+					UpdateFront = true;
+
+					return;
 				}
-				UpdateNewRope = false;
-				UpdateFront = true;
-				
-				return;
 			}
 			NewRopePosition += currentMove;
 			DrawThrowPositions[0] = NewRopePosition;
