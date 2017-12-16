@@ -78,6 +78,7 @@ public class EmptyHands : Item
 		var bc = hit.transform.GetComponent<Gatherable>();
 		if (bc != null)
 		{
+			Debug.Log("hit");
 			bc.HitsTaken++;
 			var diff = bc.HitsTaken / bc.Mod;
 			if (diff > 3 && player.Owner)

@@ -17,7 +17,7 @@ namespace Gatherables
 
 		public override void OnHit()
 		{
-
+			GetComponentInChildren<Animator>().SetTrigger("Hit");
 		}
 		public override void SetResource(GameManager game)
 		{

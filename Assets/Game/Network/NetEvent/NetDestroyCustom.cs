@@ -48,7 +48,7 @@ public class NetDestroyCustom : NetEvent
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
 		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetDestroyCustom));
-		outgoing.AddRange(BitConverter.GetBytes(8));
+		outgoing.AddRange(BitConverter.GetBytes(4));
 		outgoing.AddRange(BitConverter.GetBytes(CustomIndex));
 	}
 }
