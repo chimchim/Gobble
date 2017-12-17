@@ -17,7 +17,8 @@ public abstract class NetEvent
 		NetCreateIngredient,
 		NetDestroyWorldItem,
 		NetJump,
-		NetDestroyCustom
+		NetDestroyCustom,
+		NetIngredientFromGatherable
 	}
 
 	public static NetEvent GetGatherableEvent(Gatherable gatherable)
@@ -45,7 +46,8 @@ public abstract class NetEvent
 		NetCreateIngredient.Make,
 		NetDestroyWorldItem.Make,
 		NetJump.Make,
-		NetDestroyCustom.Make
+		NetDestroyCustom.Make,
+		NetIngredientFromGatherable.Make
 	};
 
 	// Default Accessability is Aspect

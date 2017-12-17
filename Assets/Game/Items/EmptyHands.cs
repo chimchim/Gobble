@@ -2,6 +2,7 @@
 using Game.Component;
 using Game.GEntity;
 using Game.Systems;
+using Gatherables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,9 +83,17 @@ public class EmptyHands : Item
 			var tryhit = bc.OnHit(game, GatherLevel.Hands);
 			if (tryhit && player.Owner)
 			{
-				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
-				var position = bc.transform.position;
-				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
+				if (!bc.GatherScript.CreateFromGatherable)
+				{
+					HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
+					var position = bc.transform.position;
+					HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
+				}
+				else
+				{
+					GatherableCustom custom = bc as GatherableCustom;
+					HandleNetEventSystem.AddEvent(game, entity, NetIngredientFromGatherable.Make(entity, 1, custom.CustomIndex, bc.IngredientType, bc.GetForce()));
+				}
 			}
 		}
 	}

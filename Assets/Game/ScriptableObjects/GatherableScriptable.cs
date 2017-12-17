@@ -10,6 +10,7 @@ public class GatherableScriptable : ScriptableObject
 		Hands,
 		Pickaxe
 	}
+	public bool CreateFromGatherable;
 	public GatherLevel Level;
 	public int HitsNeeded;
 

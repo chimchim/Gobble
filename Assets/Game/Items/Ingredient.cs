@@ -2,6 +2,7 @@
 using Game.Component;
 using Game.GEntity;
 using Game.Systems;
+using Gatherables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +75,43 @@ public class Ingredient : Item
 
 		HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, Quantity, IngredientType, position, force));
 	}
+	public static VisibleItem MakeFromGatherable(GameManager game, GameObject go, Vector2 force, TileMap.IngredientType ingredientType)
+	{
+		var platform = go.transform.Find("platform");
+		if (platform != null)
+			GameObject.Destroy(platform.gameObject);
 
+		go.layer = LayerMask.NameToLayer("Default");
+		var visible = go.AddComponent<VisibleItem>();
+		var item = Make();
+		item.IngredientType = ingredientType;
+		visible.Item = item;
+		visible.Force = force;
+
+		visible.CallBack = (EntityID) =>
+		{
+			var player = game.Entities.GetComponentOf<Player>(EntityID);
+			if (player.Owner)
+			{
+				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
+				foreach (Item stackable in holder.Items.Values)
+				{
+					if (stackable.TryStack(game, item))
+					{
+						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
+						inv.InventoryBackpack.SetQuantity(stackable);
+						inv.MainInventory.SetQuantity(stackable);
+						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
+						return;
+					}
+				}
+				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
+				item.OnPickup(game, EntityID, go);
+			}
+		};
+
+		return visible;
+	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.Ingredient.IngredientsPrefabs[(int)ingredientType]);
@@ -115,6 +152,7 @@ public class Ingredient : Item
 
 		return visible;
 	}
+
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.InventorySprite[(int)IngredientType];
@@ -135,9 +173,17 @@ public class Ingredient : Item
 			var tryhit = bc.OnHit(game, GatherLevel.Hands);
 			if (tryhit && player.Owner)
 			{
-				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
-				var position = bc.transform.position;
-				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
+				if (!bc.GatherScript.CreateFromGatherable)
+				{
+					HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
+					var position = bc.transform.position;
+					HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
+				}
+				else
+				{
+					GatherableCustom custom = bc as GatherableCustom;
+					HandleNetEventSystem.AddEvent(game, entity, NetIngredientFromGatherable.Make(entity, 1, custom.CustomIndex, bc.IngredientType, bc.GetForce()));
+				}
 			}
 		}
 
