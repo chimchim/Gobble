@@ -78,7 +78,7 @@ public class PickAxe : Item
 			{
 				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
 				var position = bc.transform.position;
-				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
+				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
 			}
 		}
 		

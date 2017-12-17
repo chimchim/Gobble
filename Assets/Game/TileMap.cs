@@ -131,7 +131,7 @@ public partial class TileMap
 		go1.gameObject.AddComponent<GatherableCustom>().IngredientType = IngredientType.TreeTwig;
 		go1.GetComponent<GatherableCustom>().Mod = minsVariables.NormalMod;
 		go1.GetComponent<GatherableCustom>().CustomIndex = CurrentCustomIndex;
-		go1.GetComponent<GatherableCustom>().GatherScript = game.GameResources.AllItems.Tree;
+		go1.GetComponent<GatherableCustom>().GatherScript = game.GameResources.AllItems.TreeTwig;
 		CustomGatherables.Add(CurrentCustomIndex, go1);
 		CurrentCustomIndex++;
 	}

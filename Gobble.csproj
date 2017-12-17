@@ -152,6 +152,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\Gatherables\Gatherable.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Gatherables\GatherableBlock.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\Gatherables\GatherableCustom.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\Gatherables\PreferedLayers.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GraphicRope.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\IdHolder.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpack.cs" />

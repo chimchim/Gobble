@@ -22,11 +22,23 @@ public class VisibleItem : MonoBehaviour
 		_offset.x = offset.size.x / 2;
 		_offset.y = offset.size.y / 2;
 		#region Masks
-		Mask = new MappedMasks
+		var prefered = GetComponent<PreferedLayers>();
+		if (prefered == null)
 		{
-			UpLayers = LayerMask.GetMask("Collideable"),
-			DownLayers = LayerMask.GetMask("Collideable") | LayerMask.GetMask("Platform") | LayerMask.GetMask("Treetop")
-		}; 
+			Mask = new MappedMasks
+			{
+				UpLayers = LayerMask.GetMask("Collideable"),
+				DownLayers = LayerMask.GetMask("Collideable") | LayerMask.GetMask("Platform") | LayerMask.GetMask("Treetop")
+			};
+		}
+		else
+		{
+			Mask = new MappedMasks
+			{
+				UpLayers = prefered.UpLayers,
+				DownLayers = prefered.DownLayers
+			};
+		}
 		#endregion
 	}
 

@@ -12,4 +12,5 @@ public class AllScriptableItems : ScriptableObject
 	[Header("Gatherable ")]
 	public GatherableScriptable Gravel;
 	public GatherableScriptable Tree;
+	public GatherableScriptable TreeTwig;
 }

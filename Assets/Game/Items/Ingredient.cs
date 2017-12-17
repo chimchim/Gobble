@@ -77,14 +77,14 @@ public class Ingredient : Item
 
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
 	{
-		var go = GameObject.Instantiate(game.GameResources.AllItems.Ingredient.Prefab);
+		var go = GameObject.Instantiate(game.GameResources.AllItems.Ingredient.IngredientsPrefabs[(int)ingredientType]);
 		if (go == null)
 		{
 			Debug.Log("GO NULL");
 		}
 		go.transform.position = position;
 		
-		go.GetComponent<SpriteRenderer>().sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)ingredientType];
+		//go.GetComponent<SpriteRenderer>().sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)ingredientType];
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.IngredientType = ingredientType;
@@ -117,7 +117,7 @@ public class Ingredient : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)IngredientType];
+		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.InventorySprite[(int)IngredientType];
 		CheckMain(game, entity, game.GameResources.AllItems.Ingredient, gameObject);
 	}
 	private void TryPick(GameManager game, int entity)
@@ -125,8 +125,7 @@ public class Ingredient : Item
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
-		var offset = -hand.up * 0.4f;
-		var hit = Physics2D.Raycast(hand.position + offset, -hand.up, 0.4f, layerMask);
+		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.7f, layerMask);
 		if (hit.transform == null)
 			return;
 
@@ -138,7 +137,7 @@ public class Ingredient : Item
 			{
 				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
 				var position = bc.transform.position;
-				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
+				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
 			}
 		}
 

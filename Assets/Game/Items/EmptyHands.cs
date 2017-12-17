@@ -71,8 +71,8 @@ public class EmptyHands : Item
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
-		var offset = -hand.up * 0.4f;
-		var hit = Physics2D.Raycast(hand.position + offset, -hand.up, 0.4f, layerMask);
+
+		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.7f, layerMask);
 		if (hit.transform == null)
 			return;
 
@@ -84,7 +84,7 @@ public class EmptyHands : Item
 			{
 				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
 				var position = bc.transform.position;
-				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
+				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, bc.GetForce()));
 			}
 		}
 	}

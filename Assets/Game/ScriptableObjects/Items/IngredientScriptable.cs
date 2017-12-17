@@ -7,5 +7,6 @@ using UnityEngine;
 public class IngredientScriptable : ScriptableItem
 {
 	public TileMap.IngredientType Types;
-	public Sprite[] IngredientsTypes;
+	public Sprite[] InventorySprite;
+	public GameObject[] IngredientsPrefabs;
 }

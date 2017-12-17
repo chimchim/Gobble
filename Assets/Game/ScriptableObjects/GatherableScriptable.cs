@@ -12,4 +12,12 @@ public class GatherableScriptable : ScriptableObject
 	}
 	public GatherLevel Level;
 	public int HitsNeeded;
+
+	[Range(0, 10)]
+	public float MinForce;
+	[Range(0, 10)]
+	public float MaxForce;
+
+	public Vector2 ForceVectorDir;
+	public float RandomAngle;
 }
