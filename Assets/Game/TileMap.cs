@@ -102,7 +102,7 @@ public partial class TileMap
 	private Transform _mineralParent;
 
 
-	public GameObject CreateBlock(int x, int y)
+	public GameObject CreateBlock(GameManager game, int x, int y)
 	{
 		GameObject cube = new GameObject();
 		GameObject crackObj = new GameObject();
@@ -118,9 +118,53 @@ public partial class TileMap
 		cube.GetComponent<GatherableBlock>().X = x;
 		cube.GetComponent<GatherableBlock>().Y = y;
 		cube.GetComponent<GatherableBlock>().Renderer = crackObj.GetComponent<SpriteRenderer>();
+		cube.GetComponent<GatherableBlock>().GatherScript = game.GameResources.AllItems.Gravel;
 		cube.layer = LayerMask.NameToLayer("Collideable");
 		cube.tag = "cube";
 		return cube;
+	}
+	void CreatTwig(GameManager game, GameObject go, float x, float y, float xOffset)
+	{
+		var go1 = GameObject.Instantiate(go);
+		go1.transform.position = new Vector3(x, y, 0) * 1.28f;
+		go1.transform.position -= new Vector3(xOffset, 0, 0.2f);
+		go1.gameObject.AddComponent<GatherableCustom>().IngredientType = IngredientType.TreeTwig;
+		go1.GetComponent<GatherableCustom>().Mod = minsVariables.NormalMod;
+		go1.GetComponent<GatherableCustom>().CustomIndex = CurrentCustomIndex;
+		go1.GetComponent<GatherableCustom>().GatherScript = game.GameResources.AllItems.Tree;
+		CustomGatherables.Add(CurrentCustomIndex, go1);
+		CurrentCustomIndex++;
+	}
+
+	void CreateBlockTree(GameManager game, GameObject go, float x, float y)
+	{
+		var chunk = GameObject.Instantiate(go);
+
+		chunk.name = x.ToString() + "  " + y.ToString();
+		chunk.transform.position = new Vector3(x, y, 0) * 1.28f;
+		chunk.transform.position -= new Vector3(0, 0, 0.1f);
+		chunk.AddComponent<GatherableBlock>().IngredientType = IngredientType.TreeChunk;
+		chunk.GetComponent<GatherableBlock>().Mod = minsVariables.NormalMod;
+		chunk.GetComponent<GatherableBlock>().X = (int)x;
+		chunk.GetComponent<GatherableBlock>().Y = (int)y;
+		chunk.GetComponent<GatherableBlock>().GatherScript = game.GameResources.AllItems.Tree;
+		Blocks[(int)x, (int)y] = chunk;
+	}
+	private void CreateMineral(GameManager game, int x, int y, Sprite sprite, IngredientType type = IngredientType.Normal)
+	{
+		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
+		var parent = Blocks[x, y].transform;
+		Blocks[x, y].GetComponent<Gatherable>().Mod = Mods[(int)type];
+		Blocks[x, y].GetComponent<Gatherable>().IngredientType = type;
+		go.transform.parent = parent;
+		go.transform.localPosition = new Vector3(0, 0, -0.1f);
+		go.GetComponent<SpriteRenderer>().sprite = sprite;
+
+		if (Minerals[x, y] != null)
+		{
+			GameObject.Destroy(Minerals[x, y].gameObject);
+		}
+		Minerals[x, y] = go.transform;
 	}
 	public void InitiateMap(GameManager game)
 	{
@@ -152,7 +196,7 @@ public partial class TileMap
 				int topLayerBound = (GameUnity.MapHeight + GameUnity.HeightBound) + GameUnity.BottomBoundOffset + GameUnity.TopBoundOffset - 1;
 				if ((x < GameUnity.WidhtBound || x > rightLayerBound) || (y < GameUnity.HeightBound || y > topLayerBound))
 				{
-					var cube = CreateBlock(x, y);
+					var cube = CreateBlock(game, x, y);
 					cube.GetComponent<Gatherable>().TileType = TileType.Boundry;
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(x + (0.28f * x), y + (0.28f * y), 0);
@@ -178,7 +222,7 @@ public partial class TileMap
 				int posY = y + startY;
 				if (noise < 0.16f && GameUnity.GenerateSmallIsland)
 				{
-					var cube = CreateBlock(posX, posY);
+					var cube = CreateBlock(game, posX, posY);
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 					Blocks[posX, posY] = cube;
@@ -188,14 +232,14 @@ public partial class TileMap
 				}
 				else if (noise < 0.9f && noise > 0.5f)
 				{
-					var cube = CreateBlock(posX, posY);
+					var cube = CreateBlock(game, posX, posY);
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 					Blocks[posX, posY] = cube;
 				}
 				else
 				{
-					var cube = CreateBlock(posX, posY);
+					var cube = CreateBlock(game, posX, posY);
 					cube.transform.parent = parentCube.transform;
 					cube.transform.position = new Vector3(posX + (0.28f * posX), posY + (0.28f * posY), 0);
 					Blocks[posX, posY] = cube;
@@ -272,31 +316,7 @@ public partial class TileMap
 			}
 		}
 	}
-	void CreatTwig(GameManager game, GameObject go, float x, float y, float xOffset)
-	{
-		var go1 = GameObject.Instantiate(go);
-		go1.transform.position = new Vector3(x, y, 0) * 1.28f;
-		go1.transform.position -= new Vector3(xOffset, 0, 0.2f);
-		go1.gameObject.AddComponent<GatherableCustom>().IngredientType = IngredientType.TreeTwig;
-		go1.GetComponent<GatherableCustom>().Mod = minsVariables.NormalMod;
-		go1.GetComponent<GatherableCustom>().CustomIndex = CurrentCustomIndex;
-		CustomGatherables.Add(CurrentCustomIndex, go1);
-		CurrentCustomIndex++;
-	}
-
-	void CreateBlockTree(GameManager game, GameObject go, float x, float y)
-	{
-		var chunk = GameObject.Instantiate(go);
-
-		chunk.name = x.ToString() + "  " + y.ToString();
-		chunk.transform.position = new Vector3(x, y, 0) * 1.28f;
-		chunk.transform.position -= new Vector3(0, 0, 0.1f);
-		chunk.AddComponent<GatherableBlock>().IngredientType = IngredientType.TreeChunk;
-		chunk.GetComponent<GatherableBlock>().Mod = minsVariables.NormalMod;
-		chunk.GetComponent<GatherableBlock>().X = (int)x;
-		chunk.GetComponent<GatherableBlock>().Y = (int)y;
-		Blocks[(int)x, (int)y] = chunk;
-	}
+	
 	void CreateTree(GameManager game, List<Vector2> tops)
 	{
 		GameObject go = null;
@@ -314,6 +334,7 @@ public partial class TileMap
 		int leftHeight = 0;
 		int rightHeight = 0;
 		Vector2 startPos = Vector2.zero;
+		bool groundTwig = false;
 		for (int i = 0; i < tops.Count; i++)
 		{
 			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
@@ -325,7 +346,11 @@ public partial class TileMap
 				var up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2];
 				if (up == TileType.Air)
 				{
-					startPos = new Vector2(tops[i].x, tops[i].y + 2);
+					if (game.CurrentRandom.Next(0, 2) == 0)
+					{
+						groundTwig = true;
+						CreatTwig(game, game.GameResources.Prefabs.TwigLeft, tops[i].x, tops[i].y + 2, 1);
+					}
 					CreateBlockTree(game, game.GameResources.Prefabs.Level2_1.gameObject, tops[i].x, tops[i].y + 2);
 					for (int j = 1; j < treeLength; j++)
 					{
@@ -363,7 +388,10 @@ public partial class TileMap
 				var up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2];
 				if (up == TileType.Air)
 				{
-					startPos = new Vector2(tops[i].x, tops[i].y + 2);
+					if (!groundTwig)
+					{
+						CreatTwig(game, game.GameResources.Prefabs.TwigRight, tops[i].x, tops[i].y + 2, -0.8f);
+					}
 					CreateBlockTree(game, game.GameResources.Prefabs.Level2_2.gameObject, tops[i].x, tops[i].y + 2);
 					for (int j = 1; j < treeLength; j++)
 					{
@@ -397,6 +425,7 @@ public partial class TileMap
 			}
 			if (i + start == 3) CreateBlockTree(game, game.GameResources.Prefabs.Level1_4.gameObject, tops[i].x, tops[i].y + 1);
 		}
+		
 		#endregion
 		#region middletwig
 		/*int totalheight = Mathf.Max(rightHeight, leftHeight);
@@ -415,7 +444,7 @@ public partial class TileMap
 				go1.gameObject.AddComponent<BlockComponent>().IngredientType = IngredientType.TreeChunk;
 				go1.GetComponent<BlockComponent>().Mod = minsVariables.NormalMod;
 			}
-		}*/ 
+		}*/
 		#endregion
 	}
 
@@ -569,23 +598,6 @@ public partial class TileMap
 				}
 			}
 		}
-	}
-
-	private void CreateMineral(GameManager game, int x, int y, Sprite sprite, IngredientType type = IngredientType.Normal)
-	{
-		var go = GameObject.Instantiate(game.GameResources.Prefabs.SpriteDiffuse);
-		var parent = Blocks[x, y].transform;
-		Blocks[x, y].GetComponent<Gatherable>().Mod = Mods[(int)type];
-		Blocks[x, y].GetComponent<Gatherable>().IngredientType = type;
-		go.transform.parent = parent;
-		go.transform.localPosition = new Vector3(0, 0, -0.1f);
-		go.GetComponent<SpriteRenderer>().sprite = sprite;
-
-		if (Minerals[x, y] != null)
-		{
-			GameObject.Destroy(Minerals[x, y].gameObject);
-		}
-		Minerals[x, y] = go.transform;
 	}
 
 	public void CreateIron(GameManager game)

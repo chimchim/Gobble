@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using GatherLevel = GatherableScriptable.GatherLevel;
 
 public class PickAxe : Item
 {
@@ -72,20 +73,12 @@ public class PickAxe : Item
 		var bc = hit.transform.GetComponent<Gatherable>();
 		if (bc != null)
 		{
-			bc.HitsTaken++;
-			var diff = bc.HitsTaken / bc.Mod;
-			if (diff > 3 && player.Owner)
+			var tryhit = bc.OnHit(game, GatherLevel.Pickaxe);
+			if (tryhit && player.Owner)
 			{
 				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
 				var position = bc.transform.position;
 				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
-			}
-			bc.OnHit();
-			int mod = bc.HitsTaken % bc.Mod;
-			
-			if (mod == 0)
-			{
-				bc.SetResource(game);
 			}
 		}
 		

@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-//using IngredientType = TileMap.IngredientType;
+using GatherLevel = GatherableScriptable.GatherLevel;
+
 public class Ingredient : Item
 {
 
@@ -124,27 +125,20 @@ public class Ingredient : Item
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
-		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
+		var offset = -hand.up * 0.4f;
+		var hit = Physics2D.Raycast(hand.position + offset, -hand.up, 0.4f, layerMask);
 		if (hit.transform == null)
 			return;
 
 		var bc = hit.transform.GetComponent<Gatherable>();
 		if (bc != null)
 		{
-			bc.HitsTaken++;
-			var diff = bc.HitsTaken / bc.Mod;
-			if (diff > 3 && player.Owner)
+			var tryhit = bc.OnHit(game, GatherLevel.Hands);
+			if (tryhit && player.Owner)
 			{
 				HandleNetEventSystem.AddEvent(game, entity, NetEvent.GetGatherableEvent(bc));
 				var position = bc.transform.position;
 				HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, 1, bc.IngredientType, position, Vector2.zero));
-			}
-			bc.OnHit();
-			int mod = bc.HitsTaken % bc.Mod;
-
-			if (mod == 0)
-			{
-				bc.SetResource(game);
 			}
 		}
 

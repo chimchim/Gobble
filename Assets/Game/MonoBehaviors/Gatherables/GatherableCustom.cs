@@ -2,6 +2,7 @@
 using Game;
 using UnityEngine;
 using System.Collections;
+using GatherLevel = GatherableScriptable.GatherLevel;
 
 namespace Gatherables
 {
@@ -15,9 +16,17 @@ namespace Gatherables
 			return game.TileMap.CustomGatherables[CustomIndex];
 		}
 
-		public override void OnHit()
+		public override bool OnHit(GameManager game, GatherLevel level)
 		{
-			GetComponentInChildren<Animator>().SetTrigger("Hit");
+			if (level >= GatherScript.Level)
+			{
+				GetComponentInChildren<Animator>().SetTrigger("Hit");
+				HitsTaken++;
+				if (HitsTaken >= GatherScript.HitsNeeded)
+					return true;
+			}
+
+			return false;
 		}
 		public override void SetResource(GameManager game)
 		{

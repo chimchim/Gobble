@@ -2,6 +2,7 @@
 using Game;
 using UnityEngine;
 using System.Collections;
+using GatherLevel = GatherableScriptable.GatherLevel;
 
 namespace Gatherables
 {
@@ -16,14 +17,26 @@ namespace Gatherables
 			return game.TileMap.Blocks[X, Y];
 		}
 
-		public override void OnHit()
+		public override bool OnHit(GameManager game, GatherLevel level)
 		{
-			if (Renderer == null)
+			if(level >= GatherScript.Level)
 			{
-				StartCoroutine(ShakeMain());
-				return;
+				if (Renderer == null)
+					StartCoroutine(ShakeMain());
+				else
+					StartCoroutine(Shake());
+
+				int mod = HitsTaken % Mod;
+				HitsTaken++;
+				if (mod == 0)
+				{
+					SetResource(game);
+				}
+				if (HitsTaken >= GatherScript.HitsNeeded)
+					return true;
 			}
-			StartCoroutine(Shake());
+			
+			return false;
 		}
 		public override void SetResource(GameManager game)
 		{
