@@ -118,6 +118,7 @@
     <Compile Include="Assets\Game\Items\EmptyHands.cs" />
     <Compile Include="Assets\Game\Items\Ingredient.cs" />
     <Compile Include="Assets\Game\Items\Item.cs" />
+    <Compile Include="Assets\Game\Items\Ladder.cs" />
     <Compile Include="Assets\Game\Items\PickAxe.cs" />
     <Compile Include="Assets\Game\Items\Rope.cs" />
     <Compile Include="Assets\Game\Misc\Bitmask.cs" />
@@ -165,11 +166,13 @@
     <Compile Include="Assets\Game\Movement\Floating.cs" />
     <Compile Include="Assets\Game\Movement\FlyingDebug.cs" />
     <Compile Include="Assets\Game\Movement\Grounded.cs" />
+    <Compile Include="Assets\Game\Movement\Ladders.cs" />
     <Compile Include="Assets\Game\Movement\MovementState.cs" />
     <Compile Include="Assets\Game\Movement\Roped.cs" />
     <Compile Include="Assets\Game\Movement\Swim.cs" />
     <Compile Include="Assets\Game\Network\Client.cs" />
     <Compile Include="Assets\Game\Network\Data.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetCreateLadder.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateIngredient.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetDestroyCube.cs" />
@@ -189,6 +192,7 @@
     <Compile Include="Assets\Game\ScriptableObjects\Items\PickAxeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\RopeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItem.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItemBaseScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\LayerMasksVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MineralsGenVariables.cs" />

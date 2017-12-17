@@ -17,7 +17,7 @@ namespace Game
 
         public EntityManager Entities { get { return _entityManager; } }
 		public SystemManager Systems { get { return _systemManager; } }
-
+		public List<Action> CallBacks = new List<Action>();
 		public LayerMasksVariables LayerMasks;
 		public GameResources GameResources;
 		public TileMap TileMap;
@@ -108,6 +108,11 @@ namespace Game
 			{
 				TileMap.UpdateWater();
 			}
+			foreach (Action a in CallBacks)
+			{
+				a.Invoke();
+			}
+			CallBacks.Clear();
 		}
 		public void FixedUpdate(float delta)
 		{

@@ -12,6 +12,7 @@ public class PrefabsVariables : ScriptableObject
 
 	public GameObject SpriteDiffuse;
 	public GameObject Poof;
+	public GameObject Ladder;
 
 	[Header("TreeTile ")]
 	public GameObject Level1_1;

@@ -14,7 +14,8 @@ namespace Game.Systems
 		{
 			Grounded,
 			Roped,
-			Rope
+			Rope,
+			Ladder
 		}
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent>();
 		

@@ -44,11 +44,11 @@ namespace Game.Systems
 						var force = input.ScreenDirection * 5;
 						if (itemrand == 0)
 						{
-							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Pickaxe, position, force));
+							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Ladder, position, force));
 						}
 						if (itemrand == 1)
 						{
-							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Rope, position, force));
+							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Ladder, position, force));
 						}
 					}
 				}

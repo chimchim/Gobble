@@ -25,6 +25,7 @@ namespace Game.Systems
 					input.Space = false;
 					input.RightClick = false;
 					input.E = false;
+					input.OnLeftDown = false;
 				}
 				input.NetworkJump = false;
 			}

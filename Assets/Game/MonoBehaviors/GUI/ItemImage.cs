@@ -12,8 +12,12 @@ public class ItemImage : MonoBehaviour {
 
 	public void SetQuantity(int i)
 	{
-		if(i > 1)
+		if (i > 1)
 			Quantity.text = i.ToString();
+		else
+		{
+			Quantity.text = "";
+		}
 	}
 
 	public void SetImage(Sprite sprite)

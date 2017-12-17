@@ -30,6 +30,10 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Rope.MakeItem(game, Position, Force);
 		}
+		if (ItemID == Item.ItemID.Ladder)
+		{
+			visible = Ladder.MakeItem(game, Position, Force);
+		}
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;

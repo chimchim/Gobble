@@ -8,6 +8,7 @@ public class AllScriptableItems : ScriptableObject
 	public PickAxeScriptable PickAxe;
 	public RopeScriptable Rope;
 	public IngredientScriptable Ingredient;
+	public ScriptableItem Ladder;
 
 	[Header("Gatherable ")]
 	public GatherableScriptable Gravel;

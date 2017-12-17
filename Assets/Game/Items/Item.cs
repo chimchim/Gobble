@@ -12,7 +12,8 @@ public abstract class Item
 	{
 		Rope,
 		Pickaxe,
-		Ingredient
+		Ingredient,
+		Ladder
 	}
 	public ItemID ID;
 
