@@ -128,37 +128,46 @@ public class Ladder : Item
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		Vector2 pos = transform.position;
 		var hit = Physics2D.Raycast(pos, -hand.up, 2.0f, layerMask);
-		//Debug.DrawLine(pos, pos + (-hand.up * 3), Color.blue);
+		Debug.DrawLine(pos, pos + (new Vector2(-hand.up.x, -hand.up.y) * 2.0f), Color.blue);
 		Placeable.position = new Vector3(0, 0, 0);
 		if (hit.transform != null)
 		{
+			bool placeOK = false;
 			if (hit.normal.y == 0)
 			{
-				
-				Placeable.position = new Vector3(hit.transform.position.x + (hit.normal.x * 0.64f), hit.transform.position.y, -0.2f);
-				if (input.OnLeftDown)
+				placeOK = true;
+				Placeable.position = new Vector3(hit.transform.position.x + (hit.normal.x * 0.68f), hit.transform.position.y, -0.2f);
+			}
+			else if (hit.normal.x == 0)
+			{
+				int x = (int)(hit.transform.position.x / 1.28f);
+				int y = (int)(hit.transform.position.y / 1.28f);
+				int nextX = x + (Math.Sign(-hand.up.x));
+				var cube = game.TileMap.Blocks[nextX, y];
+
+				if (cube == null)
 				{
-					layerMask = (1 << LayerMask.NameToLayer("Ladder"));
-					var hit2 = Physics2D.Raycast(pos, -hand.up, 2.0f, layerMask);
-					if (hit2.transform != null)
-						return;
-					Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
-					HandleNetEventSystem.AddEventIgnoreOwner(game, entity, NetCreateLadder.Make(Placeable.position));
-					Quantity--;
-					Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
-					if (Quantity <= 0)
-					{
-						game.CallBacks.Add(() =>
-						{
-							base.ThrowItem(game, entity);
-						});
-						return;
-					}
-					var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
-					inv.MainInventory.SetQuantity(this);
+					placeOK = true;
+					Placeable.position = new Vector3(hit.transform.position.x + (0.68f * (Math.Sign(-hand.up.x))), hit.transform.position.y, -0.2f);
 				}
 			}
-			
+			if (input.OnLeftDown && placeOK)
+			{
+				Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
+				HandleNetEventSystem.AddEventIgnoreOwner(game, entity, NetCreateLadder.Make(Placeable.position));
+				Quantity--;
+				Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+				if (Quantity <= 0)
+				{
+					game.CallBacks.Add(() =>
+					{
+						base.ThrowItem(game, entity);
+					});
+					return;
+				}
+				var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
+				inv.MainInventory.SetQuantity(this);
+			}
 			return;
 		}
 
