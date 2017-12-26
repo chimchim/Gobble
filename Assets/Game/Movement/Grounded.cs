@@ -13,7 +13,8 @@ namespace Game.Movement
 {
 	public class Grounded : MovementState
 	{
-		bool groundedLast;
+		public Collider2D JumpLadder;
+		public float JumpLadderTimer;
 		float groundTimer;
 		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
@@ -32,7 +33,6 @@ namespace Game.Movement
 			{
 				movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Roped;
 			}
-			animator.SetBool("Run", false);
 			animator.SetBool("Roped", false);
 			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
@@ -48,7 +48,6 @@ namespace Game.Movement
 
 			if (combinedSpeed > GameUnity.PlayerSpeed && !movement.Grounded)
 			{
-
 				movement.ForceVelocity.x = signedCombinedSpeed * forceXSpeed;
 			}
 			else
@@ -56,17 +55,15 @@ namespace Game.Movement
 				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 			}
 
-			stats.OxygenSeconds += delta;
-			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
+			animator.SetBool("Run", (movement.Grounded && input.Axis.x != 0));
 
-			if (movement.Grounded && input.Axis.x != 0)
-			{
-				animator.SetBool("Run", true);
-			}
 			if ((input.Space && (movement.Grounded || groundTimer < 0.2f) && player.Owner))
 			{
 				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
-				//Game.Systems.Movement.DoJump(game, player.EntityID);
+			}
+			if (!movement.Grounded)
+			{
+				groundTimer += delta;
 			}
 
 			float yMovement = movement.CurrentVelocity.y * delta + (movement.ForceVelocity.y * delta);
@@ -77,61 +74,90 @@ namespace Game.Movement
 
 			bool vertGrounded = false;
 			bool horGrounded = false;
-			if (!movement.Grounded)
-			{
-				groundTimer += delta;
-			}
+			bool vertGrounded2 = false;
+			bool horGrounded2 = false;
+
 			Vector3 tempPos = entityGameObject.transform.position;
 			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer];
-			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
-			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
-			entityGameObject.transform.position = tempPos;
+			var tempPos1 = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+			tempPos1 = Game.Systems.Movement.VerticalMovement(tempPos1, yMovement, xOffset, yOffset, mask, out vertGrounded);
+			var tempPos2 = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded2);
+			tempPos2 = Game.Systems.Movement.HorizontalMovement(tempPos2, xMovement, xOffset, yOffset, out horGrounded2);
+			entityGameObject.transform.position = tempPos1;
+			if ((tempPos2 - tempPos).magnitude > (tempPos1 - tempPos).magnitude)
+			{
+				entityGameObject.transform.position = tempPos2;
+				horGrounded = horGrounded2;
+				vertGrounded = vertGrounded2;
+			}
+
 			movement.Grounded = vertGrounded;
-			
+			animator.SetBool("Jump", !vertGrounded);
+
 			if (vertGrounded)
 			{
-				animator.SetBool("Jump", false);
-				if (movement.FallingTime > GameUnity.ExtraFallSpeedAfter)
-				{
-					float fallMulti = movement.FallingTime - GameUnity.ExtraFallSpeedAfter;
-					AffectHP fallDamage = AffectHP.Make(-GameUnity.FallDamage * fallMulti);
-					fallDamage.Apply(game, entityID);
-					fallDamage.Recycle();
-				}
+				movement.CurrentVelocity.y = 0;
 				movement.ForceVelocity.y = 0;
+				groundTimer = 0;
 				if (yMovement < 0)
 				{
 					movement.ForceVelocity.x *= 0.88f;
 				}
-				movement.FallingTime = 0;
-				movement.CurrentVelocity.y = 0;
-				groundedLast = true;
-				groundTimer = 0;
 			}
-			else
-			{
-				animator.SetBool("Jump", true);
-				if (movement.CurrentVelocity.y < 0)
-				{
-					movement.FallingTime += delta;
-				}
-			}
-
 			if(horGrounded)
 			{
 				movement.ForceVelocity.x = 0;
 			}
+		
+			var ladder1 = VerticalMovementLadder(tempPos, yMovement, xOffset, yOffset);
+			if (ladder1 && (input.Axis.x != 0 || input.Axis.y != 0))
+			{
+				var skipLadder = (JumpLadderTimer > 0 && ladder1 == JumpLadder);
+				if (!skipLadder)
+				{
+					groundTimer = 0;
+					movement.CurrentState = MovementComponent.MoveState.Ladder;
+				}
+			}
+			JumpLadderTimer -= delta;
 			var layerMask = 1 << LayerMask.NameToLayer("Water");
 			var topRayPos = new Vector2(tempPos.x, tempPos.y + 0.65f);
 			RaycastHit2D hit = Physics2D.Raycast(topRayPos, -Vector3.up, yOffset, layerMask);
 			if (hit.collider != null)
 			{
-				movement.FallingTime = 0;
 				movement.CurrentState = MovementComponent.MoveState.Swimming;
-				Debug.DrawLine(topRayPos, topRayPos + (-Vector2.up * (yOffset)), Color.magenta);
-			}
-			
+			}		
 		}
+
+		public static Collider2D VerticalMovementLadder(Vector3 pos, float y, float Xoffset, float yoffset)
+		{
+			float half = yoffset - (yoffset / 10);
+			float fullRayDistance = yoffset + Mathf.Abs(y) - half;
+			var layerMask = 1 << LayerMask.NameToLayer("Ladder");
+
+			float sign = Mathf.Sign(y);
+			Vector3 firstStartY = pos;
+			RaycastHit2D hitsY = new RaycastHit2D();
+			hitsY = Physics2D.Raycast(firstStartY, Vector3.up * sign, 0.1f, layerMask);
+
+			//var laddered = ((hitsY.collider != null));
+			return hitsY.collider;
+		}
+		public static bool HorizontalMovementLadder(Vector3 pos, float x, float xoffset, float yoffset)
+		{
+			float fullRayDistance = xoffset + Mathf.Abs(x);
+			var layerMask = 1 << LayerMask.NameToLayer("Ladder");
+			float sign = Mathf.Sign(x);
+			Vector3 firstStartX = new Vector3(0, -yoffset + 0.05f, 0) + pos;
+			Vector3 secondStartX = new Vector3(0, yoffset - 0.05f, 0) + pos;
+			RaycastHit2D[] hitsY = new RaycastHit2D[2];
+			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, fullRayDistance, layerMask);
+			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, fullRayDistance, layerMask);
+
+			var laddered = ((hitsY[0].collider != null) || (hitsY[1].collider != null));
+			return laddered;
+		}
+
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 

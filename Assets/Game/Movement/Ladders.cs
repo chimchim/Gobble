@@ -31,22 +31,11 @@ namespace Game.Movement
 			animator.SetBool("Roped", false);
 
 			movement.ForceVelocity = Vector2.zero;
-
-
-			stats.OxygenSeconds += delta;
-			stats.OxygenSeconds = Mathf.Min(stats.OxygenSeconds, stats.MaxOxygenSeconds);
-
-			if (movement.Grounded && input.Axis.x != 0)
-			{
-				animator.SetBool("Run", true);
-			}
-			if ((input.Space && player.Owner))
-			{
-				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
-			}
-			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed;
-			float yMovement = movement.CurrentVelocity.y * delta + (movement.ForceVelocity.y * delta);
-			float xMovement = 0;
+			
+			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 1.5f;
+			movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+			float yMovement = movement.CurrentVelocity.y * delta;
+			float xMovement = movement.CurrentVelocity.x * delta;
 
 			float xOffset = GameUnity.GroundHitBox.x;
 			float yOffset = GameUnity.GroundHitBox.y;
@@ -54,22 +43,41 @@ namespace Game.Movement
 			bool vertGrounded = false;
 			bool horGrounded = false;
 			Vector3 tempPos = entityGameObject.transform.position;
+
 			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer];
-			//tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
-			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
-			entityGameObject.transform.position = tempPos;
-			movement.Grounded = vertGrounded;
+			var tempPos1 = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
+			tempPos1 = Game.Systems.Movement.VerticalMovement(tempPos1, yMovement, xOffset, yOffset, mask, out vertGrounded);
+			entityGameObject.transform.position = tempPos1;
 
-			if (vertGrounded)
+			if (yMovement == 0)
+				yMovement = -0.1f;
+			var ladder1 = Grounded.VerticalMovementLadder(tempPos, yMovement, xOffset, yOffset);
+			if (!ladder1)
 			{
+				if (Math.Abs(input.Axis.x) <= 0 && input.Axis.y > 0)
+				{
+					if ((input.Space && player.Owner))
+					{
+						movement.CurrentState = MovementComponent.MoveState.Grounded;
+						var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
+						grounded.JumpLadder = ladder1;
+						grounded.JumpLadderTimer = 0.15f;
+						HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
+					}
+					entityGameObject.transform.position = tempPos;
+					return;
+				}
+				movement.CurrentVelocity.y *= 0.8f;
+				movement.CurrentState = MovementComponent.MoveState.Grounded;
+				return;
 			}
-			else
+			if ((input.Space && player.Owner))
 			{
-			}
-
-			if (horGrounded)
-			{
-
+				movement.CurrentState = MovementComponent.MoveState.Grounded;
+				var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
+				grounded.JumpLadder = ladder1;
+				grounded.JumpLadderTimer = 0.15f;
+				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 			}
 		}
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)

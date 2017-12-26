@@ -100,7 +100,7 @@ public partial class TileMap
 	private int _extraIron;
 	private int _extraCopper;
 	private Transform _mineralParent;
-
+	GameObject parentCube;
 
 	public GameObject CreateBlock(GameManager game, int x, int y)
 	{
@@ -132,6 +132,7 @@ public partial class TileMap
 		go1.GetComponent<GatherableCustom>().Mod = minsVariables.NormalMod;
 		go1.GetComponent<GatherableCustom>().CustomIndex = CurrentCustomIndex;
 		go1.GetComponent<GatherableCustom>().GatherScript = game.GameResources.AllItems.TreeTwig;
+		go1.transform.parent = parentCube.transform;
 		CustomGatherables.Add(CurrentCustomIndex, go1);
 		CurrentCustomIndex++;
 	}
@@ -149,6 +150,7 @@ public partial class TileMap
 		chunk.GetComponent<GatherableBlock>().Y = (int)y;
 		chunk.GetComponent<GatherableBlock>().GatherScript = game.GameResources.AllItems.Tree;
 		Blocks[(int)x, (int)y] = chunk;
+		chunk.transform.parent = parentCube.transform;
 	}
 	private void CreateMineral(GameManager game, int x, int y, Sprite sprite, IngredientType type = IngredientType.Normal)
 	{
@@ -183,7 +185,7 @@ public partial class TileMap
 		Mods[2] = minsVariables.CopperMod;
 		Mods[3] = minsVariables.IronMod;
 		Mods[4] = minsVariables.GoldMod;
-		GameObject parentCube = new GameObject();
+		parentCube = new GameObject();
 		parentCube.name = "Tiles";
 		_mineralParent = parentCube.transform;
 		for (int x = 0; x < fullWidhth; x++)

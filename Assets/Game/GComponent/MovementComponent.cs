@@ -41,7 +41,8 @@ namespace Game.Component
 			Swimming,
 			Floating,
 			FlyingDebug,
-			Roped
+			Roped,
+			Ladder
 		}
 		public MoveState CurrentState;
 		public MovementState[] States;
@@ -73,12 +74,13 @@ namespace Game.Component
 			MovementComponent comp = _pool.GetNext();
             comp.EntityID = entityID;
 			comp.OxygenDeplationTick = 1;
-			comp.States = new MovementState[5];
+			comp.States = new MovementState[6];
 			comp.States[(int)MoveState.Grounded] = new Grounded();
 			comp.States[(int)MoveState.Swimming] = new Swim();
 			comp.States[(int)MoveState.Floating] = new Floating();
 			comp.States[(int)MoveState.FlyingDebug] = new FlyingDebug();
 			comp.States[(int)MoveState.Roped] = new Roped();
+			comp.States[(int)MoveState.Ladder] = new Ladders();
 			comp.CurrentState = MoveState.Grounded;
 			comp.RopeList = new List<RopedData>();
 
