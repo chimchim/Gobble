@@ -110,7 +110,7 @@ namespace Game.Movement
 			}
 		
 			var ladder1 = VerticalMovementLadder(tempPos, yMovement, xOffset, yOffset);
-			if (ladder1 && (input.Axis.x != 0 || input.Axis.y != 0))
+			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/)
 			{
 				var skipLadder = (JumpLadderTimer > 0 && ladder1 == JumpLadder);
 				if (!skipLadder)

@@ -10,6 +10,7 @@ namespace Game.Systems
 	public class InputSystem : ISystem
 	{
 		// gör en input translator?
+		bool craftingActive = true;
         private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
 		private KeyCode[] AlphaKeys = new KeyCode[]
 			{
@@ -32,12 +33,12 @@ namespace Game.Systems
 				if (player.Owner)
 				{
 					var movement = game.Entities.GetComponentOf<MovementComponent>(e);
-
+					var inventory = game.Entities.GetComponentOf<InventoryComponent>(e);
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
 					Vector2 mousePos = UnityEngine.Input.mousePosition;
 					mousePos = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-
+					
 					Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
 					Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
 					screenDirection.Normalize();
@@ -54,9 +55,17 @@ namespace Game.Systems
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
-					input.LeftDown = UnityEngine.Input.GetKey(KeyCode.Mouse0);
-					input.OnLeftDown = UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown;
+					input.LeftDown = (UnityEngine.Input.GetKey(KeyCode.Mouse0) && !inventory.Crafting.Hovering);
+					input.OnLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !inventory.Crafting.Hovering;
 					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
+
+					if (Input.GetKeyDown(KeyCode.C))
+					{
+						inventory.Crafting.gameObject.SetActive(!craftingActive);
+						craftingActive = !craftingActive;
+						if (!craftingActive)
+							inventory.Crafting.Hovering = false;
+					}
 				}
 				else
 				{
@@ -110,7 +119,18 @@ namespace Game.Systems
 
 		public void Initiate(GameManager game)
 		{
+			 var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 
+			 foreach (int e in entities)
+			 {
+				 var player = game.Entities.GetComponentOf<Player>(e);
+				 var inventory = game.Entities.GetComponentOf<InventoryComponent>(e);
+
+				 if (player.Owner)
+				 {
+					 inventory.Crafting.gameObject.SetActive(craftingActive);
+				 }
+			 }
 		}
         public void SendMessage(GameManager game, int reciever, Message message)
         {

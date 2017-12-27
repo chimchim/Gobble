@@ -140,12 +140,12 @@ public class Ladder : Item
 			}
 			else if (hit.normal.x == 0)
 			{
-				int x = (int)(hit.transform.position.x / 1.28f);
-				int y = (int)(hit.transform.position.y / 1.28f);
+				var bajs = hit.transform.position / 1.28f;
+				int x = (int)bajs.x;
+				int y = (int)bajs.y;
 				int nextX = x + (Math.Sign(-hand.up.x));
 				var cube = game.TileMap.Blocks[nextX, y];
-
-				if (cube == null)
+				if (cube == null || cube.GetComponent<GatherableBlock>().IngredientType == TileMap.IngredientType.TreeChunk)
 				{
 					placeOK = true;
 					Placeable.position = new Vector3(hit.transform.position.x + (0.68f * (Math.Sign(-hand.up.x))), hit.transform.position.y, -0.2f);

@@ -86,9 +86,10 @@ public class GameUnity : MonoBehaviour
 	public static float PerlinZoom;
 
 	public static int MainInventorySize = 3;
-	public static int BackpackInventorySize = 9;
+	public static int BackpackInventorySize = 8;
 	public InventoryBackpack InventoryBackpack;
 	public InventoryMain MainInventory;
+	public Crafting Crafting;
 	public GameObject BuildConsole;
 	public GameObject MenuObject;
 	public GameObject MiniMapCanvas;
@@ -138,10 +139,12 @@ public class GameUnity : MonoBehaviour
 		MainInventory.gameObject.SetActive(true);
 		inventory.InventoryBackpack = InventoryBackpack;
 		inventory.MainInventory = MainInventory;
+		inventory.Crafting = Crafting;
 	}
 
 	bool buildConsoleActive;
 	int normal = 0;
+	bool canvasactive = true;
 	void Update () 
 	{
         game.Update(Time.deltaTime);
@@ -150,14 +153,15 @@ public class GameUnity : MonoBehaviour
 
 		StartingPosition = StartPos.position;
 
+		//if (UnityEngine.Input.GetKeyDown(KeyCode.B))
+		//{
+		//	buildConsoleActive = !buildConsoleActive;
+		//	BuildConsole.SetActive(buildConsoleActive);
+		//}
 		if (UnityEngine.Input.GetKeyDown(KeyCode.B))
 		{
-			buildConsoleActive = !buildConsoleActive;
-			BuildConsole.SetActive(buildConsoleActive);
-		}
-		if (UnityEngine.Input.GetKeyDown(KeyCode.C))
-		{
-			Canvas.SetActive(false);
+			Canvas.SetActive(!canvasactive);
+			canvasactive = !canvasactive;
 		}
 	}
 	void FixedUpdate()

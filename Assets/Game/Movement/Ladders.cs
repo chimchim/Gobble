@@ -31,8 +31,9 @@ namespace Game.Movement
 			animator.SetBool("Roped", false);
 
 			movement.ForceVelocity = Vector2.zero;
-			
-			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 1.5f;
+			//float sign = input.Axis.y == 0 ? 0 : Mathf.Sign(input.Axis.y);
+			//float inputY = Math.Max(Mathf.Abs(input.Axis.y), 0.6f) * sign;
+			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 1.3f;
 			movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 			float yMovement = movement.CurrentVelocity.y * delta;
 			float xMovement = movement.CurrentVelocity.x * delta;
@@ -64,10 +65,14 @@ namespace Game.Movement
 						grounded.JumpLadderTimer = 0.15f;
 						HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 					}
+
 					entityGameObject.transform.position = tempPos;
 					return;
 				}
-				movement.CurrentVelocity.y *= 0.8f;
+				if (input.Axis.y > 0)
+				{
+					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * GameUnity.PlayerSpeed * 1.3f;
+				}
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				return;
 			}

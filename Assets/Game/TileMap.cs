@@ -307,7 +307,8 @@ public partial class TileMap
 						else
 							break;	
 					}
-					int create = game.CurrentRandom.Next(0, minsVariables.TreeOneIn - chance);
+					int startChance = Mathf.Max(minsVariables.TreeOneIn - chance, 1);
+					int create = game.CurrentRandom.Next(0, startChance);
 					if (create == 0 && okTops.Count > 1)
 					{
 						CreateTree(game, okTops);
@@ -329,7 +330,7 @@ public partial class TileMap
 			start = 4 - tops.Count;
 		}
 		int treeLength = game.CurrentRandom.Next(7, 21);
-		int roofOffset = 2;
+		int roofOffset = 1;
 		#region Ground
 
 		int twigAmount = 0;
@@ -339,6 +340,14 @@ public partial class TileMap
 		bool groundTwig = false;
 		for (int i = 0; i < tops.Count; i++)
 		{
+			int spaceChance = game.CurrentRandom.Next(3, 6);
+			if (i == (tops.Count - 1))
+			{
+				for (int u = 1; u < spaceChance; u++)
+				{
+					_enlisted[(int)tops[i].x + u, (int)tops[i].y] = true;
+				}
+			}
 			_enlisted[(int)tops[i].x, (int)tops[i].y] = true;
 			
 			if (i+start == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level1_1.gameObject, tops[i].x, tops[i].y + 1);
