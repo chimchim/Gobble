@@ -180,9 +180,15 @@ public class Ingredient : Item
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
-		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.7f, layerMask);
+		var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
 		if (hit.transform == null)
-			return;
+		{
+			var entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
+			var newDir = hand.position - entityPos;
+			hit = Physics2D.Raycast(entityPos, newDir, 1.2f, layerMask);
+			if (hit.transform == null)
+				return;
+		}
 
 		var bc = hit.transform.GetComponent<Gatherable>();
 		if (bc != null)

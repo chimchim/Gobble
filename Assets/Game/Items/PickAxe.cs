@@ -64,15 +64,14 @@ public class PickAxe : Item
 
 	private void TryPick(GameManager game, int entity)
 	{
-		var entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
 		
 		var hit = Physics2D.Raycast(HitPointer.position, HitPointer.right, 0.2f, layerMask);
 		if (hit.transform == null)
 		{
-			var newDir = entityPos - HitPointer.position;
-			Debug.DrawLine(entityPos, HitPointer.position, Color.green);
+			var entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
+			var newDir = HitPointer.position - entityPos;
 			hit = Physics2D.Raycast(entityPos, newDir, 1.2f, layerMask);
 			if(hit.transform == null)
 				return;

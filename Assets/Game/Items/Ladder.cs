@@ -143,9 +143,9 @@ public class Ladder : Item
 			}
 			else if (hit.normal.x == 0)
 			{
-				var bajs = hit.transform.position / 1.28f;
-				int x = (int)bajs.x;
-				int y = (int)bajs.y;
+				var coord = hit.transform.position / 1.28f;
+				int x = (int)coord.x;
+				int y = (int)coord.y;
 				int nextX = x + (Math.Sign(-hand.up.x));
 				var cube = game.TileMap.Blocks[nextX, y];
 				if (cube == null || cube.GetComponent<GatherableBlock>().IngredientType == TileMap.IngredientType.TreeChunk)
@@ -166,9 +166,15 @@ public class Ladder : Item
 					{
 						base.ThrowItem(game, entity);
 					});
+					game.CallBacks.Add(() =>
+					{
+						var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
+						holder.Hands.OwnerActivate(game, entity);
+					});
 					return;
 				}
 				var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
+				
 				inv.MainInventory.SetQuantity(this);
 			}
 			return;
