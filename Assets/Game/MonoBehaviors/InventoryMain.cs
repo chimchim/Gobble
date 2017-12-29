@@ -14,7 +14,6 @@ public class InventoryMain : MonoBehaviour {
 
 	void Start ()
 	{
-
 		Template.SetActive(true);
 		SetMainInventorySlots(GameUnity.MainInventorySize);
 	}
@@ -56,6 +55,21 @@ public class InventoryMain : MonoBehaviour {
 			return Items[index];
 		}
 		return null;
+	}
+
+	public void RemoveItem(Item item)
+	{
+		for (int i = 0; i < Items.Length; i++)
+		{
+			if (item == Items[i])
+			{
+				Items[i] = null;
+				ItemImage[i].UnsetImage();
+				ItemImage[i].Quantity.text = "";
+				CurrenItemsAmount--;
+				break;
+			}
+		}
 	}
 
 	public void RemoveItem(int index)

@@ -39,7 +39,6 @@ public class InventoryBackpack : MonoBehaviour
 		{
 			if (Items[i] == null)
 			{
-				CurrenItemsAmount++;
 				Items[i] = item;
 				ItemImage[i].SetImage(scriptable.Sprite);
 				ItemImage[i].SetQuantity(item.Quantity);
@@ -59,11 +58,18 @@ public class InventoryBackpack : MonoBehaviour
 		return null;
 	}
 
-	public void RemoveItem(int index)
+	public void RemoveItem(Item item)
 	{
-		CurrenItemsAmount--;
-		Items[index] = null;
-		ItemImage[index].UnsetImage();
+		for (int i = 0; i < Items.Length; i++)
+		{
+			if (item == Items[i])
+			{
+				Items[i] = null;
+				ItemImage[i].UnsetImage();
+				ItemImage[i].Quantity.text = "";
+				break;
+			}
+		}
 	}
 
 	public void SetMainInventorySlots(int slots)

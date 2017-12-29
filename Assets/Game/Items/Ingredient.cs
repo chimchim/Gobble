@@ -68,6 +68,9 @@ public class Ingredient : Item
 	{
 		base.ThrowItem(game, entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		game.GameResources.AllItems.IngredientAmount[(int)IngredientType] -= Quantity;
+		inventory.Crafting.SetCurrent();
 
 		var ent = game.Entities.GetEntity(entity);
 		var position = ent.gameObject.transform.position;
@@ -106,7 +109,7 @@ public class Ingredient : Item
 						return;
 					}
 				}
-				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = 1;
+				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Quantity;
 				SetCraftingData(game, EntityID, (int)ingredientType);
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);
@@ -149,7 +152,7 @@ public class Ingredient : Item
 						return;
 					}
 				}
-				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = 1;
+				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Quantity;
 				SetCraftingData(game, EntityID, (int)ingredientType);
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);

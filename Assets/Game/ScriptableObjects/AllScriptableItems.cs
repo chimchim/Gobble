@@ -10,6 +10,7 @@ public class AllScriptableItems : ScriptableObject
 	public IngredientScriptable Ingredient;
 	public ScriptableItem Ladder;
 
+	public List<ScriptableItem> AllItemsList = new List<ScriptableItem>();
 	[Header("Gatherable ")]
 	public GatherableScriptable Gravel;
 	public GatherableScriptable Tree;

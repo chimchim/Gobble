@@ -7,8 +7,12 @@ public class CraftButton : MonoBehaviour
 {
 	public Image ItemImage;
 	public Text AmountString;
+	public int CurrentAmount;
+
+	private ScriptableItem Item;
 	public void SetItem(ScriptableItem item, int[] ingredients)
 	{
+		Item = item;
 		int amount = -1;
 		for (int i = 0; i < item.IngredientsNeeded.Count; i++)
 		{
@@ -23,7 +27,15 @@ public class CraftButton : MonoBehaviour
 			AmountString.text = amount.ToString();
 		else
 			AmountString.text = "";
-
+		CurrentAmount = amount;
 		ItemImage.sprite = item.Sprite;
+	}
+	public void OnClick()
+	{
+		if (CurrentAmount > 0)
+		{
+			CurrentAmount--;
+			Item.MakeItem.Invoke();
+		}
 	}
 }

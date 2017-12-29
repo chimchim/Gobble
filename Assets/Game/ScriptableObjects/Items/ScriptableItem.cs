@@ -19,10 +19,14 @@ public class ScriptableItem : ScriptableObject
 	public Sprite Sprite;
 	public List<Recipe> IngredientsNeeded;
 	public ItemCategory Category;
+	public Item.ItemID WhatItem;
+	
 	[Serializable]
 	public struct Recipe
 	{
 		public TileMap.IngredientType Ingredient;
 		public int AmountNeeded;
 	}
+
+	public Action MakeItem;
 }

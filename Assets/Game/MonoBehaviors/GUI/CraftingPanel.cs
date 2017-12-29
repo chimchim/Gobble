@@ -27,7 +27,7 @@ public class CraftingPanel : MonoBehaviour
 			}
 		}
 	}
-	void Start()
+	void OnEnable()
 	{
 		for (int i = 0; i < TemplateAmount; i++)
 		{
