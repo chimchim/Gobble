@@ -109,6 +109,10 @@ public class GameUnity : MonoBehaviour
 	
 		game.Systems.CreateSystems();
 		game.Initiate();
+		for (int i = 0; i < game.GameResources.AllItems.IngredientAmount.Length; i++)
+		{
+			game.GameResources.AllItems.IngredientAmount[i] = 0;
+		}
 		if (!MapData.UseMenu)
 		{
 			game.CreateEmptyPlayer(true, "local", true, 0, Characters.Yolanda);

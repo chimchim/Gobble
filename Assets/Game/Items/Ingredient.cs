@@ -98,6 +98,7 @@ public class Ingredient : Item
 				{
 					if (stackable.TryStack(game, item))
 					{
+						SetCraftingData(game, EntityID, (int)ingredientType);
 						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 						inv.InventoryBackpack.SetQuantity(stackable);
 						inv.MainInventory.SetQuantity(stackable);
@@ -105,6 +106,8 @@ public class Ingredient : Item
 						return;
 					}
 				}
+				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = 1;
+				SetCraftingData(game, EntityID, (int)ingredientType);
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);
 			}
@@ -127,7 +130,6 @@ public class Ingredient : Item
 		item.IngredientType = ingredientType;
 		visible.Item = item;
 		visible.Force = force;
-
 		visible.CallBack = (EntityID) =>
 		{
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
@@ -136,8 +138,10 @@ public class Ingredient : Item
 				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
 				foreach (Item stackable in holder.Items.Values)
 				{
-					if (stackable.TryStack(game, item))
+					var stacked = stackable.TryStack(game, item);
+					if (stacked)
 					{
+						SetCraftingData(game, EntityID, (int)ingredientType);
 						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 						inv.InventoryBackpack.SetQuantity(stackable);
 						inv.MainInventory.SetQuantity(stackable);
@@ -145,6 +149,8 @@ public class Ingredient : Item
 						return;
 					}
 				}
+				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = 1;
+				SetCraftingData(game, EntityID, (int)ingredientType);
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);
 			}
@@ -152,7 +158,11 @@ public class Ingredient : Item
 
 		return visible;
 	}
-
+	public static void SetCraftingData(GameManager game, int entity, int ingredientType)
+	{
+		var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		inventory.Crafting.SetCurrent();
+	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.InventorySprite[(int)IngredientType];
@@ -204,6 +214,7 @@ public class Ingredient : Item
 			if (ingre.IngredientType == IngredientType)
 			{
 				Quantity += ingre.Quantity;
+				game.GameResources.AllItems.IngredientAmount[(int)IngredientType] = Quantity;
 				return true;
 			}
         }

@@ -10,8 +10,10 @@ public class ScriptableItem : ScriptableObject
 	public enum ItemCategory
 	{ 
 		Build,
+		Movement,
+		Defence,
 		Weapons,
-		Movement
+		Ingredient
 	}
 	public GameObject Prefab;
 	public Sprite Sprite;
@@ -21,6 +23,6 @@ public class ScriptableItem : ScriptableObject
 	public struct Recipe
 	{
 		public TileMap.IngredientType Ingredient;
-		public int Amount;
+		public int AmountNeeded;
 	}
 }

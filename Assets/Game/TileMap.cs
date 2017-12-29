@@ -370,7 +370,7 @@ public partial class TileMap
 						{
 							int extra = 3 - j;
 							extra = Mathf.Min(extra, 0);
-							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1));
+							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1) + twigAmount);
 							if (twig == 0)
 							{
 								twigAmount++;
@@ -391,6 +391,7 @@ public partial class TileMap
 						} 
 						#endregion
 					}
+					twigAmount = 0;
 				}
 			}
 			if (i + start == 2)
@@ -412,7 +413,7 @@ public partial class TileMap
 							rightHeight++;
 							int extra = 6 - j;
 							extra = Mathf.Min(extra, 0);
-							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1));
+							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1) + twigAmount);
 							if (twig == 0)
 							{
 								twigAmount++;
