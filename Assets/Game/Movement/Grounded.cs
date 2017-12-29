@@ -99,10 +99,7 @@ namespace Game.Movement
 				movement.CurrentVelocity.y = 0;
 				movement.ForceVelocity.y = 0;
 				groundTimer = 0;
-				if (yMovement < 0)
-				{
-					movement.ForceVelocity.x *= 0.88f;
-				}
+				movement.ForceVelocity.x *= 0.88f;
 			}
 			if(horGrounded)
 			{

@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class CraftingPanel : MonoBehaviour
 {
+	
 	public int TemplateAmount;
 	public GameObject Template;
 	[SerializeField]
 	public List<CraftButton> CraftButtons = new List<CraftButton>();
+
 	private int _currentIndex;
+	private bool enabled;
 	public void SetItems(AllScriptableItems allItems, ScriptableItem.ItemCategory category)
 	{
 		for (int i = 0; i < _currentIndex; i++)
@@ -16,19 +19,21 @@ public class CraftingPanel : MonoBehaviour
 			CraftButtons[i].gameObject.SetActive(false);
 		}
 		_currentIndex = 0;
-		var items = allItems.GetItems();
-		for (int i = 0; i < items.Count; i++)
+		for (int i = 0; i < allItems.AllItemsList.Count; i++)
 		{
-			if (items[i].Category == category)
+			if (allItems.AllItemsList[i].Category == category)
 			{
 				CraftButtons[_currentIndex].gameObject.SetActive(true);
-				CraftButtons[_currentIndex].SetItem(items[i], allItems.IngredientAmount);
+				CraftButtons[_currentIndex].SetItem(allItems.AllItemsList[i], allItems.IngredientAmount);
 				_currentIndex++;
 			}
 		}
 	}
 	void OnEnable()
 	{
+		if (enabled)
+			return;
+		enabled = true;
 		for (int i = 0; i < TemplateAmount; i++)
 		{
 			var go = Instantiate(Template);

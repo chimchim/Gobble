@@ -110,7 +110,12 @@ public abstract class Item
 		}
 	}
 
-
+	public virtual bool HasSlot(InventoryComponent inv)
+	{
+		var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
+		(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
+		return hasSlot;
+	}
 	public virtual void ThrowItem(Game.GameManager game, int entity)
 	{
 		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);

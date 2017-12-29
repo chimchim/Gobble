@@ -39,6 +39,7 @@ public class InventoryBackpack : MonoBehaviour
 		{
 			if (Items[i] == null)
 			{
+				CurrenItemsAmount++;
 				Items[i] = item;
 				ItemImage[i].SetImage(scriptable.Sprite);
 				ItemImage[i].SetQuantity(item.Quantity);
@@ -64,6 +65,7 @@ public class InventoryBackpack : MonoBehaviour
 		{
 			if (item == Items[i])
 			{
+				CurrenItemsAmount--;
 				Items[i] = null;
 				ItemImage[i].UnsetImage();
 				ItemImage[i].Quantity.text = "";

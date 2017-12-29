@@ -71,7 +71,7 @@ namespace Game.Movement
 				}
 				if (input.Axis.y > 0)
 				{
-					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * GameUnity.PlayerSpeed * 1.3f;
+					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * GameUnity.PlayerSpeed * 1.6f;
 				}
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				return;

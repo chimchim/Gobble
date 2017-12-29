@@ -63,6 +63,7 @@ public class InventoryMain : MonoBehaviour {
 		{
 			if (item == Items[i])
 			{
+				Debug.Log("Remove item at " + i);
 				Items[i] = null;
 				ItemImage[i].UnsetImage();
 				ItemImage[i].Quantity.text = "";
@@ -89,6 +90,7 @@ public class InventoryMain : MonoBehaviour {
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
 			ItemImage.Add(go.GetComponent<ItemImage>());
 		}
+		ItemImage[0].Chosen.enabled = true;
 		Destroy(Template);
 	}
 	public void ResetAll()

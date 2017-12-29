@@ -77,19 +77,22 @@ public class Ladder : Item
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
+				var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
+				var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
+				(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
+				if (!hasSlot)
+					return;
 				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
 				foreach (Item stackable in holder.Items.Values)
 				{
 					if (stackable.TryStack(game, item))
 					{
-						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 						inv.InventoryBackpack.SetQuantity(stackable);
 						inv.MainInventory.SetQuantity(stackable);
 						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
 						return;
 					}
 				}
-				
 
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
 				item.OnPickup(game, EntityID, go);

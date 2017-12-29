@@ -62,12 +62,13 @@ namespace Game.Systems
 			foreach (int e in entities)
 			{
 				var player = game.Entities.GetComponentOf<Player>(e);
-				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
-				var inventory = game.Entities.GetComponentOf<InventoryComponent>(e);
+				
 				
 				var force = new Vector2(0, 8);
 				if (player.Owner)
 				{
+					var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
+					var inventory = game.Entities.GetComponentOf<InventoryComponent>(e);
 					for (int i = 0; i < game.GameResources.AllItems.AllItemsList.Count; i++)
 					{
 
@@ -94,11 +95,11 @@ namespace Game.Systems
 												if (itemHolder.ActiveItems.Contains(item))
 												{
 													item.OwnerDeActivate(game, e);
-													inventory.MainInventory.RemoveItem(item);
+													itemHolder.Hands.OwnerActivate(game, e);
 												}
-												else
-													inventory.InventoryBackpack.RemoveItem(item);
 
+												inventory.InventoryBackpack.RemoveItem(item);
+												inventory.MainInventory.RemoveItem(item);
 												HandleNetEventSystem.AddEventIgnoreOwner(game, e, NetDestroyItem.Make(e, item.ItemNetID));
 											}
 											else

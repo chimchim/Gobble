@@ -64,13 +64,19 @@ public class PickAxe : Item
 
 	private void TryPick(GameManager game, int entity)
 	{
+		var entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
 		
 		var hit = Physics2D.Raycast(HitPointer.position, HitPointer.right, 0.2f, layerMask);
 		if (hit.transform == null)
-			return;
-
+		{
+			var newDir = entityPos - HitPointer.position;
+			Debug.DrawLine(entityPos, HitPointer.position, Color.green);
+			hit = Physics2D.Raycast(entityPos, newDir, 1.2f, layerMask);
+			if(hit.transform == null)
+				return;
+		}
 		var bc = hit.transform.GetComponent<Gatherable>();
 		if (bc != null)
 		{
@@ -114,6 +120,12 @@ public class PickAxe : Item
 		visible.Force = force;
         visible.CallBack = (EntityID) =>
 		{
+			var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
+			var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
+			(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
+			Debug.Log("hasSlot " + hasSlot + " backpack amount " + inv.InventoryBackpack.CurrenItemsAmount); 
+			if (!hasSlot)
+				return;
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{

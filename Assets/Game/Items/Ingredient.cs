@@ -97,18 +97,20 @@ public class Ingredient : Item
 			if (player.Owner)
 			{
 				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
+				var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 				foreach (Item stackable in holder.Items.Values)
 				{
 					if (stackable.TryStack(game, item))
 					{
 						SetCraftingData(game, EntityID, (int)ingredientType);
-						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 						inv.InventoryBackpack.SetQuantity(stackable);
 						inv.MainInventory.SetQuantity(stackable);
 						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
 						return;
 					}
 				}
+				if (!item.HasSlot(inv))
+					return;
 				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Quantity;
 				SetCraftingData(game, EntityID, (int)ingredientType);
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
@@ -138,6 +140,7 @@ public class Ingredient : Item
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
+				var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
 				foreach (Item stackable in holder.Items.Values)
 				{
@@ -145,13 +148,14 @@ public class Ingredient : Item
 					if (stacked)
 					{
 						SetCraftingData(game, EntityID, (int)ingredientType);
-						var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
 						inv.InventoryBackpack.SetQuantity(stackable);
 						inv.MainInventory.SetQuantity(stackable);
 						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
 						return;
 					}
 				}
+				if (!item.HasSlot(inv))
+					return;
 				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Quantity;
 				SetCraftingData(game, EntityID, (int)ingredientType);
 				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));

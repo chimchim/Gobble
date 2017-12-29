@@ -47,6 +47,11 @@ public class Rope : Item
 		visible.Item = item;
 		visible.CallBack = (EntityID) =>
 		{
+			var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
+			var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
+			(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
+			if (!hasSlot)
+				return;
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
