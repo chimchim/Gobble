@@ -14,6 +14,18 @@ public class CraftingMatsNeeded : MonoBehaviour
 	private int _currentIndex;
 	private bool enabled;
 
+	public void SetMatsAmount()
+	{
+		for (int i = 0; i < ItemImages.Count; i++)
+		{
+			if (ItemImages[i].IsSet)
+			{
+				var currentAmount = AllItems.IngredientAmount[(int)ItemImages[i].Recipe.Ingredient];
+				ItemImages[i].Chosen.enabled = (currentAmount >= ItemImages[i].Recipe.AmountNeeded);
+			}
+		}
+	}
+
 	public void SetMatsNeeded(ScriptableItem item)
 	{
 		for (int i = 0; i < ItemImages.Count; i++)
@@ -21,21 +33,22 @@ public class CraftingMatsNeeded : MonoBehaviour
 			ItemImages[i].DisableImages();
 		}
 
-		int counter = 0;
+		float counter = 0;
 		int sign = 1;
 		int start = (ItemImages.Count - 1) / 2;
 		for (int i = 0; i < item.IngredientsNeeded.Count; i++)
 		{
-			int index = (start + (counter * sign));
+			int index = (int)(start + (counter * sign));
 			var recipe = item.IngredientsNeeded[i];
 			var sprite = Ingredients.InventorySprite[(int)recipe.Ingredient];
 			var currentAmount = AllItems.IngredientAmount[(int)recipe.Ingredient];
+			ItemImages[index].Recipe = recipe;
 			ItemImages[index].EnableImages();
 			ItemImages[index].SetImage(sprite);
 			ItemImages[index].Chosen.enabled = (currentAmount >= recipe.AmountNeeded);
 			ItemImages[index].SetQuantity(recipe.AmountNeeded);
-			counter++;
-			index *= -1;
+			counter += 0.5f;
+			sign *= -1;
 		}
 	}
 	void OnEnable()

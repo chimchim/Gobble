@@ -10,6 +10,7 @@ public class ItemImage : MonoBehaviour {
 	public Text Quantity;
 	public bool IsSet;
 
+	public ScriptableItem.Recipe Recipe;
 	public void SetQuantity(int i)
 	{
 		if (i > 1)
@@ -33,11 +34,13 @@ public class ItemImage : MonoBehaviour {
 	}
 	public void DisableImages()
 	{
+		IsSet = false;
 		GetComponent<Image>().enabled = false;
 		Image.enabled = false;
 	}
 	public void EnableImages()
 	{
+		IsSet = true;
 		GetComponent<Image>().enabled = true;
 		Image.enabled = true;
 	}

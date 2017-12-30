@@ -25,9 +25,11 @@ public class CraftingPanel : MonoBehaviour
 			{
 				CraftButtons[_currentIndex].gameObject.SetActive(true);
 				CraftButtons[_currentIndex].SetItem(allItems.AllItemsList[i], allItems.IngredientAmount);
+				MatsNeededPanel.SetMatsAmount();
 				_currentIndex++;
 			}
 		}
+		
 	}
 	void OnEnable()
 	{
