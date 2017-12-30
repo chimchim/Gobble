@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,8 +9,9 @@ public class CraftButton : MonoBehaviour
 	public Image ItemImage;
 	public Text AmountString;
 	public int CurrentAmount;
-
-	private ScriptableItem Item;
+	public Action<ScriptableItem> SetMaterials;
+	public ScriptableItem Item;
+	
 	public void SetItem(ScriptableItem item, int[] ingredients)
 	{
 		Item = item;
@@ -32,6 +34,7 @@ public class CraftButton : MonoBehaviour
 	}
 	public void OnClick()
 	{
+		SetMaterials.Invoke(Item);
 		if (CurrentAmount > 0)
 		{
 			CurrentAmount--;

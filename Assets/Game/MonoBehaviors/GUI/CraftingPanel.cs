@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CraftingPanel : MonoBehaviour
 {
-	
+	public CraftingMatsNeeded MatsNeededPanel;
 	public int TemplateAmount;
 	public GameObject Template;
-	[SerializeField]
+	[HideInInspector]
 	public List<CraftButton> CraftButtons = new List<CraftButton>();
 
 	private int _currentIndex;
@@ -40,6 +40,10 @@ public class CraftingPanel : MonoBehaviour
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
 			CraftButtons.Add(go.GetComponent<CraftButton>());
+			go.GetComponent<CraftButton>().SetMaterials = (Scriptable) =>
+			{
+				MatsNeededPanel.SetMatsNeeded(Scriptable);
+			};
 			go.SetActive(false);
 		}
 		Destroy(Template);

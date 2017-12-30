@@ -31,4 +31,14 @@ public class ItemImage : MonoBehaviour {
 		IsSet = false;
 		Image.enabled = false;
 	}
+	public void DisableImages()
+	{
+		GetComponent<Image>().enabled = false;
+		Image.enabled = false;
+	}
+	public void EnableImages()
+	{
+		GetComponent<Image>().enabled = true;
+		Image.enabled = true;
+	}
 }
