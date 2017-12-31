@@ -35,7 +35,10 @@ public class Ladder : Item
 
 	public override void OwnerActivate(GameManager game, int entity)
 	{
-		Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+		if (Placeable == null)
+		{
+			Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+		}
 		base.OwnerActivate(game, entity);
 	}
 

@@ -10,8 +10,10 @@ public class CraftButton : MonoBehaviour
 	public Text AmountString;
 	public int CurrentAmount;
 	public Action<ScriptableItem> SetMaterials;
-	public ScriptableItem Item;
-	
+	public Image Chosen;
+
+	private ScriptableItem Item;
+	public bool IsSelected;
 	public void SetItem(ScriptableItem item, int[] ingredients)
 	{
 		Item = item;
@@ -34,6 +36,8 @@ public class CraftButton : MonoBehaviour
 	}
 	public void OnClick()
 	{
+		Chosen.enabled = true;
+		IsSelected = true;
 		SetMaterials.Invoke(Item);
 		if (CurrentAmount > 0)
 		{

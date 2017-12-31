@@ -12,6 +12,7 @@ public class CraftingPanel : MonoBehaviour
 
 	private int _currentIndex;
 	private bool enabled;
+
 	public void SetItems(AllScriptableItems allItems, ScriptableItem.ItemCategory category)
 	{
 		for (int i = 0; i < _currentIndex; i++)
@@ -31,6 +32,14 @@ public class CraftingPanel : MonoBehaviour
 		}
 		
 	}
+	public void SetSelected()
+	{
+		for (int i = 0; i < CraftButtons.Count; i++)
+		{
+			CraftButtons[i].Chosen.enabled = false;
+		}
+	}
+
 	void OnEnable()
 	{
 		if (enabled)
