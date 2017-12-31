@@ -14,6 +14,13 @@ public class CraftingMatsNeeded : MonoBehaviour
 	private int _currentIndex;
 	private bool enabled;
 
+	public void Reset()
+	{
+		for (int i = 0; i < ItemImages.Count; i++)
+		{
+			ItemImages[i].DisableImages();
+		}
+	}
 	public void SetMatsAmount()
 	{
 		for (int i = 0; i < ItemImages.Count; i++)
@@ -28,6 +35,8 @@ public class CraftingMatsNeeded : MonoBehaviour
 
 	public void SetMatsNeeded(ScriptableItem item)
 	{
+		Debug.Log("SET MATS NEEDE " + item.WhatItem);
+		Reset();
 		for (int i = 0; i < ItemImages.Count; i++)
 		{
 			ItemImages[i].DisableImages();

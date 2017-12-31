@@ -37,6 +37,7 @@ public class ItemImage : MonoBehaviour {
 		IsSet = false;
 		GetComponent<Image>().enabled = false;
 		Image.enabled = false;
+		Quantity.text = "";
 	}
 	public void EnableImages()
 	{

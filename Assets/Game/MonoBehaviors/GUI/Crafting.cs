@@ -10,7 +10,9 @@ public class Crafting : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public bool Hovering;
 	public CraftingPanel Panel;
 	public AllScriptableItems AllItemsVariables;
-	public int Current;
+	public ScriptableItem.ItemCategory Current;
+	[HideInInspector]
+	public CraftButton[] CurrentButton;
 	public void OnPointerExit(PointerEventData eventData)
 	{
 		Hovering = false;
@@ -21,41 +23,50 @@ public class Crafting : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	}
 	void Start()
 	{
+		CurrentButton = new CraftButton[4];
 		Gear();
 	}
 
+	public void SetCurrentButton(CraftButton button)
+	{
+		CurrentButton[(int)Current] = button;
+	}
 	public void SetCurrent()
 	{
-		Panel.SetItems(AllItemsVariables, (ScriptableItem.ItemCategory)(Current));
+		Debug.Log("Set Current Crafting");
+		Panel.ResetChoosenItems();
+		Panel.SetItems(AllItemsVariables, Current);
+		if (CurrentButton[(int)Current])
+			CurrentButton[(int)Current].SetCurrent();
 	}
 
 	public void Gear()
 	{
-		Panel.SetItems(AllItemsVariables, ScriptableItem.ItemCategory.Build);
+		Current = ScriptableItem.ItemCategory.Build;
+		SetCurrent();
 		ResetAll();
 		Choosens[0].SetActive(true);
-		Current = 0;
 	}
 	public void Boots()
 	{
-		Panel.SetItems(AllItemsVariables, ScriptableItem.ItemCategory.Movement);
+		Current = ScriptableItem.ItemCategory.Movement;
+		SetCurrent();
 		ResetAll();
 		Choosens[1].SetActive(true);
-		Current = 1;
 	}
 	public void Shield()
 	{
-		Panel.SetItems(AllItemsVariables, ScriptableItem.ItemCategory.Defence);
+		Current = ScriptableItem.ItemCategory.Defence;
+		SetCurrent();
 		ResetAll();
 		Choosens[2].SetActive(true);
-		Current = 2;
 	}
 	public void Sword()
 	{
-		Panel.SetItems(AllItemsVariables, ScriptableItem.ItemCategory.Weapons);
+		Current = ScriptableItem.ItemCategory.Weapons;
+		SetCurrent();
 		ResetAll();
 		Choosens[3].SetActive(true);
-		Current = 3;
 	}
 	public void ResetAll()
 	{

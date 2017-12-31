@@ -15,6 +15,7 @@ public class CraftingPanel : MonoBehaviour
 
 	public void SetItems(AllScriptableItems allItems, ScriptableItem.ItemCategory category)
 	{
+		MatsNeededPanel.Reset();
 		for (int i = 0; i < _currentIndex; i++)
 		{
 			CraftButtons[i].gameObject.SetActive(false);
@@ -32,7 +33,8 @@ public class CraftingPanel : MonoBehaviour
 		}
 		
 	}
-	public void SetSelected()
+
+	public void ResetChoosenItems()
 	{
 		for (int i = 0; i < CraftButtons.Count; i++)
 		{
