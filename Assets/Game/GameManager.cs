@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
 using UnityEngine;
+using Game.Movement;
 
 namespace Game
 {
@@ -35,7 +36,23 @@ namespace Game
 			
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
 		}
+		public void CreateRabbit(Vector2 position)
+		{
+			Entity ent = new Entity();
+			this.Entities.addEntity(ent);
+			var list = new List<Movement.AnimalState>();
+			var patrol = new RabbitPatrol();
+			list.Add(patrol);
+			list.Add(new RabbitChill());
+			var animal = Animal.Make(ent.ID, list);
+			animal.CurrentState = patrol;
+			ent.AddComponent(animal);
 
+			var playerGameObject = GameObject.Instantiate(this.GameResources.Prefabs.Rabbit, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+			ent.gameObject = playerGameObject;
+			ent.gameObject.transform.position = position;
+			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
+		}
 		public void CreateFullPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);

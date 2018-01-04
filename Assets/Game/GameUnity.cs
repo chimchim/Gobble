@@ -85,8 +85,11 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryY;
 	public static float PerlinZoom;
 
+	public static float RabbitSpeed = 3;
+	public static float RabbitChillTimer = 2;
 	public static int MainInventorySize = 3;
 	public static int BackpackInventorySize = 8;
+
 	public InventoryBackpack InventoryBackpack;
 	public InventoryMain MainInventory;
 	public Crafting Crafting;

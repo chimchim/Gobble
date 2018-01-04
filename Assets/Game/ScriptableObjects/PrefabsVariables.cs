@@ -10,6 +10,9 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Milton;
 	public GameObject Yolanda;
 
+	[Header("Animals")]
+	public GameObject Rabbit;
+
 	public GameObject SpriteDiffuse;
 	public GameObject Poof;
 	public GameObject Ladder;
