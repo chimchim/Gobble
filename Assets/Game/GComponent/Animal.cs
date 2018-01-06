@@ -32,12 +32,16 @@ namespace Game.Component
 
 		public void TransitionState(GameManager game, int id, GEntity.Entity entity, Type from, Type to)
 		{
+			Debug.Log("From " + from.ToString() + " to " + to.ToString());
 			for (int i = 0; i < States.Count; i++)
 			{
 				if (States[i].GetType() == from)
 				{
 					States[i].LeaveState(game, this, id, entity);
 				}
+			}
+			for (int i = 0; i < States.Count; i++)
+			{
 				if (States[i].GetType() == to)
 				{
 					States[i].EnterState(game, this, id, entity);

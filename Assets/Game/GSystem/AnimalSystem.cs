@@ -26,6 +26,12 @@ namespace Game.Systems
 				var animal = game.Entities.GetComponentOf<Animal>(e);
 				var entity = game.Entities.GetEntity(e);
 				animal.CurrentState.Update(game, animal, e, entity, delta);
+				float signDir = animal.CurrentVelocity.x;
+				if (Mathf.Abs(signDir) > 0.3f)
+				{
+					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
+					entity.Animator.transform.eulerAngles = new Vector3(entity.Animator.transform.eulerAngles.x, mult * 180, entity.Animator.transform.eulerAngles.z);
+				}
 			}
 		}
 

@@ -1,18 +1,18 @@
 fileFormatVersion: 2
-guid: 4f4f9a452ecc7f946a6c32827099427a
-timeCreated: 1515276362
+guid: 2b9626409eaf5f441b04bc8d9850d3a9
+timeCreated: 1515277617
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: dig_0
-    21300002: dig_1
-    21300004: dig_2
-    21300006: dig_3
-    21300008: dig_4
-    21300010: dig_5
-    21300012: dig_6
-    21300014: dig_7
-    21300016: dig_9
+    21300000: digReverse_0
+    21300002: digReverse_2
+    21300004: digReverse_4
+    21300006: digReverse_5
+    21300008: digReverse_6
+    21300010: digReverse_7
+    21300012: digReverse_8
+    21300014: digReverse_9
+    21300016: digReverse_10
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -79,89 +79,37 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: dig_0
+      name: digReverse_0
       rect:
         serializedVersion: 2
-        x: 31
-        y: 53
-        width: 103
-        height: 111
-      alignment: 9
-      pivot: {x: 0.5, y: 0.71}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: dig_1
-      rect:
-        serializedVersion: 2
-        x: 175
+        x: 36
         y: 56
-        width: 117
-        height: 108
+        width: 56
+        height: 117
       alignment: 9
-      pivot: {x: 0.5, y: 0.81}
+      pivot: {x: 0.5, y: 0.87}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: dig_2
+      name: digReverse_2
       rect:
         serializedVersion: 2
-        x: 342
-        y: 12
-        width: 115
-        height: 151
+        x: 113
+        y: 48
+        width: 67
+        height: 127
       alignment: 9
-      pivot: {x: 0.5, y: 0.8}
+      pivot: {x: 0.5, y: 0.78}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: dig_3
+      name: digReverse_4
       rect:
         serializedVersion: 2
-        x: 519
-        y: 17
-        width: 101
-        height: 145
-      alignment: 9
-      pivot: {x: 0.5, y: 0.77}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: dig_4
-      rect:
-        serializedVersion: 2
-        x: 681
-        y: 22
-        width: 51
-        height: 138
-      alignment: 9
-      pivot: {x: 0.5, y: 0.77}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: dig_5
-      rect:
-        serializedVersion: 2
-        x: 780
-        y: 21
-        width: 76
-        height: 139
-      alignment: 9
-      pivot: {x: 0.5, y: 0.77}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: dig_6
-      rect:
-        serializedVersion: 2
-        x: 887
-        y: 34
+        x: 202
+        y: 45
         width: 69
         height: 126
       alignment: 9
@@ -170,28 +118,80 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: dig_7
+      name: digReverse_5
       rect:
         serializedVersion: 2
-        x: 990
-        y: 37
-        width: 67
-        height: 124
+        x: 297
+        y: 43
+        width: 76
+        height: 139
       alignment: 9
-      pivot: {x: 0.5, y: 0.78}
+      pivot: {x: 0.5, y: 0.77}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: dig_9
+      name: digReverse_6
       rect:
         serializedVersion: 2
-        x: 1092
-        y: 43
-        width: 56
-        height: 117
+        x: 422
+        y: 39
+        width: 51
+        height: 138
       alignment: 9
-      pivot: {x: 0.5, y: 0.87}
+      pivot: {x: 0.5, y: 0.77}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: digReverse_7
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 44
+        width: 101
+        height: 145
+      alignment: 9
+      pivot: {x: 0.5, y: 0.77}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: digReverse_8
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 44
+        width: 115
+        height: 151
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: digReverse_9
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 51
+        width: 117
+        height: 108
+      alignment: 9
+      pivot: {x: 0.5, y: 0.81}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: digReverse_10
+      rect:
+        serializedVersion: 2
+        x: 1084
+        y: 40
+        width: 103
+        height: 111
+      alignment: 9
+      pivot: {x: 0.5, y: 0.71}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

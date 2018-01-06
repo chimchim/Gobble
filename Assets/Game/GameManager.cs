@@ -44,6 +44,8 @@ namespace Game
 			var patrol = new RabbitPatrol();
 			list.Add(patrol);
 			list.Add(new RabbitChill());
+			list.Add(new JumpFlee());
+			list.Add(new RabbitDig());
 			var animal = Animal.Make(ent.ID, list);
 			animal.CurrentState = patrol;
 			ent.AddComponent(animal);

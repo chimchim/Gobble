@@ -11,95 +11,112 @@ using Game.Systems;
 
 namespace Game.Movement
 {
-	public class RabbitPatrol : AnimalState
+	public class JumpFlee : AnimalState
 	{
-		Vector3 goTo = Vector3.zero;
+		float otherDirectionTimer;
+		float otherDirection;
+		float jumpTimer;
+		float length;
+		float lengthTimer;
+		float direction;
 		public override void EnterState(GameManager game, Animal animal, int entityID, Entity entity)
 		{
-			var position = entity.gameObject.transform.position;
-			NewPosition(game, position);
+			otherDirectionTimer = -1;
+			entity.Animator.SetBool("Fall", false);
 		}
 
-		private bool ReachedPosition(Game.GameManager game, Vector2 position, Animal animal, Entity entity, int rand)
-		{
-			if (rand == 0)
-			{
-				animal.TransitionState(game, animal.EntityID, entity, this.GetType(), typeof(RabbitChill));
-				return false;
-			}
-			NewPosition(game, position);
-			return true;
-		}
-		private void NewPosition(Game.GameManager game, Vector2 position)
-		{
-			int x = game.CurrentRandom.Next(1, 9);
-			int sign = game.CurrentRandom.Next(0, 2);
-			sign = sign == 0 ? -1 : 1;
-			goTo.x = position.x + (sign * x);
-			goTo.y = position.y;
-			goTo.z = -0.2f;
-		}
 		public override void Update(GameManager game, Animal animal, int entityID, Entity entity, float delta)
 		{
 			var position = entity.gameObject.transform.position;
 			var closest = ClosestPlayer(game, position);
 			var fromPlayer = position - closest;
-			if (fromPlayer.magnitude < GameUnity.RabbitAggro)
+			bool isSafe = false;
+			if (fromPlayer.magnitude > (GameUnity.RabbitAggro * 2.0f))
 			{
-				animal.TransitionState(game, animal.EntityID, entity, this.GetType(), typeof(JumpFlee));
-				return;
+				isSafe = true;
 			}
-			if (goTo == Vector3.zero)
+			if (animal.Grounded)
 			{
-				NewPosition(game, position);
+				direction = Math.Sign(fromPlayer.x);
+				if (otherDirectionTimer > 0f)
+				{
+					otherDirectionTimer -= delta;
+					direction = otherDirection;
+				}
 			}
-			var direction = goTo - position;
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
-			animal.CurrentVelocity.x = Math.Sign(direction.x) * GameUnity.RabbitSpeed;
+			animal.CurrentVelocity.x = direction * GameUnity.RabbitSpeed * 1.6f;
 			float yMovement = animal.CurrentVelocity.y * delta;
 			float xMovement = animal.CurrentVelocity.x * delta;
-			
+
 			float xOffset = GameUnity.GroundHitBox.x;
 			float yOffset = GameUnity.GroundHitBox.y;
-			
+
 			bool vertGrounded = false;
 			bool horGrounded = false;
-			
+
 			Vector3 tempPos = position;
 			int layer = (int)Systems.Movement.LayerMaskEnum.Grounded;
 			var mask = game.LayerMasks.MappedMasks[layer];
 			tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
 			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			tempPos.z = -0.2f;
-			
+
 			if (horGrounded)
 			{
-				int rand = game.CurrentRandom.Next(0, 4);
-				if (!ReachedPosition(game, position, animal, entity, rand))
-					return;
+
 			}
 			if (vertGrounded)
 			{
 				animal.CurrentVelocity.y = 0;
-				animal.Grounded = true;
 			}
-
-			entity.gameObject.transform.position = tempPos;
-			entity.Animator.SetBool("Walk", (!horGrounded && vertGrounded));
-			entity.Animator.SetBool("Fall", !vertGrounded);
-
-			Debug.DrawLine(position, goTo, Color.red);
-			if (Math.Abs(position.x - goTo.x) < 1)
+			if (vertGrounded && yMovement < 0)
 			{
-				int rand = game.CurrentRandom.Next(0, 2);
-				ReachedPosition(game, position, animal, entity, rand);
+				entity.Animator.SetBool("Jump", false);
+				entity.Animator.SetBool("Walk", true);
+				animal.Grounded = true;
+				jumpTimer += delta;
+				if (jumpTimer > 0.45f)
+				{
+					jumpTimer = 0;
+					animal.CurrentVelocity.y = game.CurrentRandom.Next(13, 22);
+					entity.Animator.SetBool("Jump", true);
+					entity.Animator.SetBool("Walk", false);
+				}
+				if (isSafe)
+					animal.TransitionState(game, entityID, entity, this.GetType(), typeof(RabbitChill));
+			}
+			else
+			{
+				animal.Grounded = false;
+			}
+			
+			entity.gameObject.transform.position = tempPos;
+			if (lengthTimer < 0.8f)
+			{
+				lengthTimer += delta;
+				length += Math.Abs(entity.gameObject.transform.position.x - position.x);
+			}
+			if (lengthTimer > 0.8f)
+			{
+				lengthTimer = 0;
+				if (length < 0.5f)
+				{
+					otherDirection = -Math.Sign(fromPlayer.x);
+					otherDirectionTimer = 1f;
+				}
+				length = 0;
 			}
 		}
 
 		public override void LeaveState(GameManager game, Animal animal, int entityID, Entity entity)
 		{
-			entity.Animator.SetBool("Fall", false);
+			lengthTimer = 0;
+			length = 0;
+			jumpTimer = 0;
+			otherDirectionTimer = 0;
+			entity.Animator.SetBool("Jump", false);
 			entity.Animator.SetBool("Walk", false);
 		}
 	}

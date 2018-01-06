@@ -86,7 +86,8 @@ public class GameUnity : MonoBehaviour
 	public static float PerlinZoom;
 
 	public static float RabbitSpeed = 3;
-	public static float RabbitChillTimer = 2;
+	public static float RabbitChillTimer = 3;
+	public static float RabbitAggro = 4;
 	public static int MainInventorySize = 3;
 	public static int BackpackInventorySize = 8;
 
