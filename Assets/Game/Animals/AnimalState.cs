@@ -9,13 +9,17 @@ namespace Game.Movement
 {
 	public abstract class AnimalState
 	{
-			
-		public abstract void EnterState(GameManager game, Animal animal, int entityID, Entity entity);
-		public abstract void Update(GameManager game, Animal animal, int entityID, Entity entity, float delta);
-		public abstract void LeaveState(GameManager game, Animal animal, int entityID, Entity entity);
+		public int Index;
+		public abstract void EnterState(GameManager game, Animal animal, Entity entity, bool host);
+		public abstract void Update(GameManager game, Animal animal, Entity entity, bool host, float delta);
+		public abstract void LeaveState(GameManager game, Animal animal, Entity entity, bool host);
 
+		public AnimalState(int index)
+		{
+			Index = index;
+		}
 		public Vector3 ClosestPlayer(GameManager game, Vector3 myPos)
-		{ 
+		{
 			var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<InputComponent>());
 			Vector3 closest = new Vector3(100000, 10000, 0);
 			foreach (int e in entities)
@@ -28,5 +32,9 @@ namespace Game.Movement
 			}
 			return closest;
 		}
+
+		public abstract void Serialize(Game.GameManager game, int entity, List<byte> byteArray);
+		public abstract void Deserialize(object gameState, byte[] byteData, ref int index);
+
 	}
 }

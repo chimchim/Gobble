@@ -12,6 +12,7 @@ namespace Game.Systems
 		// gör en input translator?
 		int packetCounter = 0;
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
+		private readonly Bitmask _animalBitmask = Bitmask.MakeFromComponents<Animal>();
 		List<byte> _currentByteArray = new List<byte>();
 
 		public void Update(GameManager game, float delta)
@@ -62,7 +63,21 @@ namespace Game.Systems
 						{
 							item.Serialize(game, player.EntityID, _currentByteArray);
 						}
-						
+						if (player.IsHost)
+						{
+							var animals = game.Entities.GetEntitiesWithComponents(_animalBitmask);
+							foreach (int a in animals)
+							{
+								var animal = game.Entities.GetComponentOf<Animal>(a);
+								_currentByteArray.AddRange(BitConverter.GetBytes(animal.CurrentState.Index));
+								_currentByteArray.AddRange(BitConverter.GetBytes(animal.Dead));
+								animal.CurrentState.Serialize(game, a, _currentByteArray);
+							}
+						}
+						if (_currentByteArray.Count > 700)
+						{
+							Debug.LogError("GETTING BIG ");
+						}
 						var byteData = _currentByteArray.ToArray();
 						game.Client.SendInput(player.EntityID, byteData);
 

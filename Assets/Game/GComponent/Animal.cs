@@ -13,6 +13,8 @@ namespace Game.Component
 
 		public List<AnimalState> States = new List<AnimalState>();
 		public AnimalState CurrentState;
+		public bool Dead;
+		public bool LocalDead;
 		public override void Recycle()
 		{
 			_pool.Recycle(this);
@@ -30,21 +32,20 @@ namespace Game.Component
 			return comp;
 		}
 
-		public void TransitionState(GameManager game, int id, GEntity.Entity entity, Type from, Type to)
+		public void TransitionState(GameManager game, GEntity.Entity entity, Type from, Type to, bool host)
 		{
-			Debug.Log("From " + from.ToString() + " to " + to.ToString());
 			for (int i = 0; i < States.Count; i++)
 			{
 				if (States[i].GetType() == from)
 				{
-					States[i].LeaveState(game, this, id, entity);
+					States[i].LeaveState(game, this, entity, host);
 				}
 			}
 			for (int i = 0; i < States.Count; i++)
 			{
 				if (States[i].GetType() == to)
 				{
-					States[i].EnterState(game, this, id, entity);
+					States[i].EnterState(game, this, entity, host);
 					CurrentState = States[i];
 				}
 			}

@@ -87,7 +87,7 @@ public class GameUnity : MonoBehaviour
 
 	public static float RabbitSpeed = 3;
 	public static float RabbitChillTimer = 3;
-	public static float RabbitAggro = 4;
+	public static float RabbitAggro = 2; 
 	public static int MainInventorySize = 3;
 	public static int BackpackInventorySize = 8;
 
@@ -110,7 +110,7 @@ public class GameUnity : MonoBehaviour
 		StartingPosition = StartPos.position;
 
 		SetFamilyID();
-	
+		game.PrivateRandom = new System.Random();
 		game.Systems.CreateSystems();
 		game.Initiate();
 		for (int i = 0; i < game.GameResources.AllItems.IngredientAmount.Length; i++)

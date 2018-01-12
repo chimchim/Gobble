@@ -15,7 +15,9 @@ namespace Game.Movement
 	{
 		public float tempTimer;
 		private float chillTimer;
-		public override void EnterState(GameManager game, Animal animal, int entityID, Entity entity)
+
+		public RabbitChill(int index) : base(index) { }
+		public override void EnterState(GameManager game, Animal animal, Entity entity, bool host)
 		{
 			int rand = game.CurrentRandom.Next(0, 2);
 			chillTimer = 1;
@@ -26,14 +28,14 @@ namespace Game.Movement
 			}
 		}
 
-		public override void Update(GameManager game, Animal animal, int entityID, Entity entity, float delta)
+		public override void Update(GameManager game, Animal animal, Entity entity, bool host, float delta)
 		{
 			var position = entity.gameObject.transform.position;
 			var closest = ClosestPlayer(game, position);
 			var fromPlayer = position - closest;
 			if (fromPlayer.magnitude < GameUnity.RabbitAggro)
 			{
-				animal.TransitionState(game, animal.EntityID, entity, this.GetType(), typeof(JumpFlee));
+				animal.TransitionState(game, entity, this.GetType(), typeof(JumpFlee), host);
 				return;
 			}
 			tempTimer += delta;
@@ -42,7 +44,7 @@ namespace Game.Movement
 				chillTimer = 1;
 				tempTimer = 0;
 				entity.Animator.SetBool("Eat", false);
-				int rand = game.CurrentRandom.Next(0, 5);
+				int rand = game.CurrentRandom.Next(0, 4);
 				if (rand == 0)
 					return;
 				if (rand == 1)
@@ -53,10 +55,10 @@ namespace Game.Movement
 				}
 				if (rand == 2)
 				{
-					animal.TransitionState(game, entityID, entity, this.GetType(), typeof(RabbitDig));
+					animal.TransitionState(game, entity, this.GetType(), typeof(RabbitDig), host);
 					return;
 				}
-				animal.TransitionState(game, entityID, entity, this.GetType(), typeof(RabbitPatrol));
+				animal.TransitionState(game, entity, this.GetType(), typeof(RabbitPatrol), host);
 			}
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
@@ -79,7 +81,17 @@ namespace Game.Movement
 			entity.gameObject.transform.position = tempPos;
 		}
 
-		public override void LeaveState(GameManager game, Animal animal, int entityID, Entity entity)
+		public override void Serialize(GameManager game, int entity, List<byte> byteArray)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Deserialize(object gameState, byte[] byteData, ref int index)
+		{
+			
+		}
+
+		public override void LeaveState(GameManager game, Animal animal, Entity entity, bool host)
 		{
 			entity.Animator.SetBool("Eat", false);
 			tempTimer = 0;

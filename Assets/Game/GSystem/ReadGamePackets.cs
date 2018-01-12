@@ -10,6 +10,7 @@ namespace Game.Systems
 	public class ReadgamePackets : ISystem
 	{
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
+		private readonly Bitmask _animalBitmask = Bitmask.MakeFromComponents<Animal>();
 		bool[,] foundTile;
 
 		public void Update(GameManager game, float delta)
@@ -72,6 +73,28 @@ namespace Game.Systems
 							if (!itemHolder.ActiveItems[k].GotUpdated)
 							{
 								itemHolder.ActiveItems[k].ClientDeActivate(game, gameLogic.PlayerID);
+							}
+						}
+
+						foreach (int e in entities)
+						{
+							var player = game.Entities.GetComponentOf<Player>(e);
+							if (!player.Owner || player.IsHost)
+								continue;
+
+							var animals = game.Entities.GetEntitiesWithComponents(_animalBitmask);
+							foreach (int a in animals)
+							{
+								var animal = game.Entities.GetComponentOf<Animal>(a);
+								int hostStateIndex = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+								currentIndex += sizeof(int);
+								int dead = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+								currentIndex += sizeof(bool);
+								if (hostStateIndex != animal.CurrentState.Index)
+								{
+									animal.TransitionState(game, game.Entities.GetEntity(a), animal.CurrentState.GetType(), animal.States[hostStateIndex].GetType(), false);
+								}
+								animal.CurrentState.Deserialize(game, byteDataRecieve, ref currentIndex);
 							}
 						}
 					}

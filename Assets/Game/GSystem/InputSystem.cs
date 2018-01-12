@@ -59,6 +59,12 @@ namespace Game.Systems
 					input.OnLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !inventory.Crafting.Hovering;
 					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
 
+					if (Input.GetKeyDown(KeyCode.Mouse2) && player.IsHost)
+					{
+						
+						HandleNetEventSystem.AddEvent(game, e, NetEventCreateAnimal.Make(0, mousePos));
+
+					}
 					if (Input.GetKeyDown(KeyCode.C))
 					{
 						inventory.Crafting.gameObject.SetActive(!craftingActive);

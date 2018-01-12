@@ -19,13 +19,16 @@ namespace Game.Movement
 		float length;
 		float lengthTimer;
 		float direction;
-		public override void EnterState(GameManager game, Animal animal, int entityID, Entity entity)
+
+		public JumpFlee(int index) : base(index) { }
+
+		public override void EnterState(GameManager game, Animal animal, Entity entity, bool host)
 		{
 			otherDirectionTimer = -1;
 			entity.Animator.SetBool("Fall", false);
 		}
 
-		public override void Update(GameManager game, Animal animal, int entityID, Entity entity, float delta)
+		public override void Update(GameManager game, Animal animal, Entity entity, bool host, float delta)
 		{
 			var position = entity.gameObject.transform.position;
 			var closest = ClosestPlayer(game, position);
@@ -85,7 +88,7 @@ namespace Game.Movement
 					entity.Animator.SetBool("Walk", false);
 				}
 				if (isSafe)
-					animal.TransitionState(game, entityID, entity, this.GetType(), typeof(RabbitChill));
+					animal.TransitionState(game, entity, this.GetType(), typeof(RabbitChill), host);
 			}
 			else
 			{
@@ -109,8 +112,15 @@ namespace Game.Movement
 				length = 0;
 			}
 		}
-
-		public override void LeaveState(GameManager game, Animal animal, int entityID, Entity entity)
+		public override void Serialize(GameManager game, int entity, List<byte> byteArray)
+		{
+			throw new NotImplementedException();
+		}
+		public override void Deserialize(object gameState, byte[] byteData, ref int index)
+		{
+			
+		}
+		public override void LeaveState(GameManager game, Animal animal, Entity entity, bool host)
 		{
 			lengthTimer = 0;
 			length = 0;

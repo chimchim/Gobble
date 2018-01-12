@@ -19,7 +19,7 @@ namespace Game.GEntity
 			}
 			else
 			{
-				Debug.Log("Could not add entity, ID Taken!");
+				Debug.Log("Could not add entity, ID Taken! " + entity.ID);
 			}
 		}
 		public void RemoveEntity(Entity entity)

@@ -25,6 +25,7 @@ namespace Game
 		private GameUnity _gameUnity;
 		public Client Client;
 		public System.Random CurrentRandom;
+		public System.Random PrivateRandom;
 		public List<VisibleItem> WorldItems = new List<VisibleItem>();
 		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{
@@ -41,11 +42,11 @@ namespace Game
 			Entity ent = new Entity();
 			this.Entities.addEntity(ent);
 			var list = new List<Movement.AnimalState>();
-			var patrol = new RabbitPatrol();
+			var patrol = new RabbitPatrol(0);
 			list.Add(patrol);
-			list.Add(new RabbitChill());
-			list.Add(new JumpFlee());
-			list.Add(new RabbitDig());
+			//list.Add(new RabbitChill(1));
+			//list.Add(new JumpFlee(2));
+			//list.Add(new RabbitDig(3));
 			var animal = Animal.Make(ent.ID, list);
 			animal.CurrentState = patrol;
 			ent.AddComponent(animal);

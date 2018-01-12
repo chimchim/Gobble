@@ -14,17 +14,19 @@ namespace Game.Movement
 	public class RabbitPatrol : AnimalState
 	{
 		Vector3 goTo = Vector3.zero;
-		public override void EnterState(GameManager game, Animal animal, int entityID, Entity entity)
+
+		public RabbitPatrol(int index) : base(index) { }
+		public override void EnterState(GameManager game, Animal animal, Entity entity, bool host)
 		{
 			var position = entity.gameObject.transform.position;
 			NewPosition(game, position);
 		}
 
-		private bool ReachedPosition(Game.GameManager game, Vector2 position, Animal animal, Entity entity, int rand)
+		private bool ReachedPosition(Game.GameManager game, Vector2 position, Animal animal, Entity entity, int rand, bool host)
 		{
 			if (rand == 0)
 			{
-				animal.TransitionState(game, animal.EntityID, entity, this.GetType(), typeof(RabbitChill));
+				animal.TransitionState(game, entity, this.GetType(), typeof(RabbitChill), host);
 				return false;
 			}
 			NewPosition(game, position);
@@ -32,27 +34,31 @@ namespace Game.Movement
 		}
 		private void NewPosition(Game.GameManager game, Vector2 position)
 		{
-			int x = game.CurrentRandom.Next(1, 9);
-			int sign = game.CurrentRandom.Next(0, 2);
+			int x = game.PrivateRandom.Next(1, 9);
+			int sign = game.PrivateRandom.Next(0, 2);
 			sign = sign == 0 ? -1 : 1;
 			goTo.x = position.x + (sign * x);
 			goTo.y = position.y;
 			goTo.z = -0.2f;
 		}
-		public override void Update(GameManager game, Animal animal, int entityID, Entity entity, float delta)
+		public override void Update(GameManager game, Animal animal, Entity entity, bool host, float delta)
 		{
 			var position = entity.gameObject.transform.position;
-			var closest = ClosestPlayer(game, position);
-			var fromPlayer = position - closest;
-			if (fromPlayer.magnitude < GameUnity.RabbitAggro)
+			if (host)
 			{
-				animal.TransitionState(game, animal.EntityID, entity, this.GetType(), typeof(JumpFlee));
-				return;
+				var closest = ClosestPlayer(game, position);
+				var fromPlayer = position - closest;
+				if (fromPlayer.magnitude < GameUnity.RabbitAggro && host)
+				{
+					animal.TransitionState(game, entity, this.GetType(), typeof(JumpFlee), host);
+					return;
+				}
+				if (goTo == Vector3.zero)
+				{
+					NewPosition(game, position);
+				}
 			}
-			if (goTo == Vector3.zero)
-			{
-				NewPosition(game, position);
-			}
+
 			var direction = goTo - position;
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
@@ -65,7 +71,8 @@ namespace Game.Movement
 			
 			bool vertGrounded = false;
 			bool horGrounded = false;
-			
+			if (!host && goTo == Vector3.zero)
+				xMovement = 0;
 			Vector3 tempPos = position;
 			int layer = (int)Systems.Movement.LayerMaskEnum.Grounded;
 			var mask = game.LayerMasks.MappedMasks[layer];
@@ -73,10 +80,10 @@ namespace Game.Movement
 			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			tempPos.z = -0.2f;
 			
-			if (horGrounded)
+			if (horGrounded && host)
 			{
-				int rand = game.CurrentRandom.Next(0, 4);
-				if (!ReachedPosition(game, position, animal, entity, rand))
+				int rand = game.PrivateRandom.Next(0, 4);
+				if (!ReachedPosition(game, position, animal, entity, rand, host))
 					return;
 			}
 			if (vertGrounded)
@@ -92,12 +99,29 @@ namespace Game.Movement
 			Debug.DrawLine(position, goTo, Color.red);
 			if (Math.Abs(position.x - goTo.x) < 1)
 			{
-				int rand = game.CurrentRandom.Next(0, 2);
-				ReachedPosition(game, position, animal, entity, rand);
+				goTo = Vector3.zero;
+				int rand = game.PrivateRandom.Next(0, 2);
+				if(host)
+					ReachedPosition(game, position, animal, entity, rand, host);
 			}
 		}
 
-		public override void LeaveState(GameManager game, Animal animal, int entityID, Entity entity)
+		public override void Serialize(GameManager game, int entity, List<byte> byteArray)
+		{
+			byteArray.AddRange(BitConverter.GetBytes(goTo.x));
+			byteArray.AddRange(BitConverter.GetBytes(goTo.y));
+		}
+
+		public override void Deserialize(object gameState, byte[] byteData, ref int index)
+		{
+			float x = BitConverter.ToSingle(byteData, index);
+			index += sizeof(float);
+			float y = BitConverter.ToSingle(byteData, index);
+			index += sizeof(float);
+			goTo = new Vector3(x, y, -0.2f);
+		}
+
+		public override void LeaveState(GameManager game, Animal animal, Entity entity, bool host)
 		{
 			entity.Animator.SetBool("Fall", false);
 			entity.Animator.SetBool("Walk", false);

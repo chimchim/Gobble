@@ -82,12 +82,18 @@
   <ItemGroup>
     <Compile Include="Assets\Game\Action\Action.cs" />
     <Compile Include="Assets\Game\Action\AffectHP.cs" />
+    <Compile Include="Assets\Game\Animals\AnimalState.cs" />
+    <Compile Include="Assets\Game\Animals\JumpFlee.cs" />
+    <Compile Include="Assets\Game\Animals\RabbitChill.cs" />
+    <Compile Include="Assets\Game\Animals\RabbitDig.cs" />
+    <Compile Include="Assets\Game\Animals\RabbitPatrol.cs" />
     <Compile Include="Assets\Game\DataPacket.cs" />
     <Compile Include="Assets\Game\Entity\Entity.cs" />
     <Compile Include="Assets\Game\Entity\EntityFactory.cs" />
     <Compile Include="Assets\Game\Entity\EntityID.cs" />
     <Compile Include="Assets\Game\Entity\EntityManager.cs" />
     <Compile Include="Assets\Game\GComponent\ActionQueue.cs" />
+    <Compile Include="Assets\Game\GComponent\Animal.cs" />
     <Compile Include="Assets\Game\GComponent\GComponent.cs" />
     <Compile Include="Assets\Game\GComponent\InputComponent.cs" />
     <Compile Include="Assets\Game\GComponent\InventoryComponent.cs" />
@@ -99,6 +105,7 @@
     <Compile Include="Assets\Game\GComponent\ResourcesComponent.cs" />
     <Compile Include="Assets\Game\GComponent\Stats.cs" />
     <Compile Include="Assets\Game\GSystem\ActionApplier.cs" />
+    <Compile Include="Assets\Game\GSystem\AnimalSystem.cs" />
     <Compile Include="Assets\Game\GSystem\DeadReckoning.cs" />
     <Compile Include="Assets\Game\GSystem\HandleNetEventSystem.cs" />
     <Compile Include="Assets\Game\GSystem\InitResources.cs" />
@@ -131,6 +138,9 @@
     <Compile Include="Assets\Game\Misc\Server.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\AnimationEvents.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\FollowCamera.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\CraftButton.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\Crafting.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\CraftingPanel.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\FreeArmPositioning.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\HpBar.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ItemImage.cs" />
@@ -138,6 +148,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ChangeTeamButton.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\CharacterSelection.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ChooseCharacter.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\CraftingMatsNeeded.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\GameLobby.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\HostSection.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\JoinGame.cs" />
@@ -172,14 +183,15 @@
     <Compile Include="Assets\Game\Movement\Swim.cs" />
     <Compile Include="Assets\Game\Network\Client.cs" />
     <Compile Include="Assets\Game\Network\Data.cs" />
-    <Compile Include="Assets\Game\Network\NetEvent\NetCreateLadder.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateIngredient.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateItem.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetCreateLadder.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetDestroyCube.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetDestroyCustom.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetDestroyItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetDestroyWorldItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEvent.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetEventCreateAnimal.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEventRope.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetIngredientFromGatherable.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetItemPickup.cs" />
@@ -207,6 +219,7 @@
     <Compile Include="Assets\Game\VIKTIGT.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Credits.txt" />
     <None Include="Assets\Graphics\Shaders\Shader.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
