@@ -23,7 +23,7 @@ public class NetCreateIngredient : NetEvent
 		int itemNetID = (Creator * 200000) + NetEventID;
 		VisibleItem visible = null;
 
-		visible = Ingredient.MakeItem(game, Position, Force, IngredientType);
+		visible = Ingredient.MakeItem(game, Position, Force, IngredientType, Creator);
 		visible.Item.Quantity = Quantity;
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;

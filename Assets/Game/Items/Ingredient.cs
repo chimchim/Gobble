@@ -78,7 +78,7 @@ public class Ingredient : Item
 
 		HandleNetEventSystem.AddEvent(game, entity, NetCreateIngredient.Make(entity, Quantity, IngredientType, position, force));
 	}
-	public static VisibleItem MakeFromGatherable(GameManager game, GameObject go, Vector2 force, TileMap.IngredientType ingredientType)
+	public static VisibleItem MakeFromGatherable(GameManager game, GameObject go, Vector2 force, TileMap.IngredientType ingredientType, int creator)
 	{
 		var platform = go.transform.Find("platform");
 		if (platform != null)
@@ -91,36 +91,23 @@ public class Ingredient : Item
 		visible.Item = item;
 		visible.Force = force;
 
-		visible.CallBack = (EntityID) =>
+		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
+		foreach (int e in entities)
 		{
-			var player = game.Entities.GetComponentOf<Player>(EntityID);
-			if (player.Owner)
+			var player = game.Entities.GetComponentOf<Player>(e);
+			if (player.IsHost && player.Owner)
 			{
-				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-				var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
-				foreach (Item stackable in holder.Items.Values)
+				visible.CallBack = (EntityID) =>
 				{
-					if (stackable.TryStack(game, item))
-					{
-						SetCraftingData(game, EntityID, (int)ingredientType);
-						inv.InventoryBackpack.SetQuantity(stackable);
-						inv.MainInventory.SetQuantity(stackable);
-						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
-						return;
-					}
-				}
-				if (!item.HasSlot(inv))
-					return;
-				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Quantity;
-				SetCraftingData(game, EntityID, (int)ingredientType);
-				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
-				item.OnPickup(game, EntityID, go);
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetPlayerItemPickup.Make(EntityID, item.ItemNetID));
+				};
+				break;
 			}
-		};
+		}
 
 		return visible;
 	}
-	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType)
+	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, TileMap.IngredientType ingredientType, int creator)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.Ingredient.IngredientsPrefabs[(int)ingredientType]);
 		if (go == null)
@@ -135,34 +122,19 @@ public class Ingredient : Item
 		item.IngredientType = ingredientType;
 		visible.Item = item;
 		visible.Force = force;
-		visible.CallBack = (EntityID) =>
+		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
+		foreach (int e in entities)
 		{
-			Debug.Log("Pickup " + item.ItemNetID);
-			var player = game.Entities.GetComponentOf<Player>(EntityID);
-			if (player.Owner)
+			var player = game.Entities.GetComponentOf<Player>(e);
+			if (player.IsHost && player.Owner)
 			{
-				var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
-				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-				foreach (Item stackable in holder.Items.Values)
+				visible.CallBack = (EntityID) =>
 				{
-					var stacked = stackable.TryStack(game, item);
-					if (stacked)
-					{
-						SetCraftingData(game, EntityID, (int)ingredientType);
-						inv.InventoryBackpack.SetQuantity(stackable);
-						inv.MainInventory.SetQuantity(stackable);
-						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
-						return;
-					}
-				}
-				if (!item.HasSlot(inv))
-					return;
-				game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Quantity;
-				SetCraftingData(game, EntityID, (int)ingredientType);
-				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
-				item.OnPickup(game, EntityID, go);
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetPlayerItemPickup.Make(EntityID, item.ItemNetID));
+				};
+				break;
 			}
-		};
+		}
 
 		return visible;
 	}

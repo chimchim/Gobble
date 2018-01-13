@@ -131,7 +131,7 @@ namespace Game.Systems
 					netEvent.Handle(game);
 					netEvent.Recycle();
 					netComp.CurrentEventID = netEventID;
-					//Debug.Log("make Event " + netEvent.GetType()  + " netEventID " + netEventID);
+					Debug.Log("make Event " + netEvent.GetType()  + " netEventID " + netEventID);
 				}
 
 				currentIndex += netEventByteSize;

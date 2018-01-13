@@ -30,7 +30,7 @@ public class NetIngredientFromGatherable : NetEvent
 		int itemNetID = (Creator * 200000) + NetEventID;
 		VisibleItem visible = null;
 
-		visible = Ingredient.MakeFromGatherable(game, custom, Force, IngredientType);
+		visible = Ingredient.MakeFromGatherable(game, custom, Force, IngredientType, Creator);
 		visible.Item.Quantity = Quantity;
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
