@@ -15,6 +15,9 @@ namespace Game.Component
 		public AnimalState CurrentState;
 		public bool Dead;
 		public bool LocalDead;
+
+		public Vector2 HostPosition;
+		public Vector2 HostVelocity;
 		public override void Recycle()
 		{
 			_pool.Recycle(this);
@@ -32,7 +35,7 @@ namespace Game.Component
 			return comp;
 		}
 
-		public void TransitionState(GameManager game, GEntity.Entity entity, Type from, Type to, bool host)
+		public void TransitionState(GameManager game, GEntity.Entity entity, Type from, Type to, Player host)
 		{
 			for (int i = 0; i < States.Count; i++)
 			{
@@ -49,6 +52,11 @@ namespace Game.Component
 					CurrentState = States[i];
 				}
 			}
+		}
+
+		public void SyncPosition(GameManager game, Vector2 hostPos, Vector2 hostVel)
+		{
+
 		}
 	}
 }

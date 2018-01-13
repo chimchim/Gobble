@@ -16,49 +16,55 @@ namespace Game.Movement
 		public float tempTimer;
 		private float chillTimer;
 
+		bool eating;
 		public RabbitChill(int index) : base(index) { }
-		public override void EnterState(GameManager game, Animal animal, Entity entity, bool host)
+		public override void EnterState(GameManager game, Animal animal, Entity entity, Player host)
 		{
-			int rand = game.CurrentRandom.Next(0, 2);
+			if (!host.IsHost)
+				return;
+			int rand = game.PrivateRandom.Next(0, 2);
 			chillTimer = 1;
 			if (rand == 0)
 			{
-				entity.Animator.SetBool("Eat", true);
+				eating = true;
 				chillTimer = GameUnity.RabbitChillTimer;
 			}
 		}
 
-		public override void Update(GameManager game, Animal animal, Entity entity, bool host, float delta)
+		public override void Update(GameManager game, Animal animal, Entity entity, Player host, float delta)
 		{
 			var position = entity.gameObject.transform.position;
-			var closest = ClosestPlayer(game, position);
-			var fromPlayer = position - closest;
-			if (fromPlayer.magnitude < GameUnity.RabbitAggro)
+			if (host.IsHost)
 			{
-				animal.TransitionState(game, entity, this.GetType(), typeof(JumpFlee), host);
-				return;
-			}
-			tempTimer += delta;
-			if (tempTimer > chillTimer)
-			{
-				chillTimer = 1;
-				tempTimer = 0;
-				entity.Animator.SetBool("Eat", false);
-				int rand = game.CurrentRandom.Next(0, 4);
-				if (rand == 0)
-					return;
-				if (rand == 1)
+				var closest = ClosestPlayer(game, position);
+				var fromPlayer = position - closest;
+				if (fromPlayer.magnitude < GameUnity.RabbitAggro)
 				{
-					chillTimer = GameUnity.RabbitChillTimer;
-					entity.Animator.SetBool("Eat", true);
+					animal.TransitionState(game, entity, this.GetType(), typeof(JumpFlee), host);
 					return;
 				}
-				if (rand == 2)
+				tempTimer += delta;
+				if (tempTimer > chillTimer)
 				{
-					animal.TransitionState(game, entity, this.GetType(), typeof(RabbitDig), host);
-					return;
+					chillTimer = 1;
+					tempTimer = 0;
+					eating = false;
+					int rand = game.PrivateRandom.Next(0, 4);
+					if (rand == 0)
+						return;
+					if (rand == 1)
+					{
+						chillTimer = GameUnity.RabbitChillTimer;
+						eating = true;
+						return;
+					}
+					if (rand == 2)
+					{
+						animal.TransitionState(game, entity, this.GetType(), typeof(RabbitDig), host);
+						return;
+					}
+					animal.TransitionState(game, entity, this.GetType(), typeof(RabbitPatrol), host);
 				}
-				animal.TransitionState(game, entity, this.GetType(), typeof(RabbitPatrol), host);
 			}
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
@@ -79,22 +85,25 @@ namespace Game.Movement
 			tempPos = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			tempPos.z = -0.2f;
 			entity.gameObject.transform.position = tempPos;
+			entity.Animator.SetBool("Eat", eating);
 		}
 
-		public override void Serialize(GameManager game, int entity, List<byte> byteArray)
+		public override void InnerSerialize(GameManager game, Animal animal, List<byte> byteArray)
 		{
-			throw new NotImplementedException();
+			byteArray.AddRange(BitConverter.GetBytes(eating));
 		}
 
-		public override void Deserialize(object gameState, byte[] byteData, ref int index)
+		public override void InnerDeSerialize(GameManager game, Animal animal, byte[] byteData, ref int index)
 		{
-			
+			eating = BitConverter.ToBoolean(byteData, index);
+			index += sizeof(bool);
 		}
 
-		public override void LeaveState(GameManager game, Animal animal, Entity entity, bool host)
+		public override void LeaveState(GameManager game, Animal animal, Entity entity, Player host)
 		{
 			entity.Animator.SetBool("Eat", false);
 			tempTimer = 0;
+			eating = false;
 		}
 	}
 }

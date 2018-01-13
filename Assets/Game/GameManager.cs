@@ -44,8 +44,8 @@ namespace Game
 			var list = new List<Movement.AnimalState>();
 			var patrol = new RabbitPatrol(0);
 			list.Add(patrol);
-			//list.Add(new RabbitChill(1));
-			//list.Add(new JumpFlee(2));
+			list.Add(new RabbitChill(1));
+			list.Add(new JumpFlee(2));
 			//list.Add(new RabbitDig(3));
 			var animal = Animal.Make(ent.ID, list);
 			animal.CurrentState = patrol;

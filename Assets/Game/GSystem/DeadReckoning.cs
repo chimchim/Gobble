@@ -11,8 +11,6 @@ namespace Game.Systems
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		bool[,] foundTile;
 
-		public float lerpStep = 0.05f;
-		public float LerpSpeed;
 		public void Update(GameManager game, float delta)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
@@ -55,11 +53,11 @@ namespace Game.Systems
 					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, masks, out vertGrounded);
 					bool horVertGrounded = vertGrounded || horGrounded;
 
-					if (diff.magnitude > 4)
+					if (diff.magnitude > 40)
 					{
 						otherTransform.position = networkPosition;
 					}
-					if ((vertHorGrounded || horVertGrounded) && diff.magnitude > 1)
+					if ((vertHorGrounded || horVertGrounded) && diff.magnitude > 20.5f)
 					{
 						otherTransform.position = networkPosition;
 					}

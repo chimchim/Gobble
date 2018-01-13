@@ -20,7 +20,8 @@ public abstract class NetEvent
 		NetDestroyCustom,
 		NetIngredientFromGatherable,
 		NetCreateLadder,
-		NetCreateAnimal
+		NetCreateAnimal,
+		NetAnimalJump
 	}
 
 	public static NetEvent GetGatherableEvent(Gatherable gatherable)
@@ -51,7 +52,8 @@ public abstract class NetEvent
 		NetDestroyCustom.Make,
 		NetIngredientFromGatherable.Make,
 		NetCreateLadder.Make,
-		NetEventCreateAnimal.Make
+		NetEventCreateAnimal.Make,
+		NetAnimalJump.Make
 	};
 
 	// Default Accessability is Aspect

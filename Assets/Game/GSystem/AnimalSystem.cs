@@ -25,7 +25,7 @@ namespace Game.Systems
 				{
 					var animal = game.Entities.GetComponentOf<Animal>(e);
 					var entity = game.Entities.GetEntity(e);
-					animal.CurrentState.Update(game, animal, entity, player.IsHost, delta);
+					animal.CurrentState.Update(game, animal, entity, player, delta);
 					float signDir = animal.CurrentVelocity.x;
 					if (Mathf.Abs(signDir) > 0.3f)
 					{

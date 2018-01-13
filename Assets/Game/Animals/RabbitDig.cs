@@ -18,14 +18,14 @@ namespace Game.Movement
 		bool Digged;
 
 		public RabbitDig(int index) : base(index) { }
-		public override void EnterState(GameManager game, Animal animal, Entity entity, bool host)
+		public override void EnterState(GameManager game, Animal animal, Entity entity, Player host)
 		{
 			entity.Animator.SetBool("Dig", true);
 			timer = 0;
 			digTimer = 0;
 		}
 
-		public override void Update(GameManager game, Animal animal, Entity entity, bool host, float delta)
+		public override void Update(GameManager game, Animal animal, Entity entity, Player host, float delta)
 		{
 			var position = entity.gameObject.transform.position;
 			digTimer += delta;
@@ -48,17 +48,17 @@ namespace Game.Movement
 			}
 		}
 
-		public override void Serialize(GameManager game, int entity, List<byte> byteArray)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void Deserialize(object gameState, byte[] byteData, ref int index)
+		public override void InnerSerialize(GameManager game, Animal animal, List<byte> byteArray)
 		{
 
 		}
 
-		public override void LeaveState(GameManager game, Animal animal, Entity entity, bool host)
+		public override void InnerDeSerialize(GameManager game, Animal animal, byte[] byteData, ref int index)
+		{
+
+		}
+
+		public override void LeaveState(GameManager game, Animal animal, Entity entity, Player host)
 		{
 			timer = 0;
 			Digged = false;

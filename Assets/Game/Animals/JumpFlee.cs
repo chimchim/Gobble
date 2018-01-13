@@ -22,31 +22,36 @@ namespace Game.Movement
 
 		public JumpFlee(int index) : base(index) { }
 
-		public override void EnterState(GameManager game, Animal animal, Entity entity, bool host)
+		public override void EnterState(GameManager game, Animal animal, Entity entity, Player host)
 		{
 			otherDirectionTimer = -1;
 			entity.Animator.SetBool("Fall", false);
+			direction = 0;
 		}
 
-		public override void Update(GameManager game, Animal animal, Entity entity, bool host, float delta)
+		public override void Update(GameManager game, Animal animal, Entity entity, Player host, float delta)
 		{
 			var position = entity.gameObject.transform.position;
+			bool isSafe = false;
 			var closest = ClosestPlayer(game, position);
 			var fromPlayer = position - closest;
-			bool isSafe = false;
-			if (fromPlayer.magnitude > (GameUnity.RabbitAggro * 2.0f))
+			if (host.IsHost)
 			{
-				isSafe = true;
-			}
-			if (animal.Grounded)
-			{
-				direction = Math.Sign(fromPlayer.x);
-				if (otherDirectionTimer > 0f)
+				if (fromPlayer.magnitude > (GameUnity.RabbitAggro * 2.0f))
 				{
-					otherDirectionTimer -= delta;
-					direction = otherDirection;
+					isSafe = true;
+				}
+				if (animal.Grounded)
+				{
+					direction = Math.Sign(fromPlayer.x);
+					if (otherDirectionTimer > 0f)
+					{
+						otherDirectionTimer -= delta;
+						direction = otherDirection;
+					}
 				}
 			}
+
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
 			animal.CurrentVelocity.x = direction * GameUnity.RabbitSpeed * 1.6f;
@@ -80,47 +85,49 @@ namespace Game.Movement
 				entity.Animator.SetBool("Walk", true);
 				animal.Grounded = true;
 				jumpTimer += delta;
-				if (jumpTimer > 0.45f)
+				if (jumpTimer > 0.45f && host.IsHost)
 				{
 					jumpTimer = 0;
-					animal.CurrentVelocity.y = game.CurrentRandom.Next(13, 22);
-					entity.Animator.SetBool("Jump", true);
-					entity.Animator.SetBool("Walk", false);
+					Debug.Log("Rabbit jump ID " + animal.EntityID);
+					HandleNetEventSystem.AddEventAndHandle(game, host.EntityID, NetAnimalJump.Make(animal.EntityID, game.PrivateRandom.Next(13, 22)));
 				}
-				if (isSafe)
+				if (isSafe && host.IsHost)
 					animal.TransitionState(game, entity, this.GetType(), typeof(RabbitChill), host);
 			}
 			else
 			{
 				animal.Grounded = false;
 			}
-			
-			entity.gameObject.transform.position = tempPos;
-			if (lengthTimer < 0.8f)
+			if (host.IsHost)
 			{
-				lengthTimer += delta;
-				length += Math.Abs(entity.gameObject.transform.position.x - position.x);
-			}
-			if (lengthTimer > 0.8f)
-			{
-				lengthTimer = 0;
-				if (length < 0.5f)
+				entity.gameObject.transform.position = tempPos;
+				if (lengthTimer < 0.8f)
 				{
-					otherDirection = -Math.Sign(fromPlayer.x);
-					otherDirectionTimer = 1f;
+					lengthTimer += delta;
+					length += Math.Abs(entity.gameObject.transform.position.x - position.x);
 				}
-				length = 0;
+				if (lengthTimer > 0.8f)
+				{
+					lengthTimer = 0;
+					if (length < 0.5f)
+					{
+						otherDirection = -Math.Sign(fromPlayer.x);
+						otherDirectionTimer = 1f;
+					}
+					length = 0;
+				}
 			}
 		}
-		public override void Serialize(GameManager game, int entity, List<byte> byteArray)
+		public override void InnerSerialize(GameManager game, Animal animal, List<byte> byteArray)
 		{
-			throw new NotImplementedException();
+			byteArray.AddRange(BitConverter.GetBytes(direction));
 		}
-		public override void Deserialize(object gameState, byte[] byteData, ref int index)
+		public override void InnerDeSerialize(GameManager game, Animal animal, byte[] byteData, ref int index)
 		{
-			
+			direction = BitConverter.ToSingle(byteData, index);
+			index += sizeof(float);
 		}
-		public override void LeaveState(GameManager game, Animal animal, Entity entity, bool host)
+		public override void LeaveState(GameManager game, Animal animal, Entity entity, Player host)
 		{
 			lengthTimer = 0;
 			length = 0;

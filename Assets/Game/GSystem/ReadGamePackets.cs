@@ -82,26 +82,31 @@ namespace Game.Systems
 							if (!player.Owner || player.IsHost)
 								continue;
 
-							var animals = game.Entities.GetEntitiesWithComponents(_animalBitmask);
-							foreach (int a in animals)
-							{
-								var animal = game.Entities.GetComponentOf<Animal>(a);
-								int hostStateIndex = BitConverter.ToInt32(byteDataRecieve, currentIndex);
-								currentIndex += sizeof(int);
-								int dead = BitConverter.ToInt32(byteDataRecieve, currentIndex);
-								currentIndex += sizeof(bool);
-								if (hostStateIndex != animal.CurrentState.Index)
-								{
-									animal.TransitionState(game, game.Entities.GetEntity(a), animal.CurrentState.GetType(), animal.States[hostStateIndex].GetType(), false);
-								}
-								animal.CurrentState.Deserialize(game, byteDataRecieve, ref currentIndex);
-							}
+							ReadAnimals(game, byteDataRecieve, ref currentIndex, delta, player);
 						}
 					}
 				}
 			}
 		}
-		
+
+		void ReadAnimals(GameManager game, byte[] byteDataRecieve, ref int currentIndex, float delta, Player host)
+		{
+			var animals = game.Entities.GetEntitiesWithComponents(_animalBitmask);
+			foreach (int a in animals)
+			{
+				var animal = game.Entities.GetComponentOf<Animal>(a);
+				int hostStateIndex = BitConverter.ToInt32(byteDataRecieve, currentIndex);
+				currentIndex += sizeof(int);
+				bool dead = BitConverter.ToBoolean(byteDataRecieve, currentIndex);
+				currentIndex += sizeof(bool);
+				if (hostStateIndex != animal.CurrentState.Index)
+				{
+					animal.TransitionState(game, game.Entities.GetEntity(a), animal.CurrentState.GetType(), animal.States[hostStateIndex].GetType(), host);
+				}
+				animal.CurrentState.Deserialize(game, animal, byteDataRecieve, ref currentIndex);
+				animal.CurrentState.DeadReckon(game, animal, delta);
+			}
+		}
 		void ReadNetEvents(GameManager game, int entity, byte[] byteData, ref int currentIndex)
 		{
 			var netComp = game.Entities.GetComponentOf<NetEventComponent>(entity);
@@ -126,7 +131,7 @@ namespace Game.Systems
 					netEvent.Handle(game);
 					netEvent.Recycle();
 					netComp.CurrentEventID = netEventID;
-					Debug.Log("make Event " + netEvent.GetType()  + " netEventID " + netEventID);
+					//Debug.Log("make Event " + netEvent.GetType()  + " netEventID " + netEventID);
 				}
 
 				currentIndex += netEventByteSize;

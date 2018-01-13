@@ -34,11 +34,9 @@ namespace Game.GEntity
 			if (replaceID == -1)
 			{
 				_id = IDGiver.GetNewID();
-				Debug.Log("ReplaceID " + _id);
 			}
 			else
 			{
-				Debug.Log("_id " + replaceID);
 				_id = replaceID;
 			}
 			if (IDGiver.NextID <= replaceID)

@@ -69,14 +69,12 @@ namespace Game.Systems
 							foreach (int a in animals)
 							{
 								var animal = game.Entities.GetComponentOf<Animal>(a);
-								_currentByteArray.AddRange(BitConverter.GetBytes(animal.CurrentState.Index));
-								_currentByteArray.AddRange(BitConverter.GetBytes(animal.Dead));
-								animal.CurrentState.Serialize(game, a, _currentByteArray);
+								animal.CurrentState.Serialize(game, animal, _currentByteArray);
 							}
 						}
-						if (_currentByteArray.Count > 700)
+						if (_currentByteArray.Count > 900)
 						{
-							Debug.LogError("GETTING BIG ");
+							Debug.LogError("GETTING BIG " + _currentByteArray.Count);
 						}
 						var byteData = _currentByteArray.ToArray();
 						game.Client.SendInput(player.EntityID, byteData);

@@ -87,7 +87,7 @@ public class GameUnity : MonoBehaviour
 
 	public static float RabbitSpeed = 3;
 	public static float RabbitChillTimer = 3;
-	public static float RabbitAggro = 2; 
+	public static float RabbitAggro = 3; 
 	public static int MainInventorySize = 3;
 	public static int BackpackInventorySize = 8;
 

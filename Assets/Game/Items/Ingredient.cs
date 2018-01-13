@@ -137,6 +137,7 @@ public class Ingredient : Item
 		visible.Force = force;
 		visible.CallBack = (EntityID) =>
 		{
+			Debug.Log("Pickup " + item.ItemNetID);
 			var player = game.Entities.GetComponentOf<Player>(EntityID);
 			if (player.Owner)
 			{
