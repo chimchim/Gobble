@@ -117,22 +117,20 @@ public class PickAxe : Item
 		var item = Make();
 		visible.Item = item;
 		visible.Force = force;
-        visible.CallBack = (EntityID) =>
+		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
+		foreach (int e in entities)
 		{
-			var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
-			var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
-			(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
-			Debug.Log("hasSlot " + hasSlot + " backpack amount " + inv.InventoryBackpack.CurrenItemsAmount); 
-			if (!hasSlot)
-				return;
-			var player = game.Entities.GetComponentOf<Player>(EntityID);
-			if (player.Owner)
+			var player = game.Entities.GetComponentOf<Player>(e);
+			if (player.IsHost && player.Owner)
 			{
-				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
-				item.OnPickup(game, EntityID, go);
+				visible.CallBack = (EntityID) =>
+				{
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetItemPickup.Make(EntityID, item.ItemNetID));
+				};
+				break;
 			}
-		};
-		
+		}
+
 		return visible;
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)

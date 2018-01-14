@@ -15,6 +15,7 @@ public class VisibleItem : MonoBehaviour
 	Vector2 _offset;
 	bool grounded;
 
+	bool pickable;
 	MappedMasks Mask;
 	public void OnEnable()
 	{
@@ -77,11 +78,11 @@ public class VisibleItem : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D other)
 	{
 		var idholder = other.GetComponent<IdHolder>();
-		if (idholder != null && CallBack != null)
+		if (idholder != null && CallBack != null && pickable)
 		{
+			pickable = false;
 			enabled = false;
 			CallBack.Invoke(idholder.ID);
-			CallBack = null;
 		}
 	}
 	public IEnumerator TriggerTime()
@@ -93,6 +94,7 @@ public class VisibleItem : MonoBehaviour
 			counter += Time.deltaTime;
 			if (counter >= ShakeTime)
 			{
+				pickable = true;
 				GetComponent<BoxCollider2D>().isTrigger = true;
 				yield break;
 			}

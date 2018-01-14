@@ -11,7 +11,8 @@ public abstract class NetEvent
 	{
 		NetCreateItem,
 		NetItemPickup,
-		NetPlayerItemPickup,
+		NetIngredientPickup,
+		NetSetInSlotClient,
 		NetRopeEvent,
 		NetDestroyItem,
 		NetDestroyCube,
@@ -44,7 +45,8 @@ public abstract class NetEvent
 	{
 		NetCreateItem.Make,
 		NetItemPickup.Make,
-		NetPlayerItemPickup.Make,
+		NetIngredientPickup.Make,
+		NetSetInSlotClient.Make,
 		NetEventRope.Make,
 		NetDestroyItem.Make,
 		NetDestroyCube.Make,

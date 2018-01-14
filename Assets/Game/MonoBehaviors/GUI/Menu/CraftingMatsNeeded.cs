@@ -35,7 +35,6 @@ public class CraftingMatsNeeded : MonoBehaviour
 
 	public void SetMatsNeeded(ScriptableItem item)
 	{
-		Debug.Log("SET MATS NEEDE " + item.WhatItem);
 		Reset();
 		for (int i = 0; i < ItemImages.Count; i++)
 		{

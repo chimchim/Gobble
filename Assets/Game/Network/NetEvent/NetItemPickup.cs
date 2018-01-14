@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Game;
 using UnityEngine;
 using Game.Component;
+using Game.Systems;
 
 public class NetItemPickup : NetEvent
 {
@@ -15,21 +16,49 @@ public class NetItemPickup : NetEvent
 	public override void Handle(GameManager game)
 	{
 		var visibles = game.WorldItems;
+		var player = game.Entities.GetComponentOf<Player>(Player);
+
 		
+		
+		VisibleItem item = null;
 		for (int i = visibles.Count - 1; i > -1; i--)
 		{
 			if (visibles[i].Item.ItemNetID == ItemID)
 			{
-				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
-				itemHolder.Items.Add(ItemID, visibles[i].Item);
-				Item.SetInHand(game, Player, visibles[i].Item.CurrentGameObject);
-				visibles[i].Item.CurrentGameObject.SetActive(false);
-				visibles[i].Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;
-				visibles[i].enabled = false;
-				visibles.RemoveAt(i);
+				item = visibles[i];
 				break;
 			}
 		}
+
+		item.Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;
+		item.enabled = false;
+		if (!player.Owner)
+			return;
+
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
+		var inv = game.Entities.GetComponentOf<InventoryComponent>(Player);
+		bool picked = false;
+		if (!item.Item.HasSlot(inv))
+		{
+
+		}
+		else
+		{
+			picked = true;
+			foreach (Item stackable in itemHolder.Items.Values)
+			{
+				if (stackable.TryStack(game, item.Item))
+				{
+					inv.InventoryBackpack.SetQuantity(stackable);
+					inv.MainInventory.SetQuantity(stackable);
+					picked = false;
+					HandleNetEventSystem.AddEvent(game, Player, NetDestroyWorldItem.Make(item.Item.ItemNetID));
+					return;
+				}
+			}
+			item.Item.OnPickup(game, Player, item.gameObject);
+		}
+		HandleNetEventSystem.AddEventAndHandle(game, Player, NetSetInSlotClient.Make(Player, ItemID, picked));
 	}
 
 	public static NetItemPickup Make()

@@ -45,21 +45,21 @@ public class Rope : Item
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		visible.Item = item;
-		visible.CallBack = (EntityID) =>
-		{
-			var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
-			var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
-			(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
-			if (!hasSlot)
-				return;
-			var player = game.Entities.GetComponentOf<Player>(EntityID);
-			if (player.Owner)
-			{
-				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
-				item.OnPickup(game, EntityID, go);
-			}
-		};
 		visible.Force = force;
+		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
+		foreach (int e in entities)
+		{
+			var player = game.Entities.GetComponentOf<Player>(e);
+			if (player.IsHost && player.Owner)
+			{
+				visible.CallBack = (EntityID) =>
+				{
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetItemPickup.Make(EntityID, item.ItemNetID));
+				};
+				break;
+			}
+		}
+		
 		return visible;
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)

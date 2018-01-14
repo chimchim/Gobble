@@ -75,32 +75,19 @@ public class Ladder : Item
 		var item = Make();
 		visible.Item = item;
 		visible.Force = force;
-		visible.CallBack = (EntityID) =>
+		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
+		foreach (int e in entities)
 		{
-			var player = game.Entities.GetComponentOf<Player>(EntityID);
-			if (player.Owner)
+			var player = game.Entities.GetComponentOf<Player>(e);
+			if (player.IsHost && player.Owner)
 			{
-				var inv = game.Entities.GetComponentOf<InventoryComponent>(EntityID);
-				var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
-				(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
-				if (!hasSlot)
-					return;
-				var holder = game.Entities.GetComponentOf<ItemHolder>(EntityID);
-				foreach (Item stackable in holder.Items.Values)
+				visible.CallBack = (EntityID) =>
 				{
-					if (stackable.TryStack(game, item))
-					{
-						inv.InventoryBackpack.SetQuantity(stackable);
-						inv.MainInventory.SetQuantity(stackable);
-						HandleNetEventSystem.AddEvent(game, EntityID, NetDestroyWorldItem.Make(item.ItemNetID));
-						return;
-					}
-				}
-
-				HandleNetEventSystem.AddEventIgnoreOwner(game, EntityID, NetItemPickup.Make(EntityID, item.ItemNetID));
-				item.OnPickup(game, EntityID, go);
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetItemPickup.Make(EntityID, item.ItemNetID));
+				};
+				break;
 			}
-		};
+		}
 
 		return visible;
 	}

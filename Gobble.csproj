@@ -197,7 +197,8 @@
     <Compile Include="Assets\Game\Network\NetEvent\NetIngredientFromGatherable.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetItemPickup.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetJump.cs" />
-    <Compile Include="Assets\Game\Network\NetEvent\NetPlayerItemPickup.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetIngredientPickup.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetSetInSlotClient.cs" />
     <Compile Include="Assets\Game\Network\Utility.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\AllScriptableItems.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GatherableScriptable.cs" />

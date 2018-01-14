@@ -33,7 +33,6 @@ public class Crafting : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	}
 	public void SetCurrent()
 	{
-		Debug.Log("Set Current Crafting");
 		Panel.ResetChoosenItems();
 		Panel.SetItems(AllItemsVariables, Current);
 		if (CurrentButton[(int)Current])

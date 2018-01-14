@@ -6,9 +6,9 @@ using UnityEngine;
 using Game.Component;
 using Game.Systems;
 
-public class NetPlayerItemPickup : NetEvent
+public class NetIngredientPickup : NetEvent
 {
-	private static ObjectPool<NetPlayerItemPickup> _pool = new ObjectPool<NetPlayerItemPickup>(10);
+	private static ObjectPool<NetIngredientPickup> _pool = new ObjectPool<NetIngredientPickup>(10);
 
 	public int ItemID;
 	public int Player;
@@ -17,9 +17,8 @@ public class NetPlayerItemPickup : NetEvent
 	{
 		var visibles = game.WorldItems;
 		var player = game.Entities.GetComponentOf<Player>(Player);
-		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
 		VisibleItem item = null;
-		Debug.Log("handle Netplayer pick up 1");
+
 		for (int i = visibles.Count - 1; i > -1; i--)
 		{
 			if (visibles[i].Item.ItemNetID == ItemID)
@@ -28,20 +27,21 @@ public class NetPlayerItemPickup : NetEvent
 				break;
 			}
 		}
+		item.Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;
+		item.enabled = false;
 		if (!player.Owner)
+			return;
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
+		var inv = game.Entities.GetComponentOf<InventoryComponent>(Player);
+		bool picked = false;
+		if (!item.Item.HasSlot(inv))
 		{
-			itemHolder.Items.Add(ItemID, item.Item);
-			Item.SetInHand(game, Player, item.Item.CurrentGameObject);
-			item.Item.CurrentGameObject.SetActive(false);
-			item.Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;
-			item.enabled = false;
-			visibles.Remove(item);
+
 		}
 		else
 		{
-			Debug.Log("handle Netplayer pick up 2");
-			var inv = game.Entities.GetComponentOf<InventoryComponent>(Player);
 			var ingredientType = (item.Item as Ingredient).IngredientType;
+			picked = true;
 			foreach (Item stackable in itemHolder.Items.Values)
 			{
 				if (stackable.TryStack(game, item.Item))
@@ -53,21 +53,19 @@ public class NetPlayerItemPickup : NetEvent
 					return;
 				}
 			}
-			if (!item.Item.HasSlot(inv))
-				return;
 			game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Item.Quantity;
 			Ingredient.SetCraftingData(game, Player, (int)ingredientType);
 			item.Item.OnPickup(game, Player, item.gameObject);
-			item.enabled = false;
 		}
+		HandleNetEventSystem.AddEvent(game, Player, NetSetInSlotClient.Make(Player, ItemID, picked));
 	}
 
-	public static NetPlayerItemPickup Make()
+	public static NetIngredientPickup Make()
 	{
 		return _pool.GetNext();
 	}
 
-	public static NetPlayerItemPickup Make(int player, int itemID)
+	public static NetIngredientPickup Make(int player, int itemID)
 	{
 		var evt = _pool.GetNext();
 		evt.ItemID = itemID;
@@ -94,7 +92,7 @@ public class NetPlayerItemPickup : NetEvent
 
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
-		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetPlayerItemPickup));
+		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetIngredientPickup));
 		outgoing.AddRange(BitConverter.GetBytes(8));
 		outgoing.AddRange(BitConverter.GetBytes(Player));
 		outgoing.AddRange(BitConverter.GetBytes(ItemID));

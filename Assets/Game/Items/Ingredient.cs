@@ -99,7 +99,7 @@ public class Ingredient : Item
 			{
 				visible.CallBack = (EntityID) =>
 				{
-					HandleNetEventSystem.AddEventAndHandle(game, e, NetPlayerItemPickup.Make(EntityID, item.ItemNetID));
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetIngredientPickup.Make(EntityID, item.ItemNetID));
 				};
 				break;
 			}
@@ -130,7 +130,7 @@ public class Ingredient : Item
 			{
 				visible.CallBack = (EntityID) =>
 				{
-					HandleNetEventSystem.AddEventAndHandle(game, e, NetPlayerItemPickup.Make(EntityID, item.ItemNetID));
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetIngredientPickup.Make(EntityID, item.ItemNetID));
 				};
 				break;
 			}
