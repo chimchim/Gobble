@@ -53,12 +53,14 @@ namespace Game.Systems
 					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, masks, out vertGrounded);
 					bool horVertGrounded = vertGrounded || horGrounded;
 
-					if (diff.magnitude > 40)
+					if (diff.magnitude > 3)
 					{
+						Debug.Log("Snap pos 1");
 						otherTransform.position = networkPosition;
 					}
-					if ((vertHorGrounded || horVertGrounded) && diff.magnitude > 20.5f)
+					if ((vertHorGrounded || horVertGrounded) && diff.magnitude > 1f)
 					{
+						Debug.Log("Snap pos 2");
 						otherTransform.position = networkPosition;
 					}
 					else

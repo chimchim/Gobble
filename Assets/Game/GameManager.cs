@@ -74,6 +74,7 @@ namespace Game
 
 			var playerGameObject = GameObject.Instantiate(GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 			playerGameObject.tag = "Player";
+			playerGameObject.layer = owner ?  LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;

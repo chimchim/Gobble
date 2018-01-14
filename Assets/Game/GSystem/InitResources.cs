@@ -46,6 +46,7 @@ namespace Game.Systems
 
 				var playerGameObject = GameObject.Instantiate(game.GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 				playerGameObject.tag = "Player";
+				playerGameObject.layer = player.Owner ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
 				ent.gameObject = playerGameObject;
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 				playerGameObject.AddComponent<IdHolder>().ID = ent.ID;

@@ -9,6 +9,8 @@ public class MapVariables : ScriptableObject
 	public bool RotateArm = true;
 	public bool DebugMode = true;
 	public bool CreateWater = true;
+	public bool CreateTrees = false;
+	public bool CreateItems = true;
 	public bool GenerateSmallIsland = false;
 	public bool UseMenu = false;
 	public bool QuickJoin = false;

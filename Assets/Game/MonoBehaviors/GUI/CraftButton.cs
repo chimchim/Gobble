@@ -44,6 +44,11 @@ public class CraftButton : MonoBehaviour
 	}
 	public void OnClick()
 	{
+		if (GameUnity.CreateItems)
+		{
+			Item.MakeItem.Invoke();
+			return;
+		}
 		Crafting.SetCurrentButton(this);
 		SetCurrent();
 		if (CurrentAmount > 0)

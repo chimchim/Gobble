@@ -100,17 +100,20 @@ namespace Game.Systems
 		}
 		public static Vector3 HorizontalMovement(Vector3 pos, float x, float xoffset, float yoffset, out bool grounded)
 		{
-			float fullRayDistance = xoffset + Mathf.Abs(x);
+			grounded = false;
+			if (Mathf.Abs(x) <= 0)
+				return pos;
+			float half = xoffset - (xoffset / 10);
+			float fullRayDistance = xoffset + Mathf.Abs(x) - half;
 			var layerMask = 1 << LayerMask.NameToLayer("Collideable");
 			float sign = Mathf.Sign(x);
-			Vector3 firstStartX = new Vector3(0, -yoffset + 0.05f, 0) + pos;
-			Vector3 secondStartX = new Vector3(0, yoffset - 0.05f, 0) + pos;
+			Vector3 firstStartX = new Vector3(half * sign, -yoffset + 0.05f, 0) + pos;
+			Vector3 secondStartX = new Vector3(half * sign, yoffset - 0.05f, 0) + pos;
 			RaycastHit2D[] hitsY = new RaycastHit2D[2];
 			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, fullRayDistance, layerMask);
 			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, fullRayDistance, layerMask);
 			Debug.DrawLine(firstStartX, firstStartX + (Vector3.right * fullRayDistance * sign), Color.red);
 			Debug.DrawLine(secondStartX, secondStartX + (Vector3.right * fullRayDistance * sign), Color.red);
-			grounded = false;
 
 			Vector3 movement = new Vector3(pos.x + x, pos.y, 0);
 			for (int i = 0; i < hitsY.Length; i++)

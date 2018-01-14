@@ -83,6 +83,7 @@ namespace Game.Movement
 			tempPos1 = Game.Systems.Movement.VerticalMovement(tempPos1, yMovement, xOffset, yOffset, mask, out vertGrounded);
 			var tempPos2 = Game.Systems.Movement.VerticalMovement(tempPos, yMovement, xOffset, yOffset, mask, out vertGrounded2);
 			tempPos2 = Game.Systems.Movement.HorizontalMovement(tempPos2, xMovement, xOffset, yOffset, out horGrounded2);
+
 			entityGameObject.transform.position = tempPos1;
 			if ((tempPos2 - tempPos).magnitude > (tempPos1 - tempPos).magnitude)
 			{

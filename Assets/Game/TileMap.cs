@@ -258,7 +258,8 @@ public partial class TileMap
 		MineralTypes = null;
 		BlockIslandSize = null;
 		Minerals = null;
-		CreateTrees(game);
+		if(GameUnity.CreateTrees)
+			CreateTrees(game);
 	}
 
 	public void CreateTrees(GameManager game)

@@ -9,7 +9,7 @@ public class AllScriptableItems : ScriptableObject
 	public RopeScriptable Rope;
 	public IngredientScriptable Ingredient;
 	public ScriptableItem Ladder;
-
+	public ScriptableItem Shield;
 	public List<ScriptableItem> AllItemsList = new List<ScriptableItem>();
 	[Header("Gatherable ")]
 	public GatherableScriptable Gravel;

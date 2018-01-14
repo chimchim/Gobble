@@ -65,7 +65,9 @@ public class GameUnity : MonoBehaviour
 	[Header("Map Variables")]
 	public static bool RotateArm;
 	public static bool DebugMode;
+	public static bool CreateItems;
 	public static bool CreateWater;
+	public static bool CreateTrees;
 	public static bool GenerateIslands;
 	public static bool GenerateSmallIsland;
 	public static bool QuickJoin;
@@ -217,6 +219,8 @@ public class GameUnity : MonoBehaviour
 		RotateArm = MapData.RotateArm;
 		DebugMode = MapData.DebugMode;
 		CreateWater = MapData.CreateWater;
+		CreateTrees = MapData.CreateTrees;
+		CreateItems = MapData.CreateItems;
 		GenerateIslands = MapData.GenerateIslands;
 		GenerateSmallIsland = MapData.GenerateSmallIsland;
 		QuickJoin = MapData.QuickJoin;
