@@ -95,7 +95,7 @@ namespace Game.Movement
 			var ladder1 = VerticalMovementLadder(tempPos, yMovement, capsule.size.x, capsule.size.y);
 			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/)
 			{
-				var skipLadder = (JumpLadderTimer > 0 && ladder1 == JumpLadder);
+				var skipLadder = (JumpLadderTimer > 0 || ladder1 == JumpLadder);
 				if (!skipLadder)
 				{
 					groundTimer = 0;
@@ -122,20 +122,6 @@ namespace Game.Movement
 
 			//var laddered = ((hitsY.collider != null));
 			return hitsY.collider;
-		}
-		public static bool HorizontalMovementLadder(Vector3 pos, float x, float xoffset, float yoffset)
-		{
-			float fullRayDistance = xoffset + Mathf.Abs(x);
-			var layerMask = 1 << LayerMask.NameToLayer("Ladder");
-			float sign = Mathf.Sign(x);
-			Vector3 firstStartX = new Vector3(0, -yoffset + 0.05f, 0) + pos;
-			Vector3 secondStartX = new Vector3(0, yoffset - 0.05f, 0) + pos;
-			RaycastHit2D[] hitsY = new RaycastHit2D[2];
-			hitsY[0] = Physics2D.Raycast(firstStartX, Vector2.right * sign, fullRayDistance, layerMask);
-			hitsY[1] = Physics2D.Raycast(secondStartX, Vector2.right * sign, fullRayDistance, layerMask);
-
-			var laddered = ((hitsY[0].collider != null) || (hitsY[1].collider != null));
-			return laddered;
 		}
 
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)

@@ -63,7 +63,8 @@ namespace Game
 			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			ent.AddComponent(ActionQueue.Make(ent.ID));
-			ent.AddComponent(MovementComponent.Make(ent.ID));
+			var moveComp = MovementComponent.Make(ent.ID);
+			ent.AddComponent(moveComp);
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 			ent.AddComponent(InputComponent.Make(ent.ID));
 			ent.AddComponent(NetEventComponent.Make(ent.ID));
@@ -77,6 +78,7 @@ namespace Game
 			playerGameObject.layer = owner ?  LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
+			moveComp.Body = playerGameObject.GetComponent<Rigidbody2D>();
 			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 			playerGameObject.GetComponent<IdHolder>().Owner = owner;
 			playerGameObject.transform.position = new Vector3(10.86f, 83, 0);//new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);

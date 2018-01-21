@@ -150,6 +150,7 @@ public class Ladder : Item
 				HandleNetEventSystem.AddEventIgnoreOwner(game, entity, NetCreateLadder.Make(Placeable.position));
 				Quantity--;
 				Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+				Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
 				if (Quantity <= 0)
 				{
 					game.CallBacks.Add(() =>
