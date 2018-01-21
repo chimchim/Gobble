@@ -35,7 +35,7 @@ public partial class TileMap
 
 	private List<List<Vector2>> _islands = new List<List<Vector2>>();
 	private Material diffMat;
-
+	private PhysicsMaterial2D Physics2d;
 	private Material[] _darkMats;
 	private TileType[,] BlockTypes;
 	private IngredientType[,] MineralTypes;
@@ -113,6 +113,7 @@ public partial class TileMap
 		cube.GetComponent<SpriteRenderer>().material = diffMat;
 		cube.AddComponent<BoxCollider2D>();
 		cube.GetComponent<BoxCollider2D>().size = new Vector2(1.28f, 1.28f);
+		cube.GetComponent<BoxCollider2D>().sharedMaterial = Physics2d;
 		cube.AddComponent<GatherableBlock>().IngredientType = IngredientType.Normal;
 		cube.GetComponent<GatherableBlock>().Mod = minsVariables.NormalMod;
 		cube.GetComponent<GatherableBlock>().X = x;
@@ -1069,7 +1070,8 @@ public partial class TileMap
 			_darkMats[i - 1] = Resources.Load("Material/SpriteDiffuseDark"+i.ToString(), typeof(Material)) as Material;
 		}
 		diffMat = Resources.Load("Material/SpriteDiffuse", typeof(Material)) as Material;
-		
+		Physics2d = Resources.Load("Material/physic", typeof(PhysicsMaterial2D)) as PhysicsMaterial2D;
+
 		_rockBotMat = Resources.Load("Tiles/Minerals/Rocks/Bot", typeof(Sprite)) as Sprite;
 		_rockBotLeftCornerMat = Resources.Load("Tiles/Minerals/Rocks/BotLeftCorner", typeof(Sprite)) as Sprite;
 		_rockBotRightCornerMat = Resources.Load("Tiles/Minerals/Rocks/BotRightCorner", typeof(Sprite)) as Sprite;

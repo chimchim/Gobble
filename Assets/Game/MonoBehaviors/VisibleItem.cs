@@ -75,16 +75,25 @@ public class VisibleItem : MonoBehaviour
 
 
 	}
-	void OnTriggerEnter2D(Collider2D other)
+	public void TryPick(int id)
 	{
-		var idholder = other.GetComponent<IdHolder>();
-		if (idholder != null && CallBack != null && pickable)
+		if (CallBack != null && pickable)
 		{
 			pickable = false;
 			enabled = false;
-			CallBack.Invoke(idholder.ID);
+			CallBack.Invoke(id);
 		}
 	}
+	//void OnTriggerEnter2D(Collider2D other)
+	//{
+	//	var idholder = other.GetComponent<IdHolder>();
+	//	if (idholder != null && CallBack != null && pickable)
+	//	{
+	//		pickable = false;
+	//		enabled = false;
+	//		CallBack.Invoke(idholder.ID);
+	//	}
+	//}
 	public IEnumerator TriggerTime()
 	{
 		float ShakeTime = 0.5f;
@@ -95,7 +104,6 @@ public class VisibleItem : MonoBehaviour
 			if (counter >= ShakeTime)
 			{
 				pickable = true;
-				GetComponent<BoxCollider2D>().isTrigger = true;
 				yield break;
 			}
 			yield return null;

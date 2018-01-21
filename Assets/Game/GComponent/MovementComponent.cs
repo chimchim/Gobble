@@ -9,6 +9,7 @@ namespace Game.Component
     {
         private static ObjectPool<MovementComponent> _pool = new ObjectPool<MovementComponent>(10);
 		// Swim
+		public Rigidbody2D Body;
 		public int FloatingCounter;
 		public bool FloatJump;
 		public float SwimTime;

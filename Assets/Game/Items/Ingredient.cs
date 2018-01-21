@@ -84,7 +84,7 @@ public class Ingredient : Item
 		if (platform != null)
 			GameObject.Destroy(platform.gameObject);
 
-		go.layer = LayerMask.NameToLayer("Default");
+		go.layer = LayerMask.NameToLayer("Item");
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.IngredientType = ingredientType;

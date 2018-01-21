@@ -11,7 +11,7 @@ namespace Game.Systems
 	{
 		// gör en input translator?
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<InputComponent, Player, ActionQueue>();
-
+		LayerMask itemLayer = LayerMask.GetMask("Item");
 		public void Update(GameManager game, float delta)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
@@ -20,6 +20,19 @@ namespace Game.Systems
 			{
 				var player = game.Entities.GetComponentOf<Player>(e);	
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
+				if (player.IsHost && player.Owner)
+				{
+					foreach (int r in entities)
+					{
+						var pos = game.Entities.GetEntity(r).gameObject.transform.position;
+						var hit = Physics2D.Raycast(pos, -Vector2.up, 0.6f, itemLayer);
+						if (hit.transform != null)
+						{
+							var visible = hit.transform.GetComponent<VisibleItem>();
+							visible.TryPick(r);
+						}
+					}
+				}
 				foreach (Item item in itemHolder.ActiveItems)
 				{
 					item.GotUpdated = false;
