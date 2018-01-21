@@ -13,8 +13,8 @@ namespace Game.Movement
 {
 	public class Grounded : MovementState
 	{
-		int playerPlatformLayer = LayerMask.NameToLayer("PlayerPlatform");
-		int playerLayer = LayerMask.NameToLayer("Player");
+		public int PlayerPlatformLayer = LayerMask.NameToLayer("PlayerPlatform");
+		public int PlayerLayer = LayerMask.NameToLayer("Player");
 		int platformLayer = LayerMask.NameToLayer("Platform");
 		public Collider2D JumpLadder;
 		public float JumpLadderTimer;
@@ -80,11 +80,11 @@ namespace Game.Movement
 			movement.Grounded = Game.Systems.Movement.CheckGrounded(tempPos, yMovement, yPos, game.LayerMasks.MappedMasks[movement.CurrentLayer], out layer);
 			if (layer == platformLayer && yMovement < 0)
 			{
-				entityGameObject.layer = playerPlatformLayer;
+				entityGameObject.layer = PlayerPlatformLayer;
 			}
 			else
 			{
-				entityGameObject.layer = playerLayer;
+				entityGameObject.layer = PlayerLayer;
 			}
 			if (movement.Grounded)
 			{

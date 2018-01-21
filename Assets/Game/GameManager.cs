@@ -8,7 +8,7 @@ using Game.GEntity;
 using Game.Component;
 using UnityEngine;
 using Game.Movement;
-
+using MoveState = Game.Component.MovementComponent.MoveState;
 namespace Game
 {
 	public class GameManager
@@ -56,15 +56,13 @@ namespace Game
 			ent.gameObject.transform.position = position;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 		}
-		public void CreateFullPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
+		public void CreateFullPlayer(bool owner, string name, bool isHost, int team, int ownerTeam, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
 			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			ent.AddComponent(ActionQueue.Make(ent.ID));
-			var moveComp = MovementComponent.Make(ent.ID);
-			ent.AddComponent(moveComp);
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 			ent.AddComponent(InputComponent.Make(ent.ID));
 			ent.AddComponent(NetEventComponent.Make(ent.ID));
@@ -75,7 +73,11 @@ namespace Game
 
 			var playerGameObject = GameObject.Instantiate(GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 			playerGameObject.tag = "Player";
-			playerGameObject.layer = owner ?  LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
+			playerGameObject.layer = player.Team == ownerTeam ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
+			var moveComp = MovementComponent.Make(ent.ID);
+			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerLayer = player.Team == ownerTeam ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
+			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerPlatformLayer = player.Team == ownerTeam ? LayerMask.NameToLayer("PlayerPlatform") : LayerMask.NameToLayer("PlayerEnemyPlatform");
+			ent.AddComponent(moveComp);
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 			moveComp.Body = playerGameObject.GetComponent<Rigidbody2D>();

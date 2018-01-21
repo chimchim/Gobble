@@ -92,7 +92,14 @@ namespace Game.Systems
 			int clientCount = BitConverter.ToInt32(byteData, 1);
 			int currentByteIndex = 1;
 			currentByteIndex += sizeof(int);
-
+			int ownerTeam = 0;
+			var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
+			foreach (int entity in entities)
+			{
+				var player = game.Entities.GetComponentOf<Player>(entity);
+				if (player.Owner)
+					ownerTeam = player.Team;
+			}
 			for (int i = 0; i < clientCount; i++)
 			{
 
@@ -121,9 +128,10 @@ namespace Game.Systems
 					}
 					else
 					{
-						game.CreateFullPlayer(isOwner, name, isHost, team, Characters.Yolanda, id);
+						game.CreateFullPlayer(isOwner, name, isHost, team, ownerTeam, Characters.Yolanda, id);
 					}
 				}
+				
 			}
 			menu.PlayerAmount = clientCount;
 		}
