@@ -33,6 +33,7 @@ namespace Game.Systems
 
 					float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
 					Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
+					translate = translate.magnitude > diff.magnitude ? diff : translate;
 					Vector2 translatePos = otherPosition + translate;
 					//movement.Body.MovePosition(translatePos);
 					otherTransform.position = translatePos;
@@ -41,14 +42,11 @@ namespace Game.Systems
 					float dot = Vector2.Dot(newPosDiff.normalized, diff.normalized);
 					if (dot < 0)
 					{
-						Debug.Log("SNAP");
 						otherTransform.position = networkPosition;
-						//movement.Body.MovePosition(networkPosition);
 					}
 					if (diff.magnitude > 3)
 					{
 						otherTransform.position = networkPosition;
-						//movement.Body.MovePosition(networkPosition);
 					}
 				}
 			}

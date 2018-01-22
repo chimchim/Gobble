@@ -61,7 +61,7 @@ public abstract class Item
 
 
 	public abstract void OnPickup(Game.GameManager game, int entity, GameObject gameObject);
-	public abstract void Input(Game.GameManager game, int entity);
+	public abstract void Input(Game.GameManager game, int entity, float delta);
 	public abstract void Sync(Game.GameManager game, Client.GameLogicPacket packet, byte[] byteData, ref int currentIndex);
 	public abstract void Serialize(Game.GameManager game, int entity, List<byte> byteArray);
 	public abstract void Recycle();
@@ -80,31 +80,14 @@ public abstract class Item
 		if (!CurrentGameObject)
 			return;
 		float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
+		var eu = CurrentGameObject.transform.localEulerAngles;
 		if (resources.FacingDirection > 0)
 		{
-			if (rotDir > 0)
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 180, eu.z);
-			}
-			else
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 0, eu.z);
-			}
+			CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 180, eu.z) : new Vector3(eu.x, 0, eu.z);
 		}
 		else
 		{
-			if (rotDir > 0)
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 0, eu.z);
-			}
-			else
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 180, eu.z);
-			}
+			CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 0, eu.z) : new Vector3(eu.x, 180, eu.z);
 		}
 	}
 	public virtual bool TryStack(Game.GameManager game, Item item)

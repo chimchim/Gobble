@@ -184,7 +184,7 @@ public class Ingredient : Item
 		}
 
 	}
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);

@@ -36,7 +36,7 @@ namespace Game.Systems
 				foreach (Item item in itemHolder.ActiveItems)
 				{
 					item.GotUpdated = false;
-					item.Input(game, e);
+					item.Input(game, e, delta);
 				}
 				for (int k = itemHolder.ActiveItems.Count - 1; k >= 0; k--)
 				{

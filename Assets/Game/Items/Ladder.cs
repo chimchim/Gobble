@@ -111,7 +111,7 @@ public class Ladder : Item
 		CheckMain(game, entity, game.GameResources.AllItems.Ladder, gameObject);
 	}
 
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
 		base.RotateArm(game, entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);

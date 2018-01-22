@@ -26,12 +26,14 @@ namespace Game.Movement
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
 
+			#region Variables
 			movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Grounded;
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var player = game.Entities.GetComponentOf<Game.Component.Player>(entityID);
 			var animator = entity.Animator;
-			var entityGameObject = entity.gameObject;
+			var entityGameObject = entity.gameObject; 
+			#endregion
 
 			if (input.Axis.y < 0)
 			{
@@ -78,20 +80,15 @@ namespace Game.Movement
 			float yPos = (((capsule.size.y / 2) + (capsule.size.x *1.5f/2)) - Mathf.Abs(yMovement));
 			int layer = 0;
 			movement.Grounded = Game.Systems.Movement.CheckGrounded(tempPos, yMovement, yPos, mask, out layer);
-			if (layer == platformLayer && yMovement < 0)
-			{
-				entityGameObject.layer = PlayerPlatformLayer;
-			}
-			else
-			{
-				entityGameObject.layer = PlayerLayer;
-			}
+			entityGameObject.layer = (layer == platformLayer && yMovement < 0) ? PlayerPlatformLayer : PlayerLayer;
+
 			if (movement.Grounded)
 			{
 				if(yMovement < 0)
 					groundTimer = 0;
 				movement.CurrentVelocity.y = 0;
 			}
+			#region LadderCheck
 			var ladder1 = VerticalMovementLadder(tempPos, yMovement, capsule.size.x, capsule.size.y);
 			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/)
 			{
@@ -101,14 +98,47 @@ namespace Game.Movement
 					groundTimer = 0;
 					movement.CurrentState = MovementComponent.MoveState.Ladder;
 				}
-			}
+			} 
+			#endregion
 			JumpLadderTimer -= delta;
 			Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
 			movement.Body.MovePosition(newPos);
 			animator.SetBool("Jump", !movement.Grounded);
+			NetSync(game, player, movement, input, entityID, delta);
 
 		}
 
+		public void NetSync(GameManager game, Player player, MovementComponent movement, InputComponent input, int e, float delta)
+		{
+			var entity = game.Entities.GetEntity(e);
+			var otherTransform = entity.gameObject.transform;
+			Vector2 otherPosition = otherTransform.position;
+			Vector2 networkPosition = input.NetworkPosition;
+			Debug.DrawLine(otherPosition, networkPosition, Color.green);
+
+			Vector2 diff = networkPosition - otherPosition;
+			if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
+			{
+
+				float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
+				Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
+				translate = translate.magnitude > diff.magnitude ? diff : translate;
+				Vector2 translatePos = otherPosition + translate;
+				movement.Body.MovePosition(translatePos);
+				Vector2 newPos = otherTransform.position;
+				Vector2 newPosDiff = newPos - otherPosition;
+				float dot = Vector2.Dot(newPosDiff.normalized, diff.normalized);
+				if (dot < 0)
+				{
+					Debug.Log("SNAP");
+					movement.Body.MovePosition(networkPosition);
+				}
+				if (diff.magnitude > 3)
+				{
+					movement.Body.MovePosition(networkPosition);
+				}
+			}
+		}
 		public static Collider2D VerticalMovementLadder(Vector3 pos, float y, float Xoffset, float yoffset)
 		{
 			float half = yoffset - (yoffset / 10);

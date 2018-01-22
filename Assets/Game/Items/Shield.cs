@@ -127,7 +127,7 @@ public class Shield : Item
 		CheckMain(game, entity, game.GameResources.AllItems.Shield, gameObject);
 	}
 
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
 		var entityObj = game.Entities.GetEntity(entity);
 
@@ -136,39 +136,21 @@ public class Shield : Item
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
 		Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
-		resources.FreeArm.up = -input.ScreenDirection;
-		if (entityObj.Animator.transform.eulerAngles.y > 6)
-		{
-			resources.FreeArm.up = input.ScreenDirection;
-			resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-		}
-		float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
-		if (resources.FacingDirection > 0)
-		{
-			if (rotDir > 0)
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 180, eu.z);
-			}
-			else
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 0, eu.z);
-			}
-		}
-		else
-		{
-			if (rotDir > 0)
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 0, eu.z);
-			}
-			else
-			{
-				var eu = CurrentGameObject.transform.localEulerAngles;
-				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 180, eu.z);
-			}
-		}
+
+		base.RotateArm(game, entity);
+	}
+	private const float DegToRad = 3.14f / 180f;
+
+	public Vector2 Rotate(Vector2 v, float degrees)
+	{
+		return RotateRadians(v, degrees * DegToRad);
+	}
+
+	public Vector2 RotateRadians(Vector2 v, float radians)
+	{
+		var ca = (float)Math.Cos(radians);
+		var sa = (float)Math.Sin(radians);
+		return new Vector2(ca * v.x - sa * v.y, sa * v.x + ca * v.y);
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
