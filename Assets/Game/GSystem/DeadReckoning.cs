@@ -13,7 +13,6 @@ namespace Game.Systems
 
 		public void Update(GameManager game, float delta)
 		{
-			return;
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			float xOffset = GameUnity.GroundHitBox.x;
 			float yOffset = GameUnity.GroundHitBox.y;
@@ -22,62 +21,35 @@ namespace Game.Systems
 				var player = game.Entities.GetComponentOf<Player>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
-				var otherTransform = game.Entities.GetEntity(e).gameObject.transform;
-				var otherPosition = new Vector2(otherTransform.position.x, otherTransform.position.y);
-				var networkPosition = input.NetworkPosition;
+				var entity = game.Entities.GetEntity(e);
+				var otherTransform = entity.gameObject.transform;
+				Vector2 otherPosition = otherTransform.position;
+				Vector2 networkPosition = input.NetworkPosition;
 				Debug.DrawLine(otherPosition, networkPosition, Color.green);
 
 				Vector2 diff = networkPosition - otherPosition;
 				if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 				{
-					float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude/ GameUnity.NetworkLerpSpeed));
+
+					float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
 					Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
-					if (translate.magnitude > diff.magnitude)
+					Vector2 translatePos = otherPosition + translate;
+					//movement.Body.MovePosition(translatePos);
+					otherTransform.position = translatePos;
+					Vector2 newPos = otherTransform.position;
+					Vector2 newPosDiff = newPos - otherPosition;
+					float dot = Vector2.Dot(newPosDiff.normalized, diff.normalized);
+					if (dot < 0)
 					{
-						translate = diff;
+						Debug.Log("SNAP");
+						otherTransform.position = networkPosition;
+						//movement.Body.MovePosition(networkPosition);
 					}
-
-					float stepX = translate.x;// (diff.normalized * step).x;
-					float stepY = translate.y;//(diff.normalized * step).y;
-
-					bool vertGrounded = false;
-					bool horGrounded = false;
-
-					Vector3 tempPos = otherTransform.position;
-					MappedMasks masks = game.LayerMasks.MappedMasks[movement.CurrentLayer];
-					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, masks, out vertGrounded);
-					tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, stepX, xOffset, yOffset, out horGrounded);
-					bool vertHorGrounded = vertGrounded || horGrounded;
-
-					tempPos = otherTransform.position;
-					tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, stepX, xOffset, yOffset, out horGrounded);
-					tempPos = Game.Systems.Movement.VerticalMovement(tempPos, stepY, xOffset, yOffset, masks, out vertGrounded);
-					bool horVertGrounded = vertGrounded || horGrounded;
-
 					if (diff.magnitude > 3)
 					{
-						Debug.Log("Snap pos 1");
 						otherTransform.position = networkPosition;
+						//movement.Body.MovePosition(networkPosition);
 					}
-					if ((vertHorGrounded || horVertGrounded) && diff.magnitude > 1f)
-					{
-						Debug.Log("Snap pos 2");
-						otherTransform.position = networkPosition;
-					}
-					else
-					{
-						otherTransform.position += new Vector3(stepX, stepY, 0);
-					}
-				}
-				if (!player.Owner && movement.CurrentState == MovementComponent.MoveState.Roped)
-				{
-					//if (diff.magnitude > 1)
-					//{
-					//	movement.RopeList.Clear();
-					//	movement.RopeList.AddRange(input.RopeList);
-					//	input.RopeList.Clear();
-					//	otherTransform.position = networkPosition;
-					//}
 				}
 			}
 		}
