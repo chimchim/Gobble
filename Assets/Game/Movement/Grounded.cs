@@ -73,7 +73,7 @@ namespace Game.Movement
 			float yMovement = movement.CurrentVelocity.y * delta + (movement.ForceVelocity.y * delta);
 			float xMovement = movement.CurrentVelocity.x * delta + (movement.ForceVelocity.x * delta);
 			Vector2 tempPos = entityGameObject.transform.position;
-			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer].DownLayers;
+			var mask = player.Enemy ? game.LayerMasks.MappedMasksEnemy[movement.CurrentLayer].DownLayers : game.LayerMasks.MappedMasks[movement.CurrentLayer].DownLayers;
 			var capsule =  entityGameObject.GetComponent<CapsuleCollider2D>();
 			float yPos = (((capsule.size.y / 2) + (capsule.size.x *1.5f/2)) - Mathf.Abs(yMovement));
 			int layer = 0;

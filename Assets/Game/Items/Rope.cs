@@ -119,7 +119,7 @@ public class Rope : Item
 
 	public override void Input(GameManager game, int entity)
 	{
-
+		base.RotateArm(game, entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		if (player.Owner)
 		{

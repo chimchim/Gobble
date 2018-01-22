@@ -37,7 +37,9 @@ public class Ladder : Item
 	{
 		if (Placeable == null)
 		{
+			
 			Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+			Placeable.gameObject.layer = LayerMask.NameToLayer("Default");
 		}
 		base.OwnerActivate(game, entity);
 	}
@@ -111,6 +113,7 @@ public class Ladder : Item
 
 	public override void Input(GameManager game, int entity)
 	{
+		base.RotateArm(game, entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable"));
 		if (!player.Owner)
@@ -146,11 +149,11 @@ public class Ladder : Item
 			}
 			if (input.OnLeftDown && placeOK)
 			{
-				Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
-				HandleNetEventSystem.AddEventIgnoreOwner(game, entity, NetCreateLadder.Make(Placeable.position));
+				//Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
+				HandleNetEventSystem.AddEventAndHandle(game, entity, NetCreateLadder.Make(Placeable.position));
 				Quantity--;
-				Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
-				Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
+				//var ladder = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+				//ladder.gameObject.layer = LayerMask.NameToLayer("Ladder");
 				if (Quantity <= 0)
 				{
 					game.CallBacks.Add(() =>

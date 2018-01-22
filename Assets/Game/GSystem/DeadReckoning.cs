@@ -13,6 +13,7 @@ namespace Game.Systems
 
 		public void Update(GameManager game, float delta)
 		{
+			return;
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			float xOffset = GameUnity.GroundHitBox.x;
 			float yOffset = GameUnity.GroundHitBox.y;

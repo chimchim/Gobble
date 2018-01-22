@@ -66,6 +66,47 @@ public abstract class Item
 	public abstract void Serialize(Game.GameManager game, int entity, List<byte> byteArray);
 	public abstract void Recycle();
 
+	public virtual void RotateArm(Game.GameManager game, int e)
+	{
+		var entity = game.Entities.GetEntity(e);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
+		var input = game.Entities.GetComponentOf<InputComponent>(e);
+		resources.FreeArm.up = -input.ScreenDirection;
+		if (entity.Animator.transform.eulerAngles.y > 6)
+		{
+			resources.FreeArm.up = input.ScreenDirection;
+			resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+		}
+		if (!CurrentGameObject)
+			return;
+		float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
+		if (resources.FacingDirection > 0)
+		{
+			if (rotDir > 0)
+			{
+				var eu = CurrentGameObject.transform.localEulerAngles;
+				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 180, eu.z);
+			}
+			else
+			{
+				var eu = CurrentGameObject.transform.localEulerAngles;
+				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 0, eu.z);
+			}
+		}
+		else
+		{
+			if (rotDir > 0)
+			{
+				var eu = CurrentGameObject.transform.localEulerAngles;
+				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 0, eu.z);
+			}
+			else
+			{
+				var eu = CurrentGameObject.transform.localEulerAngles;
+				CurrentGameObject.transform.localEulerAngles = new Vector3(eu.x, 180, eu.z);
+			}
+		}
+	}
 	public virtual bool TryStack(Game.GameManager game, Item item)
 	{
 		return false;

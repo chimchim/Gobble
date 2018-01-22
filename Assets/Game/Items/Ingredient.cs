@@ -190,6 +190,7 @@ public class Ingredient : Item
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
 
+		base.RotateArm(game, entity);
 	}
 
 	public override bool TryStack(GameManager game, Item item)
