@@ -148,16 +148,18 @@ public class Sword : Item
 				Vector2 pos = (handPos + offset);
 				var hit = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.4f, game.LayerMasks.MappedMasks[3].UpLayers);
 				var hitTransform = hit.transform;
-				if (hitTransform != null)
+				var collider = hit.collider;
+				if (collider != null)
 				{
 					var gameobj = hitTransform.gameObject;
-					if (gameobj.layer == LayerMask.NameToLayer("EnemyShield"))
+					Debug.Log("collider.gameObject.layer " + collider.gameObject.name);
+					if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
 					{
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);
 						break;
 					}
-					if (gameobj.layer == LayerMask.NameToLayer("PlayerEnemy") || gameobj.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
+					if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 					{
 						var go = GameObject.Instantiate(game.GameResources.Prefabs.Blood3);
 						go.transform.position = new Vector3(hit.point.x, hit.point.y, -1);
