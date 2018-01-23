@@ -12,6 +12,8 @@ public class rigid : MonoBehaviour {
 	public float Jump;
 	void Start () {
 		body = GetComponent<Rigidbody2D>();
+		//body.MovePosition(new Vector2(3.2f, 0.3f));
+		//Debug.Log("trans " + transform.position);
 	}
 	
 	// Update is called once per frame
@@ -33,7 +35,11 @@ public class rigid : MonoBehaviour {
 		var hit = Physics2D.CapsuleCast(transform.position, new Vector2(0.4f, 1), CapsuleDirection2D.Vertical, 0, new Vector2(0, yMovement).normalized, Mathf.Abs(yMovement), layerMask);
 		if (hit.transform != null)
 		{
-			CurrentVelocity.y = 0;		
+			CurrentVelocity.y = 0;
+		}
+		else
+		{
+			Debug.Log("Missed " + CurrentVelocity.y);
 		}
 		//.velocity = new Vector3(xMovement, yMovement);
 		Vector2 newPos = transform.position + new Vector3(xMovement, yMovement);

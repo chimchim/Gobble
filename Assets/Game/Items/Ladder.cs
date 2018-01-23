@@ -37,7 +37,9 @@ public class Ladder : Item
 	{
 		if (Placeable == null)
 		{
+			
 			Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+			Placeable.gameObject.layer = LayerMask.NameToLayer("Default");
 		}
 		base.OwnerActivate(game, entity);
 	}
@@ -50,7 +52,7 @@ public class Ladder : Item
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
-
+		Placeable.position = new Vector3(0, 0, 0);
 		base.OwnerDeActivate(game, entity);
 	}
 
@@ -109,8 +111,9 @@ public class Ladder : Item
 		CheckMain(game, entity, game.GameResources.AllItems.Ladder, gameObject);
 	}
 
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
+		base.RotateArm(game, entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		var layerMask = (1 << LayerMask.NameToLayer("Collideable"));
 		if (!player.Owner)
@@ -119,9 +122,10 @@ public class Ladder : Item
 		var transform = game.Entities.GetEntity(entity).gameObject.transform;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
+		Vector2 placeDirection = input.ScreenDirection;
 		Vector2 pos = transform.position;
-		var hit = Physics2D.Raycast(pos, -hand.up, 2.0f, layerMask);
-		Debug.DrawLine(pos, pos + (new Vector2(-hand.up.x, -hand.up.y) * 2.0f), Color.blue);
+		var hit = Physics2D.Raycast(pos, placeDirection, 2.0f, layerMask);
+		Debug.DrawLine(pos, pos + (new Vector2(placeDirection.x, placeDirection.y) * 2.0f), Color.blue);
 		Placeable.position = new Vector3(0, 0, 0);
 		if (hit.transform != null)
 		{
@@ -136,20 +140,18 @@ public class Ladder : Item
 				var coord = hit.transform.position / 1.28f;
 				int x = (int)coord.x;
 				int y = (int)coord.y;
-				int nextX = x + (Math.Sign(-hand.up.x));
+				int nextX = x + (Math.Sign(placeDirection.x));
 				var cube = game.TileMap.Blocks[nextX, y];
 				if (cube == null || cube.GetComponent<GatherableBlock>().IngredientType == TileMap.IngredientType.TreeChunk)
 				{
 					placeOK = true;
-					Placeable.position = new Vector3(hit.transform.position.x + (0.68f * (Math.Sign(-hand.up.x))), hit.transform.position.y, -0.2f);
+					Placeable.position = new Vector3(hit.transform.position.x + (0.68f * (Math.Sign(placeDirection.x))), hit.transform.position.y, -0.2f);
 				}
 			}
 			if (input.OnLeftDown && placeOK)
 			{
-				Placeable.gameObject.layer = LayerMask.NameToLayer("Ladder");
-				HandleNetEventSystem.AddEventIgnoreOwner(game, entity, NetCreateLadder.Make(Placeable.position));
+				HandleNetEventSystem.AddEventAndHandle(game, entity, NetCreateLadder.Make(Placeable.position));
 				Quantity--;
-				Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
 				if (Quantity <= 0)
 				{
 					game.CallBacks.Add(() =>

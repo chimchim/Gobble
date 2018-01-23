@@ -12,7 +12,7 @@ namespace Game.Component
 		public Animator FreeArmAnimator;
 		public AnimationEvents ArmEvents;
 		public string Character;
-
+		public int FacingDirection;
 		public override void Recycle()
 		{
 			GraphicRope = null;

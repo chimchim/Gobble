@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.Component;
 using Game.Actions;
+using Game.Movement;
+using MoveState = Game.Component.MovementComponent.MoveState;
 
 namespace Game.Systems
 {
@@ -15,15 +17,6 @@ namespace Game.Systems
 
 		public void Update(GameManager game, float delta)
 		{
-			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
-			foreach (int entity in entities)
-			{
-				var player = game.Entities.GetComponentOf<Player>(entity);
-				if (player.Owner)
-				{
-					
-				}
-			}
 		}
 
 
@@ -31,11 +24,17 @@ namespace Game.Systems
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			int players = 0;
+			int ownerTeam = 0;
+			foreach (int entity in entities)
+			{
+				var player = game.Entities.GetComponentOf<Player>(entity);
+				if (player.Owner)
+					ownerTeam = player.Team;
+			}
 			foreach (int entity in entities)
 			{
 				var ent = game.Entities.GetEntity(entity);
 				ent.AddComponent(ActionQueue.Make(ent.ID));
-				ent.AddComponent(MovementComponent.Make(ent.ID));
 				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 				ent.AddComponent(InputComponent.Make(ent.ID));
 				ent.AddComponent(NetEventComponent.Make(ent.ID));
@@ -43,11 +42,19 @@ namespace Game.Systems
 				ent.AddComponent(inventory);
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-
-				var playerGameObject = GameObject.Instantiate(game.GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+				var movecomp = MovementComponent.Make(ent.ID);
+				ent.AddComponent(movecomp);
+				#region SetEnemy
+				player.Enemy = (player.Team != ownerTeam);
+				((Grounded)movecomp.States[(int)MoveState.Grounded]).PlayerLayer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
+				((Grounded)movecomp.States[(int)MoveState.Grounded]).PlayerPlatformLayer = !player.Enemy ? LayerMask.NameToLayer("PlayerPlatform") : LayerMask.NameToLayer("PlayerEnemyPlatform");
+				var playerGameObject = GameObject.Instantiate(game.GetCharacterByTeam(player.Team), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 				playerGameObject.tag = "Player";
-				playerGameObject.layer = player.Owner ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
+				playerGameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy"); 
+				#endregion
+
 				ent.gameObject = playerGameObject;
+
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 				playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 				playerGameObject.GetComponent<IdHolder>().Owner = player.Owner;

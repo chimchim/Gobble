@@ -38,11 +38,7 @@ public class NetItemPickup : NetEvent
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
 		var inv = game.Entities.GetComponentOf<InventoryComponent>(Player);
 		bool picked = false;
-		if (!item.Item.HasSlot(inv))
-		{
-
-		}
-		else
+		if (item.Item.HasSlot(inv))
 		{
 			picked = true;
 			foreach (Item stackable in itemHolder.Items.Values)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Game.GEntity;
 using Game.Component;
 using Game.Actions;
+using System;
 
 namespace Game.Systems
 {
@@ -30,17 +31,20 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
-				var rope = game.Entities.GetComponentOf<ResourcesComponent>(e).GraphicRope;
-				rope.UpdateRope();
+				var resource = game.Entities.GetComponentOf<ResourcesComponent>(e);
+				resource.GraphicRope.UpdateRope();
 				if (entity.Animator == null)
 					continue;
 
 				float signDir = movement.CurrentVelocity.x + movement.ForceVelocity.x;
+				//resource.FacingDirection = (int)Mathf.Sign(signDir);
+				//Debug.Log("resource.FacingDirection " + resource.FacingDirection);
 				if (Mathf.Abs(signDir) > 0.3f)
 				{
 					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
 					entity.Animator.transform.eulerAngles = new Vector3(entity.Animator.transform.eulerAngles.x, mult * 180, entity.Animator.transform.eulerAngles.z);
-
+					resource.FacingDirection = (int)Mathf.Sign(signDir);
+					//Debug.Log("resource.FacingDirection " + resource.FacingDirection);
 				}
 
 				int currentStateIndex = (int)movement.CurrentState;
@@ -57,6 +61,37 @@ namespace Game.Systems
 			movement.CurrentVelocity.y = GameUnity.JumpSpeed;
 			animator.SetBool("Jump", true);
 
+		}
+
+		public static bool CheckGrounded(Vector2 tempPos, float y, float yOffset, MappedMasks masks, out int layer)
+		{
+			layer = 0;
+			LayerMask layerMask = 0;// = masks.DownLayers[0];
+			#region Layers
+			if (y < 0)
+			{
+				layerMask = masks.DownLayers;
+			}
+			else
+			{
+				layerMask = masks.UpLayers;
+			}
+			#endregion
+			Vector2 yDirection = new Vector2(0, y).normalized;
+			float ySize = Mathf.Abs(y);
+
+			for (int i = -1; i < 2; i++)
+			{
+				var pos = tempPos + new Vector2((i * 0.1f), yOffset * Math.Sign(y));
+				var hit2 = Physics2D.Raycast(pos, yDirection, ySize, layerMask);
+				Debug.DrawLine(pos, pos + (yDirection * ySize), Color.red);
+				if (hit2.transform != null)
+				{
+					layer = hit2.transform.gameObject.layer;
+					return true;
+				}
+			}
+			return false;
 		}
 		public static Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, MappedMasks masks, out bool grounded)
 		{
@@ -142,7 +177,7 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-
+				movement.Body = game.Entities.GetEntity(e).gameObject.GetComponent<Rigidbody2D>();
 				Debug.Log("initiate aniamtor");
 				if (player.Owner)
 				{

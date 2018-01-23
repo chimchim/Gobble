@@ -8,7 +8,7 @@ using Game.GEntity;
 using Game.Component;
 using UnityEngine;
 using Game.Movement;
-
+using MoveState = Game.Component.MovementComponent.MoveState;
 namespace Game
 {
 	public class GameManager
@@ -56,14 +56,13 @@ namespace Game
 			ent.gameObject.transform.position = position;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 		}
-		public void CreateFullPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
+		public void CreateFullPlayer(bool owner, string name, bool isHost, int team, int ownerTeam, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
 			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			ent.AddComponent(ActionQueue.Make(ent.ID));
-			ent.AddComponent(MovementComponent.Make(ent.ID));
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
 			ent.AddComponent(InputComponent.Make(ent.ID));
 			ent.AddComponent(NetEventComponent.Make(ent.ID));
@@ -71,15 +70,24 @@ namespace Game
 			ent.AddComponent(inventory);
 			var player = Entities.GetComponentOf<Player>(ent.ID);
 			var resources = Entities.GetComponentOf<ResourcesComponent>(ent.ID);
+			player.Enemy = (player.Team != ownerTeam);
+			var playerGameObject = GameObject.Instantiate(GetCharacterByTeam(team), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 
-			var playerGameObject = GameObject.Instantiate(GetCharacterObject(player.Character), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+			#region SetEnemy
+			var moveComp = MovementComponent.Make(ent.ID);
+			ent.AddComponent(moveComp);
+			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerLayer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
+			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerPlatformLayer = !player.Enemy ? LayerMask.NameToLayer("PlayerPlatform") : LayerMask.NameToLayer("PlayerEnemyPlatform");
 			playerGameObject.tag = "Player";
-			playerGameObject.layer = owner ?  LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyPlayer");
+			playerGameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy"); 
+			#endregion
+
 			ent.gameObject = playerGameObject;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
+			moveComp.Body = playerGameObject.GetComponent<Rigidbody2D>();
 			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 			playerGameObject.GetComponent<IdHolder>().Owner = owner;
-			playerGameObject.transform.position = new Vector3(10.86f, 83, 0);//new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
+			playerGameObject.transform.position = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 
 			GameObject Ropes = new GameObject();
 			Ropes.AddComponent<GraphicRope>().Owner = owner;
@@ -166,6 +174,19 @@ namespace Game
 					return GameResources.Prefabs.Yolanda;
 
 				case Characters.Schmillo:
+					return GameResources.Prefabs.Schmillo;
+
+			}
+			return GameResources.Prefabs.Milton;
+		}
+		public GameObject GetCharacterByTeam(int team)
+		{
+			switch (team)
+			{
+				case 0:
+					return GameResources.Prefabs.Yolanda;
+
+				case 1:
 					return GameResources.Prefabs.Schmillo;
 
 			}

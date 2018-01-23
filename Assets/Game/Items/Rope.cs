@@ -117,9 +117,9 @@ public class Rope : Item
 		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Rope, position, force));
 	}
 
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
-
+		base.RotateArm(game, entity);
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		if (player.Owner)
 		{

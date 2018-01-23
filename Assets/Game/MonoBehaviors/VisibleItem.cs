@@ -19,9 +19,18 @@ public class VisibleItem : MonoBehaviour
 	MappedMasks Mask;
 	public void OnEnable()
 	{
-		var offset = GetComponent<BoxCollider2D>();
-		_offset.x = offset.size.x / 2;
-		_offset.y = offset.size.y / 2;
+		var box = GetComponent<BoxCollider2D>();
+		var capsule = GetComponent<CapsuleCollider2D>();
+		if (box)
+		{
+			_offset.x = box.size.x / 2 * transform.localScale.x;
+			_offset.y = box.size.y / 2 * transform.localScale.y;
+		}
+		else if(capsule)
+		{
+			_offset.x = capsule.size.x / 2 * transform.localScale.x;
+			_offset.y = capsule.size.y / 2 * transform.localScale.y;
+		}
 		#region Masks
 		var prefered = GetComponent<PreferedLayers>();
 		if (prefered == null)
@@ -75,16 +84,25 @@ public class VisibleItem : MonoBehaviour
 
 
 	}
-	void OnTriggerEnter2D(Collider2D other)
+	public void TryPick(int id)
 	{
-		var idholder = other.GetComponent<IdHolder>();
-		if (idholder != null && CallBack != null && pickable)
+		if (CallBack != null && pickable)
 		{
 			pickable = false;
 			enabled = false;
-			CallBack.Invoke(idholder.ID);
+			CallBack.Invoke(id);
 		}
 	}
+	//void OnTriggerEnter2D(Collider2D other)
+	//{
+	//	var idholder = other.GetComponent<IdHolder>();
+	//	if (idholder != null && CallBack != null && pickable)
+	//	{
+	//		pickable = false;
+	//		enabled = false;
+	//		CallBack.Invoke(idholder.ID);
+	//	}
+	//}
 	public IEnumerator TriggerTime()
 	{
 		float ShakeTime = 0.5f;
@@ -95,7 +113,6 @@ public class VisibleItem : MonoBehaviour
 			if (counter >= ShakeTime)
 			{
 				pickable = true;
-				GetComponent<BoxCollider2D>().isTrigger = true;
 				yield break;
 			}
 			yield return null;

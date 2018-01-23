@@ -8,7 +8,7 @@ public class LayerMasksVariables : ScriptableObject
 {
 	public LayerMaskEnum Enums;
 	public MappedMasks[] MappedMasks;
-
+	public MappedMasks[] MappedMasksEnemy;
 }
 [Serializable]
 public struct MappedMasks

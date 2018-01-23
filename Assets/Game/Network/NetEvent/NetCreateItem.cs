@@ -38,6 +38,10 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Shield.MakeItem(game, Position, Force);
 		}
+		if (ItemID == Item.ItemID.Sword)
+		{
+			visible = Sword.MakeItem(game, Position, Force);
+		}
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;

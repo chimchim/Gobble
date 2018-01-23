@@ -114,15 +114,12 @@ public class EmptyHands : Item
 		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
 
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
-		//var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
-		//
-		////var hit = Physics2D.Raycast(hand.position, -hand.up, 0.4f, layerMask);
-		//Debug.DrawLine(hand.position, hand.position + (-hand.up * 3), Color.green);
+		base.RotateArm(game, entity);
 
 	}
 

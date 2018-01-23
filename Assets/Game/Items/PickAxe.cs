@@ -138,8 +138,9 @@ public class PickAxe : Item
 		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
 
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
+		base.RotateArm(game, entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);

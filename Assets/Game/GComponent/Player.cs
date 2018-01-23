@@ -10,6 +10,7 @@ namespace Game.Component
 		public bool IsHost;
 		public string PlayerName;
 		public int Team;
+		public bool Enemy;
 		public int LobbySlot;
 		public Characters Character;
 		public override void Recycle()

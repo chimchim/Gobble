@@ -84,7 +84,7 @@ public class Ingredient : Item
 		if (platform != null)
 			GameObject.Destroy(platform.gameObject);
 
-		go.layer = LayerMask.NameToLayer("Default");
+		go.layer = LayerMask.NameToLayer("Item");
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.IngredientType = ingredientType;
@@ -184,12 +184,13 @@ public class Ingredient : Item
 		}
 
 	}
-	public override void Input(GameManager game, int entity)
+	public override void Input(GameManager game, int entity, float delta)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Dig", input.LeftDown);
 
+		base.RotateArm(game, entity);
 	}
 
 	public override bool TryStack(GameManager game, Item item)

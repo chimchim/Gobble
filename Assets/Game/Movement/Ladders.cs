@@ -38,21 +38,13 @@ namespace Game.Movement
 			float yMovement = movement.CurrentVelocity.y * delta;
 			float xMovement = movement.CurrentVelocity.x * delta;
 
-			float xOffset = GameUnity.GroundHitBox.x;
-			float yOffset = GameUnity.GroundHitBox.y;
-
-			bool vertGrounded = false;
-			bool horGrounded = false;
-			Vector3 tempPos = entityGameObject.transform.position;
-
-			var mask = game.LayerMasks.MappedMasks[movement.CurrentLayer];
-			var tempPos1 = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, xOffset, yOffset, out horGrounded);
-			tempPos1 = Game.Systems.Movement.VerticalMovement(tempPos1, yMovement, xOffset, yOffset, mask, out vertGrounded);
-			entityGameObject.transform.position = tempPos1;
-
+			Vector2 tempPos = entityGameObject.transform.position;
+			var capsule = entityGameObject.GetComponent<CapsuleCollider2D>();
+			Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
+			movement.Body.MovePosition(newPos);
 			if (yMovement == 0)
 				yMovement = -0.1f;
-			var ladder1 = Grounded.VerticalMovementLadder(tempPos, yMovement, xOffset, yOffset);
+			var ladder1 = Grounded.VerticalMovementLadder(tempPos, yMovement, capsule.size.x, capsule.size.y);
 			if (!ladder1)
 			{
 				if (Math.Abs(input.Axis.x) <= 0 && input.Axis.y > 0)
@@ -62,7 +54,7 @@ namespace Game.Movement
 						movement.CurrentState = MovementComponent.MoveState.Grounded;
 						var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
 						grounded.JumpLadder = ladder1;
-						grounded.JumpLadderTimer = 0.15f;
+						grounded.JumpLadderTimer = 0.25f;
 						HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 					}
 
@@ -81,7 +73,7 @@ namespace Game.Movement
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
 				grounded.JumpLadder = ladder1;
-				grounded.JumpLadderTimer = 0.15f;
+				grounded.JumpLadderTimer = 0.25f;
 				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 			}
 		}
