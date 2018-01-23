@@ -11,8 +11,13 @@ public class AnimationEvents : MonoBehaviour
 		OnArmHit.Invoke();
 	}
 	public Action Attackable;
+	public Action NotAttackable;
 	public void AttackableEvent()
 	{
 		Attackable.Invoke();
+	}
+	public void NotAttackableEvent()
+	{
+		NotAttackable.Invoke();
 	}
 }

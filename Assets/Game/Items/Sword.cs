@@ -36,7 +36,11 @@ public class Sword : Item
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.ArmEvents.Attackable = () =>
 		{
-			Attacking = !Attacking;
+			Attacking = true;
+		};
+		resources.ArmEvents.NotAttackable = () =>
+		{
+			Attacking = false;
 		};
 		base.OwnerActivate(game, entity);
 	}
@@ -46,7 +50,11 @@ public class Sword : Item
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.ArmEvents.Attackable = () =>
 		{
-			Attacking = !Attacking;
+			Attacking = true;
+		};
+		resources.ArmEvents.NotAttackable = () =>
+		{
+			Attacking = false;
 		};
 		base.ClientActivate(game, entity);
 	}
@@ -127,17 +135,24 @@ public class Sword : Item
 			{
 				Vector2 offset = CurrentGameObject.transform.up * (1.2f - (i * 0.2f));
 				Vector2 pos = (handPos + offset);
-				var hitTransform = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.2f, game.LayerMasks.MappedMasks[3].UpLayers).transform;
+				var hitTransform = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.4f, game.LayerMasks.MappedMasks[3].UpLayers).transform;
 				if (hitTransform != null)
 				{
 					var gameobj = hitTransform.gameObject;
-					if (gameobj.layer == LayerMask.NameToLayer("Collideable"))
+					if (gameobj.layer == LayerMask.NameToLayer("Collideable") || gameobj.layer == LayerMask.NameToLayer("EnemyShield"))
 					{
-						Debug.Log("Collideable");
+						Attacking = false;
+						resources.FreeArmAnimator.SetBool("Sword", false);
+						break;
+					}
+					if (gameobj.layer == LayerMask.NameToLayer("PlayerEnemy") || gameobj.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
+					{
+						Attacking = false;
+						resources.FreeArmAnimator.SetBool("Sword", false);
 						break;
 					}
 				}
-				Debug.DrawLine((handPos + offset), (handPos + offset) + (new Vector2(CurrentGameObject.transform.right.x, CurrentGameObject.transform.right.y) * 0.2f));
+				//Debug.DrawLine((handPos + offset), (handPos + offset) + (new Vector2(CurrentGameObject.transform.right.x, CurrentGameObject.transform.right.y) * 0.2f));
 			}
 		}
 
