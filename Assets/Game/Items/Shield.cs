@@ -126,32 +126,50 @@ public class Shield : Item
 	{
 		CheckMain(game, entity, game.GameResources.AllItems.Shield, gameObject);
 	}
-
 	public override void Input(GameManager game, int entity, float delta)
 	{
-		var entityObj = game.Entities.GetEntity(entity);
-
-		CurrentGameObject.transform.localPosition = CurrentGameObject.transform.localPosition;
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
-		Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
-
+		
 		base.RotateArm(game, entity);
+		#region Lerp angle
+		//var entityObj = game.Entities.GetEntity(entity);
+		//
+		//CurrentGameObject.transform.localPosition = CurrentGameObject.transform.localPosition;
+		//var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		//var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		//Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
+		//Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
+		//
+		//if (resources.FacingDirection != lastFacing)
+		//{
+		//	base.RotateArm(game, entity);
+		//	Debug.Log("Change facing");
+		//	input.Dir = resources.FreeArm.up;
+		//	lastFacing = resources.FacingDirection;
+		//	return;
+		//}
+		//input.Dir = RotateTowards(input.Dir, -screenDirection, 3);
+		//resources.FreeArm.up = input.Dir;
+		//if (entityObj.Animator.transform.eulerAngles.y > 6)
+		//{
+		//	input.Dir = RotateTowards(input.Dir, screenDirection, 6);
+		//	resources.FreeArm.up = input.Dir;
+		//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+		//}
+		//
+		//lastFacing = resources.FacingDirection;
+		//float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
+		//var eu = CurrentGameObject.transform.localEulerAngles;
+		//if (resources.FacingDirection > 0)
+		//{
+		//	CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 180, eu.z) : new Vector3(eu.x, 0, eu.z);
+		//}
+		//else
+		//{
+		//	CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 0, eu.z) : new Vector3(eu.x, 180, eu.z);
+		//} 
+		#endregion
 	}
-	private const float DegToRad = 3.14f / 180f;
 
-	public Vector2 Rotate(Vector2 v, float degrees)
-	{
-		return RotateRadians(v, degrees * DegToRad);
-	}
-
-	public Vector2 RotateRadians(Vector2 v, float radians)
-	{
-		var ca = (float)Math.Cos(radians);
-		var sa = (float)Math.Sin(radians);
-		return new Vector2(ca * v.x - sa * v.y, sa * v.x + ca * v.y);
-	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{

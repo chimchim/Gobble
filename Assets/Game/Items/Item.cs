@@ -14,7 +14,8 @@ public abstract class Item
 		Pickaxe,
 		Ingredient,
 		Ladder,
-		Shield
+		Shield,
+		Sword
 	}
 	public ItemID ID;
 
