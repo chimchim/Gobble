@@ -113,33 +113,40 @@ public class Sword : Item
 	}
 	public override void Input(GameManager game, int e, float delta)
 	{
-		var entity = game.Entities.GetEntity(e);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
+		resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
+		if (!input.LeftDown)
+		{
+			Attacking = false;
+		}
+		if (Attacking)
+		{
+			Vector2 handPos = CurrentGameObject.transform.position;
+			for (int i = 0; i < 4; i++)
+			{
+				Vector2 offset = CurrentGameObject.transform.up * (1.2f - (i * 0.2f));
+				Vector2 pos = (handPos + offset);
+				var hitTransform = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.2f, game.LayerMasks.MappedMasks[3].UpLayers).transform;
+				if (hitTransform != null)
+				{
+					var gameobj = hitTransform.gameObject;
+					if (gameobj.layer == LayerMask.NameToLayer("Collideable"))
+					{
+						Debug.Log("Collideable");
+						break;
+					}
+				}
+				Debug.DrawLine((handPos + offset), (handPos + offset) + (new Vector2(CurrentGameObject.transform.right.x, CurrentGameObject.transform.right.y) * 0.2f));
+			}
+		}
+
+		var entity = game.Entities.GetEntity(e);
 		resources.FreeArm.up = -input.ScreenDirection;
 		if (entity.Animator.transform.eulerAngles.y > 6)
 		{
 			resources.FreeArm.up = input.ScreenDirection;
 			resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-		}
-		if (!CurrentGameObject)
-			return;
-		float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
-		var eu = CurrentGameObject.transform.localEulerAngles;
-		//if (resources.FacingDirection > 0)
-		//{
-		//	CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 180, eu.z) : new Vector3(eu.x, 0, eu.z);
-		//}
-		//else
-		//{
-		//	CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 0, eu.z) : new Vector3(eu.x, 180, eu.z);
-		//}
-
-		resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
-
-		if (Attacking)
-		{
-			Debug.DrawRay(CurrentGameObject.transform.position, Vector2.up);
 		}
 	}
 
