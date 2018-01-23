@@ -15,6 +15,7 @@ public class Sword : Item
 
 	private static ObjectPool<Sword> _pool = new ObjectPool<Sword>(10);
 	public bool Attacking;
+	public Transform Effect;
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
@@ -34,8 +35,13 @@ public class Sword : Item
 	public override void OwnerActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
+			var go = GameObject.Instantiate(game.GameResources.Prefabs.Slice2);
+			go.transform.position = Effect.position;
+			go.transform.rotation = Effect.rotation;
+			GameObject.Destroy(go, 0.8f);
 			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
@@ -48,8 +54,13 @@ public class Sword : Item
 	public override void ClientActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
+			var go = GameObject.Instantiate(game.GameResources.Prefabs.Slice2);
+			go.transform.position = Effect.position;
+			go.transform.rotation = Effect.rotation;
+			GameObject.Destroy(go, 0.8f);
 			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
@@ -135,11 +146,12 @@ public class Sword : Item
 			{
 				Vector2 offset = CurrentGameObject.transform.up * (1.2f - (i * 0.2f));
 				Vector2 pos = (handPos + offset);
-				var hitTransform = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.4f, game.LayerMasks.MappedMasks[3].UpLayers).transform;
+				var hit = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.4f, game.LayerMasks.MappedMasks[3].UpLayers);
+				var hitTransform = hit.transform;
 				if (hitTransform != null)
 				{
 					var gameobj = hitTransform.gameObject;
-					if (gameobj.layer == LayerMask.NameToLayer("Collideable") || gameobj.layer == LayerMask.NameToLayer("EnemyShield"))
+					if (gameobj.layer == LayerMask.NameToLayer("EnemyShield"))
 					{
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);
@@ -147,6 +159,11 @@ public class Sword : Item
 					}
 					if (gameobj.layer == LayerMask.NameToLayer("PlayerEnemy") || gameobj.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 					{
+						var go = GameObject.Instantiate(game.GameResources.Prefabs.Blood3);
+						go.transform.position = new Vector3(hit.point.x, hit.point.y, -1);
+						go.transform.right = CurrentGameObject.transform.right;
+						//go.transform.LookAt(go.transform.position + CurrentGameObject.transform.right);
+						GameObject.Destroy(go, 0.8f);
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);
 						break;

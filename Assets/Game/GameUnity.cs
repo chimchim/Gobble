@@ -86,6 +86,7 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
 	public static float PerlinZoom;
+	public static Vector3 DebugVector;
 
 	public static float RabbitSpeed = 3;
 	public static float RabbitChillTimer = 3;
@@ -239,6 +240,7 @@ public class GameUnity : MonoBehaviour
 		FullWidth = MapWidth + (WidhtBound * 2);
 		FullHeight = MapHeight + (HeightBound * 2) + BottomBoundOffset + TopBoundOffset;
 		PerlinZoom = MapData.PerlinZoom;
+		DebugVector = MapData.DebugVector;
 
 	}
     void LateUpdate()

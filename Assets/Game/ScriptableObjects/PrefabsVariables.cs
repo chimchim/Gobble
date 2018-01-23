@@ -17,6 +17,9 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Poof;
 	public GameObject Ladder;
 
+	[Header("Effects")]
+	public GameObject Slice2;
+	public GameObject Blood3;
 	[Header("TreeTile ")]
 	public GameObject Level1_1;
 	public GameObject Level1_2;
@@ -35,4 +38,6 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject TwigLeft;
 	public GameObject TwigRight;
 	public GameObject TwigMiddle;
+
+
 }
