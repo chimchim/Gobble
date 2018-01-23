@@ -104,7 +104,8 @@ namespace Game.Movement
 			Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
 			movement.Body.MovePosition(newPos);
 			animator.SetBool("Jump", !movement.Grounded);
-			NetSync(game, player, movement, input, entityID, delta);
+			if(game.Client != null)
+				NetSync(game, player, movement, input, entityID, delta);
 
 		}
 
