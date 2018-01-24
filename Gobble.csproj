@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2017.3.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -379,6 +381,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpack.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryMain.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\ItemIdHolder.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\VisibleItem.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
     <Compile Include="Assets\Game\Movement\Floating.cs" />
@@ -403,6 +406,8 @@
     <Compile Include="Assets\Game\Network\NetEvent\NetEvent.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEventCreateAnimal.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEventRope.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetHitItem.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetHitPlayer.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetIngredientFromGatherable.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetIngredientPickup.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetItemPickup.cs" />

@@ -38,7 +38,7 @@ public class Sword : Item
 		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
-			game.CreateEffect(game.GameResources.Prefabs.Slice2, Effect.position, Effect.right, 0.5f);
+			game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
 			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
@@ -54,7 +54,7 @@ public class Sword : Item
 		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
-			game.CreateEffect(game.GameResources.Prefabs.Slice2, Effect.position, Effect.right, 0.5f);
+			game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
 			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
@@ -141,19 +141,19 @@ public class Sword : Item
 				Vector2 offset = CurrentGameObject.transform.up * (1.2f - (i * 0.2f));
 				Vector2 pos = (handPos + offset);
 				var hit = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.4f, game.LayerMasks.MappedMasks[3].UpLayers);
-				var hitTransform = hit.transform;
 				var collider = hit.collider;
 				if (collider != null)
 				{
-					var gameobj = hitTransform.gameObject;
+					var transform = collider.transform;
 					if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
 					{
-						var normal = collider.gameObject.transform.right;
+						var normal = transform.right;
 						float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
 						if (dot < 0)
 						{
-							HandleNetEventSystem.AddEventAndHandle(game, e, NetCreateEffect.Make(1, hit.point, Vector2.zero));
-							//game.CreateEffect(game.GameResources.Prefabs.Ricochet, hit.point, 0.5f);
+							var itemholder = transform.GetComponent<ItemIdHolder>();
+							
+							HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, E.Effects.Ricochet, hit.point));
 							Attacking = false;
 							resources.FreeArmAnimator.SetBool("Sword", false);
 							break;
@@ -161,13 +161,14 @@ public class Sword : Item
 					}
 					if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 					{
-						HandleNetEventSystem.AddEventAndHandle(game, e, NetCreateEffect.Make(0, hit.point, Vector2.zero));
+						var id = transform.GetComponent<IdHolder>().ID;
+						Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y);
+						HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 20, E.Effects.Blood3, offsetPoint));
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);
 						break;
 					}
 				}
-				//Debug.DrawLine((handPos + offset), (handPos + offset) + (new Vector2(CurrentGameObject.transform.right.x, CurrentGameObject.transform.right.y) * 0.2f));
 			}
 		}
 

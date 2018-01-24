@@ -38,14 +38,12 @@ namespace Game.Systems
 					continue;
 
 				float signDir = movement.CurrentVelocity.x + movement.ForceVelocity.x;
-				//resource.FacingDirection = (int)Mathf.Sign(signDir);
-				//Debug.Log("resource.FacingDirection " + resource.FacingDirection);
+
 				if (Mathf.Abs(signDir) > 0.3f)
 				{
 					int mult = (int)Mathf.Max((1 + Mathf.Sign(signDir)), 1);
 					entity.Animator.transform.eulerAngles = new Vector3(entity.Animator.transform.eulerAngles.x, mult * 180, entity.Animator.transform.eulerAngles.z);
 					resource.FacingDirection = (int)Mathf.Sign(signDir);
-					//Debug.Log("resource.FacingDirection " + resource.FacingDirection);
 				}
 
 				int currentStateIndex = (int)movement.CurrentState;
@@ -182,11 +180,6 @@ namespace Game.Systems
 				Debug.Log("initiate aniamtor");
 				if (player.Owner)
 				{
-					if (GameUnity.DebugMode)
-					{
-						movement.CurrentState = MovementComponent.MoveState.FlyingDebug;
-					}
-					
 					var oxygenMeter = GameObject.FindObjectOfType<OxygenMeter>();
 					var hpbar = GameObject.FindObjectOfType<HpBar>();
 					stats.HpBar = hpbar;

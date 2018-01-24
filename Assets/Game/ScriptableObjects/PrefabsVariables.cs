@@ -18,9 +18,8 @@ public class PrefabsVariables : ScriptableObject
 	public GameObject Ladder;
 
 	[Header("Effects")]
-	public GameObject Slice2;
-	public GameObject Blood3;
-	public GameObject Ricochet;
+	public GameObject[] Effects;
+
 	[Header("TreeTile ")]
 	public GameObject Level1_1;
 	public GameObject Level1_2;

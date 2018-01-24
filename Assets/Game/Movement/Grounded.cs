@@ -63,7 +63,7 @@ namespace Game.Movement
 
 			animator.SetBool("Run", (movement.Grounded && input.Axis.x != 0));
 
-			if ((input.Space /*&& (movement.Grounded || groundTimer < 0.2f)*/ && player.Owner))
+			if ((input.Space && (movement.Grounded || groundTimer < 0.2f || GameUnity.DebugMode) && player.Owner))
 			{
 				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 			}

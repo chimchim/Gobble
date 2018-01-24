@@ -10,13 +10,17 @@ using System.Text;
 using UnityEngine;
 using GatherLevel = GatherableScriptable.GatherLevel;
 
-public class Shield : Item
+public class Shield : Item, IHealth
 {
 
 	private static ObjectPool<Shield> _pool = new ObjectPool<Shield>(10);
 	private LayerMask enemyLayer =  LayerMask.NameToLayer("EnemyShield");
 	private LayerMask playerLayer = LayerMask.NameToLayer("PlayerShield");
 	public bool IsSet;
+
+	private float health;
+
+
 	public override void Recycle()
 	{
 		IsSet = false;
@@ -36,7 +40,7 @@ public class Shield : Item
 
 	public override void OwnerActivate(GameManager game, int entity)
 	{
-		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 100;
+		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 10;
 		base.OwnerActivate(game, entity);
 		if (IsSet)
 			return;
@@ -44,11 +48,13 @@ public class Shield : Item
 		CurrentGameObject.layer = playerLayer;
 		CurrentGameObject.GetComponent<CapsuleCollider2D>().enabled = true;
 		CurrentGameObject.GetComponent<CapsuleCollider2D>().isTrigger = false;
+		CurrentGameObject.AddComponent<ItemIdHolder>().ID = ItemNetID;
+		CurrentGameObject.GetComponent<ItemIdHolder>().Owner = entity;
 	}
 
 	public override void ClientActivate(GameManager game, int entity)
 	{
-		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 100;
+		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 10;
 		base.ClientActivate(game, entity);
 		if (IsSet)
 			return;
@@ -56,6 +62,8 @@ public class Shield : Item
 		#region Activate Layers
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
 		var player = game.Entities.GetComponentOf<Player>(entity);
+		CurrentGameObject.AddComponent<ItemIdHolder>().ID = ItemNetID;
+		CurrentGameObject.GetComponent<ItemIdHolder>().Owner = entity;
 		foreach (int e in entities)
 		{
 			var otherPlayer = game.Entities.GetComponentOf<Player>(e);
@@ -188,6 +196,12 @@ public class Shield : Item
 	{
 
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
+	}
+
+	public void DoDamage(float dmg)
+	{
+		health -= dmg;
+		Debug.Log("Shield health " + health);
 	}
 }
 

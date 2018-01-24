@@ -46,25 +46,6 @@ namespace Game.Systems
 						itemHolder.ActiveItems[k].OwnerDeActivate(game, e);
 					}
 				}
-				if (player.Owner)
-				{
-					var input = game.Entities.GetComponentOf<InputComponent>(e);
-					if (input.E)
-					{
-						var position = game.Entities.GetEntity(e).gameObject.transform.position;
-						position.y += 0.3f;
-						var itemrand = game.CurrentRandom.Next(0, 2);
-						var force = input.ScreenDirection * 5;
-						if (itemrand == 0)
-						{
-							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Ladder, position, force));
-						}
-						if (itemrand == 1)
-						{
-							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, Item.ItemID.Ladder, position, force));
-						}
-					}
-				}
 			}
 		}
 

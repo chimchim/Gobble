@@ -6,6 +6,10 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+public interface IHealth
+{
+	void DoDamage(float dmg);
+}
 public abstract class Item
 {
 	public enum ItemID

@@ -13,6 +13,8 @@ namespace Game.Component
 		public bool Enemy;
 		public int LobbySlot;
 		public Characters Character;
+
+		public float Health;
 		public override void Recycle()
 		{
 			LobbySlot = -1;
@@ -37,6 +39,7 @@ namespace Game.Component
 			comp.Team = team;
 			comp.LobbySlot = -1;
 			comp.Character = character;
+			comp.Health = 100;
 			return comp;
 		}
 		public static Player Make(int entityID, bool owner)
@@ -44,7 +47,7 @@ namespace Game.Component
             Player comp = _pool.GetNext();
             comp.EntityID = entityID;
 			comp.Owner = owner;
-
+			comp.Health = 100;
 			return comp;
         }
     }
