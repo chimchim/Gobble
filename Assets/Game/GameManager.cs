@@ -122,6 +122,26 @@ namespace Game
 			
 		}
 
+		public void CreateEffect(GameObject effect, Vector2 pos, Quaternion rotation, float delay)
+		{
+			var go = GameObject.Instantiate(effect);
+			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);
+			go.transform.rotation = rotation;
+			GameObject.Destroy(go, delay);
+		}
+		public void CreateEffect(GameObject effect, Vector2 pos, Vector2 direction, float delay)
+		{
+			var go = GameObject.Instantiate(effect);
+			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);
+			go.transform.right = direction;
+			GameObject.Destroy(go, delay);
+		}
+		public void CreateEffect(GameObject effect, Vector2 pos, float delay)
+		{
+			var go = GameObject.Instantiate(effect);
+			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);
+			GameObject.Destroy(go, delay);
+		}
         public void Update(float delta)
         {
 			if (Client != null)

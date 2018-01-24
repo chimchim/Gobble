@@ -38,10 +38,7 @@ public class Sword : Item
 		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
-			var go = GameObject.Instantiate(game.GameResources.Prefabs.Slice2);
-			go.transform.position = Effect.position;
-			go.transform.rotation = Effect.rotation;
-			GameObject.Destroy(go, 0.8f);
+			game.CreateEffect(game.GameResources.Prefabs.Slice2, Effect.position, Effect.right, 0.5f);
 			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
@@ -57,10 +54,7 @@ public class Sword : Item
 		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
-			var go = GameObject.Instantiate(game.GameResources.Prefabs.Slice2);
-			go.transform.position = Effect.position;
-			go.transform.rotation = Effect.rotation;
-			GameObject.Destroy(go, 0.8f);
+			game.CreateEffect(game.GameResources.Prefabs.Slice2, Effect.position, Effect.right, 0.5f);
 			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
@@ -158,10 +152,8 @@ public class Sword : Item
 						float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
 						if (dot < 0)
 						{
-							var go = GameObject.Instantiate(game.GameResources.Prefabs.Ricochet);
-							go.transform.position = new Vector3(hit.point.x, hit.point.y, -1);
-							go.transform.right = CurrentGameObject.transform.right;
-							GameObject.Destroy(go, 0.8f);
+							HandleNetEventSystem.AddEventAndHandle(game, e, NetCreateEffect.Make(1, hit.point, Vector2.zero));
+							//game.CreateEffect(game.GameResources.Prefabs.Ricochet, hit.point, 0.5f);
 							Attacking = false;
 							resources.FreeArmAnimator.SetBool("Sword", false);
 							break;
@@ -169,10 +161,7 @@ public class Sword : Item
 					}
 					if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 					{
-						var go = GameObject.Instantiate(game.GameResources.Prefabs.Blood3);
-						go.transform.position = new Vector3(hit.point.x, hit.point.y, -1);
-						go.transform.right = CurrentGameObject.transform.right;
-						GameObject.Destroy(go, 0.8f);
+						HandleNetEventSystem.AddEventAndHandle(game, e, NetCreateEffect.Make(0, hit.point, Vector2.zero));
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);
 						break;

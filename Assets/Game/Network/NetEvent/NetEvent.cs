@@ -24,7 +24,8 @@ public abstract class NetEvent
 		NetCreateLadder,
 		NetCreateAnimal,
 		NetAnimalJump,
-		NetAddForce
+		NetAddForce,
+		NetCreateEffect
 	}
 
 	public static NetEvent GetGatherableEvent(Gatherable gatherable)
@@ -59,7 +60,8 @@ public abstract class NetEvent
 		NetCreateLadder.Make,
 		NetEventCreateAnimal.Make,
 		NetAnimalJump.Make,
-		NetAddForce.Make
+		NetAddForce.Make,
+		NetCreateEffect.Make
 	};
 
 	// Default Accessability is Aspect
