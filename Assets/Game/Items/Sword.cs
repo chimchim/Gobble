@@ -142,7 +142,7 @@ public class Sword : Item
 		if (Attacking)
 		{
 			Vector2 handPos = CurrentGameObject.transform.position;
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 5; i++)
 			{
 				Vector2 offset = CurrentGameObject.transform.up * (1.2f - (i * 0.2f));
 				Vector2 pos = (handPos + offset);
@@ -152,19 +152,26 @@ public class Sword : Item
 				if (collider != null)
 				{
 					var gameobj = hitTransform.gameObject;
-					Debug.Log("collider.gameObject.layer " + collider.gameObject.name);
 					if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
 					{
-						Attacking = false;
-						resources.FreeArmAnimator.SetBool("Sword", false);
-						break;
+						var normal = collider.gameObject.transform.right;
+						float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
+						if (dot < 0)
+						{
+							var go = GameObject.Instantiate(game.GameResources.Prefabs.Ricochet);
+							go.transform.position = new Vector3(hit.point.x, hit.point.y, -1);
+							go.transform.right = CurrentGameObject.transform.right;
+							GameObject.Destroy(go, 0.8f);
+							Attacking = false;
+							resources.FreeArmAnimator.SetBool("Sword", false);
+							break;
+						}
 					}
 					if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 					{
 						var go = GameObject.Instantiate(game.GameResources.Prefabs.Blood3);
 						go.transform.position = new Vector3(hit.point.x, hit.point.y, -1);
 						go.transform.right = CurrentGameObject.transform.right;
-						//go.transform.LookAt(go.transform.position + CurrentGameObject.transform.right);
 						GameObject.Destroy(go, 0.8f);
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);

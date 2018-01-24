@@ -42,12 +42,12 @@ namespace Game.Systems
 					Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
 					Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
 					screenDirection.Normalize();
-					//resources.FreeArm.up = -screenDirection;
-					//if (entity.Animator.transform.eulerAngles.y > 6)
-					//{
-					//	resources.FreeArm.up = screenDirection;
-					//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-					//}
+					resources.FreeArm.up = -screenDirection;
+					if (entity.Animator.transform.eulerAngles.y > 6)
+					{
+						resources.FreeArm.up = screenDirection;
+						resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+					}
 					ItemChangeInput(game, e, itemHolder, input);
 					input.MousePos = mousePos;
 					input.ArmDirection = resources.FreeArm.up;
@@ -77,10 +77,10 @@ namespace Game.Systems
 							inventory.Crafting.Hovering = false;
 					}
 				}
-				//else
-				//{
-				//	resources.FreeArm.up = input.ArmDirection;
-				//}
+				else
+				{
+					resources.FreeArm.up = input.ArmDirection;
+				}
 			}
 		}
 

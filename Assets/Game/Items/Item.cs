@@ -69,6 +69,7 @@ public abstract class Item
 
 	public virtual void RotateArm(Game.GameManager game, int e)
 	{
+		return;
 		var entity = game.Entities.GetEntity(e);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 		var input = game.Entities.GetComponentOf<InputComponent>(e);

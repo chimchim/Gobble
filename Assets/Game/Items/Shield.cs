@@ -36,6 +36,7 @@ public class Shield : Item
 
 	public override void OwnerActivate(GameManager game, int entity)
 	{
+		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 100;
 		base.OwnerActivate(game, entity);
 		if (IsSet)
 			return;
@@ -47,6 +48,7 @@ public class Shield : Item
 
 	public override void ClientActivate(GameManager game, int entity)
 	{
+		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 100;
 		base.ClientActivate(game, entity);
 		if (IsSet)
 			return;
@@ -77,10 +79,14 @@ public class Shield : Item
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
-
+		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 1;
 		base.OwnerDeActivate(game, entity);
 	}
-
+	public override void ClientDeActivate(GameManager game, int entity)
+	{
+		game.Entities.GetComponentOf<MovementComponent>(entity).Body.mass = 1;
+		base.ClientDeActivate(game, entity);
+	}
 	public override void ThrowItem(GameManager game, int entity)
 	{
 		base.ThrowItem(game, entity);
