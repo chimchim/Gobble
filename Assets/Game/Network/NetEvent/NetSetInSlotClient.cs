@@ -35,7 +35,7 @@ public class NetSetInSlotClient : NetEvent
 			item.Force = new Vector2(0, 8);
 			item.enabled = true;
 			item.Item.CurrentGameObject.GetComponent<Collider2D>().enabled = true;
-			item.GetComponent<BoxCollider2D>().isTrigger = false;
+			item.GetComponent<Collider2D>().isTrigger = false;
 			item.StartCoroutine(item.TriggerTime());
 			return;
 		}
