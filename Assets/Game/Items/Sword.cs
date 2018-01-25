@@ -126,9 +126,11 @@ public class Sword : Item
 	}
 	public override void Input(GameManager game, int e, float delta)
 	{
+		var entity = game.Entities.GetEntity(e);
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 		resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
+		//Debug.Log("input.LeftDown " + input.LeftDown);
 		var player = game.Entities.GetComponentOf<Player>(e);
 		if (!player.Owner)
 			return;
@@ -136,52 +138,52 @@ public class Sword : Item
 		{
 			Attacking = false;
 		}
+		Vector2 midPos = (CurrentGameObject.transform.position) + (CurrentGameObject.transform.up * 0.9f);
+		Vector2 pos = entity.gameObject.transform.position;// (handPos + offset);
+		Vector2 dir = midPos - pos;
+		Debug.DrawLine(pos, pos + (dir.normalized * 1), Color.cyan);
 		if (Attacking)
 		{
 			Vector2 handPos = CurrentGameObject.transform.position;
-			for (int i = 0; i < 5; i++)
+
+			var hit = Physics2D.Raycast(pos, dir.normalized, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
+			Debug.DrawLine(pos, pos + (dir * 1), Color.red);
+			var collider = hit.collider;
+			if (collider != null)
 			{
-				Vector2 offset = CurrentGameObject.transform.up * (1.2f - (i * 0.2f));
-				Vector2 pos = (handPos + offset);
-				var hit = Physics2D.Raycast(pos, CurrentGameObject.transform.right, 0.4f, game.LayerMasks.MappedMasks[3].UpLayers);
-				var collider = hit.collider;
-				if (collider != null)
+				var transform = collider.transform;
+				if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield") || collider.gameObject.layer == LayerMask.NameToLayer("Collideable"))
 				{
-					var transform = collider.transform;
-					if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
+					var normal = transform.right;
+					float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
+					if (dot < 0)
 					{
-						var normal = transform.right;
-						float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
-						if (dot < 0)
-						{
-							var itemholder = transform.GetComponent<ItemIdHolder>();
-							
-							HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, E.Effects.Ricochet, hit.point));
-							Attacking = false;
-							resources.FreeArmAnimator.SetBool("Sword", false);
-							break;
-						}
-					}
-					if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
-					{
-						var id = transform.GetComponent<IdHolder>().ID;
-						Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y);
-						HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 20, E.Effects.Blood3, offsetPoint));
+						var itemholder = transform.GetComponent<ItemIdHolder>();
+						
+						HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, E.Effects.Ricochet, hit.point));
 						Attacking = false;
 						resources.FreeArmAnimator.SetBool("Sword", false);
-						break;
+						//break;
 					}
+				}
+				if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
+				{
+					var id = transform.GetComponent<IdHolder>().ID;
+					Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y);
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 20, E.Effects.Blood3, offsetPoint));
+					Attacking = false;
+					resources.FreeArmAnimator.SetBool("Sword", false);
+					//break;
 				}
 			}
 		}
 
-		var entity = game.Entities.GetEntity(e);
-		resources.FreeArm.up = -input.ScreenDirection;
-		if (entity.Animator.transform.eulerAngles.y > 6)
-		{
-			resources.FreeArm.up = input.ScreenDirection;
-			resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-		}
+		//resources.FreeArm.up = -input.ScreenDirection;
+		//if (entity.Animator.transform.eulerAngles.y > 6)
+		//{
+		//	resources.FreeArm.up = input.ScreenDirection;
+		//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+		//}
 	}
 
 

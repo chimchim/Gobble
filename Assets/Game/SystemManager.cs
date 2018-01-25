@@ -67,6 +67,7 @@ namespace Game
 			_update[GameState.Menu].Add(new MenuSystem());
 			_update[GameState.Game].Add(new Map());
 			_update[GameState.Game].Add(new InitResources());
+			//_update[GameState.Game].Add(new UpdateItems());
 			_update[GameState.Game].Add(new InputSystem());
 			_update[GameState.Game].Add(new ReadgamePackets());
 			//_update[GameState.Game].Add(new DeadReckoning());
