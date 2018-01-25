@@ -24,13 +24,7 @@ namespace Game.Systems
 				{
 					foreach (int r in entities)
 					{
-						var pos = game.Entities.GetEntity(r).gameObject.transform.position;
-						var hit = Physics2D.Raycast(pos, -Vector2.up, 0.6f, itemLayer);
-						if (hit.transform != null)
-						{
-							var visible = hit.transform.GetComponent<VisibleItem>();
-							visible.TryPick(r);
-						}
+						Helper.CheckItemPickup(game, r);
 					}
 				}
 				foreach (Item item in itemHolder.ActiveItems)

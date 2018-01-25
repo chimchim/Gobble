@@ -37,22 +37,23 @@ public class NetItemPickup : NetEvent
 
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
 		var inv = game.Entities.GetComponentOf<InventoryComponent>(Player);
+
+		foreach (Item stackable in itemHolder.Items.Values)
+		{
+			if (stackable.TryStack(game, item.Item))
+			{
+				inv.InventoryBackpack.SetQuantity(stackable);
+				inv.MainInventory.SetQuantity(stackable);
+
+				HandleNetEventSystem.AddEvent(game, Player, NetDestroyWorldItem.Make(item.Item.ItemNetID));
+				return;
+			}
+		}
 		bool picked = false;
 		if (item.Item.HasSlot(inv))
 		{
 			picked = true;
-			foreach (Item stackable in itemHolder.Items.Values)
-			{
-				if (stackable.TryStack(game, item.Item))
-				{
-					inv.InventoryBackpack.SetQuantity(stackable);
-					inv.MainInventory.SetQuantity(stackable);
-					picked = false;
-					HandleNetEventSystem.AddEvent(game, Player, NetDestroyWorldItem.Make(item.Item.ItemNetID));
-					return;
-				}
-			}
-			item.Item.OnPickup(game, Player, item.gameObject);
+			item.Item.OnPickup(game, Player, item.gameObject);	
 		}
 		HandleNetEventSystem.AddEventAndHandle(game, Player, NetSetInSlotClient.Make(Player, ItemID, picked));
 	}

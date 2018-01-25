@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using UnityEngine;
 
 public static class Helper
 {
+	private static LayerMask itemLayer = LayerMask.GetMask("Item");
 	private const float DegToRad = 3.14f / 180f;
 	public static Vector2 RotateTowards(this Vector2 from, Vector2 to, float degrees)
 	{
@@ -29,6 +31,22 @@ public static class Helper
 		var ca = (float)Math.Cos(radians);
 		var sa = (float)Math.Sin(radians);
 		return new Vector2(ca * v.x - sa * v.y, sa * v.x + ca * v.y);
+	}
+
+	public static void CheckItemPickup(GameManager game, int e)
+	{ 
+		Vector2 pos = game.Entities.GetEntity(e).gameObject.transform.position;
+		pos += new Vector2(0, 0.5f);
+		for (int i = -1; i < 2; i++)
+		{
+			pos += new Vector2(0.2f*i, 0);
+			var hit = Physics2D.Raycast(pos, -Vector2.up, 1.2f, itemLayer);
+			if (hit.transform != null)
+			{
+				var visible = hit.transform.GetComponent<VisibleItem>();
+				visible.TryPick(e);
+			}
+		}
 	}
 }
 

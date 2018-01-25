@@ -92,6 +92,39 @@ namespace Game.Systems
 			}
 			return false;
 		}
+
+		public static void NetSync(GameManager game, Player player, MovementComponent movement, InputComponent input, int e, float delta)
+		{
+			var entity = game.Entities.GetEntity(e);
+			var otherTransform = entity.gameObject.transform;
+			Vector2 otherPosition = otherTransform.position;
+			Vector2 networkPosition = input.NetworkPosition;
+			Debug.DrawLine(otherPosition, networkPosition, Color.green);
+
+			Vector2 diff = networkPosition - otherPosition;
+			if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
+			{
+
+				float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
+				Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
+				translate = translate.magnitude > diff.magnitude ? diff : translate;
+				Vector2 translatePos = otherPosition + translate;
+				movement.Body.MovePosition(translatePos);
+				Vector2 newPos = otherTransform.position;
+				Vector2 newPosDiff = newPos - otherPosition;
+				float dot = Vector2.Dot(newPosDiff.normalized, diff.normalized);
+				if (dot < 0)
+				{
+					Debug.Log("SNAP");
+					movement.Body.MovePosition(networkPosition);
+				}
+				if (diff.magnitude > 3)
+				{
+					movement.Body.MovePosition(networkPosition);
+				}
+			}
+		}
+
 		public static Vector3 VerticalMovement(Vector3 pos, float y, float Xoffset, float yoffset, MappedMasks masks, out bool grounded)
 		{
 			float half = yoffset - (yoffset/10);

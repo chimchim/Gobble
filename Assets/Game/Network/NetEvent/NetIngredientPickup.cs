@@ -34,29 +34,28 @@ public class NetIngredientPickup : NetEvent
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(Player);
 		var inv = game.Entities.GetComponentOf<InventoryComponent>(Player);
 		bool picked = false;
-		if (!item.Item.HasSlot(inv))
-		{
 
-		}
-		else
+		var ingredientType = (item.Item as Ingredient).IngredientType;
+
+		foreach (Item stackable in itemHolder.Items.Values)
 		{
-			var ingredientType = (item.Item as Ingredient).IngredientType;
-			picked = true;
-			foreach (Item stackable in itemHolder.Items.Values)
+			if (stackable.TryStack(game, item.Item))
 			{
-				if (stackable.TryStack(game, item.Item))
-				{
-					Ingredient.SetCraftingData(game, Player, (int)ingredientType);
-					inv.InventoryBackpack.SetQuantity(stackable);
-					inv.MainInventory.SetQuantity(stackable);
-					HandleNetEventSystem.AddEvent(game, Player, NetDestroyWorldItem.Make(item.Item.ItemNetID));
-					return;
-				}
+				Ingredient.SetCraftingData(game, Player, (int)ingredientType);
+				inv.InventoryBackpack.SetQuantity(stackable);
+				inv.MainInventory.SetQuantity(stackable);
+				HandleNetEventSystem.AddEvent(game, Player, NetDestroyWorldItem.Make(item.Item.ItemNetID));
+				return;
 			}
+		}
+		if (item.Item.HasSlot(inv))
+		{
+			picked = true;
 			game.GameResources.AllItems.IngredientAmount[(int)ingredientType] = item.Item.Quantity;
 			Ingredient.SetCraftingData(game, Player, (int)ingredientType);
 			item.Item.OnPickup(game, Player, item.gameObject);
 		}
+		
 		HandleNetEventSystem.AddEvent(game, Player, NetSetInSlotClient.Make(Player, ItemID, picked));
 	}
 

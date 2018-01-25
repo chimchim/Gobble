@@ -76,6 +76,8 @@ namespace Game.Movement
 				grounded.JumpLadderTimer = 0.25f;
 				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 			}
+			if (game.Client != null)
+				Game.Systems.Movement.NetSync(game, player, movement, input, entityID, delta);
 		}
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
