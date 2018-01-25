@@ -76,20 +76,21 @@ namespace Game.Movement
 			float xMovement = movement.CurrentVelocity.x * delta + (movement.ForceVelocity.x * delta);
 			Vector2 tempPos = entityGameObject.transform.position;
 			var mask = player.Enemy ? game.LayerMasks.MappedMasksEnemy[movement.CurrentLayer] : game.LayerMasks.MappedMasks[movement.CurrentLayer];
-			var capsule =  entityGameObject.GetComponent<CapsuleCollider2D>();
-			float yPos = (((capsule.size.y / 2) + (capsule.size.x *1.5f/2)) - Mathf.Abs(yMovement));
+			var box =  entityGameObject.GetComponent<BoxCollider2D>();
+			var circle = entityGameObject.GetComponent<CircleCollider2D>();
+			float yPos = -circle.offset.y + (circle.radius * 2.0f);
 			int layer = 0;
 			movement.Grounded = Game.Systems.Movement.CheckGrounded(tempPos, yMovement, yPos, mask, out layer);
-			entityGameObject.layer = (layer == platformLayer && yMovement < 0) ? PlayerPlatformLayer : PlayerLayer;
 
 			if (movement.Grounded)
 			{
 				if(yMovement < 0)
 					groundTimer = 0;
 				movement.CurrentVelocity.y = 0;
+				yMovement = 0;
 			}
 			#region LadderCheck
-			var ladder1 = VerticalMovementLadder(tempPos, yMovement, capsule.size.x, capsule.size.y);
+			var ladder1 = VerticalMovementLadder(tempPos, yMovement, box.size.x, box.size.y);
 			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/)
 			{
 				var skipLadder = (JumpLadderTimer > 0 || ladder1 == JumpLadder);

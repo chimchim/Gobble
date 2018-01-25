@@ -113,13 +113,17 @@ namespace Game.Systems
 				Vector2 newPos = otherTransform.position;
 				Vector2 newPosDiff = newPos - otherPosition;
 				float dot = Vector2.Dot(newPosDiff.normalized, diff.normalized);
+				//float percent = 
 				if (dot < 0)
 				{
-					Debug.Log("SNAP");
+					Debug.Log("SNAP DOT ");
+					entity.gameObject.transform.position = networkPosition;
 					movement.Body.MovePosition(networkPosition);
 				}
-				if (diff.magnitude > 3)
+				if (diff.magnitude > 1.2f)
 				{
+					Debug.Log("SNAP diff.magnitude > 3");
+					entity.gameObject.transform.position = networkPosition;
 					movement.Body.MovePosition(networkPosition);
 				}
 			}

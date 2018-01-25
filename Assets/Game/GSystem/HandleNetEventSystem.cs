@@ -31,7 +31,7 @@ namespace Game.Systems
 					}
 					for (int i = netEvents.Count - 1; i >= 0; i--)
 					{
-						if (netEvents[i].Iterations >= 20)
+						if (netEvents[i].Iterations >= 150)
 						{
 							netEvents[i].Recycle();
 							netEvents.RemoveAt(i);
