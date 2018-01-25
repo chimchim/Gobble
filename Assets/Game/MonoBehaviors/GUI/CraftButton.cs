@@ -44,7 +44,7 @@ public class CraftButton : MonoBehaviour
 	}
 	public void OnClick()
 	{
-		if (GameUnity.CreateItems)
+		if (GameUnity.DebugMode)
 		{
 			Item.MakeItem.Invoke();
 			return;

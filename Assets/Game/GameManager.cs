@@ -104,7 +104,8 @@ namespace Game
 			Ropes.AddComponent<GraphicRope>().Owner = owner;
 			Ropes.GetComponent<GraphicRope>().MakeRopes();
 			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
-			resources.FreeArm = playerGameObject.transform.Find("free_arm");
+			resources.LerpCharacter = playerGameObject.transform.Find("graphics").GetComponent<LerpCharacter>();
+			resources.FreeArm = playerGameObject.transform.Find("graphics/free_arm");
 			resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
 			resources.ArmEvents = resources.FreeArmAnimator.GetComponent<AnimationEvents>();
 			resources.Hand = resources.FreeArmAnimator.transform.Find("hand");

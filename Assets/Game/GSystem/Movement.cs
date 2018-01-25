@@ -99,9 +99,10 @@ namespace Game.Systems
 			var otherTransform = entity.gameObject.transform;
 			Vector2 otherPosition = otherTransform.position;
 			Vector2 networkPosition = input.NetworkPosition;
-			Debug.DrawLine(otherPosition, networkPosition, Color.green);
-
+			//Debug.DrawLine(otherPosition, networkPosition, Color.green);
+			
 			Vector2 diff = networkPosition - otherPosition;
+			Debug.DrawLine(otherPosition, otherPosition +(diff.normalized * 10), Color.green);
 			if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 			{
 
@@ -113,7 +114,7 @@ namespace Game.Systems
 				Vector2 newPos = otherTransform.position;
 				Vector2 newPosDiff = newPos - otherPosition;
 				float dot = Vector2.Dot(newPosDiff.normalized, diff.normalized);
-				//float percent = 
+
 				if (dot < 0)
 				{
 					Debug.Log("SNAP DOT ");
@@ -122,6 +123,8 @@ namespace Game.Systems
 				}
 				if (diff.magnitude > 1.2f)
 				{
+					var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
+					resources.LerpCharacter.SetLerp(entity.gameObject.transform.position, networkPosition);
 					Debug.Log("SNAP diff.magnitude > 3");
 					entity.gameObject.transform.position = networkPosition;
 					movement.Body.MovePosition(networkPosition);

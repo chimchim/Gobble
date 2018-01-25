@@ -13,6 +13,7 @@ namespace Game.Component
 		public AnimationEvents ArmEvents;
 		public string Character;
 		public int FacingDirection;
+		public LerpCharacter LerpCharacter;
 		public override void Recycle()
 		{
 			GraphicRope = null;

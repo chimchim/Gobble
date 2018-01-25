@@ -380,6 +380,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\InventoryBackpackParent.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\InventoryMain.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\ItemIdHolder.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\LerpCharacter.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\VisibleItem.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\watertilestest.cs" />
     <Compile Include="Assets\Game\Movement\Floating.cs" />

@@ -129,6 +129,9 @@ public class Sword : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 		resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
+		var player = game.Entities.GetComponentOf<Player>(e);
+		if (!player.Owner)
+			return;
 		if (!input.LeftDown)
 		{
 			Attacking = false;

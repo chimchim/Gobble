@@ -39,12 +39,12 @@ namespace Game.Movement
 			float xMovement = movement.CurrentVelocity.x * delta;
 
 			Vector2 tempPos = entityGameObject.transform.position;
-			var capsule = entityGameObject.GetComponent<CapsuleCollider2D>();
+			var box = entityGameObject.GetComponent<BoxCollider2D>();
 			Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
 			movement.Body.MovePosition(newPos);
 			if (yMovement == 0)
 				yMovement = -0.1f;
-			var ladder1 = Grounded.VerticalMovementLadder(tempPos, yMovement, capsule.size.x, capsule.size.y);
+			var ladder1 = Grounded.VerticalMovementLadder(tempPos, yMovement, box.size.x, box.size.y);
 			if (!ladder1)
 			{
 				if (Math.Abs(input.Axis.x) <= 0 && input.Axis.y > 0)
