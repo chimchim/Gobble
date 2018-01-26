@@ -39,7 +39,7 @@ namespace Game.Movement
 			{
 				movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Roped;
 			}
-			animator.SetBool("Roped", false);
+
 			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
 			
@@ -60,8 +60,6 @@ namespace Game.Movement
 			{
 				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
 			}
-
-			animator.SetBool("Run", (movement.Grounded && input.Axis.x != 0));
 
 			if ((input.Space && (movement.Grounded || groundTimer < 0.2f || GameUnity.DebugMode) && player.Owner))
 			{
@@ -90,21 +88,27 @@ namespace Game.Movement
 				yMovement = 0;
 			}
 			#region LadderCheck
+			
 			var ladder1 = VerticalMovementLadder(tempPos, yMovement, box.size.x, box.size.y);
-			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/)
+			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/ && !player.Dead)
 			{
 				var skipLadder = (JumpLadderTimer > 0 || ladder1 == JumpLadder);
 				if (!skipLadder)
 				{
 					groundTimer = 0;
 					movement.CurrentState = MovementComponent.MoveState.Ladder;
+					Debug.Log("Go Ladder");
 				}
 			} 
 			#endregion
 			JumpLadderTimer -= delta;
 			Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
 			movement.Body.MovePosition(newPos);
-			animator.SetBool("Jump", !movement.Grounded);
+			if (animator.isActiveAndEnabled)
+			{
+				animator.SetBool("Run", (movement.Grounded && input.Axis.x != 0));
+				animator.SetBool("Jump", !movement.Grounded);
+			}
 			if(game.Client != null)
 				Game.Systems.Movement.NetSync(game, player, movement, input, entityID, delta);
 

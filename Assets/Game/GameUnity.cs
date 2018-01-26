@@ -61,7 +61,7 @@ public class GameUnity : MonoBehaviour
 	public static float OxygenDPS;
 	public static float FallDamage;
 	public static float MaxHP;
-
+	public static float DeathTimer;
 	[Header("Map Variables")]
 	public static bool RotateArm;
 	public static bool DebugMode;
@@ -215,6 +215,7 @@ public class GameUnity : MonoBehaviour
 		OxygenDPS = StatsData.OxygenDPS;
 		FallDamage = StatsData.FallDamage;
 		MaxHP = StatsData.MaxHP;
+		DeathTimer = StatsData.DeathTimer;
 
 		//Map
 		RotateArm = MapData.RotateArm;

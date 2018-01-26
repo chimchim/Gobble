@@ -405,12 +405,14 @@
     <Compile Include="Assets\Game\Network\NetEvent\NetEvent.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEventCreateAnimal.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetEventRope.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetEventSpawnPlayer.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetHitItem.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetHitPlayer.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetIngredientFromGatherable.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetIngredientPickup.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetItemPickup.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetJump.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetPlayerDeath.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetSetInSlotClient.cs" />
     <Compile Include="Assets\Game\Network\Utility.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\AllScriptableItems.cs" />

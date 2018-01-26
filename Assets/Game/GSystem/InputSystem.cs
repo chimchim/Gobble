@@ -25,6 +25,8 @@ namespace Game.Systems
 			foreach (int e in entities)
 			{
 				var player = game.Entities.GetComponentOf<Player>(e);
+				if (player.Dead)
+					continue;
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
@@ -61,7 +63,7 @@ namespace Game.Systems
 
 					if (Input.GetKeyDown(KeyCode.Mouse2) && player.IsHost)
 					{
-						game.CallBacks.Add(() =>
+						game.AddAction(() =>
 						{
 							game.CreateFullPlayer(false, "adw", false, 1, 0, Characters.Yolanda);
 						});

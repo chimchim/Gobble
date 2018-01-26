@@ -154,11 +154,11 @@ public class Ladder : Item
 				Quantity--;
 				if (Quantity <= 0)
 				{
-					game.CallBacks.Add(() =>
+					game.AddAction(() =>
 					{
 						base.ThrowItem(game, entity);
 					});
-					game.CallBacks.Add(() =>
+					game.AddAction(() =>
 					{
 						var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
 						holder.Hands.OwnerActivate(game, entity);

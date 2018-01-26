@@ -16,7 +16,11 @@ namespace Game.Movement
 
 		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-
+			//Vector2 tempPos = entity.gameObject.transform.position;
+			//float yMovement = movement.CurrentVelocity.y * delta;
+			//float xMovement = movement.CurrentVelocity.x * delta;
+			//Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
+			//movement.Body.MovePosition(newPos);
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
@@ -65,11 +69,13 @@ namespace Game.Movement
 				{
 					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * GameUnity.PlayerSpeed * 1.6f;
 				}
+
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				return;
 			}
 			if ((input.Space && player.Owner))
 			{
+
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
 				grounded.JumpLadder = ladder1;

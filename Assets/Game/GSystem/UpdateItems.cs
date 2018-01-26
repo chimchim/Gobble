@@ -18,7 +18,9 @@ namespace Game.Systems
 
 			foreach (int e in entities)
 			{
-				var player = game.Entities.GetComponentOf<Player>(e);	
+				var player = game.Entities.GetComponentOf<Player>(e);
+				if (player.Dead)
+					continue;
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
 				if (player.IsHost && player.Owner)
 				{

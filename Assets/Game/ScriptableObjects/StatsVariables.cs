@@ -7,4 +7,5 @@ public class StatsVariables : ScriptableObject
 	public float OxygenDPS = 10;
 	public float FallDamage = 40;
 	public float MaxHP = 100f;
+	public float DeathTimer = 3;
 }

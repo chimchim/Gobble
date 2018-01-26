@@ -16,7 +16,7 @@ public class NetEventCreateAnimal : NetEvent
 	{
 		if (Animal == 0)
 		{
-			game.CallBacks.Add(() =>
+			game.AddAction(() =>
 			{
 				game.CreateRabbit(Position);
 			});

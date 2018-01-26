@@ -17,7 +17,8 @@ namespace Game
 		{
 			Slice2,
 			Blood3,
-			Ricochet
+			Ricochet,
+			Death
 		}
 	}
 	public class GameManager
@@ -28,7 +29,12 @@ namespace Game
 
         public EntityManager Entities { get { return _entityManager; } }
 		public SystemManager Systems { get { return _systemManager; } }
-		public List<Action> CallBacks = new List<Action>();
+		public List<DelayedAction> CallBacks = new List<DelayedAction>();
+		public struct DelayedAction
+		{
+			public Action action;
+			public float delay;
+		}
 		public LayerMasksVariables LayerMasks;
 		public GameResources GameResources;
 		public TileMap TileMap;
@@ -37,6 +43,17 @@ namespace Game
 		public System.Random CurrentRandom;
 		public System.Random PrivateRandom;
 		public List<VisibleItem> WorldItems = new List<VisibleItem>();
+
+		public void AddAction(Action a, float d = 0)
+		{
+			//Debug.Log("Time " + Time.time + " d " + d)
+			var action = new DelayedAction
+			{
+				action = a,
+				delay = d + Time.time
+			};
+			CallBacks.Add(action);
+		}
 		public void CreateEmptyPlayer(bool owner, string name, bool isHost, int team, Characters character, int reservedID = -1)
 		{
 			Entity ent = new Entity(reservedID);
@@ -147,11 +164,12 @@ namespace Game
 			go.transform.right = direction;
 			GameObject.Destroy(go, delay);
 		}
-		public void CreateEffect(E.Effects effect, Vector2 pos, float delay)
+		public GameObject CreateEffect(E.Effects effect, Vector2 pos, float delay)
 		{
 			var go = GameObject.Instantiate(GameResources.Prefabs.Effects[(int)effect]);
 			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);
 			GameObject.Destroy(go, delay);
+			return go;
 		}
         public void Update(float delta)
         {
@@ -169,11 +187,16 @@ namespace Game
 			{
 				TileMap.UpdateWater();
 			}
-			foreach (Action a in CallBacks)
+			for (int i = CallBacks.Count - 1; i > -1; i--)
 			{
-				a.Invoke();
+				var a = CallBacks[i];
+				if (Time.time >= a.delay)
+				{
+					CallBacks.RemoveAt(i);
+					a.action.Invoke();
+				}
+				a.delay += delta;
 			}
-			CallBacks.Clear();
 		}
 		public void FixedUpdate(float delta)
 		{

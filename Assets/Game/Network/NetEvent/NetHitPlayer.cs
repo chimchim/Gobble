@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Game;
 using UnityEngine;
 using Game.Component;
+using Game.Systems;
 
 public class NetHitPlayer : NetEvent
 {
@@ -23,6 +24,13 @@ public class NetHitPlayer : NetEvent
 			return;
 
 		player.Health -= Damage;
+		if (player.Health <= 0)
+		{
+			game.AddAction(() =>
+			{
+				HandleNetEventSystem.AddEventAndHandle(game, Player, NetPlayerDeath.Make(Player));
+			});
+		}
 		Debug.Log("player.Health " + player.Health);
 
 	}

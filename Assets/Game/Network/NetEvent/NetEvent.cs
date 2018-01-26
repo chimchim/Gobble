@@ -27,7 +27,9 @@ public abstract class NetEvent
 		NetAddForce,
 		NetCreateEffect,
 		NetHitItem,
-		NetHitPlayer
+		NetHitPlayer,
+		NetPlayerDeath,
+		NetEventSpawnPlayer
 	}
 
 	public static NetEvent GetGatherableEvent(Gatherable gatherable)
@@ -65,7 +67,9 @@ public abstract class NetEvent
 		NetAddForce.Make,
 		NetCreateEffect.Make,
 		NetHitItem.Make,
-		NetHitPlayer.Make
+		NetHitPlayer.Make,
+		NetPlayerDeath.Make,
+		NetEventSpawnPlayer.Make
 	};
 
 	// Default Accessability is Aspect

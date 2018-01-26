@@ -15,6 +15,8 @@ namespace Game.Component
 		public Characters Character;
 
 		public float Health;
+
+		public bool Dead { get { return Health <= 0; } }
 		public override void Recycle()
 		{
 			LobbySlot = -1;
