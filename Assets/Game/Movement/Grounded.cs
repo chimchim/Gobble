@@ -21,7 +21,7 @@ namespace Game.Movement
 		float groundTimer;
 		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-
+			Debug.Log("Enter Grounded");
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
@@ -76,7 +76,9 @@ namespace Game.Movement
 			var mask = player.Enemy ? game.LayerMasks.MappedMasksEnemy[movement.CurrentLayer] : game.LayerMasks.MappedMasks[movement.CurrentLayer];
 			var box =  entityGameObject.GetComponent<BoxCollider2D>();
 			var circle = entityGameObject.GetComponent<CircleCollider2D>();
-			float yPos = -circle.offset.y + (circle.radius * 2.0f);
+			float yPos = -circle.offset.y + (circle.radius * 1.1f);
+			if (yMovement > 0)
+				yPos = box.offset.y  + box.size.y/2;
 			int layer = 0;
 			movement.Grounded = Game.Systems.Movement.CheckGrounded(tempPos, yMovement, yPos, mask, out layer);
 
@@ -86,6 +88,7 @@ namespace Game.Movement
 					groundTimer = 0;
 				movement.CurrentVelocity.y = 0;
 				yMovement = 0;
+
 			}
 			#region LadderCheck
 			
@@ -99,11 +102,19 @@ namespace Game.Movement
 					movement.CurrentState = MovementComponent.MoveState.Ladder;
 					Debug.Log("Go Ladder");
 				}
-			} 
+				else
+				{
+					Debug.Log("JumpLadderTimer > 0 " + (JumpLadderTimer > 0) + " ladder1 == JumpLadder " + (ladder1 == JumpLadder));
+				}
+			}
+			if (JumpLadderTimer <= 0)
+				JumpLadder = null;
 			#endregion
 			JumpLadderTimer -= delta;
+
 			Vector2 newPos = tempPos + new Vector2(xMovement, yMovement);
 			movement.Body.MovePosition(newPos);
+			Debug.DrawLine(tempPos, newPos, Color.blue);
 			if (animator.isActiveAndEnabled)
 			{
 				animator.SetBool("Run", (movement.Grounded && input.Axis.x != 0));

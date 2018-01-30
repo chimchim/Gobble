@@ -37,7 +37,7 @@ namespace Game.Movement
 			var fromPlayer = position - closest;
 			if (host.IsHost)
 			{
-				if (fromPlayer.magnitude > (GameUnity.RabbitAggro * 2.0f))
+				if (fromPlayer.magnitude > (game.Animals.RabbitAggro * 2.0f))
 				{
 					isSafe = true;
 				}
@@ -54,7 +54,7 @@ namespace Game.Movement
 
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
-			animal.CurrentVelocity.x = direction * GameUnity.RabbitSpeed * 1.6f;
+			animal.CurrentVelocity.x = direction * game.Animals.RabbitSpeed * 1.6f;
 			float yMovement = animal.CurrentVelocity.y * delta;
 			float xMovement = animal.CurrentVelocity.x * delta;
 

@@ -57,8 +57,9 @@ namespace Game.Movement
 					{
 						movement.CurrentState = MovementComponent.MoveState.Grounded;
 						var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
+						grounded.EnterState(game, movement, entityID, entity);
 						grounded.JumpLadder = ladder1;
-						grounded.JumpLadderTimer = 0.25f;
+						grounded.JumpLadderTimer = 0.15f;
 						HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 					}
 
@@ -69,17 +70,19 @@ namespace Game.Movement
 				{
 					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * GameUnity.PlayerSpeed * 1.6f;
 				}
-
+				var grounded2 = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
+				grounded2.EnterState(game, movement, entityID, entity);
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				return;
 			}
 			if ((input.Space && player.Owner))
 			{
-
+				
 				movement.CurrentState = MovementComponent.MoveState.Grounded;
 				var grounded = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
+				grounded.EnterState(game, movement, entityID, entity);
 				grounded.JumpLadder = ladder1;
-				grounded.JumpLadderTimer = 0.25f;
+				grounded.JumpLadderTimer = 0.15f;
 				HandleNetEventSystem.AddEventAndHandle(game, entityID, NetJump.Make(entityID));
 			}
 			if (game.Client != null)

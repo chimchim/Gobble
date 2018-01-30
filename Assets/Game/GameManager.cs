@@ -18,7 +18,8 @@ namespace Game
 			Slice2,
 			Blood3,
 			Ricochet,
-			Death
+			Death,
+			BloodDeath
 		}
 	}
 	public class GameManager
@@ -37,6 +38,7 @@ namespace Game
 		}
 		public LayerMasksVariables LayerMasks;
 		public GameResources GameResources;
+		public AnimalVariables Animals;
 		public TileMap TileMap;
 		private GameUnity _gameUnity;
 		public Client Client;
@@ -79,6 +81,7 @@ namespace Game
 			ent.AddComponent(animal);
 
 			var playerGameObject = GameObject.Instantiate(this.GameResources.Prefabs.Rabbit, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+			playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 			ent.gameObject = playerGameObject;
 			ent.gameObject.transform.position = position;
 			ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
@@ -209,6 +212,7 @@ namespace Game
 			GameResources.Prefabs = _gameUnity.PrefabData;
 			GameResources.AllItems = _gameUnity.AllItemsData;
 			GameResources.ScriptResources = _gameUnity.ResourceData;
+			Animals = _gameUnity.Animals;
 			LayerMasks = _gameUnity.LayerMasks;
 			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);

@@ -97,8 +97,8 @@ namespace Game.Systems
 				var animal = game.Entities.GetComponentOf<Animal>(a);
 				int hostStateIndex = BitConverter.ToInt32(byteDataRecieve, currentIndex);
 				currentIndex += sizeof(int);
-				bool dead = BitConverter.ToBoolean(byteDataRecieve, currentIndex);
-				currentIndex += sizeof(bool);
+				animal.Health = BitConverter.ToSingle(byteDataRecieve, currentIndex);
+				currentIndex += sizeof(float);
 				if (hostStateIndex != animal.CurrentState.Index)
 				{
 					animal.TransitionState(game, game.Entities.GetEntity(a), animal.CurrentState.GetType(), animal.States[hostStateIndex].GetType(), host);

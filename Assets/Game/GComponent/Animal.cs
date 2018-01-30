@@ -13,11 +13,10 @@ namespace Game.Component
 
 		public List<AnimalState> States = new List<AnimalState>();
 		public AnimalState CurrentState;
-		public bool Dead;
-		public bool LocalDead;
 
 		public Vector2 HostPosition;
 		public Vector2 HostVelocity;
+		public float Health;
 		public override void Recycle()
 		{
 			_pool.Recycle(this);

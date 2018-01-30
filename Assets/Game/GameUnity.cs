@@ -17,6 +17,7 @@ public class GameUnity : MonoBehaviour
 
 	public AllScriptableItems AllItemsData;
 	public SwimVariables SwimData;
+	public AnimalVariables Animals;
 	public GroundVariables GroundData;
 	public MapVariables MapData;
 	public StatsVariables StatsData;
@@ -88,9 +89,6 @@ public class GameUnity : MonoBehaviour
 	public static float PerlinZoom;
 	public static Vector3 DebugVector;
 
-	public static float RabbitSpeed = 3;
-	public static float RabbitChillTimer = 3;
-	public static float RabbitAggro = 3; 
 	public static int MainInventorySize = 3;
 	public static int BackpackInventorySize = 8;
 

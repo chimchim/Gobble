@@ -27,7 +27,7 @@ namespace Game.Movement
 			if (rand == 0)
 			{
 				eating = true;
-				chillTimer = GameUnity.RabbitChillTimer;
+				chillTimer = game.Animals.RabbitChillTimer;
 			}
 		}
 
@@ -38,7 +38,7 @@ namespace Game.Movement
 			{
 				var closest = ClosestPlayer(game, position);
 				var fromPlayer = position - closest;
-				if (fromPlayer.magnitude < GameUnity.RabbitAggro)
+				if (fromPlayer.magnitude < game.Animals.RabbitAggro)
 				{
 					animal.TransitionState(game, entity, this.GetType(), typeof(JumpFlee), host);
 					return;
@@ -54,7 +54,7 @@ namespace Game.Movement
 						return;
 					if (rand == 1)
 					{
-						chillTimer = GameUnity.RabbitChillTimer;
+						chillTimer = game.Animals.RabbitChillTimer;
 						eating = true;
 						return;
 					}

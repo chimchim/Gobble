@@ -63,8 +63,14 @@ public class Sword : Item
 				if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 				{
 					var id = transform.GetComponent<IdHolder>().ID;
-					Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y);
+					Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
 					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 100, E.Effects.Blood3, offsetPoint));
+				}
+				if (collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
+				{
+					var id = transform.GetComponent<IdHolder>().ID;
+					Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir *0.7f);
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 100, E.Effects.Blood3, offsetPoint));
 				}
 			}
 			

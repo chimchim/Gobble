@@ -39,7 +39,7 @@ namespace Game.Movement
 		{
 			var transform = game.Entities.GetEntity(animal.EntityID).gameObject.transform;
 			byteArray.AddRange(BitConverter.GetBytes(animal.CurrentState.Index));
-			byteArray.AddRange(BitConverter.GetBytes(animal.Dead));
+			byteArray.AddRange(BitConverter.GetBytes(animal.Health));
 			byteArray.AddRange(BitConverter.GetBytes(transform.position.x));
 			byteArray.AddRange(BitConverter.GetBytes(transform.position.y));
 			byteArray.AddRange(BitConverter.GetBytes(animal.CurrentVelocity.x));

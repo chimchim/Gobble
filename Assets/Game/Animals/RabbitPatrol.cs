@@ -48,7 +48,7 @@ namespace Game.Movement
 			{
 				var closest = ClosestPlayer(game, position);
 				var fromPlayer = position - closest;
-				if (fromPlayer.magnitude < GameUnity.RabbitAggro)
+				if (fromPlayer.magnitude < game.Animals.RabbitAggro)
 				{
 					animal.TransitionState(game, entity, this.GetType(), typeof(JumpFlee), host);
 					return;
@@ -62,7 +62,7 @@ namespace Game.Movement
 			var direction = goTo - position;
 			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
-			animal.CurrentVelocity.x = Math.Sign(direction.x) * GameUnity.RabbitSpeed;
+			animal.CurrentVelocity.x = Math.Sign(direction.x) * game.Animals.RabbitSpeed;
 			float yMovement = animal.CurrentVelocity.y * delta;
 			float xMovement = animal.CurrentVelocity.x * delta;
 			

@@ -29,7 +29,7 @@ namespace Game.Movement
 		{
 			var position = entity.gameObject.transform.position;
 			digTimer += delta;
-			if (!Digged && digTimer > 1.5f)
+			if (!Digged && digTimer > game.Animals.RabbitDigTimer)
 			{
 				Digged = true;
 				entity.gameObject.transform.position = new Vector3(-1000, -1000, position.z);
