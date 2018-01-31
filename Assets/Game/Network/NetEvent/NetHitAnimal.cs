@@ -26,12 +26,25 @@ public class NetHitAnimal : NetEvent
 		{
 			game.CreateEffect(E.Effects.BloodDeath, entity.gameObject.transform.position, 0.3f);
 		}
+
+		int hostid = Utility.IsHost(game);
+
 		game.AddAction(() =>
 		{
+			if (hostid != -1)
+			{
+				var ingredientHolder = entity.gameObject.GetComponent<IngredientHolder>();
+				foreach (ScriptableItem.Recipe r in ingredientHolder.Ingredients)
+				{
+					float randomnedAngle = UnityEngine.Random.Range(-30, 30);
+					float force = UnityEngine.Random.Range(8, 14);
+					var vec = Utility.Rotate(Vector2.up, randomnedAngle) * force;
+					HandleNetEventSystem.AddEvent(game, hostid, NetCreateIngredient.Make(hostid, r.AmountNeeded, r.Ingredient, entity.gameObject.transform.position, vec));
+				}
+			}
 			GameObject.Destroy(entity.gameObject);
 			game.Entities.RemoveEntity(entity);
 		});
-
 	}
 
 	public static NetHitAnimal Make()
