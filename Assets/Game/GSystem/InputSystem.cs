@@ -69,6 +69,7 @@ namespace Game.Systems
 						{
 							HandleNetEventSystem.AddEvent(game, e, NetEventCreateAnimal.Make(0, mousePos));
 						});
+
 						//game.CreateFullPlayer(false, "adw", false, 1, 0, Characters.Yolanda);
 						//HandleNetEventSystem.AddEvent(game, e, NetEventCreateAnimal.Make(0, mousePos));
 
@@ -100,7 +101,6 @@ namespace Game.Systems
 				var switch1 = game.RealVariables.CurrentSwitch;
 				if (switch2 == null)
 				{
-					Debug.Log(" switch2 == null");
 					switch1.Item.ThrowItem(game, holder.EntityID);
 					if (currentItem == game.RealVariables.CurrentSwitch.Item)
 					{

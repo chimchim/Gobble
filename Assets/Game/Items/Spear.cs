@@ -8,35 +8,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Effects = Game.E.Effects;
 using GatherLevel = GatherableScriptable.GatherLevel;
-
-public class Sword : Item
+public class Spear : Item
 {
 
-	private static ObjectPool<Sword> _pool = new ObjectPool<Sword>(10);
-	public bool Attacking;
-	public Transform Effect;
+	private static ObjectPool<Spear> _pool = new ObjectPool<Spear>(10);
+
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
 	}
 
-	public Sword()
+	public Spear()
 	{
 
 	}
-	public static Sword Make()
+	public static Spear Make()
 	{
-		Sword item = _pool.GetNext();
-		item.ID = ItemID.Sword;
+		Spear item = _pool.GetNext();
+		item.ID = ItemID.Spear;
 		return item;
+	}
+
+	public override void OwnerActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.ArmEvents.Attackable = () =>
+		{
+			AttackEvent(game, entity);
+		};
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Add(this);
+	}
+
+	public override void ClientActivate(GameManager game, int entity)
+	{
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Add(this);
+	}
+
+	public override void OwnerDeActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Remove(this);
+		resources.FreeArmAnimator.SetBool("Spear", false);
+	}
+	public override void ClientDeActivate(GameManager game, int entity)
+	{
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		itemHolder.ActiveItems.Remove(this);
+		resources.FreeArmAnimator.SetBool("Spear", false);
 	}
 
 	public void AttackEvent(GameManager game, int e)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
-		Effect = CurrentGameObject.transform.Find("Effect");
 		var entity = game.Entities.GetEntity(e);
 		Vector2 midPos = (CurrentGameObject.transform.position) + (CurrentGameObject.transform.up * 0.9f);
 		Vector2 pos = entity.gameObject.transform.position;
@@ -71,51 +101,6 @@ public class Sword : Item
 				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 100, E.Effects.Blood3, offsetPoint));
 			}
 		}
-
-		game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
-	}
-
-	public override void OwnerActivate(GameManager game, int e)
-	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-		Effect = CurrentGameObject.transform.Find("Effect");
-		resources.ArmEvents.Attackable = () =>
-		{
-			AttackEvent(game, e);
-		};
-
-		base.OwnerActivate(game, e);
-	}
-
-	public override void ClientActivate(GameManager game, int entity)
-	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		Effect = CurrentGameObject.transform.Find("Effect");
-		resources.ArmEvents.Attackable = () =>
-		{
-			game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
-			Attacking = true;
-		};
-		resources.ArmEvents.NotAttackable = () =>
-		{
-			Attacking = false;
-		};
-		base.ClientActivate(game, entity);
-	}
-
-	public override void OwnerDeActivate(GameManager game, int entity)
-	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		resources.FreeArmAnimator.SetBool("Sword", false);
-		Attacking = false;
-		base.OwnerDeActivate(game, entity);
-	}
-	public override void ClientDeActivate(GameManager game, int entity)
-	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		resources.FreeArmAnimator.SetBool("Sword", false);
-		Attacking = false;
-		base.ClientDeActivate(game, entity);
 	}
 
 	public override void ThrowItem(GameManager game, int entity)
@@ -127,11 +112,20 @@ public class Sword : Item
 		var position = ent.gameObject.transform.position;
 		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
 
-		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Sword, position, force));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Spear, position, force));
+	}
+
+	private void TryPick(GameManager game, int entity)
+	{
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
+		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
+
+		
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
-		var go = GameObject.Instantiate(game.GameResources.AllItems.Sword.Prefab);
+		var go = GameObject.Instantiate(game.GameResources.AllItems.Spear.Prefab);
 		go.transform.position = position;
 
 
@@ -155,22 +149,19 @@ public class Sword : Item
 
 		return visible;
 	}
-	public override bool TryStack(GameManager game, Item item)
-	{
-		return false;
-	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Sword, gameObject);
-	}
-	public override void Input(GameManager game, int e, float delta)
-	{
-		var entity = game.Entities.GetEntity(e);
-		var input = game.Entities.GetComponentOf<InputComponent>(e);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-		resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
+		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
 
+	public override void Input(GameManager game, int entity, float delta)
+	{
+		var input = game.Entities.GetComponentOf<InputComponent>(entity);
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		resources.FreeArmAnimator.SetBool("Spear", input.LeftDown);
+		base.RotateArm(game, entity);
+
+	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{

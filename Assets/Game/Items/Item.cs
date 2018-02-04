@@ -19,7 +19,8 @@ public abstract class Item
 		Ingredient,
 		Ladder,
 		Shield,
-		Sword
+		Sword,
+		Spear
 	}
 	public ItemID ID;
 

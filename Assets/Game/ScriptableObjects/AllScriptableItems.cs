@@ -11,6 +11,8 @@ public class AllScriptableItems : ScriptableObject
 	public ScriptableItem Ladder;
 	public ScriptableItem Shield;
 	public ScriptableItem Sword;
+	public ScriptableItem Spear;
+
 	public List<ScriptableItem> AllItemsList = new List<ScriptableItem>();
 	[Header("Gatherable ")]
 	public GatherableScriptable Gravel;
