@@ -10,11 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System;
-
+using UnityEngine.UI;
 public class GameUnity : MonoBehaviour 
 {
 	GameManager game = new GameManager();
-
+	
+	public static Image FollowMouse;
 	public AllScriptableItems AllItemsData;
 	public SwimVariables SwimData;
 	public AnimalVariables Animals;
@@ -26,6 +27,7 @@ public class GameUnity : MonoBehaviour
 	public PrefabsVariables PrefabData;
 	public ScriptableResources ResourceData;
 	public LayerMasksVariables LayerMasks;
+	public RealTimeVariables RealTimeVariables;
 	[SerializeField]
 	[Header("Gounded Variables")]
 	public static float Weight;
@@ -91,7 +93,7 @@ public class GameUnity : MonoBehaviour
 
 	public static int MainInventorySize = 3;
 	public static int BackpackInventorySize = 8;
-
+	public Image followMouse;
 	public InventoryBackpack InventoryBackpack;
 	public InventoryMain MainInventory;
 	public Crafting Crafting;
@@ -105,6 +107,7 @@ public class GameUnity : MonoBehaviour
 	private bool _miniMapActive = true;
 	void Start () 
 	{
+		FollowMouse = followMouse;
 		//Application.targetFrameRate = 80;
 		SetVariables();
 		Application.runInBackground = true;

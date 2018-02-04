@@ -33,6 +33,8 @@ public class NetPlayerDeath : NetEvent
 			string name = entity.Animator.GetParameter(i).name;
 			entity.Animator.SetBool(name, false);
 		}
+		
+		
 		entity.gameObject.layer = LayerMask.NameToLayer("Dead");
 		resources.LerpCharacter.gameObject.SetActive(false);
 

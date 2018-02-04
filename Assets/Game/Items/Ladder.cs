@@ -52,7 +52,8 @@ public class Ladder : Item
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
-		Placeable.position = new Vector3(0, 0, 0);
+		if(Placeable)
+			Placeable.position = new Vector3(0, 0, 0);
 		base.OwnerDeActivate(game, entity);
 	}
 
@@ -98,10 +99,8 @@ public class Ladder : Item
 		Ladder ladder = item as Ladder;
 		if (ladder != null)
 		{
-
 			Quantity += ladder.Quantity;
-			return true;
-			
+			return true;	
 		}
 
 		return false;

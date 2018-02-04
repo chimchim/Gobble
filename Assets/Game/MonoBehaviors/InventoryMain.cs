@@ -5,12 +5,22 @@ using UnityEngine.UI;
 
 public class InventoryMain : MonoBehaviour {
 
-	// Use this for initialization
-	public int CurrenItemsAmount;
 	public GameObject Template;
-	public Item[] Items = new Item[GameUnity.MainInventorySize];
 	private List<ItemImage> ItemImage = new List<ItemImage>();
 
+	public int CurrentCount
+	{
+		get
+		{
+			int count = 0;
+			foreach (ItemImage img in ItemImage)
+			{
+				if (img.Item != null)
+					count++;
+			}
+			return count;
+		}
+	}
 
 	void Start ()
 	{
@@ -20,9 +30,9 @@ public class InventoryMain : MonoBehaviour {
 
 	public void SetQuantity(Item item)
 	{
-		for (int i = 0; i < Items.Length; i++)
+		for (int i = 0; i < ItemImage.Count; i++)
 		{
-			if (Items[i] == item)
+			if (ItemImage[i].Item == item)
 			{
 				ItemImage[i].SetQuantity(item.Quantity);
 				break;
@@ -33,12 +43,11 @@ public class InventoryMain : MonoBehaviour {
 	public int SetItemInMain(ScriptableItem scriptable, Item item)
 	{
 		int index = 0;
-		for (int i = 0; i < Items.Length; i++)
+		for (int i = 0; i < ItemImage.Count; i++)
 		{
-			if (Items[i] == null)
+			if (ItemImage[i].Item == null)
 			{
-				CurrenItemsAmount++;
-				Items[i] = item;
+				ItemImage[i].Item = item;
 				ItemImage[i].SetImage(scriptable.Sprite);
 				ItemImage[i].SetQuantity(item.Quantity);
 				index = i;
@@ -50,35 +59,21 @@ public class InventoryMain : MonoBehaviour {
 	// Update is called once per frame
 	public Item GetItem(int index)
 	{
-		if (index < Items.Length)
-		{
-			return Items[index];
-		}
-		return null;
+		return ItemImage[index].Item;
 	}
 
 	public void RemoveItem(Item item)
 	{
-		for (int i = 0; i < Items.Length; i++)
+		for (int i = 0; i < ItemImage.Count; i++)
 		{
-			if (item == Items[i])
+			if (item == ItemImage[i].Item)
 			{
-				Debug.Log("Remove item at " + i);
-				Items[i] = null;
+				ItemImage[i].Item = null;
 				ItemImage[i].UnsetImage();
 				ItemImage[i].Quantity.text = "";
-				CurrenItemsAmount--;
 				break;
 			}
 		}
-	}
-
-	public void RemoveItem(int index)
-	{
-		CurrenItemsAmount--;
-		Items[index] = null;
-		ItemImage[index].UnsetImage();
-		ItemImage[index].Quantity.text = "";
 	}
 
 	public void SetMainInventorySlots(int slots)
@@ -88,6 +83,7 @@ public class InventoryMain : MonoBehaviour {
 			var go = Instantiate(Template);
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
+			go.GetComponent<ItemImage>().Type = Game.E.Inventory.Main;
 			ItemImage.Add(go.GetComponent<ItemImage>());
 		}
 		ItemImage[0].Chosen.enabled = true;
@@ -95,7 +91,7 @@ public class InventoryMain : MonoBehaviour {
 	}
 	public void ResetAll()
 	{
-		for (int i = 0; i < Items.Length; i++)
+		for (int i = 0; i < ItemImage.Count; i++)
 		{
 			ItemImage[i].Chosen.enabled = false;
 		}

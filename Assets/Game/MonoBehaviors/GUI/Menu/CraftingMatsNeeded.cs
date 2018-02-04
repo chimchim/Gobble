@@ -9,7 +9,7 @@ public class CraftingMatsNeeded : MonoBehaviour
 	public int TemplateAmount;
 	public GameObject Template;
 	[HideInInspector]
-	public List<ItemImage> ItemImages = new List<ItemImage>();
+	public List<ItemImageCrafting> ItemImages = new List<ItemImageCrafting>();
 
 	private int _currentIndex;
 	private bool enabled;
@@ -69,8 +69,8 @@ public class CraftingMatsNeeded : MonoBehaviour
 			var go = Instantiate(Template);
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
-			ItemImages.Add(go.GetComponent<ItemImage>());
-			go.GetComponent<ItemImage>().DisableImages();
+			ItemImages.Add(go.GetComponent<ItemImageCrafting>());
+			go.GetComponent<ItemImageCrafting>().DisableImages();
 		}
 		Destroy(Template);
 	}

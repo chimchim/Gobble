@@ -109,9 +109,8 @@ public abstract class Item
 	{
 		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		var items = inventoryMain.MainInventory.Items;
-		int amount = inventoryMain.MainInventory.CurrenItemsAmount;
-		int backPackAmount = inventoryMain.InventoryBackpack.CurrenItemsAmount;
+		int amount = inventoryMain.MainInventory.CurrentCount;
+		int backPackAmount = inventoryMain.InventoryBackpack.CurrentCount;
 		game.WorldItems.Remove(CurrentGameObject.GetComponent<VisibleItem>());
 		if (holder.Items.ContainsKey(ItemNetID))
 		{
@@ -136,6 +135,7 @@ public abstract class Item
 		}
 		else if (backPackAmount < GameUnity.BackpackInventorySize)
 		{
+			SetInHand(game, entity, go);
 			inventoryMain.InventoryBackpack.SetItemInMain(scriptable, this);
 			CurrentGameObject.SetActive(false);
 		}
@@ -143,16 +143,17 @@ public abstract class Item
 
 	public virtual bool HasSlot(InventoryComponent inv)
 	{
-		var hasSlot = (inv.MainInventory.CurrenItemsAmount < GameUnity.MainInventorySize) ||
-		(inv.InventoryBackpack.CurrenItemsAmount < GameUnity.BackpackInventorySize);
+		var hasSlot = (inv.MainInventory.CurrentCount < GameUnity.MainInventorySize) ||
+		(inv.InventoryBackpack.CurrentCount < GameUnity.BackpackInventorySize);
 		return hasSlot;
 	}
 	public virtual void ThrowItem(Game.GameManager game, int entity)
 	{
-		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		holder.Items.Remove(ItemNetID);
-		inventoryMain.MainInventory.RemoveItem(inventoryMain.CurrentItemIndex);
+		inv.MainInventory.RemoveItem(this);
+		inv.InventoryBackpack.RemoveItem(this);
 		OwnerDeActivate(game, entity);
 		GameObject.Destroy(CurrentGameObject);
 		Recycle();

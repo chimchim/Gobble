@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class Crafting : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+	public RealTimeVariables RealTime;
 	public List<GameObject> Choosens = new List<GameObject>();
-	public bool Hovering;
 	public CraftingPanel Panel;
 	public AllScriptableItems AllItemsVariables;
 	public ScriptableItem.ItemCategory Current;
@@ -15,11 +15,11 @@ public class Crafting : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public CraftButton[] CurrentButton;
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		Hovering = false;
+		RealTime.HoveringUI = false;
 	}
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		Hovering = true;
+		RealTime.HoveringUI = true;
 	}
 	void Start()
 	{

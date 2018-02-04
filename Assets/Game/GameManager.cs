@@ -13,6 +13,12 @@ namespace Game
 {
 	public class E
 	{
+		public enum Inventory
+		{
+			Main,
+			BackPack,
+			Equipped
+		}
 		public enum Effects
 		{
 			Slice2,
@@ -36,6 +42,7 @@ namespace Game
 			public Action action;
 			public float delay;
 		}
+		public RealTimeVariables RealVariables;
 		public LayerMasksVariables LayerMasks;
 		public GameResources GameResources;
 		public AnimalVariables Animals;
@@ -214,6 +221,7 @@ namespace Game
 			GameResources.ScriptResources = _gameUnity.ResourceData;
 			Animals = _gameUnity.Animals;
 			LayerMasks = _gameUnity.LayerMasks;
+			RealVariables = _gameUnity.RealTimeVariables;
 			Debug.Log("Initiate GameManager");
 			_systemManager.InitAll(this);
 			

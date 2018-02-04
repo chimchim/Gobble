@@ -355,7 +355,9 @@
     <Compile Include="Assets\Game\MonoBehaviors\GUI\CraftingPanel.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\FreeArmPositioning.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\HpBar.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\ImageFollowMouse.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ItemImage.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\ItemImageCrafting.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ButtonClick.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ChangeTeamButton.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\CharacterSelection.cs" />
@@ -367,6 +369,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\LeaveLobby.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\LocalGame.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\MenuGUI.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\MouseHover.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\MultiplayerGame.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\SlotData.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\MiniMap.cs" />
@@ -430,6 +433,7 @@
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MineralsGenVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\PrefabsVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\RealTimeVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\RopeDataVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\ScriptableResources.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\StatsVariables.cs" />

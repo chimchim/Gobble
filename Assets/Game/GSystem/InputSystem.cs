@@ -50,6 +50,8 @@ namespace Game.Systems
 						resources.FreeArm.up = screenDirection;
 						resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
 					}
+					bool blockedByGUI = game.RealVariables.HoveringUI || game.RealVariables.ChangingItem;
+					CheckChangingItems(game, itemHolder, inventory);
 					ItemChangeInput(game, e, itemHolder, input);
 					input.MousePos = mousePos;
 					input.ArmDirection = resources.FreeArm.up;
@@ -57,8 +59,8 @@ namespace Game.Systems
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
 					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
-					input.LeftDown = (UnityEngine.Input.GetKey(KeyCode.Mouse0) && !inventory.Crafting.Hovering);
-					input.OnLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !inventory.Crafting.Hovering;
+					input.LeftDown = (UnityEngine.Input.GetKey(KeyCode.Mouse0) && (!blockedByGUI || input.LeftDown));
+					input.OnLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !blockedByGUI;
 					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
 
 					if (Input.GetKeyDown(KeyCode.Mouse2) && player.IsHost)
@@ -76,7 +78,7 @@ namespace Game.Systems
 						inventory.Crafting.gameObject.SetActive(!craftingActive);
 						craftingActive = !craftingActive;
 						if (!craftingActive)
-							inventory.Crafting.Hovering = false;
+							game.RealVariables.HoveringUI = false;
 					}
 				}
 				else
@@ -85,7 +87,60 @@ namespace Game.Systems
 				}
 			}
 		}
+		private void CheckChangingItems(GameManager game, ItemHolder holder, InventoryComponent inv)
+		{
+			bool changing = game.RealVariables.ChangingItem;
 
+			if (changing && UnityEngine.Input.GetKeyUp(KeyCode.Mouse0))
+			{
+				GameUnity.FollowMouse.gameObject.SetActive(false);
+				game.RealVariables.ChangingItem = false;
+				var currentItem = inv.MainInventory.GetItem(inv.CurrentItemIndex);
+				var switch2 = game.RealVariables.CurrentSwitch2;
+				var switch1 = game.RealVariables.CurrentSwitch;
+				if (switch2 == null)
+				{
+					Debug.Log(" switch2 == null");
+					switch1.Item.ThrowItem(game, holder.EntityID);
+					if (currentItem == game.RealVariables.CurrentSwitch.Item)
+					{
+						holder.Hands.OwnerActivate(game, holder.EntityID);
+					}
+				}
+				else
+				{
+					if (currentItem == switch1.Item)
+					{
+						if(switch2.Item != null)
+							switch2.Item.OwnerActivate(game, holder.EntityID);
+						currentItem.OwnerDeActivate(game, holder.EntityID);
+					}
+					if (currentItem == switch2.Item)
+					{
+						switch1.Item.OwnerActivate(game, holder.EntityID);
+						if(currentItem != null)
+							currentItem.OwnerDeActivate(game, holder.EntityID);
+					}
+					var sp2 = switch2.Image.sprite;
+					switch2.SetImage(switch1.Image.sprite);
+					if (sp2 != null)
+						switch1.SetImage(sp2);
+					else
+						switch1.UnsetImage();
+
+					if(switch2.Item != null)
+						switch1.SetQuantity(switch2.Item.Quantity);
+					if (switch1.Item != null)
+						switch2.SetQuantity(switch1.Item.Quantity);
+
+					var i = switch2.Item;
+					switch2.Item = switch1.Item;
+					switch1.Item = i;
+
+				}
+
+			}
+		}
 		public void ItemChangeInput(GameManager game, int entity, ItemHolder itemHolder, InputComponent input)
 		{
 			var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);

@@ -6,9 +6,97 @@ public class script : MonoBehaviour
 {
 	Vector2 CurrentVelocity;
 
+	private void Start()
+	{
+		int[] ints = new int[]
+			{
+				3, 5, 9, 5, 3, 9, 7, 9, 9
+				//0, 0, 0, -1, -1, 1, 1, 1, -1, -1, -1
+			};
+		Debug.Log(solution(ints));
+	}
+	public int solution(int[] A)
+	{
+		int ret = 0;
+
+		for (int i = 0; i < A.Length; ++i)
+		{
+			ret = Mathf.Abs(A[i] - ret);
+		}
+
+		return ret;
+	}
+
+	int GetSlice(int[] A, int index, ref int newIndex)
+	{
+		int iterations = 1;
+		int sum = A[index];
+		index++;
+		while (true)
+		{
+			if (index < A.Length && (sum + A[index]) >= 0)
+			{
+				iterations++;
+				sum += A[index];
+				index++;
+			}
+			else
+			{
+				index++;
+				newIndex = index;
+				break;
+			}
+		}
+		return iterations;
+	}
+	int recursive(int[] A, int leftIndex, int rightIndex, int current, int leftSlice, int rightSlice)
+	{
+		//int leftSlice = current;
+		//int rightSlice = current;
+		int tempcurrent = current;
+		if (leftIndex > -1)
+			leftSlice += A[leftIndex];
+		else
+			leftSlice += -100;
+
+		if (rightIndex < A.Length)
+			rightSlice += A[rightIndex];
+		else
+			rightSlice += -100;
+
+		if (leftSlice == rightSlice && leftSlice >= 0)
+			tempcurrent += recursive(A, leftIndex - 1, rightIndex + 1, leftSlice, leftSlice, rightSlice);
+		if(leftSlice > rightSlice && leftSlice >= 0)
+			tempcurrent += recursive(A, leftIndex - 1, rightIndex, leftSlice, leftSlice, rightSlice);
+		if (rightSlice > leftSlice && rightSlice >= 0)
+			tempcurrent += recursive(A, leftIndex, rightIndex + 1, rightSlice, leftSlice, rightSlice);
+
+		return tempcurrent;
+	}
+	public void StartTraverse(int[] A, int index)
+	{
+		int leftSlice = 1;
+		int rightSlice = 1;
+		int leftIndex = index - 1;
+		int rightIndex = index + 1;
+		while (true)
+		{
+			if (leftIndex > -1)
+				leftSlice += A[leftIndex];
+			else
+				leftSlice += -100;
+
+			if (rightIndex < A.Length)
+				leftSlice += A[rightIndex];
+			else
+				rightSlice += -100;
+
+
+		}
+	}
 	void FixedUpdate ()
 	{
-
+		return;
 		float x = UnityEngine.Input.GetAxis("Horizontal");
 		float y = UnityEngine.Input.GetAxis("Vertical");
 		CurrentVelocity.y += -0.5f;

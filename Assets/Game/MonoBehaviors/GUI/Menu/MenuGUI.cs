@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class MenuGUI : MonoBehaviour {
 
 	// Use this for initialization
+	public RealTimeVariables RealTimeVariables;
+	
 	public LocalGame Local;
 	public MultiplayerGame Multiplayer;
 	public JoinGame Join;
