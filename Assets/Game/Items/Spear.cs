@@ -41,6 +41,7 @@ public class Spear : Item
 		events.Transform1.localPosition = new Vector3(events.Transform2.localPosition.x, events.Transform1.localPosition.y, events.Transform1.localPosition.z);
 		events.Attackable = () =>
 		{
+			AttackEvent(game, entity);
 			Attack = true;
 		};
 		events.NotAttackable = () =>
@@ -54,6 +55,9 @@ public class Spear : Item
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		itemHolder.ActiveItems.Add(this);
+		SpearAnim = CurrentGameObject.GetComponent<Animator>();
+		SpearAnim.enabled = true;
+		base.ClientActivate(game, entity);
 	}
 
 	public override void OwnerDeActivate(GameManager game, int entity)
@@ -69,9 +73,12 @@ public class Spear : Item
 	{
 		var events = SpearAnim.GetComponent<AnimationEvents>();
 		var pointer = events.Transform3;
+		var pointer3 = events.Transform4;
+
 		Vector2 dir = pointer.right;
-		var hit = Physics2D.Raycast(pointer.position, pointer.right, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
-		Debug.DrawLine(pointer.position, pointer.position + (pointer.right * 1.4f), Color.red);
+		float l = Mathf.Abs(pointer.localPosition.x - pointer3.localPosition.x);
+		var hit = Physics2D.Raycast(pointer.position, pointer.right, l, game.LayerMasks.MappedMasks[3].UpLayers);
+		Debug.DrawLine(pointer.position, pointer.position + (pointer.right * l), Color.red);
 		var collider = hit.collider;
 		if (collider != null)
 		{
@@ -90,13 +97,13 @@ public class Spear : Item
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 100, E.Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 10, E.Effects.Blood3, offsetPoint));
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.7f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 100, E.Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 10, E.Effects.Blood3, offsetPoint));
 			}
 		}
 	}
@@ -143,25 +150,32 @@ public class Spear : Item
 	{
 		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
-
+	int SpearCounter = 0;
 	public override void Input(GameManager game, int entity, float delta)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		if(input.OnLeftDown)
-			SpearAnim.SetTrigger("AttackTrigger");
-		SpearAnim.SetBool("AttackLoop", input.RightDown);
-		if (Attack)
+		if (input.OnLeftDown)
 		{
-			AttackEvent(game, entity);
+			SpearCounter++;
+			SpearAnim.SetTrigger("AttackTrigger");
 		}
+		SpearAnim.SetBool("AttackLoop", input.RightDown);
+		//if (Attack)
+		//{
+		//	AttackEvent(game, entity);
+		//}
 		base.RotateArm(game, entity);
 
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{
-
-
+		int spearCounter = BitConverter.ToInt32(byteData, currentIndex); currentIndex += sizeof(int);
+		if (spearCounter > SpearCounter)
+		{
+			SpearCounter = spearCounter;
+			SpearAnim.SetTrigger("AttackTrigger");
+		}
 	}
 
 
@@ -169,6 +183,7 @@ public class Spear : Item
 	{
 
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
+		byteArray.AddRange(BitConverter.GetBytes(SpearCounter));
 	}
 }
 

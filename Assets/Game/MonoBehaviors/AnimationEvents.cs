@@ -8,6 +8,7 @@ public class AnimationEvents : MonoBehaviour
 	public Transform Transform1;
 	public Transform Transform2;
 	public Transform Transform3;
+	public Transform Transform4;
 	public Action OnArmHit;
 	public void ArmHitEvent()
 	{
@@ -17,10 +18,12 @@ public class AnimationEvents : MonoBehaviour
 	public Action NotAttackable;
 	public void AttackableEvent()
 	{
-		Attackable.Invoke();
+		if(Attackable != null)
+			Attackable.Invoke();
 	}
 	public void NotAttackableEvent()
 	{
-		NotAttackable.Invoke();
+		if (NotAttackable != null)
+			NotAttackable.Invoke();
 	}
 }
