@@ -41,8 +41,7 @@ public class Spear : Item
 		{
 			AttackEvent(game, entity);
 		};
-		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		itemHolder.ActiveItems.Add(this);
+		base.OwnerActivate(game, entity);
 	}
 
 	public override void ClientActivate(GameManager game, int entity)
@@ -53,17 +52,13 @@ public class Spear : Item
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		itemHolder.ActiveItems.Remove(this);
-		resources.FreeArmAnimator.SetBool("Spear", false);
+		SpearAnim.SetBool("Attack", false);
+		base.OwnerDeActivate(game, entity);
 	}
 	public override void ClientDeActivate(GameManager game, int entity)
 	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		itemHolder.ActiveItems.Remove(this);
-		resources.FreeArmAnimator.SetBool("Spear", false);
+		SpearAnim.SetBool("Attack", false);
+		base.ClientDeActivate(game, entity);
 	}
 
 	public void AttackEvent(GameManager game, int e)

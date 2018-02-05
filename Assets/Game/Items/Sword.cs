@@ -14,7 +14,6 @@ public class Sword : Item
 {
 
 	private static ObjectPool<Sword> _pool = new ObjectPool<Sword>(10);
-	public bool Attacking;
 	public Transform Effect;
 	public override void Recycle()
 	{
@@ -94,11 +93,9 @@ public class Sword : Item
 		resources.ArmEvents.Attackable = () =>
 		{
 			game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
-			Attacking = true;
 		};
 		resources.ArmEvents.NotAttackable = () =>
 		{
-			Attacking = false;
 		};
 		base.ClientActivate(game, entity);
 	}
@@ -107,14 +104,12 @@ public class Sword : Item
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Sword", false);
-		Attacking = false;
 		base.OwnerDeActivate(game, entity);
 	}
 	public override void ClientDeActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 		resources.FreeArmAnimator.SetBool("Sword", false);
-		Attacking = false;
 		base.ClientDeActivate(game, entity);
 	}
 
