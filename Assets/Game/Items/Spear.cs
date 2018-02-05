@@ -15,6 +15,7 @@ public class Spear : Item
 
 	private static ObjectPool<Spear> _pool = new ObjectPool<Spear>(10);
 	public Animator SpearAnim;
+	public bool Attack;
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
@@ -37,9 +38,14 @@ public class Spear : Item
 		SpearAnim = CurrentGameObject.GetComponent<Animator>();
 		SpearAnim.enabled = true;
 		var events = SpearAnim.GetComponent<AnimationEvents>();
+		events.Transform1.localPosition = new Vector3(events.Transform2.localPosition.x, events.Transform1.localPosition.y, events.Transform1.localPosition.z);
 		events.Attackable = () =>
 		{
-			AttackEvent(game, entity);
+			Attack = true;
+		};
+		events.NotAttackable = () =>
+		{
+			Attack = false;
 		};
 		base.OwnerActivate(game, entity);
 	}
@@ -52,26 +58,20 @@ public class Spear : Item
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
-		SpearAnim.SetBool("Attack", false);
 		base.OwnerDeActivate(game, entity);
 	}
 	public override void ClientDeActivate(GameManager game, int entity)
 	{
-		SpearAnim.SetBool("Attack", false);
 		base.ClientDeActivate(game, entity);
 	}
 
 	public void AttackEvent(GameManager game, int e)
 	{
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-		var input = game.Entities.GetComponentOf<InputComponent>(e);
-		var entity = game.Entities.GetEntity(e);
-		Vector2 midPos = (CurrentGameObject.transform.position) + (CurrentGameObject.transform.up * 0.9f);
-		Vector2 pos = entity.gameObject.transform.position;
-		Vector2 dir = input.ScreenDirection;
-
-		var hit = Physics2D.Raycast(pos, dir.normalized, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
-		Debug.DrawLine(pos, pos + (dir * 100), Color.red);
+		var events = SpearAnim.GetComponent<AnimationEvents>();
+		var pointer = events.Transform3;
+		Vector2 dir = pointer.right;
+		var hit = Physics2D.Raycast(pointer.position, pointer.right, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
+		Debug.DrawLine(pointer.position, pointer.position + (pointer.right * 1.4f), Color.red);
 		var collider = hit.collider;
 		if (collider != null)
 		{
@@ -113,14 +113,6 @@ public class Spear : Item
 		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Spear, position, force));
 	}
 
-	private void TryPick(GameManager game, int entity)
-	{
-		var player = game.Entities.GetComponentOf<Player>(entity);
-		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
-		var layerMask = (1 << LayerMask.NameToLayer("Collideable")) | (1 << LayerMask.NameToLayer("Gatherable"));
-
-		
-	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
 		var go = GameObject.Instantiate(game.GameResources.AllItems.Spear.Prefab);
@@ -155,7 +147,13 @@ public class Spear : Item
 	public override void Input(GameManager game, int entity, float delta)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		SpearAnim.SetBool("Attack", input.LeftDown);
+		if(input.OnLeftDown)
+			SpearAnim.SetTrigger("AttackTrigger");
+		SpearAnim.SetBool("AttackLoop", input.RightDown);
+		if (Attack)
+		{
+			AttackEvent(game, entity);
+		}
 		base.RotateArm(game, entity);
 
 	}

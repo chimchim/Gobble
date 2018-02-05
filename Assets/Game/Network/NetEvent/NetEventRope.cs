@@ -25,7 +25,7 @@ public class NetEventRope : NetEvent
 		}
 		else
 		{
-			input.RightClick = false;
+			input.OnRightDown = false;
 			resources.GraphicRope.DeActivate();
 			movement.RopeList.Clear();
 			movement.CurrentState = MovementComponent.MoveState.Grounded;

@@ -40,6 +40,7 @@ public class Client
 		public float InputAxisX;
 		public float InputAxisY;
 		public bool RightClick;
+		public bool RightDown;
 		public bool LeftDown;
 		public bool InputSpace;
 		public Vector2 Position;
@@ -71,6 +72,8 @@ public class Client
 		currentByteIndex += sizeof(bool);
 		bool rightClick = BitConverter.ToBoolean(byteData, currentByteIndex);
 		currentByteIndex += sizeof(bool);
+		bool rightDown = BitConverter.ToBoolean(byteData, currentByteIndex);
+		currentByteIndex += sizeof(bool);
 		bool leftDown = BitConverter.ToBoolean(byteData, currentByteIndex);
 		currentByteIndex += sizeof(bool);
 		bool grounded = BitConverter.ToBoolean(byteData, currentByteIndex);
@@ -100,6 +103,7 @@ public class Client
 		gameLogic.InputAxisY = yInput;
 		gameLogic.InputSpace = spaceInput;
 		gameLogic.RightClick = rightClick;
+		gameLogic.RightDown = rightDown;
 		gameLogic.LeftDown = leftDown;
 		gameLogic.Position = new Vector2(posX, posY);
 		gameLogic.MousePos = new Vector2(mousePosX, mousePosY);

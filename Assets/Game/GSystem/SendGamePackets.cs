@@ -40,7 +40,8 @@ namespace Game.Systems
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.Axis.x));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.Axis.y));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.Space));
-						_currentByteArray.AddRange(BitConverter.GetBytes(input.RightClick));
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.OnRightDown));
+						_currentByteArray.AddRange(BitConverter.GetBytes(input.RightDown));
 						_currentByteArray.AddRange(BitConverter.GetBytes(input.LeftDown));
 						_currentByteArray.AddRange(BitConverter.GetBytes(movement.Grounded));
 						_currentByteArray.AddRange(BitConverter.GetBytes(entityTransform.position.x));

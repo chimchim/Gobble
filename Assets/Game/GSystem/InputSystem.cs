@@ -58,9 +58,11 @@ namespace Game.Systems
 					input.ScreenDirection = screenDirection;
 					input.Axis = new Vector2(x, y);
 					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
-					input.RightClick = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.RightClick;
+					input.OnRightDown = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.OnRightDown;
+					input.RightDown = (UnityEngine.Input.GetKey(KeyCode.Mouse1) && (!blockedByGUI || input.RightDown));
 					input.LeftDown = (UnityEngine.Input.GetKey(KeyCode.Mouse0) && (!blockedByGUI || input.LeftDown));
 					input.OnLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !blockedByGUI;
+
 					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
 
 					if (Input.GetKeyDown(KeyCode.Mouse2) && player.IsHost)

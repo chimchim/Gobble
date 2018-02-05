@@ -92,7 +92,7 @@ public class Rope : Item
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entity);
 			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-			input.RightClick = false;
+			input.OnRightDown = false;
 			resources.GraphicRope.DeActivate();
 			movement.RopeList.Clear();
 			movement.CurrentState = MovementComponent.MoveState.Grounded;
@@ -126,12 +126,12 @@ public class Rope : Item
 			var input = game.Entities.GetComponentOf<InputComponent>(entity);
 			var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-			if (input.RightClick && movement.CurrentState != MovementComponent.MoveState.Roped)
+			if (input.OnRightDown && movement.CurrentState != MovementComponent.MoveState.Roped)
 			{
 				HandleNetEventSystem.AddEventAndHandle(game, entity, NetEventRope.Make(entity, ItemNetID, true));
 				resources.GraphicRope.RopeItem = this;
 			}
-			else if (input.RightClick && movement.CurrentState == MovementComponent.MoveState.Roped && !SemiActive)
+			else if (input.OnRightDown && movement.CurrentState == MovementComponent.MoveState.Roped && !SemiActive)
 			{
 				if (resources.GraphicRope.RopeItem != null && resources.GraphicRope.RopeItem != this)
 				{

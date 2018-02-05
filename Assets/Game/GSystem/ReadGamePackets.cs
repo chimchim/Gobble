@@ -33,6 +33,7 @@ namespace Game.Systems
 						input.ScreenDirection = gameLogic.ScreenDirection;
 						input.NetworkPosition = gameLogic.Position;
 						input.LeftDown = gameLogic.LeftDown;
+						input.RightDown = gameLogic.RightDown;
 						// Do Jump
 						if (gameLogic.Grounded && gameLogic.InputSpace && !input.NetworkJump)
 						{

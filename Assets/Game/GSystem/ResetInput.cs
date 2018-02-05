@@ -23,7 +23,7 @@ namespace Game.Systems
 				if (player.Owner)
 				{
 					input.Space = false;
-					input.RightClick = false;
+					input.OnRightDown = false;
 					input.E = false;
 					input.OnLeftDown = false;
 				}

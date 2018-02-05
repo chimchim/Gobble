@@ -13,7 +13,8 @@ namespace Game.Component
 		public Vector2 Dir = new Vector2(1, 0);
 		public Vector2 ScreenDirection;
 		public bool Space;
-		public bool RightClick;
+		public bool RightDown;
+		public bool OnRightDown;
 		public bool LeftDown;
 		public bool OnLeftDown;
 		public bool E;
@@ -34,7 +35,7 @@ namespace Game.Component
 		{
 			Axis = Vector2.zero;
 			Space = false;
-			RightClick = false;
+			OnRightDown = false;
 			GameLogicPackets = null;
 			GameLogicPackets = new List<Client.GameLogicPacket>();
 			_pool.Recycle(this);
