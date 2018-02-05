@@ -14,7 +14,7 @@ public class Spear : Item
 {
 
 	private static ObjectPool<Spear> _pool = new ObjectPool<Spear>(10);
-
+	public Animator SpearAnim;
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
@@ -34,7 +34,10 @@ public class Spear : Item
 	public override void OwnerActivate(GameManager game, int entity)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		resources.ArmEvents.Attackable = () =>
+		SpearAnim = CurrentGameObject.GetComponent<Animator>();
+		SpearAnim.enabled = true;
+		var events = SpearAnim.GetComponent<AnimationEvents>();
+		events.Attackable = () =>
 		{
 			AttackEvent(game, entity);
 		};
@@ -157,8 +160,7 @@ public class Spear : Item
 	public override void Input(GameManager game, int entity, float delta)
 	{
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		resources.FreeArmAnimator.SetBool("Spear", input.LeftDown);
+		SpearAnim.SetBool("Attack", input.LeftDown);
 		base.RotateArm(game, entity);
 
 	}
