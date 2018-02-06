@@ -70,7 +70,7 @@ namespace Game.Systems
 							{
 								#region CreateItem
 								var position = game.Entities.GetEntity(e).gameObject.transform.position;
-								HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scriptItem.WhatItem, position, force));
+								HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scriptItem.WhatItem, position, force, scriptItem.Tier));
 								Item toRemove = null;
 								foreach (Item item in itemHolder.Items.Values)
 								{
@@ -123,7 +123,7 @@ namespace Game.Systems
 								{
 									#region CreateItem
 									var position = game.Entities.GetEntity(e).gameObject.transform.position;
-									HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scr.WhatItem, position, force));
+									HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scr.WhatItem, position, force, scr.Tier));
 									Item toRemove = null;
 									foreach (Item item in itemHolder.Items.Values)
 									{

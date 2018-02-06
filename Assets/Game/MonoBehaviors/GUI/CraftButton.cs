@@ -48,7 +48,9 @@ public class CraftButton : MonoBehaviour
 		SetMaterials.Invoke(Item);
 	}
 	public void OnClick()
-	{	
+	{
+		if (CollectionButton)
+			return;
 		if (GameUnity.DebugMode)
 		{
 			Item.MakeItem.Invoke();
@@ -66,6 +68,8 @@ public class CraftButton : MonoBehaviour
 
 	public void OnCollectionClick()
 	{
+		if (!CollectionButton)
+			return;
 		Crafting.Panel.DisableCollection();
 		Crafting.Panel.SetCollection((ScriptableItemCollection)Item, Ingredients);
 	}

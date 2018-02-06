@@ -13,6 +13,16 @@ namespace Game
 {
 	public class E
 	{
+		public enum ItemTier
+		{
+			Zero,
+			One,
+			Two,
+			Three,
+			Four,
+			Five
+
+		}
 		public enum Inventory
 		{
 			Main,

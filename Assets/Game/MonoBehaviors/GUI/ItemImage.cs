@@ -18,11 +18,13 @@ public class ItemImage : MonoBehaviour, IPointerDownHandler, IPointerEnterHandle
 	public E.Inventory Type;
 	public void OnPointerExit(PointerEventData eventData)
 	{
+		Debug.Log("NULL");
 		RealTime.CurrentSwitch2 = null;
 	}
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{
+		Debug.Log("SET");
 		RealTime.CurrentSwitch2 = this;
 	}
 
@@ -30,7 +32,7 @@ public class ItemImage : MonoBehaviour, IPointerDownHandler, IPointerEnterHandle
 	{
 		if (Image.enabled && eventData.button == PointerEventData.InputButton.Left)
 		{
-			GameUnity.FollowMouse.transform.position = Input.mousePosition + new Vector3(0, 15f, 0);
+			GameUnity.FollowMouse.transform.position = Input.mousePosition + new Vector3(0, 35f, 0);
 			GameUnity.FollowMouse.gameObject.SetActive(true);
 			GameUnity.FollowMouse.sprite = Image.sprite;
 			RealTime.ChangingItem = true;

@@ -20,7 +20,7 @@ public class ScriptableItem : ScriptableObject
 	public List<Recipe> IngredientsNeeded;
 	public ItemCategory Category;
 	public Item.ItemID WhatItem;
-	
+	public int Tier;
 	[Serializable]
 	public struct Recipe
 	{

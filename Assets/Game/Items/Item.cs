@@ -30,7 +30,7 @@ public abstract class Item
 
 	public bool Remove;
 	public bool GotUpdated;
-
+	
 	public virtual void ClientActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);

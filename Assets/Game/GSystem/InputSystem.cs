@@ -103,6 +103,7 @@ namespace Game.Systems
 				var switch1 = game.RealVariables.CurrentSwitch;
 				if (switch2 == null)
 				{
+					Debug.Log("Switch2 NULL");
 					switch1.Item.ThrowItem(game, holder.EntityID);
 					if (currentItem == game.RealVariables.CurrentSwitch.Item)
 					{
@@ -113,12 +114,14 @@ namespace Game.Systems
 				{
 					if (currentItem == switch1.Item)
 					{
-						if(switch2.Item != null)
+						Debug.Log("currentItem switch 1 " + switch1.Item);
+						if (switch2.Item != null)
 							switch2.Item.OwnerActivate(game, holder.EntityID);
 						currentItem.OwnerDeActivate(game, holder.EntityID);
 					}
 					if (currentItem == switch2.Item)
 					{
+						Debug.Log("currentItem switch 2 " + switch1.Item);
 						switch1.Item.OwnerActivate(game, holder.EntityID);
 						if(currentItem != null)
 							currentItem.OwnerDeActivate(game, holder.EntityID);

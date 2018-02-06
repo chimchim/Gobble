@@ -12,7 +12,7 @@ public class NetCreateItem : NetEvent
 	public Vector2 Force;
 	public Vector2 Position;
 	public int Creator;
-
+	public int ItemTier;
 	public override void Recycle()
 	{
 		Iterations = 0;
@@ -44,7 +44,7 @@ public class NetCreateItem : NetEvent
 		}
 		if (ItemID == Item.ItemID.Spear)
 		{
-			visible = Spear.MakeItem(game, Position, Force);
+			visible = Spear.MakeItem(game, Position, Force, ItemTier);
 		}
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
@@ -57,13 +57,14 @@ public class NetCreateItem : NetEvent
 		return _pool.GetNext();
 	}
 
-    public static NetCreateItem Make(int creator, Item.ItemID itemID, Vector3 position, Vector2 force)
+    public static NetCreateItem Make(int creator, Item.ItemID itemID, Vector3 position, Vector2 force, int itemTier = 0)
 	{
 		var evt = _pool.GetNext();
 		evt.ItemID = itemID;
 		evt.Force = force;
 		evt.Position = position;
 		evt.Creator = creator;
+		evt.ItemTier = itemTier;
 		return evt;
 	}
 
@@ -82,6 +83,7 @@ public class NetCreateItem : NetEvent
 		index += sizeof(float);
 		float forceY = BitConverter.ToSingle(byteData, index);
 		index += sizeof(float);
+		ItemTier = BitConverter.ToInt32(byteData, index); index += sizeof(int);
 
 		ItemID = (Item.ItemID)id;
 		Position = new Vector2(posX, posY);
@@ -98,5 +100,6 @@ public class NetCreateItem : NetEvent
 		outgoing.AddRange(BitConverter.GetBytes(Position.y));
 		outgoing.AddRange(BitConverter.GetBytes(Force.x));
 		outgoing.AddRange(BitConverter.GetBytes(Force.y));
+		outgoing.AddRange(BitConverter.GetBytes((int)ItemTier));
 	}
 }

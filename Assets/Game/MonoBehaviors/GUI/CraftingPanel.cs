@@ -27,14 +27,9 @@ public class CraftingPanel : MonoBehaviour
 			if (allItems.AllItemsList[i].Category == category)
 			{
 				CraftButtons[i].gameObject.SetActive(true);
-				if (allItems.AllItemsList[i].GetType() == typeof(ScriptableItemCollection))
+				CraftButtons[i].CollectionButton = (allItems.AllItemsList[i].GetType() == typeof(ScriptableItemCollection));
+				if (CraftButtons[i].CollectionButton)
 				{
-					if (!CraftButtons[i].CollectionIsSet)
-					{
-						CraftButtons[i].CollectionIsSet = true;
-						CraftButtons[i].GetComponent<Button>().onClick.RemoveListener(CraftButtons[i].OnClick);
-						CraftButtons[i].GetComponent<Button>().onClick.AddListener(CraftButtons[i].OnCollectionClick);
-					}
 					if (currentCollection == allItems.AllItemsList[i])
 					{
 						SetCollection(currentCollection, allItems.IngredientAmount);
