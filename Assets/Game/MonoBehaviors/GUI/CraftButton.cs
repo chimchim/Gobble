@@ -14,9 +14,14 @@ public class CraftButton : MonoBehaviour
 
 	public Crafting Crafting;
 	private ScriptableItem Item;
+	private int[] Ingredients;
 	public bool IsSelected;
+
+	public bool CollectionIsSet;
+	public bool CollectionButton;
 	public void SetItem(ScriptableItem item, int[] ingredients)
 	{
+		Ingredients = ingredients;
 		Item = item;
 		int amount = -1;
 		for (int i = 0; i < item.IngredientsNeeded.Count; i++)
@@ -43,7 +48,7 @@ public class CraftButton : MonoBehaviour
 		SetMaterials.Invoke(Item);
 	}
 	public void OnClick()
-	{
+	{	
 		if (GameUnity.DebugMode)
 		{
 			Item.MakeItem.Invoke();
@@ -56,5 +61,12 @@ public class CraftButton : MonoBehaviour
 			CurrentAmount--;
 			Item.MakeItem.Invoke();
 		}
+		
+	}
+
+	public void OnCollectionClick()
+	{
+		Crafting.Panel.DisableCollection();
+		Crafting.Panel.SetCollection((ScriptableItemCollection)Item, Ingredients);
 	}
 }

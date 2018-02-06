@@ -63,52 +63,112 @@ namespace Game.Systems
 					{
 
 						var scriptItem = game.GameResources.AllItems.AllItemsList[i];
-						scriptItem.MakeItem = () =>
+						var collection = scriptItem as ScriptableItemCollection;
+						if (collection == null)
 						{
-							var position = game.Entities.GetEntity(e).gameObject.transform.position;
-							HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scriptItem.WhatItem, position, force));
-							Item toRemove = null;
-							foreach (Item item in itemHolder.Items.Values)
+							scriptItem.MakeItem = () =>
 							{
-								var currentItem = item as Ingredient;
-								if (currentItem != null)
+								#region CreateItem
+								var position = game.Entities.GetEntity(e).gameObject.transform.position;
+								HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scriptItem.WhatItem, position, force));
+								Item toRemove = null;
+								foreach (Item item in itemHolder.Items.Values)
 								{
-									for (int j = 0; j < scriptItem.IngredientsNeeded.Count; j++)
+									var currentItem = item as Ingredient;
+									if (currentItem != null)
 									{
-										if (currentItem.IngredientType == scriptItem.IngredientsNeeded[j].Ingredient)
+										for (int j = 0; j < scriptItem.IngredientsNeeded.Count; j++)
 										{
-											item.Quantity -= scriptItem.IngredientsNeeded[j].AmountNeeded;
-											game.GameResources.AllItems.IngredientAmount[(int)currentItem.IngredientType] -= scriptItem.IngredientsNeeded[j].AmountNeeded;
-											if (item.Quantity <= 0)
+											if (currentItem.IngredientType == scriptItem.IngredientsNeeded[j].Ingredient)
 											{
-												toRemove = item;
-												if (itemHolder.ActiveItems.Contains(item))
+												item.Quantity -= scriptItem.IngredientsNeeded[j].AmountNeeded;
+												game.GameResources.AllItems.IngredientAmount[(int)currentItem.IngredientType] -= scriptItem.IngredientsNeeded[j].AmountNeeded;
+												if (item.Quantity <= 0)
 												{
-													item.OwnerDeActivate(game, e);
-													itemHolder.Hands.OwnerActivate(game, e);
-												}
+													toRemove = item;
+													if (itemHolder.ActiveItems.Contains(item))
+													{
+														item.OwnerDeActivate(game, e);
+														itemHolder.Hands.OwnerActivate(game, e);
+													}
 
-												inventory.InventoryBackpack.RemoveItem(item);
-												inventory.MainInventory.RemoveItem(item);
-												HandleNetEventSystem.AddEventIgnoreOwner(game, e, NetDestroyItem.Make(e, item.ItemNetID));
-											}
-											else
-											{
-												inventory.InventoryBackpack.SetQuantity(item);
-												inventory.MainInventory.SetQuantity(item);
+													inventory.InventoryBackpack.RemoveItem(item);
+													inventory.MainInventory.RemoveItem(item);
+													HandleNetEventSystem.AddEventIgnoreOwner(game, e, NetDestroyItem.Make(e, item.ItemNetID));
+												}
+												else
+												{
+													inventory.InventoryBackpack.SetQuantity(item);
+													inventory.MainInventory.SetQuantity(item);
+												}
 											}
 										}
 									}
 								}
-							}
-							if (toRemove != null)
+								if (toRemove != null)
+								{
+									itemHolder.Items.Remove(toRemove.ItemNetID);
+									GameObject.Destroy(toRemove.CurrentGameObject);
+									toRemove.Recycle();
+								}
+								inventory.Crafting.SetCurrent();
+								#endregion
+							};
+						}
+						else
+						{
+							foreach (ScriptableItem scr in collection.Collection)
 							{
-								itemHolder.Items.Remove(toRemove.ItemNetID);
-								GameObject.Destroy(toRemove.CurrentGameObject);
-								toRemove.Recycle();
+								scr.MakeItem = () =>
+								{
+									#region CreateItem
+									var position = game.Entities.GetEntity(e).gameObject.transform.position;
+									HandleNetEventSystem.AddEvent(game, e, NetCreateItem.Make(e, scr.WhatItem, position, force));
+									Item toRemove = null;
+									foreach (Item item in itemHolder.Items.Values)
+									{
+										var currentItem = item as Ingredient;
+										if (currentItem != null)
+										{
+											for (int j = 0; j < scr.IngredientsNeeded.Count; j++)
+											{
+												if (currentItem.IngredientType == scr.IngredientsNeeded[j].Ingredient)
+												{
+													item.Quantity -= scr.IngredientsNeeded[j].AmountNeeded;
+													game.GameResources.AllItems.IngredientAmount[(int)currentItem.IngredientType] -= scr.IngredientsNeeded[j].AmountNeeded;
+													if (item.Quantity <= 0)
+													{
+														toRemove = item;
+														if (itemHolder.ActiveItems.Contains(item))
+														{
+															item.OwnerDeActivate(game, e);
+															itemHolder.Hands.OwnerActivate(game, e);
+														}
+
+														inventory.InventoryBackpack.RemoveItem(item);
+														inventory.MainInventory.RemoveItem(item);
+														HandleNetEventSystem.AddEventIgnoreOwner(game, e, NetDestroyItem.Make(e, item.ItemNetID));
+													}
+													else
+													{
+														inventory.InventoryBackpack.SetQuantity(item);
+														inventory.MainInventory.SetQuantity(item);
+													}
+												}
+											}
+										}
+									}
+									if (toRemove != null)
+									{
+										itemHolder.Items.Remove(toRemove.ItemNetID);
+										GameObject.Destroy(toRemove.CurrentGameObject);
+										toRemove.Recycle();
+									}
+									inventory.Crafting.SetCurrent();
+									#endregion
+								};
 							}
-							inventory.Crafting.SetCurrent();
-						};
+						}
 					}
 				}
 			}

@@ -430,6 +430,7 @@
     <Compile Include="Assets\Game\ScriptableObjects\Items\RopeScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItem.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItemBaseScriptable.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\Items\ScriptableItemCollection.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\SpearScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\LayerMasksVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\MapVariables.cs" />
