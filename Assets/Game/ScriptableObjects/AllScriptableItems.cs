@@ -16,7 +16,7 @@ public class AllScriptableItems : ScriptableObject
 	public ScriptableItem Spear;
 
 	public List<ScriptableItem> AllItemsList = new List<ScriptableItem>();
-	public CharacterScriptable[] CharactersScriptables;
+	public ScriptableCharacter[] CharactersScriptables;
 	[SerializeField]
 	Characters CharacterOrder;
 	[Header("Gatherable ")]

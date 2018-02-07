@@ -15,8 +15,8 @@ public class NetJump : NetEvent
 	{
 		var animator = game.Entities.GetEntity(Player).Animator;
 		var movement = game.Entities.GetComponentOf<MovementComponent>(Player);
-
-		movement.CurrentVelocity.y = GameUnity.JumpSpeed;
+		var stats = game.Entities.GetComponentOf<Stats>(Player);
+		movement.CurrentVelocity.y = stats.CharacterStats.JumpSpeed;
 		animator.SetBool("Jump", true);
 	}
 

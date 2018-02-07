@@ -19,6 +19,7 @@ namespace Game
 		public float MoveSpeed;
 		public float JumpSpeed;
 		public float MaxHealth;
+		public float Weight;
 	}
 
 	public enum Characters
@@ -92,8 +93,8 @@ namespace Game
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
-			var charBase = GameResources.AllItems.CharactersScriptables[(int)character].GetStats();
-			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character, charBase));
+		
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
@@ -122,11 +123,11 @@ namespace Game
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
-			var charBase = GameResources.AllItems.CharactersScriptables[(int)character].GetStats();
-			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character, charBase));
+			var scrChar = GameResources.AllItems.CharactersScriptables[(int)character];
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			ent.AddComponent(ActionQueue.Make(ent.ID));
-			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
+			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime, scrChar));
 			ent.AddComponent(InputComponent.Make(ent.ID));
 			ent.AddComponent(NetEventComponent.Make(ent.ID));
 			var inventory = InventoryComponent.Make(ent.ID);
@@ -274,6 +275,7 @@ namespace Game
 		}
 		public GameObject GetCharacterByTeam(int team)
 		{
+			return GameResources.Prefabs.Yolanda;
 			switch (team)
 			{
 				case 0:

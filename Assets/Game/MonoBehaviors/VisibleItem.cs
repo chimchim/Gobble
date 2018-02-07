@@ -59,7 +59,7 @@ public class VisibleItem : MonoBehaviour
 		timer -= Time.deltaTime;
 		//if (grounded && (Math.Abs(Force.x) <= 0 || !grounded))
 		//	return;
-		Force.y += -GameUnity.Gravity * GameUnity.Weight;
+		Force.y += -GameUnity.Gravity * 2;
 		Force.x = Force.x * GameUnity.ForceDamper;
 		Force.x = Math.Abs(Force.x) < 0.5f ? 0 : Force.x;
 

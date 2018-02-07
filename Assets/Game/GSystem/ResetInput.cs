@@ -20,14 +20,10 @@ namespace Game.Systems
 			{
 				var player = game.Entities.GetComponentOf<Player>(entity);
 				var input = game.Entities.GetComponentOf<InputComponent>(entity);
-				if (player.Owner)
-				{
-					input.Space = false;
-					input.OnRightDown = false;
-					input.E = false;
-					input.OnLeftDown = false;
-				}
-				input.NetworkJump = false;
+
+				input.Space = false;
+				input.OnRightDown = false;
+				input.OnLeftDown = false;
 			}
 		}
 

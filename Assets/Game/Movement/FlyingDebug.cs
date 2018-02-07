@@ -19,9 +19,9 @@ namespace Game.Movement
 		{
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
-
-			movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed * 3;
-			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 3;
+			float PlayerSpeed = stats.CharacterStats.MoveSpeed;
+			movement.CurrentVelocity.x = input.Axis.x * PlayerSpeed * 3;
+			movement.CurrentVelocity.y = input.Axis.y * PlayerSpeed * 3;
 			float yMovement = movement.CurrentVelocity.y * delta;
 			float xMovement = movement.CurrentVelocity.x * delta;
 

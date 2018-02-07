@@ -1,4 +1,5 @@
-﻿using Game.Component;
+﻿using Game;
+using Game.Component;
 using Game.Systems;
 using System;
 using System.Collections.Generic;
@@ -6,12 +7,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public interface IHealth
-{
-	void DoDamage(float dmg);
-}
 public abstract class Item
 {
+	public interface IHealth{ void DoDamage(float dmg); }
+	public interface IOnMouseRight{ void OnMouseRight(GameManager game, int entity); }
+	public interface IOnMouseLeft { void OnMouseLeft(GameManager game, int entity); }
 	public enum ItemID
 	{
 		Rope,
@@ -34,8 +34,8 @@ public abstract class Item
 	public virtual void ClientActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		var player = game.Entities.GetComponentOf<Player>(entity);
-		player.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
+		var stats = game.Entities.GetComponentOf<Stats>(entity);
+		stats.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
 		if (!itemHolder.ActiveItems.Contains(this))
 		{
 			itemHolder.ActiveItems.Add(this);
@@ -54,9 +54,8 @@ public abstract class Item
 	public virtual void OwnerActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
-		var player = game.Entities.GetComponentOf<Player>(entity);
-		player.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
-		Debug.Log("player.CharacterStats.ArmRotationSpeed " + player.CharacterStats.ArmRotationSpeed);
+		var stats = game.Entities.GetComponentOf<Stats>(entity);
+		stats.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
 		if (!itemHolder.ActiveItems.Contains(this))
 		{
 			itemHolder.ActiveItems.Add(this);
@@ -153,7 +152,8 @@ public abstract class Item
 		(inv.InventoryBackpack.CurrentCount < GameUnity.BackpackInventorySize);
 		return hasSlot;
 	}
-	public virtual void ThrowItem(Game.GameManager game, int entity)
+	public abstract void ThrowItem(GameManager game, int entity);
+	public virtual void DestroyItem(GameManager game, int entity)
 	{
 		var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);

@@ -66,7 +66,7 @@ public class Ingredient : Item
 
 	public override void ThrowItem(GameManager game, int entity)
 	{
-		base.ThrowItem(game, entity);
+		DestroyItem(game, entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var inventory = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		game.GameResources.AllItems.IngredientAmount[(int)IngredientType] -= Quantity;

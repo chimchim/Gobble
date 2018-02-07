@@ -60,7 +60,7 @@ namespace Game.Movement
 			}
 
 			var direction = goTo - position;
-			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+			animal.CurrentVelocity.y += -GameUnity.Gravity * animal.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
 			animal.CurrentVelocity.x = Math.Sign(direction.x) * game.Animals.RabbitSpeed;
 			float yMovement = animal.CurrentVelocity.y * delta;

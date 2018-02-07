@@ -10,7 +10,8 @@ namespace Game.Component
 		public float OxygenSeconds;
 		public float MaxOxygenSeconds;
 		public HpBar HpBar;
-
+		public ScriptableCharacter ScrChar;
+		public CharacterStats CharacterStats;
 		public override void Recycle()
 		{
 			HpBar = null;
@@ -24,13 +25,15 @@ namespace Game.Component
 		{
 
 		}
-		public static Stats Make(int entityID, float hp, float oxygenSec, float maxOxygenSec)
+		public static Stats Make(int entityID, float hp, float oxygenSec, float maxOxygenSec, ScriptableCharacter scrChar)
 		{
 			Stats comp = _pool.GetNext();
 			comp.EntityID = entityID;
 			comp.HP = hp;
 			comp.OxygenSeconds = oxygenSec;
 			comp.MaxOxygenSeconds = maxOxygenSec;
+			comp.ScrChar = scrChar;
+			comp.CharacterStats = scrChar.GetStats();
 			return comp;
 		}
 	}

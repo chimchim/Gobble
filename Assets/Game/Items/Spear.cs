@@ -8,9 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using IOnMouseRight =  Item.IOnMouseRight;
+using IOnMouseLeft = Item.IOnMouseLeft;
 using Effects = Game.Effects;
 using GatherLevel = GatherableScriptable.GatherLevel;
-public class Spear : Item
+
+public class Spear : Item, IOnMouseRight, IOnMouseLeft
 {
 
 	private static ObjectPool<Spear> _pool = new ObjectPool<Spear>(10);
@@ -112,7 +115,7 @@ public class Spear : Item
 
 	public override void ThrowItem(GameManager game, int entity)
 	{
-		base.ThrowItem(game, entity);
+		DestroyItem(game, entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
 		var ent = game.Entities.GetEntity(entity);
@@ -156,70 +159,78 @@ public class Spear : Item
 	{
 		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
 	}
-	int SpearCounter = 0;
-	bool attacking = false;
-	struct AttackData
-	{
-		public float currentTime;
-		public float CurrentPosX;
-	}
 
-	public float currentTime;
+	bool attacking = false;
+	float currentTime = 0;
 	float starX = 0;
+	Vector2 attackDir;
 	public override void Input(GameManager game, int entity, float delta)
 	{
-		var events = SpearAnim.GetComponent<AnimationEvents>();
-		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var temp = events.Transform1.localPosition;
-		if (input.OnLeftDown)
-		{
-			SpearCounter++;
-			//SpearAnim.SetTrigger("AttackTrigger");
-			attacking = true;
-			//time = 0;
-			starX = temp.x;
-			currentTime = 0;
-		}
-		//SpearAnim.SetBool("AttackLoop", input.RightDown);
 		if (attacking)
 		{
+			var events = SpearAnim.GetComponent<AnimationEvents>();
+			var temp = events.transform.localPosition;
 			currentTime += delta;
 			temp = events.Transform1.localPosition;
 			float time = (currentTime / SpearScript.OutTime);
 			if (time >= 1)
 			{
-
 				time = ((currentTime - SpearScript.OutTime) / (SpearScript.InTime));
 				temp.x = Mathf.Lerp(SpearScript.Length, 0, (time)) + starX;
+				attacking = (time < 1);
 			}
 			else
 			{
 				currentTime += delta;
 				time = (currentTime / SpearScript.OutTime);
 				temp.x = Mathf.Lerp(0, SpearScript.Length, (time)) + starX;
+				
 			}
 			events.Transform1.localPosition = temp;
 		}
-		base.RotateArm(game, entity);
-
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{
-		int spearCounter = BitConverter.ToInt32(byteData, currentIndex); currentIndex += sizeof(int);
-		if (spearCounter > SpearCounter)
-		{
-			SpearCounter = spearCounter;
-			SpearAnim.SetTrigger("AttackTrigger");
-		}
+		float x = BitConverter.ToSingle(byteData, currentIndex); currentIndex += sizeof(float);
+		float y = BitConverter.ToSingle(byteData, currentIndex); currentIndex += sizeof(float);
+		attackDir = new Vector2(x, y);
 	}
 
 
 	public override void Serialize(GameManager game, int entity, List<byte> byteArray)
 	{
-
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
-		byteArray.AddRange(BitConverter.GetBytes(SpearCounter));
+
+		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
+		byteArray.AddRange(BitConverter.GetBytes(resources.FreeArm.up.x));
+		byteArray.AddRange(BitConverter.GetBytes(resources.FreeArm.up.y));
+	}
+
+	void IOnMouseRight.OnMouseRight(GameManager game, int entity)
+	{
+		var events = SpearAnim.GetComponent<AnimationEvents>();
+		var temp = events.Transform1.localPosition;
+
+		if (!attacking)
+		{
+			attacking = true;
+			starX = temp.x;
+			currentTime = 0;
+		}
+	}
+
+	void IOnMouseLeft.OnMouseLeft(GameManager game, int entity)
+	{
+		var events = SpearAnim.GetComponent<AnimationEvents>();
+		var temp = events.Transform1.localPosition;
+
+		if (!attacking)
+		{
+			attacking = true;
+			starX = temp.x;
+			currentTime = 0;
+		}
 	}
 }
 

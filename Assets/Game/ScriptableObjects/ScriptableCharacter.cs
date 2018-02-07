@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[CreateAssetMenu(fileName = "Data", menuName = "Variables/CharacterScriptable", order = 1)]
-public class CharacterScriptable : ScriptableObject
+[CreateAssetMenu(fileName = "Data", menuName = "Variables/ScriptableCharacter", order = 1)]
+public class ScriptableCharacter : ScriptableObject
 {
 	public float Health;
 	public float ArmRotation;
 	public float JumpSpeed;
 	public float MoveSpeed;
-
+	public float Weight;
 	public Game.CharacterStats GetStats()
 	{
 		return new Game.CharacterStats()
@@ -16,7 +16,8 @@ public class CharacterScriptable : ScriptableObject
 			MaxHealth = Health,
 			ArmRotationSpeed = ArmRotation,
 			JumpSpeed = JumpSpeed,
-			MoveSpeed = MoveSpeed
+			MoveSpeed = MoveSpeed,
+			Weight = Weight
 		};
 	}
 }

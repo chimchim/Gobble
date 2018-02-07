@@ -33,14 +33,15 @@ namespace Game.Systems
 			}
 			foreach (int entity in entities)
 			{
+				var player = game.Entities.GetComponentOf<Player>(entity);
 				var ent = game.Entities.GetEntity(entity);
 				ent.AddComponent(ActionQueue.Make(ent.ID));
-				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
+				var scrChar = game.GameResources.AllItems.CharactersScriptables[(int)player.Character];
+				ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime, scrChar));
 				ent.AddComponent(InputComponent.Make(ent.ID));
 				ent.AddComponent(NetEventComponent.Make(ent.ID));
 				var inventory = InventoryComponent.Make(ent.ID);
 				ent.AddComponent(inventory);
-				var player = game.Entities.GetComponentOf<Player>(entity);
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
 				var movecomp = MovementComponent.Make(ent.ID);
 				ent.AddComponent(movecomp);

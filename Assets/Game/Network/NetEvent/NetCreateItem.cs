@@ -93,7 +93,7 @@ public class NetCreateItem : NetEvent
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
 		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetCreateItem));
-		outgoing.AddRange(BitConverter.GetBytes(24));
+		outgoing.AddRange(BitConverter.GetBytes(28));
 		outgoing.AddRange(BitConverter.GetBytes((int)ItemID));
 		outgoing.AddRange(BitConverter.GetBytes(Creator));
 		outgoing.AddRange(BitConverter.GetBytes(Position.x));

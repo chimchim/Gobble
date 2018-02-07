@@ -57,7 +57,7 @@ namespace Game.Movement
 			return angle;
 		}
 
-		public static void ReleaseRope(ResourcesComponent resources, MovementComponent movement, Vector2 playerPos, Vector2 transformPos)
+		public static void ReleaseRope(ResourcesComponent resources, MovementComponent movement, Stats stats, Vector2 playerPos, Vector2 transformPos)
 		{
 			var diff1 = playerPos - transformPos;
 			float speed = diff1.y * (1/Time.fixedDeltaTime);
@@ -74,8 +74,8 @@ namespace Game.Movement
 			{
 				jumpSpeedMult = 0;
 			}
-			movement.CurrentVelocity.y += GameUnity.JumpSpeed * jumpSpeedMult;
-			movement.CurrentVelocity.y = Mathf.Clamp(movement.CurrentVelocity.y, 0, (GameUnity.JumpSpeed + GameUnity.JumpSpeed));
+			movement.CurrentVelocity.y += stats.CharacterStats.JumpSpeed * jumpSpeedMult;
+			movement.CurrentVelocity.y = Mathf.Clamp(movement.CurrentVelocity.y, 0, (stats.CharacterStats.JumpSpeed + stats.CharacterStats.JumpSpeed));
 			movement.ForceVelocity.x = diff1.x * (1 / Time.fixedDeltaTime);
 			resources.GraphicRope.DeActivate();
 			movement.RopeList.Clear();
@@ -87,6 +87,7 @@ namespace Game.Movement
 			var player = game.Entities.GetComponentOf<Player>(entityID);
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Stats>(entityID);
+			float PlayerSpeed = stats.CharacterStats.MoveSpeed;
 			var resources = game.Entities.GetComponentOf<ResourcesComponent>(entityID);
 			var animator = entity.Animator;
 			animator.SetBool("Roped", true);
@@ -180,7 +181,7 @@ namespace Game.Movement
 				xMovement = playerPos.x - entityGameObject.transform.position.x;
 				yMovement = playerPos.y - entityGameObject.transform.position.y;
 				Debug.DrawLine(playerPos, playerPos+(Vector2.up * 4), Color.red);
-				if ((input.Space || input.NetworkJump))
+				if (input.Space)
 				{
 					if (player.Owner)
 					{
@@ -191,7 +192,7 @@ namespace Game.Movement
 							rope.OwnerDeActivate(game, resources.EntityID);
 						}
 					}
-					ReleaseRope(resources, movement, playerPos, new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y));
+					ReleaseRope(resources, movement, stats, playerPos, new Vector2(entityGameObject.transform.position.x, entityGameObject.transform.position.y));
 					return;
 				}
 
@@ -203,14 +204,14 @@ namespace Game.Movement
 				{
 					if (input.Axis.x > 0)
 					{
-						gravity += gravity * GameUnity.PlayerSpeed/6 * GameUnity.RopeSpeedMult;
+						gravity += gravity * PlayerSpeed/6 * GameUnity.RopeSpeedMult;
 					}
 				}
 				if (playerPos.x > origin.x)
 				{
 					if (input.Axis.x < 0)
 					{
-						gravity += gravity * GameUnity.PlayerSpeed/6 * GameUnity.RopeSpeedMult;
+						gravity += gravity * PlayerSpeed/6 * GameUnity.RopeSpeedMult;
 					}
 				}
 				#endregion
@@ -226,10 +227,10 @@ namespace Game.Movement
 			#region Else 
 			else
 			{
-				movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+				movement.CurrentVelocity.y += -GameUnity.Gravity * stats.CharacterStats.Weight;
 				movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
 				if(movement.Grounded)
-					movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+					movement.CurrentVelocity.x = input.Axis.x * PlayerSpeed;
 
 				movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
 				movement.ForceVelocity.y = Mathf.Clamp(movement.ForceVelocity.y, -15, 15);
@@ -243,9 +244,9 @@ namespace Game.Movement
 				if(input.Axis.x != 0)
 					animator.SetBool("Run", true);
 				Vector2 diffvec = playerPos - movement.CurrentRoped.origin + new Vector2(xMovement, yMovement);
-				if ((input.Space && movement.Grounded) || input.NetworkJump)
+				if (input.Space && movement.Grounded)
 				{
-					movement.CurrentVelocity.y = GameUnity.JumpSpeed;
+					movement.CurrentVelocity.y = stats.CharacterStats.JumpSpeed;
 				}
 				if (diffvec.magnitude > len)
 				{

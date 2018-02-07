@@ -66,7 +66,8 @@ namespace Game.Movement
 					animal.TransitionState(game, entity, this.GetType(), typeof(RabbitPatrol), host);
 				}
 			}
-			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+
+			animal.CurrentVelocity.y += -GameUnity.Gravity * animal.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
 			animal.CurrentVelocity.x = 0;
 			float yMovement = animal.CurrentVelocity.y * delta;

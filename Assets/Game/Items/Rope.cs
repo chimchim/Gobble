@@ -108,7 +108,7 @@ public class Rope : Item
 			return;
 		}
 
-		base.ThrowItem(game, entity);
+		DestroyItem(game, entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
 		var ent = game.Entities.GetEntity(entity);
@@ -187,7 +187,7 @@ public class Rope : Item
 			var playerPosX = movement.CurrentRoped.origin.x + (-movement.CurrentRoped.Length * Mathf.Sin(ropeAngle));
 			var playerPosY = movement.CurrentRoped.origin.y + (-movement.CurrentRoped.Length * Mathf.Cos(ropeAngle));
 			otherTransform.position = pack.Position;
-			Game.Movement.Roped.ReleaseRope(resources, movement, new Vector2(playerPosX, playerPosY), pack.Position);
+			Game.Movement.Roped.ReleaseRope(resources, movement, game.Entities.GetComponentOf<Stats>(entity), new Vector2(playerPosX, playerPosY), pack.Position);
 			GetRopes(byteData, ref currentIndex, movement);
 
 		}

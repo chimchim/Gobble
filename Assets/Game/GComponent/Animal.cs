@@ -17,6 +17,7 @@ namespace Game.Component
 		public Vector2 HostPosition;
 		public Vector2 HostVelocity;
 		public float Health;
+		public float Weight;
 		public override void Recycle()
 		{
 			_pool.Recycle(this);
@@ -31,6 +32,7 @@ namespace Game.Component
 			Animal comp = _pool.GetNext();
 			comp.EntityID = entityID;
 			comp.States = states;
+			comp.Weight = 2;
 			return comp;
 		}
 

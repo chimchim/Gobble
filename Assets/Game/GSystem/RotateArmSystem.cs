@@ -20,9 +20,9 @@ namespace Game.Systems
 			{
 				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
-				var player = game.Entities.GetComponentOf<Player>(e);
+				var stats = game.Entities.GetComponentOf<Stats>(e);
 				var entity = game.Entities.GetEntity(e);
-				float speed = player.CharacterStats.ArmRotationSpeed;
+				float speed = stats.CharacterStats.ArmRotationSpeed;
 				Vector2 pos = entity.gameObject.transform.position;
 				if (entity.Animator.transform.eulerAngles.y > 6)
 				{

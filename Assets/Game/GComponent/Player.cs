@@ -13,8 +13,7 @@ namespace Game.Component
 		public bool Enemy;
 		public int LobbySlot;
 		public Characters Character;
-		public CharacterStats CharacterBaseStats;
-		public CharacterStats CharacterStats;
+		
 		public float Health;
 
 		public bool Dead { get { return Health <= 0; } }
@@ -32,7 +31,7 @@ namespace Game.Component
         {
 
         }
-		public static Player MakeFromLobby(int entityID, bool owner, string name, bool isHost, int team, Characters character, CharacterStats baseStats)
+		public static Player MakeFromLobby(int entityID, bool owner, string name, bool isHost, int team, Characters character)
 		{
 			Player comp = _pool.GetNext();
 			comp.EntityID = entityID;
@@ -43,8 +42,6 @@ namespace Game.Component
 			comp.LobbySlot = -1;
 			comp.Character = character;
 			comp.Health = 100;
-			comp.CharacterBaseStats = baseStats;
-			comp.CharacterStats = baseStats;
 			return comp;
 		}
 		public static Player Make(int entityID, bool owner)

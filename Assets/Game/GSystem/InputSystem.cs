@@ -57,12 +57,29 @@ namespace Game.Systems
 					input.ArmDirection = resources.FreeArm.up;
 					input.ScreenDirection = screenDirection;
 					input.Axis = new Vector2(x, y);
-					input.Space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
-					input.OnRightDown = UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.OnRightDown;
 					input.RightDown = (UnityEngine.Input.GetKey(KeyCode.Mouse1) && (!blockedByGUI || input.RightDown));
 					input.LeftDown = (UnityEngine.Input.GetKey(KeyCode.Mouse0) && (!blockedByGUI || input.LeftDown));
-					input.OnLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !blockedByGUI;
+					#region InputEvents
 
+					var space = UnityEngine.Input.GetKeyDown(KeyCode.Space) || input.Space;
+					if (!input.Space && space)
+					{
+						input.Space = space;
+						HandleNetEventSystem.AddEventAndHandle(game, e, NetInputKeyDown.Make(e, KeyCode.Space));
+					}
+					var onLeftDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0) || input.OnLeftDown) && !blockedByGUI;
+					if (!input.OnLeftDown && onLeftDown)
+					{
+						input.OnLeftDown = onLeftDown;
+						HandleNetEventSystem.AddEventAndHandle(game, e, NetInputKeyDown.Make(e, KeyCode.Mouse0));
+					}
+					var onRightDown = (UnityEngine.Input.GetKeyDown(KeyCode.Mouse1) || input.OnLeftDown) && !blockedByGUI;
+					if (!input.OnRightDown && onRightDown)
+					{
+						input.OnRightDown = onRightDown;
+						HandleNetEventSystem.AddEventAndHandle(game, e, NetInputKeyDown.Make(e, KeyCode.Mouse1));
+					} 
+					#endregion
 					input.E = UnityEngine.Input.GetKeyDown(KeyCode.E) || input.E;
 
 					if (Input.GetKeyDown(KeyCode.Mouse2) && player.IsHost)

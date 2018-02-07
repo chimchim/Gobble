@@ -25,7 +25,7 @@ public class NetHitItem : NetEvent
 		if (itemholder.Items.ContainsKey(ItemID))
 		{
 			var item = itemholder.Items[ItemID];
-			IHealth item1 = item as IHealth;
+			Item.IHealth item1 = item as Item.IHealth;
 			item1.DoDamage(Damage);
 			return;
 		}

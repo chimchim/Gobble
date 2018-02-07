@@ -10,7 +10,7 @@ using System.Text;
 using UnityEngine;
 using GatherLevel = GatherableScriptable.GatherLevel;
 
-public class Shield : Item, IHealth
+public class Shield : Item, Item.IHealth
 {
 
 	private static ObjectPool<Shield> _pool = new ObjectPool<Shield>(10);
@@ -98,7 +98,7 @@ public class Shield : Item, IHealth
 	}
 	public override void ThrowItem(GameManager game, int entity)
 	{
-		base.ThrowItem(game, entity);
+		DestroyItem(game, entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
 		var ent = game.Entities.GetEntity(entity);

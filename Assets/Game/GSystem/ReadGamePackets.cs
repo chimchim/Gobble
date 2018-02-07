@@ -35,10 +35,6 @@ namespace Game.Systems
 						input.LeftDown = gameLogic.LeftDown;
 						input.RightDown = gameLogic.RightDown;
 						// Do Jump
-						if (gameLogic.Grounded && gameLogic.InputSpace && !input.NetworkJump)
-						{
-							input.NetworkJump = true;
-						}
 						input.Axis = new Vector2(gameLogic.InputAxisX, gameLogic.InputAxisY);
 
 						var itemHolder = game.Entities.GetComponentOf<ItemHolder>(gameLogic.PlayerID);

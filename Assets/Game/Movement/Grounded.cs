@@ -32,15 +32,15 @@ namespace Game.Movement
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var player = game.Entities.GetComponentOf<Game.Component.Player>(entityID);
 			var animator = entity.Animator;
-			var entityGameObject = entity.gameObject; 
+			var entityGameObject = entity.gameObject;
+			float MoveSpeed = stats.CharacterStats.MoveSpeed;
 			#endregion
 
 			if (input.Axis.y < 0)
 			{
 				movement.CurrentLayer = (int)Systems.Movement.LayerMaskEnum.Roped;
 			}
-
-			movement.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+			movement.CurrentVelocity.y += -GameUnity.Gravity * stats.CharacterStats.Weight;
 			movement.CurrentVelocity.y = Mathf.Max(movement.CurrentVelocity.y, -GameUnity.MaxGravity);
 			
 			movement.ForceVelocity.x = Mathf.Clamp(movement.ForceVelocity.x, -15, 15);
@@ -48,17 +48,17 @@ namespace Game.Movement
 			movement.ForceVelocity.x = movement.ForceVelocity.x * GameUnity.ForceDamper;
 			movement.ForceVelocity.y = movement.ForceVelocity.y * GameUnity.ForceDamper;
 
-			float combinedSpeed = Mathf.Abs(movement.ForceVelocity.x + (input.Axis.x * GameUnity.PlayerSpeed));
-			float signedCombinedSpeed = Mathf.Sign(movement.ForceVelocity.x + input.Axis.x * GameUnity.PlayerSpeed);
+			float combinedSpeed = Mathf.Abs(movement.ForceVelocity.x + (input.Axis.x * MoveSpeed));
+			float signedCombinedSpeed = Mathf.Sign(movement.ForceVelocity.x + input.Axis.x * MoveSpeed);
 			float forceXSpeed = Mathf.Abs(movement.ForceVelocity.x);
 
-			if (combinedSpeed > GameUnity.PlayerSpeed && !movement.Grounded)
+			if (combinedSpeed > MoveSpeed && !movement.Grounded)
 			{
 				movement.ForceVelocity.x = signedCombinedSpeed * forceXSpeed;
 			}
 			else
 			{
-				movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+				movement.CurrentVelocity.x = input.Axis.x * MoveSpeed;
 			}
 
 			if ((input.Space && (movement.Grounded || groundTimer < 0.2f || GameUnity.DebugMode) && player.Owner))

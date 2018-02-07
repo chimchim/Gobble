@@ -28,6 +28,7 @@ namespace Game.Movement
 			var input = game.Entities.GetComponentOf<InputComponent>(entityID);
 			var stats = game.Entities.GetComponentOf<Game.Component.Stats>(entityID);
 			var player = game.Entities.GetComponentOf<Game.Component.Player>(entityID);
+			float PlayerSpeed = stats.CharacterStats.MoveSpeed;
 			var animator = entity.Animator;
 			var entityGameObject = entity.gameObject;
 
@@ -37,8 +38,8 @@ namespace Game.Movement
 			movement.ForceVelocity = Vector2.zero;
 			//float sign = input.Axis.y == 0 ? 0 : Mathf.Sign(input.Axis.y);
 			//float inputY = Math.Max(Mathf.Abs(input.Axis.y), 0.6f) * sign;
-			movement.CurrentVelocity.y = input.Axis.y * GameUnity.PlayerSpeed * 1.3f;
-			movement.CurrentVelocity.x = input.Axis.x * GameUnity.PlayerSpeed;
+			movement.CurrentVelocity.y = input.Axis.y * PlayerSpeed * 1.3f;
+			movement.CurrentVelocity.x = input.Axis.x * PlayerSpeed;
 			float yMovement = movement.CurrentVelocity.y * delta;
 			float xMovement = movement.CurrentVelocity.x * delta;
 
@@ -68,7 +69,7 @@ namespace Game.Movement
 				}
 				if (input.Axis.y > 0)
 				{
-					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * GameUnity.PlayerSpeed * 1.6f;
+					movement.CurrentVelocity.y = Mathf.Sign(input.Axis.y) * PlayerSpeed * 1.6f;
 				}
 				var grounded2 = movement.States[(int)MovementComponent.MoveState.Grounded] as Grounded;
 				grounded2.EnterState(game, movement, entityID, entity);

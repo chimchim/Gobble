@@ -6,7 +6,6 @@ using Game.GEntity;
 using Game.Component;
 using Game.Systems;
 using System.Linq;
-using System.Linq;
 using System.Text;
 using System.Reflection;
 using System;
@@ -30,9 +29,6 @@ public class GameUnity : MonoBehaviour
 	public RealTimeVariables RealTimeVariables;
 	[SerializeField]
 	[Header("Gounded Variables")]
-	public static float Weight;
-	public static float PlayerSpeed;
-	public static float JumpSpeed;
 	public static float Gravity;
 	public static float MaxGravity;
 	public static float ExtraFallSpeedAfter;
@@ -184,12 +180,9 @@ public class GameUnity : MonoBehaviour
 
 	private void SetVariables()
 	{
-		PlayerSpeed = GroundData.PlayerSpeed;
-		JumpSpeed = GroundData.JumpSpeed;
 		Gravity = GroundData.Gravity;
 		ExtraFallSpeedAfter = GroundData.ExtraFallSpeedAfter;
 		MaxGravity = GroundData.MaxGravity;
-		Weight = GroundData.Weight;
 		ForceDamper = GroundData.ForceDamper;
 		GroundHitBox = GroundData.GroundHitBox;
 		NetworkLerpSpeed = GroundData.NetworkLerpSpeed;

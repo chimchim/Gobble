@@ -52,7 +52,7 @@ namespace Game.Movement
 				}
 			}
 
-			animal.CurrentVelocity.y += -GameUnity.Gravity * GameUnity.Weight;
+			animal.CurrentVelocity.y += -GameUnity.Gravity * animal.Weight;
 			animal.CurrentVelocity.y = Mathf.Max(animal.CurrentVelocity.y, -GameUnity.MaxGravity);
 			animal.CurrentVelocity.x = direction * game.Animals.RabbitSpeed * 1.6f;
 			float yMovement = animal.CurrentVelocity.y * delta;

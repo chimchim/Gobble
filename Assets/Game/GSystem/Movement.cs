@@ -56,8 +56,9 @@ namespace Game.Systems
 		{
 			var animator = game.Entities.GetEntity(id).Animator;
 			var movement = game.Entities.GetComponentOf<MovementComponent>(id);
+			var stats = game.Entities.GetComponentOf<Stats>(id);
 
-			movement.CurrentVelocity.y = GameUnity.JumpSpeed;
+			movement.CurrentVelocity.y = stats.CharacterStats.JumpSpeed;
 			animator.SetBool("Jump", true);
 
 		}
