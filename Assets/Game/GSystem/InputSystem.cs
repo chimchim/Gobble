@@ -119,7 +119,7 @@ namespace Game.Systems
 							switch2.Item.OwnerActivate(game, holder.EntityID);
 						currentItem.OwnerDeActivate(game, holder.EntityID);
 					}
-					if (currentItem == switch2.Item)
+					if (currentItem == switch2.Item && (currentItem != null || (switch2.Type == E.Inventory.Main && switch2.Index == inv.CurrentItemIndex)))
 					{
 						Debug.Log("currentItem switch 2 " + switch1.Item);
 						switch1.Item.OwnerActivate(game, holder.EntityID);

@@ -16,15 +16,14 @@ public class ItemImage : MonoBehaviour, IPointerDownHandler, IPointerEnterHandle
 	public RealTimeVariables RealTime;
 	public Item Item;
 	public E.Inventory Type;
+	public int Index;
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		Debug.Log("NULL");
 		RealTime.CurrentSwitch2 = null;
 	}
 
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		Debug.Log("SET");
 		RealTime.CurrentSwitch2 = this;
 	}
 

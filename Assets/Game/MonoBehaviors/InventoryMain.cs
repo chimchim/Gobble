@@ -84,6 +84,7 @@ public class InventoryMain : MonoBehaviour {
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
 			go.GetComponent<ItemImage>().Type = Game.E.Inventory.Main;
+			go.GetComponent<ItemImage>().Index = i;
 			ItemImage.Add(go.GetComponent<ItemImage>());
 		}
 		ItemImage[0].Chosen.enabled = true;
