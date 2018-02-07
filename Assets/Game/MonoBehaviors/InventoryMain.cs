@@ -83,7 +83,7 @@ public class InventoryMain : MonoBehaviour {
 			var go = Instantiate(Template);
 			go.transform.parent = transform;
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
-			go.GetComponent<ItemImage>().Type = Game.E.Inventory.Main;
+			go.GetComponent<ItemImage>().Type = Game.Inventory.Main;
 			go.GetComponent<ItemImage>().Index = i;
 			ItemImage.Add(go.GetComponent<ItemImage>());
 		}

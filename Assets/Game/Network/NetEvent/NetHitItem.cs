@@ -13,7 +13,7 @@ public class NetHitItem : NetEvent
 	public int Player;
 	public float Damage;
 	public Vector2 EffectPosition;
-	public E.Effects Effect;
+	public Effects Effect;
 	public override void Handle(GameManager game)
 	{
 		game.CreateEffect(Effect, EffectPosition, 0.5f);
@@ -38,7 +38,7 @@ public class NetHitItem : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetHitItem Make(int player, int itemID, float damage, E.Effects effect, Vector2 effectPosition)
+	public static NetHitItem Make(int player, int itemID, float damage, Effects effect, Vector2 effectPosition)
 	{
 		var evt = _pool.GetNext();
 		evt.ItemID = itemID;
@@ -62,7 +62,7 @@ public class NetHitItem : NetEvent
 		Damage = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float x = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float y = BitConverter.ToSingle(byteData, index); index += sizeof(float);
-		Effect = (E.Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
+		Effect = (Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
 		EffectPosition = new Vector2(x, y);
 	}
 

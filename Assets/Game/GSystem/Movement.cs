@@ -229,10 +229,6 @@ namespace Game.Systems
 				}
 			}
 		}
-        public void SendMessage(GameManager game, int reciever, Message message)
-        {
-
-        }
     }
 }
 //Debug.DrawLine(firstStartX, firstStartX + (Vector3.right * xoffset * sign), Color.red);

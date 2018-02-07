@@ -31,14 +31,8 @@ namespace Game.Systems
 			}
 		}
 
-
-
 		public void Initiate(GameManager game)
 		{
-		}
-		public void SendMessage(GameManager game, int reciever, Message message)
-		{
-
 		}
 	}
 }

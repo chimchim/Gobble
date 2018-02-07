@@ -21,6 +21,7 @@ public class ScriptableItem : ScriptableObject
 	public ItemCategory Category;
 	public Item.ItemID WhatItem;
 	public int Tier;
+	public float RotationSpeed;
 	[Serializable]
 	public struct Recipe
 	{

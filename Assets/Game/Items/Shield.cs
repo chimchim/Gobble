@@ -64,6 +64,7 @@ public class Shield : Item, IHealth
 		var player = game.Entities.GetComponentOf<Player>(entity);
 		CurrentGameObject.AddComponent<ItemIdHolder>().ID = ItemNetID;
 		CurrentGameObject.GetComponent<ItemIdHolder>().Owner = entity;
+
 		foreach (int e in entities)
 		{
 			var otherPlayer = game.Entities.GetComponentOf<Player>(e);
@@ -114,6 +115,7 @@ public class Shield : Item, IHealth
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.ScrItem = game.GameResources.AllItems.Shield;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());

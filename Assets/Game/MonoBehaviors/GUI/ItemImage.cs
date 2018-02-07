@@ -15,7 +15,7 @@ public class ItemImage : MonoBehaviour, IPointerDownHandler, IPointerEnterHandle
 
 	public RealTimeVariables RealTime;
 	public Item Item;
-	public E.Inventory Type;
+	public Inventory Type;
 	public int Index;
 	public void OnPointerExit(PointerEventData eventData)
 	{

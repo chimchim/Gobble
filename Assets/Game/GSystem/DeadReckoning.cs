@@ -57,13 +57,5 @@ namespace Game.Systems
 		{
 
 		}
-
-
-
-		public void SendMessage(GameManager game, int reciever, Message message)
-		{
-
-		}
-
 	}
 }

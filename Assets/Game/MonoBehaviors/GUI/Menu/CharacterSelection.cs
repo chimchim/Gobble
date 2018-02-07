@@ -1,15 +1,9 @@
-﻿using System.Collections;
+﻿using Game;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum Characters
-{
-	Yolanda,
-	Schmillo,
-	Milton,
-	Peppermin
-}
 public class CharacterSelection : MonoBehaviour {
 
 	// Use this for initialization

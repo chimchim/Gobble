@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using Effects = Game.E.Effects;
+using Effects = Game.Effects;
 using GatherLevel = GatherableScriptable.GatherLevel;
 public class Spear : Item
 {
@@ -92,20 +92,20 @@ public class Spear : Item
 				if (dot < 0)
 				{
 					var itemholder = transform.GetComponent<ItemIdHolder>();
-					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, E.Effects.Ricochet, hit.point));
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
 				}
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 10, E.Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 10, Effects.Blood3, offsetPoint));
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.7f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 10, E.Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 10, Effects.Blood3, offsetPoint));
 			}
 		}
 	}
@@ -125,7 +125,7 @@ public class Spear : Item
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, int tier)
 	{
 		var spear = ((ScriptableItemCollection)game.GameResources.AllItems.Spear).Collection[tier] as SpearScriptable;
-
+		
 		var go = GameObject.Instantiate(spear.Prefab);
 		go.transform.position = position;
 
@@ -133,6 +133,7 @@ public class Spear : Item
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.SpearScript = spear;
+		item.ScrItem = spear;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());

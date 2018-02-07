@@ -280,12 +280,5 @@ namespace Game.Systems
 			actionArray[6] = CheckStartGame;
 			_menu.ActionArray = actionArray;
 		}
-
-
-		public void SendMessage(GameManager game, int reciever, Message message)
-		{
-
-		}
-
 	}
 }

@@ -76,6 +76,7 @@ public class Ladder : Item
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.ScrItem = game.GameResources.AllItems.Ladder;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());

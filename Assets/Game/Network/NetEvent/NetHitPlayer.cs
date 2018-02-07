@@ -13,7 +13,7 @@ public class NetHitPlayer : NetEvent
 	public int Player;
 	public float Damage;
 	public Vector2 EffectOffset;
-	public E.Effects Effect;
+	public Effects Effect;
 	public override void Handle(GameManager game)
 	{
 		var entity = game.Entities.GetEntity(Player);
@@ -40,7 +40,7 @@ public class NetHitPlayer : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetHitPlayer Make(int player, float damage, E.Effects effect, Vector2 effectOffset)
+	public static NetHitPlayer Make(int player, float damage, Effects effect, Vector2 effectOffset)
 	{
 		var evt = _pool.GetNext();
 		evt.Player = player;
@@ -62,7 +62,7 @@ public class NetHitPlayer : NetEvent
 		Damage = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float x = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float y = BitConverter.ToSingle(byteData, index); index += sizeof(float);
-		Effect = (E.Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
+		Effect = (Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
 		EffectOffset = new Vector2(x, y);
 	}
 

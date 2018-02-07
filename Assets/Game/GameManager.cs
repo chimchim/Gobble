@@ -9,35 +9,50 @@ using Game.Component;
 using UnityEngine;
 using Game.Movement;
 using MoveState = Game.Component.MovementComponent.MoveState;
+
 namespace Game
 {
-	public class E
-	{
-		public enum ItemTier
-		{
-			Zero,
-			One,
-			Two,
-			Three,
-			Four,
-			Five
 
-		}
-		public enum Inventory
-		{
-			Main,
-			BackPack,
-			Equipped
-		}
-		public enum Effects
-		{
-			Slice2,
-			Blood3,
-			Ricochet,
-			Death,
-			BloodDeath
-		}
+	public struct CharacterStats
+	{
+		public float ArmRotationSpeed;
+		public float MoveSpeed;
+		public float JumpSpeed;
+		public float MaxHealth;
 	}
+
+	public enum Characters
+	{
+		Yolanda,
+		Schmillo,
+		Milton,
+		Peppermin
+	}
+	public enum ItemTier
+	{
+		Zero,
+		One,
+		Two,
+		Three,
+		Four,
+		Five
+
+	}
+	public enum Inventory
+	{
+		Main,
+		BackPack,
+		Equipped
+	}
+	public enum Effects
+	{
+		Slice2,
+		Blood3,
+		Ricochet,
+		Death,
+		BloodDeath
+	}
+	
 	public class GameManager
 	{
 	
@@ -77,8 +92,8 @@ namespace Game
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
-			
-			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
+			var charBase = GameResources.AllItems.CharactersScriptables[(int)character].GetStats();
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character, charBase));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			
 			Debug.Log("Create empty player ID " + ent.ID + " isowner " + owner + " name " + name + " ishost " + isHost + " TEAM " + team);
@@ -107,7 +122,8 @@ namespace Game
 		{
 			Entity ent = new Entity(reservedID);
 			this.Entities.addEntity(ent);
-			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character));
+			var charBase = GameResources.AllItems.CharactersScriptables[(int)character].GetStats();
+			ent.AddComponent(Player.MakeFromLobby(ent.ID, owner, name, isHost, team, character, charBase));
 			ent.AddComponent(ResourcesComponent.Make(ent.ID));
 			ent.AddComponent(ActionQueue.Make(ent.ID));
 			ent.AddComponent(Stats.Make(ent.ID, 100, GameUnity.OxygenTime, GameUnity.OxygenTime));
@@ -170,21 +186,21 @@ namespace Game
 			
 		}
 
-		public void CreateEffect(E.Effects effect, Vector2 pos, Quaternion rotation, float delay)
+		public void CreateEffect(Effects effect, Vector2 pos, Quaternion rotation, float delay)
 		{
 			var go = GameObject.Instantiate(GameResources.Prefabs.Effects[(int)effect]);
 			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);
 			go.transform.rotation = rotation;
 			GameObject.Destroy(go, delay);
 		}
-		public void CreateEffect(E.Effects effect, Vector2 pos, Vector2 direction, float delay)
+		public void CreateEffect(Effects effect, Vector2 pos, Vector2 direction, float delay)
 		{
 			var go = GameObject.Instantiate(GameResources.Prefabs.Effects[(int)effect]);
 			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);
 			go.transform.right = direction;
 			GameObject.Destroy(go, delay);
 		}
-		public GameObject CreateEffect(E.Effects effect, Vector2 pos, float delay)
+		public GameObject CreateEffect(Effects effect, Vector2 pos, float delay)
 		{
 			var go = GameObject.Instantiate(GameResources.Prefabs.Effects[(int)effect]);
 			go.transform.position = new Vector3(pos.x, pos.y, -0.4f);

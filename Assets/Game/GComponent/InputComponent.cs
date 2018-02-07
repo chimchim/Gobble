@@ -10,7 +10,7 @@ namespace Game.Component
 		public Vector2 Axis;
 		public Vector2 MousePos;
 		public Vector2 ArmDirection;
-		public Vector2 Dir = new Vector2(1, 0);
+		public Vector2 Dir;
 		public Vector2 ScreenDirection;
 		public bool Space;
 		public bool RightDown;

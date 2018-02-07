@@ -159,12 +159,5 @@ namespace Game.Systems
 			game.Client.TryJoin(ip, port, name);
 			game.Client.BeginToRecieve();
 		}
-
-
-		public void SendMessage(GameManager game, int reciever, Message message)
-		{
-
-		}
-
 	}
 }

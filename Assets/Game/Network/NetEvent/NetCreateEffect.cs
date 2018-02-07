@@ -8,7 +8,7 @@ public class NetCreateEffect : NetEvent
 {
 	private static ObjectPool<NetCreateEffect> _pool = new ObjectPool<NetCreateEffect>(10);
 
-	public E.Effects Effect;
+	public Effects Effect;
 	public Vector2 Position;
 	public Vector2 LookDirection;
 
@@ -27,7 +27,7 @@ public class NetCreateEffect : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetCreateEffect Make(E.Effects effect, Vector2 pos, Vector2 dir)
+	public static NetCreateEffect Make(Effects effect, Vector2 pos, Vector2 dir)
 	{
 		var evt = _pool.GetNext();
 		evt.Effect = effect;
@@ -39,7 +39,7 @@ public class NetCreateEffect : NetEvent
 
 	protected override void InnerNetDeserialize(GameManager game, byte[] byteData, int index)
 	{
-		Effect = (E.Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
+		Effect = (Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
 		float posX = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float posY = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float dirX = BitConverter.ToSingle(byteData, index); index += sizeof(float);

@@ -37,11 +37,10 @@ public class Sword : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
 		Effect = CurrentGameObject.transform.Find("Effect");
 		var entity = game.Entities.GetEntity(e);
-		Vector2 midPos = (CurrentGameObject.transform.position) + (CurrentGameObject.transform.up * 0.9f);
 		Vector2 pos = entity.gameObject.transform.position;
-		Vector2 dir = input.ScreenDirection;
+		Vector2 dir = -resources.FreeArm.up;
 
-		var hit = Physics2D.Raycast(pos, dir.normalized, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
+		var hit = Physics2D.Raycast(pos, resources.FreeArm.up, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
 		Debug.DrawLine(pos, pos + (dir * 100), Color.red);
 		var collider = hit.collider;
 		if (collider != null)
@@ -54,24 +53,24 @@ public class Sword : Item
 				if (dot < 0)
 				{
 					var itemholder = transform.GetComponent<ItemIdHolder>();
-					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, E.Effects.Ricochet, hit.point));
+					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
 				}
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 100, E.Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 100, Effects.Blood3, offsetPoint));
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.7f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 100, E.Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 100, Effects.Blood3, offsetPoint));
 			}
 		}
 
-		game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
+		game.CreateEffect(Effects.Slice2, Effect.position, Effect.right, 0.5f);
 	}
 
 	public override void OwnerActivate(GameManager game, int e)
@@ -92,7 +91,7 @@ public class Sword : Item
 		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
-			game.CreateEffect(E.Effects.Slice2, Effect.position, Effect.right, 0.5f);
+			game.CreateEffect(Effects.Slice2, Effect.position, Effect.right, 0.5f);
 		};
 		resources.ArmEvents.NotAttackable = () =>
 		{
@@ -132,6 +131,7 @@ public class Sword : Item
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.ScrItem = game.GameResources.AllItems.Sword;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());

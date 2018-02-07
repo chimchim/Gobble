@@ -44,12 +44,12 @@ namespace Game.Systems
 					Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
 					Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
 					screenDirection.Normalize();
-					resources.FreeArm.up = -screenDirection;
-					if (entity.Animator.transform.eulerAngles.y > 6)
-					{
-						resources.FreeArm.up = screenDirection;
-						resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-					}
+					//resources.FreeArm.up = -screenDirection;
+					//if (entity.Animator.transform.eulerAngles.y > 6)
+					//{
+					//	resources.FreeArm.up = screenDirection;
+					//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+					//}
 					bool blockedByGUI = game.RealVariables.HoveringUI || game.RealVariables.ChangingItem;
 					CheckChangingItems(game, itemHolder, inventory);
 					ItemChangeInput(game, e, itemHolder, input);
@@ -84,10 +84,10 @@ namespace Game.Systems
 							game.RealVariables.HoveringUI = false;
 					}
 				}
-				else
-				{
-					resources.FreeArm.up = input.ArmDirection;
-				}
+				//else
+				//{
+				//	resources.FreeArm.up = input.ArmDirection;
+				//}
 			}
 		}
 		private void CheckChangingItems(GameManager game, ItemHolder holder, InventoryComponent inv)
@@ -103,7 +103,7 @@ namespace Game.Systems
 				var switch1 = game.RealVariables.CurrentSwitch;
 				if (switch2 == null)
 				{
-					Debug.Log("Switch2 NULL");
+					//Debug.Log("Switch2 NULL");
 					switch1.Item.ThrowItem(game, holder.EntityID);
 					if (currentItem == game.RealVariables.CurrentSwitch.Item)
 					{
@@ -114,14 +114,14 @@ namespace Game.Systems
 				{
 					if (currentItem == switch1.Item)
 					{
-						Debug.Log("currentItem switch 1 " + switch1.Item);
+						//Debug.Log("currentItem switch 1 " + switch1.Item);
 						if (switch2.Item != null)
 							switch2.Item.OwnerActivate(game, holder.EntityID);
 						currentItem.OwnerDeActivate(game, holder.EntityID);
 					}
-					if (currentItem == switch2.Item && (currentItem != null || (switch2.Type == E.Inventory.Main && switch2.Index == inv.CurrentItemIndex)))
+					if (currentItem == switch2.Item && (currentItem != null || (switch2.Type == Inventory.Main && switch2.Index == inv.CurrentItemIndex)))
 					{
-						Debug.Log("currentItem switch 2 " + switch1.Item);
+						//Debug.Log("currentItem switch 2 " + switch1.Item);
 						switch1.Item.OwnerActivate(game, holder.EntityID);
 						if(currentItem != null)
 							currentItem.OwnerDeActivate(game, holder.EntityID);
@@ -204,9 +204,5 @@ namespace Game.Systems
 				 }
 			 }
 		}
-        public void SendMessage(GameManager game, int reciever, Message message)
-        {
-
-        }
 	}
 }

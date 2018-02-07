@@ -19,18 +19,20 @@ public class VisibleItem : MonoBehaviour
 	MappedMasks Mask;
 	public void OnEnable()
 	{
-		var box = GetComponent<BoxCollider2D>();
-		var capsule = GetComponent<CapsuleCollider2D>();
-		if (box)
-		{
-			_offset.x = box.size.x / 2 * transform.localScale.x;
-			_offset.y = box.size.y / 2 * transform.localScale.y;
-		}
-		else if(capsule)
-		{
-			_offset.x = capsule.size.x / 2 * transform.localScale.x;
-			_offset.y = capsule.size.y / 2 * transform.localScale.y;
-		}
+		//var box = GetComponent<BoxCollider2D>();
+		//var capsule = GetComponent<CapsuleCollider2D>();
+		//if (box)
+		//{
+		//	_offset.x = box.size.x / 2 * transform.localScale.x;
+		//	_offset.y = box.size.y / 2 * transform.localScale.y;
+		//}
+		//else if(capsule)
+		//{
+		//	_offset.x = capsule.size.x / 2 * transform.localScale.x;
+		//	_offset.y = capsule.size.y / 2 * transform.localScale.y;
+		//}
+		_offset.x = 0.3f;
+		_offset.y = 0.3f;
 		#region Masks
 		var prefered = GetComponent<PreferedLayers>();
 		if (prefered == null)

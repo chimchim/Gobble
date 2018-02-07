@@ -87,6 +87,7 @@ public class Ingredient : Item
 		go.layer = LayerMask.NameToLayer("Item");
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.ScrItem = game.GameResources.AllItems.Ingredient;
 		item.IngredientType = ingredientType;
 		visible.Item = item;
 		visible.Force = force;
@@ -119,6 +120,7 @@ public class Ingredient : Item
 		//go.GetComponent<SpriteRenderer>().sprite = game.GameResources.AllItems.Ingredient.IngredientsTypes[(int)ingredientType];
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.ScrItem = game.GameResources.AllItems.Ingredient;
 		item.IngredientType = ingredientType;
 		visible.Item = item;
 		visible.Force = force;

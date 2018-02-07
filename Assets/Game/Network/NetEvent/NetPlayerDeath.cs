@@ -14,7 +14,7 @@ public class NetPlayerDeath : NetEvent
 	public override void Handle(GameManager game)
 	{
 		var entity = game.Entities.GetEntity(Player);
-		var effect = game.CreateEffect(E.Effects.Death, entity.gameObject.transform.position, GameUnity.DeathTimer);
+		var effect = game.CreateEffect(Effects.Death, entity.gameObject.transform.position, GameUnity.DeathTimer);
 		effect.transform.parent = entity.gameObject.transform;
 		var input = game.Entities.GetComponentOf<InputComponent>(Player);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(Player);

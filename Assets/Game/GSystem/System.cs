@@ -5,12 +5,7 @@ namespace Game
 {
 	public interface ISystem
 	{
-
 		void Update(GameManager game, float time);
-
         void Initiate(GameManager game);
-
-        void SendMessage(GameManager game, int reciever, Message mess);
-
 	}
 }

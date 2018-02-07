@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Game;
+
 [CreateAssetMenu(fileName = "Data", menuName = "Variables/AllScriptableItems", order = 1)]
 public class AllScriptableItems : ScriptableObject
 {
@@ -14,11 +16,15 @@ public class AllScriptableItems : ScriptableObject
 	public ScriptableItem Spear;
 
 	public List<ScriptableItem> AllItemsList = new List<ScriptableItem>();
+	public CharacterScriptable[] CharactersScriptables;
+	[SerializeField]
+	Characters CharacterOrder;
 	[Header("Gatherable ")]
 	public GatherableScriptable Gravel;
 	public GatherableScriptable Tree;
 	public GatherableScriptable TreeTwig;
 
+	[HideInInspector]
 	public int[] IngredientAmount = new int[7];
 
 	public List<ScriptableItem> GetItems()

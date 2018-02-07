@@ -109,9 +109,5 @@ namespace Game.Systems
 			}
 			return game.GameResources.Prefabs.Milton;
         }
-		public void SendMessage(GameManager game, int reciever, Message message)
-		{
-
-		}
 	}
 }

@@ -13,7 +13,7 @@ public class NetHitAnimal : NetEvent
 	public int Animal;
 	public float Damage;
 	public Vector2 EffectOffset;
-	public E.Effects Effect;
+	public Effects Effect;
 	public override void Handle(GameManager game)
 	{
 		var entity = game.Entities.GetEntity(Animal);
@@ -24,7 +24,7 @@ public class NetHitAnimal : NetEvent
 		animal.Health -= Damage;
 		if (animal.Health <= 0)
 		{
-			game.CreateEffect(E.Effects.BloodDeath, entity.gameObject.transform.position, 0.3f);
+			game.CreateEffect(Effects.BloodDeath, entity.gameObject.transform.position, 0.3f);
 		}
 
 		int hostid = Utility.IsHost(game);
@@ -52,7 +52,7 @@ public class NetHitAnimal : NetEvent
 		return _pool.GetNext();
 	}
 
-	public static NetHitAnimal Make(int player, float damage, E.Effects effect, Vector2 effectOffset)
+	public static NetHitAnimal Make(int player, float damage, Effects effect, Vector2 effectOffset)
 	{
 		var evt = _pool.GetNext();
 		evt.Animal = player;
@@ -74,7 +74,7 @@ public class NetHitAnimal : NetEvent
 		Damage = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float x = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float y = BitConverter.ToSingle(byteData, index); index += sizeof(float);
-		Effect = (E.Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
+		Effect = (Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
 		EffectOffset = new Vector2(x, y);
 	}
 

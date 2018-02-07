@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2017.3.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -323,6 +325,7 @@
     <Compile Include="Assets\Game\GSystem\QuickJoin.cs" />
     <Compile Include="Assets\Game\GSystem\ReadGamePackets.cs" />
     <Compile Include="Assets\Game\GSystem\ResetInput.cs" />
+    <Compile Include="Assets\Game\GSystem\RotateArmSystem.cs" />
     <Compile Include="Assets\Game\GSystem\SendGamePackets.cs" />
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GSystem\UpdateItems.cs" />
@@ -423,6 +426,7 @@
     <Compile Include="Assets\Game\Network\Utility.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\AllScriptableItems.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\AnimalVariables.cs" />
+    <Compile Include="Assets\Game\ScriptableObjects\CharacterScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GatherableScriptable.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\GroundVariables.cs" />
     <Compile Include="Assets\Game\ScriptableObjects\Items\IngredientScriptable.cs" />

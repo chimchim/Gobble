@@ -23,7 +23,7 @@ public abstract class Item
 		Spear
 	}
 	public ItemID ID;
-
+	public ScriptableItem ScrItem;
 	public GameObject CurrentGameObject;
 	public int ItemNetID;
 	public int Quantity = 1;
@@ -34,6 +34,8 @@ public abstract class Item
 	public virtual void ClientActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		player.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
 		if (!itemHolder.ActiveItems.Contains(this))
 		{
 			itemHolder.ActiveItems.Add(this);
@@ -52,6 +54,9 @@ public abstract class Item
 	public virtual void OwnerActivate(Game.GameManager game, int entity)
 	{
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
+		var player = game.Entities.GetComponentOf<Player>(entity);
+		player.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
+		Debug.Log("player.CharacterStats.ArmRotationSpeed " + player.CharacterStats.ArmRotationSpeed);
 		if (!itemHolder.ActiveItems.Contains(this))
 		{
 			itemHolder.ActiveItems.Add(this);

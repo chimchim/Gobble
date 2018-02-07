@@ -44,6 +44,7 @@ public class Rope : Item
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
+		item.ScrItem = game.GameResources.AllItems.Rope;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
