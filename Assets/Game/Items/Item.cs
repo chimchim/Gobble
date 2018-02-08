@@ -110,7 +110,7 @@ public abstract class Item
 
 	}
 
-	public virtual void CheckMain(Game.GameManager game, int entity, ScriptableItem scriptable, GameObject go)
+	public virtual void CheckMain(Game.GameManager game, int entity, GameObject go)
 	{
 		var inventoryMain = game.Entities.GetComponentOf<InventoryComponent>(entity);
 		var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
@@ -126,7 +126,7 @@ public abstract class Item
 		
 		if (amount < GameUnity.MainInventorySize)
 		{
-			int index = inventoryMain.MainInventory.SetItemInMain(scriptable, this);
+			int index = inventoryMain.MainInventory.SetItemInMain(ScrItem, this);
 			SetInHand(game, entity, go);
 			if (inventoryMain.CurrentItemIndex == index)
 			{
@@ -141,7 +141,7 @@ public abstract class Item
 		else if (backPackAmount < GameUnity.BackpackInventorySize)
 		{
 			SetInHand(game, entity, go);
-			inventoryMain.InventoryBackpack.SetItemInMain(scriptable, this);
+			inventoryMain.InventoryBackpack.SetItemInMain(ScrItem, this);
 			CurrentGameObject.SetActive(false);
 		}
 	}

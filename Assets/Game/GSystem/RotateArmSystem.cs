@@ -23,7 +23,7 @@ namespace Game.Systems
 				var stats = game.Entities.GetComponentOf<Stats>(e);
 				var entity = game.Entities.GetEntity(e);
 				float speed = stats.CharacterStats.ArmRotationSpeed;
-				Vector2 pos = entity.gameObject.transform.position;
+				Vector2 pos = resources.FreeArmAnimator.transform.position;
 				if (entity.Animator.transform.eulerAngles.y > 6)
 				{
 					input.Dir = Helper.RotateTowards(input.Dir, input.ScreenDirection, speed * delta);
@@ -35,9 +35,7 @@ namespace Game.Systems
 					input.Dir = Helper.RotateTowards(input.Dir, input.ScreenDirection, speed * delta);
 					resources.FreeArm.up = -input.Dir;
 				}
-
-				Debug.DrawLine(pos, pos + (input.Dir * 3), Color.blue);
-
+				//Debug.DrawLine(pos, pos + (input.Dir * 3), Color.blue);
 			}
 		}
 

@@ -256,33 +256,17 @@ namespace Game
 
 		public GameObject GetCharacterObject(Characters character)
 		{
-			switch (character)
-			{
-				case Characters.Milton:
-					return GameResources.Prefabs.Milton;
-
-				case Characters.Peppermin:
-					return GameResources.Prefabs.Peppermin;
-
-				case Characters.Yolanda:
-					return GameResources.Prefabs.Yolanda;
-
-				case Characters.Schmillo:
-					return GameResources.Prefabs.Schmillo;
-
-			}
-			return GameResources.Prefabs.Milton;
+			return GameResources.AllItems.CharactersScriptables[(int)character].Prefab;
 		}
 		public GameObject GetCharacterByTeam(int team)
 		{
-			return GameResources.Prefabs.Yolanda;
 			switch (team)
 			{
 				case 0:
-					return GameResources.Prefabs.Yolanda;
+					return GameResources.AllItems.CharactersScriptables[(int)Characters.Yolanda].Prefab;
 
 				case 1:
-					return GameResources.Prefabs.Schmillo;
+					return GameResources.AllItems.CharactersScriptables[(int)Characters.Schmillo].Prefab;
 
 			}
 			return GameResources.Prefabs.Milton;

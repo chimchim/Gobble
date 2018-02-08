@@ -83,7 +83,7 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 		Vector2 dir = pointer.right;
 		float l = Mathf.Abs(pointer.localPosition.x - pointer3.localPosition.x);
 		var hit = Physics2D.Raycast(pointer.position, pointer.right, l, game.LayerMasks.MappedMasks[3].UpLayers);
-		Debug.DrawLine(pointer.position, pointer.position + (pointer.right * l), Color.red);
+		Debug.DrawLine(pointer.position, pointer3.position, Color.red);
 		var collider = hit.collider;
 		if (collider != null)
 		{
@@ -157,7 +157,7 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 
 	bool attacking = false;
@@ -184,7 +184,7 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 				currentTime += delta;
 				time = (currentTime / SpearScript.OutTime);
 				temp.x = Mathf.Lerp(0, SpearScript.Length, (time)) + starX;
-				
+				AttackEvent(game, entity);
 			}
 			events.Transform1.localPosition = temp;
 		}

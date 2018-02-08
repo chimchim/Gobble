@@ -148,7 +148,7 @@ public class Ingredient : Item
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		game.GameResources.AllItems.Ingredient.Sprite = game.GameResources.AllItems.Ingredient.InventorySprite[(int)IngredientType];
-		CheckMain(game, entity, game.GameResources.AllItems.Ingredient, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 	private void TryPick(GameManager game, int entity)
 	{

@@ -108,7 +108,7 @@ public class Ladder : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Ladder, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 
 	public override void Input(GameManager game, int entity, float delta)

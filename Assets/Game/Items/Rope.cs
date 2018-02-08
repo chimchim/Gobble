@@ -65,7 +65,7 @@ public class Rope : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Rope, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 	public override void OwnerActivate(GameManager game, int entity)
 	{

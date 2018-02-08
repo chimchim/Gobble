@@ -20,7 +20,7 @@ public class NetHitPlayer : NetEvent
 		Vector3 pos = entity.gameObject.transform.position + new Vector3(EffectOffset.x, EffectOffset.y, 0.2f);
 		game.CreateEffect(Effect, pos, 0.5f);
 		var player = game.Entities.GetComponentOf<Player>(Player);
-		if (!player.Owner)
+		if (!player.Owner || GameUnity.DebugMode)
 			return;
 
 		player.Health -= Damage;

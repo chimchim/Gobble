@@ -37,11 +37,11 @@ public class Sword : Item
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
 		Effect = CurrentGameObject.transform.Find("Effect");
 		var entity = game.Entities.GetEntity(e);
-		Vector2 pos = entity.gameObject.transform.position;
+		Vector2 pos = resources.FreeArmAnimator.transform.position;
 		Vector2 dir = -resources.FreeArm.up;
 
-		var hit = Physics2D.Raycast(pos, resources.FreeArm.up, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
-		Debug.DrawLine(pos, pos + (dir * 100), Color.red);
+		var hit = Physics2D.Raycast(pos, dir, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
+		Debug.DrawLine(pos, pos + (dir * 1.4f), Color.red);
 		var collider = hit.collider;
 		if (collider != null)
 		{
@@ -156,7 +156,7 @@ public class Sword : Item
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Sword, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 	public override void Input(GameManager game, int e, float delta)
 	{

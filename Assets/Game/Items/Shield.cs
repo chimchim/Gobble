@@ -140,7 +140,7 @@ public class Shield : Item, Item.IHealth
 	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.Shield, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 	public override void Input(GameManager game, int entity, float delta)
 	{

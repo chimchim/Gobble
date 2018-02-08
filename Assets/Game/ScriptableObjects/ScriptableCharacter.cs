@@ -4,6 +4,7 @@ using System.Collections;
 [CreateAssetMenu(fileName = "Data", menuName = "Variables/ScriptableCharacter", order = 1)]
 public class ScriptableCharacter : ScriptableObject
 {
+	public GameObject Prefab;
 	public float Health;
 	public float ArmRotation;
 	public float JumpSpeed;

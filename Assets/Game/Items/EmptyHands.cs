@@ -111,7 +111,7 @@ public class EmptyHands : Item
 
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
-		CheckMain(game, entity, game.GameResources.AllItems.PickAxe, gameObject);
+		CheckMain(game, entity, gameObject);
 	}
 
 	public override void Input(GameManager game, int entity, float delta)
