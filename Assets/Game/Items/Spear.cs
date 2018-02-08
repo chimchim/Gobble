@@ -83,22 +83,20 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 		Vector2 dir = pointer.right;
 		float l = Mathf.Abs(pointer.localPosition.x - pointer3.localPosition.x);
 		var hit = Physics2D.Raycast(pointer.position, pointer.right, l, game.LayerMasks.MappedMasks[3].UpLayers);
-		Debug.DrawLine(pointer.position, pointer3.position, Color.red);
+		var hit2 = Physics2D.Raycast(events.Transform1.position, pointer.right, pointer3.localPosition.x, LayerMask.NameToLayer("EnemyShield"));
+
+		if (hit2.collider != null)
+		{
+			var transform = hit2.collider.transform;
+			var itemholder = transform.GetComponent<ItemIdHolder>();
+			HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
+		}
+		Debug.DrawLine(events.Transform1.position, pointer3.position, Color.red);
 		var collider = hit.collider;
 		if (collider != null)
 		{
 			var transform = collider.transform;
-			if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield") || collider.gameObject.layer == LayerMask.NameToLayer("Collideable"))
-			{
-				var normal = transform.right;
-				float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
-				if (dot < 0)
-				{
-					var itemholder = transform.GetComponent<ItemIdHolder>();
-					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
-				}
-			}
-			if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
+			if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
@@ -171,13 +169,16 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 			var events = SpearAnim.GetComponent<AnimationEvents>();
 			var temp = events.transform.localPosition;
 			currentTime += delta;
-			temp = events.Transform1.localPosition;
 			float time = (currentTime / SpearScript.OutTime);
 			if (time >= 1)
 			{
 				time = ((currentTime - SpearScript.OutTime) / (SpearScript.InTime));
 				temp.x = Mathf.Lerp(SpearScript.Length, 0, (time)) + starX;
 				attacking = (time < 1);
+	
+				var stats = game.Entities.GetComponentOf<Stats>(entity);
+				stats.CharacterStats.ArmRotationSpeed = SpearScript.RotationSpeed * time;
+				
 			}
 			else
 			{
@@ -211,9 +212,10 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 	{
 		var events = SpearAnim.GetComponent<AnimationEvents>();
 		var temp = events.Transform1.localPosition;
-
+		var stats = game.Entities.GetComponentOf<Stats>(entity);
 		if (!attacking)
 		{
+			stats.CharacterStats.ArmRotationSpeed = 0;
 			attacking = true;
 			starX = temp.x;
 			currentTime = 0;
@@ -225,8 +227,10 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 		var events = SpearAnim.GetComponent<AnimationEvents>();
 		var temp = events.Transform1.localPosition;
 
+		var stats = game.Entities.GetComponentOf<Stats>(entity);
 		if (!attacking)
 		{
+			stats.CharacterStats.ArmRotationSpeed = 0;
 			attacking = true;
 			starX = temp.x;
 			currentTime = 0;
