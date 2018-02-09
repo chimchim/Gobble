@@ -9,4 +9,5 @@ public class SpearScriptable : ScriptableItem
 	public float OutTime = 1;
 	public float InTime = 1;
 	public float Length = 1;
+	public float Damage;
 }

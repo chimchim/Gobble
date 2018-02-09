@@ -21,8 +21,11 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 	public bool Attack;
 
 	public SpearScriptable SpearScript;
+	public List<Collider2D> CollidedWith = new List<Collider2D>();
 	public override void Recycle()
 	{
+		SpearAnim = null;
+		CollidedWith.Clear();
 		_pool.Recycle(this);
 	}
 
@@ -79,34 +82,48 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 		var events = SpearAnim.GetComponent<AnimationEvents>();
 		var pointer = events.Transform3;
 		var pointer3 = events.Transform4;
-
+		Vector2 grahpicsPos = events.Transform1.position;
 		Vector2 dir = pointer.right;
-		float l = Mathf.Abs(pointer.localPosition.x - pointer3.localPosition.x);
-		var hit = Physics2D.Raycast(pointer.position, pointer.right, l, game.LayerMasks.MappedMasks[3].UpLayers);
-		var hit2 = Physics2D.Raycast(events.Transform1.position, pointer.right, pointer3.localPosition.x, LayerMask.NameToLayer("EnemyShield"));
 
+		float l = (pointer.position - pointer3.position).magnitude;
+		float l1 = (grahpicsPos - new Vector2(pointer3.position.x, pointer3.position.y)).magnitude;
+
+		var hit = Physics2D.Raycast(pointer.position, dir, l, game.LayerMasks.MappedMasks[3].UpLayers);
+		var hit2 = Physics2D.Raycast(grahpicsPos, dir, l1, LayerMask.GetMask("EnemyShield") | LayerMask.GetMask("Collideable"));
+		Debug.DrawLine(grahpicsPos, grahpicsPos + (dir * l1), Color.red);
 		if (hit2.collider != null)
 		{
 			var transform = hit2.collider.transform;
-			var itemholder = transform.GetComponent<ItemIdHolder>();
-			HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
-		}
-		Debug.DrawLine(events.Transform1.position, pointer3.position, Color.red);
-		var collider = hit.collider;
-		if (collider != null)
-		{
-			var transform = collider.transform;
-			if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy"))
+			if (hit2.collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
 			{
-				var id = transform.GetComponent<IdHolder>().ID;
+				var itemholder = transform.GetComponent<ItemIdHolder>();
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, SpearScript.Damage, Effects.Ricochet, hit2.point));
+			}
+			else
+			{
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetCreateEffect.Make(Effects.Ricochet, hit2.point, dir));
+			}
+			hitReturn = true;
+			goBack = true;
+			return;
+		}
+
+		var collider = hit.collider;
+		if (collider != null && !CollidedWith.Contains(hit.collider))
+		{
+			CollidedWith.Add(hit.collider);
+			var transform = collider.transform;
+			if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyHitBox"))
+			{
+				var id = transform.root.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 10, Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, SpearScript.Damage, Effects.Blood3, offsetPoint));
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
 			{
 				var id = transform.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.7f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 10, Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, SpearScript.Damage, Effects.Blood3, offsetPoint));
 			}
 		}
 	}
@@ -153,87 +170,123 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 
 		return visible;
 	}
+
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		CheckMain(game, entity, gameObject);
 	}
 
 	bool attacking = false;
-	float currentTime = 0;
 	float starX = 0;
 	Vector2 attackDir;
+	bool goBack = false;
+	bool hitReturn = false;
+	int attackCounter;
 	public override void Input(GameManager game, int entity, float delta)
 	{
 		if (attacking)
 		{
+			var player = game.Entities.GetComponentOf<Player>(entity);
 			var events = SpearAnim.GetComponent<AnimationEvents>();
-			var temp = events.transform.localPosition;
-			currentTime += delta;
-			float time = (currentTime / SpearScript.OutTime);
-			if (time >= 1)
+			var temp = events.Transform1.transform.localPosition;
+
+			if (!goBack)
 			{
-				time = ((currentTime - SpearScript.OutTime) / (SpearScript.InTime));
-				temp.x = Mathf.Lerp(SpearScript.Length, 0, (time)) + starX;
-				attacking = (time < 1);
-	
-				var stats = game.Entities.GetComponentOf<Stats>(entity);
-				stats.CharacterStats.ArmRotationSpeed = SpearScript.RotationSpeed * time;
-				
+				if (!player.Owner) game.Entities.GetComponentOf<ResourcesComponent>(entity).FreeArm.up = game.Entities.GetComponentOf<InputComponent>(entity).ArmDirection;
+				if (player.Owner) AttackEvent(game, entity);
+
+				float outSpeed = SpearScript.Length / SpearScript.OutTime;
+				float xTranslate = outSpeed * delta;
+				float currentL = temp.x - starX;
+				if (currentL + xTranslate < SpearScript.Length)
+				{
+					temp.x += xTranslate;
+				}
+				else
+				{
+					temp.x = starX + currentL;
+					goBack = true;
+				}
 			}
 			else
 			{
-				currentTime += delta;
-				time = (currentTime / SpearScript.OutTime);
-				temp.x = Mathf.Lerp(0, SpearScript.Length, (time)) + starX;
-				AttackEvent(game, entity);
+				float inSpeed = SpearScript.Length / SpearScript.InTime;
+				float xTranslate = -inSpeed * delta;
+				float currentL = temp.x - starX;
+				if (currentL + xTranslate > 0)
+				{
+					temp.x += xTranslate;
+				}
+				else
+				{
+					temp.x = starX;
+					goBack = false;
+					attacking = false;
+					hitReturn = false;
+				}
+				float lengthNorm = (1 - Math.Max(0, (currentL + xTranslate) / SpearScript.Length));
+				var stats = game.Entities.GetComponentOf<Stats>(entity);
+				stats.CharacterStats.ArmRotationSpeed = SpearScript.RotationSpeed * lengthNorm;
+				if(lengthNorm < 0.2f && player.Owner && !hitReturn) AttackEvent(game, entity);
+
 			}
+
 			events.Transform1.localPosition = temp;
 		}
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{
-		float x = BitConverter.ToSingle(byteData, currentIndex); currentIndex += sizeof(float);
-		float y = BitConverter.ToSingle(byteData, currentIndex); currentIndex += sizeof(float);
-		attackDir = new Vector2(x, y);
+		int counter = BitConverter.ToInt32(byteData, currentIndex); currentIndex += sizeof(int);
+		if (counter > attackCounter)
+		{
+			DoAttack(game, pack.PlayerID);
+			attackCounter = counter;
+		}
+		var hitReturn = BitConverter.ToBoolean(byteData, currentIndex); currentIndex += sizeof(bool);
+		if (hitReturn)
+			goBack = hitReturn;
 	}
 
 
 	public override void Serialize(GameManager game, int entity, List<byte> byteArray)
 	{
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
-
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);
-		byteArray.AddRange(BitConverter.GetBytes(resources.FreeArm.up.x));
-		byteArray.AddRange(BitConverter.GetBytes(resources.FreeArm.up.y));
+		byteArray.AddRange(BitConverter.GetBytes(attackCounter));
+		byteArray.AddRange(BitConverter.GetBytes(hitReturn));
 	}
 
 	void IOnMouseRight.OnMouseRight(GameManager game, int entity)
 	{
-		var events = SpearAnim.GetComponent<AnimationEvents>();
-		var temp = events.Transform1.localPosition;
-		var stats = game.Entities.GetComponentOf<Stats>(entity);
 		if (!attacking)
 		{
-			stats.CharacterStats.ArmRotationSpeed = 0;
-			attacking = true;
-			starX = temp.x;
-			currentTime = 0;
+			attackCounter++;
+			DoAttack(game, entity);
 		}
 	}
 
 	void IOnMouseLeft.OnMouseLeft(GameManager game, int entity)
 	{
+		if (!attacking)
+		{
+			attackCounter++;
+			DoAttack(game, entity);
+		}
+	}
+
+	void DoAttack(GameManager game, int entity)
+	{
 		var events = SpearAnim.GetComponent<AnimationEvents>();
 		var temp = events.Transform1.localPosition;
-
 		var stats = game.Entities.GetComponentOf<Stats>(entity);
 		if (!attacking)
 		{
+			CollidedWith.Clear();
 			stats.CharacterStats.ArmRotationSpeed = 0;
 			attacking = true;
 			starX = temp.x;
-			currentTime = 0;
+			hitReturn = false;
+			goBack = false;
 		}
 	}
 }

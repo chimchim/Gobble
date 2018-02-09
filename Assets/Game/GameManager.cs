@@ -143,7 +143,8 @@ namespace Game
 			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerLayer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
 			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerPlatformLayer = !player.Enemy ? LayerMask.NameToLayer("PlayerPlatform") : LayerMask.NameToLayer("PlayerEnemyPlatform");
 			playerGameObject.tag = "Player";
-			playerGameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy"); 
+			playerGameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
+			playerGameObject.transform.Find("graphics/Hitbox").gameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyHitBox"); 
 			#endregion
 
 			ent.gameObject = playerGameObject;

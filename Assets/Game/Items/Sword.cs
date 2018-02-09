@@ -56,9 +56,9 @@ public class Sword : Item
 					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
 				}
 			}
-			if (collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemy") || collider.gameObject.layer == LayerMask.NameToLayer("PlayerEnemyPlatform"))
+			if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyHitBox"))
 			{
-				var id = transform.GetComponent<IdHolder>().ID;
+				var id = transform.root.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
 				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, 100, Effects.Blood3, offsetPoint));
 			}

@@ -39,6 +39,7 @@ public class EmptyHands : Item
 		};
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		itemHolder.ActiveItems.Add(this);
+		var stats = game.Entities.GetComponentOf<Stats>(entity).CharacterStats.ArmRotationSpeed = 300;
 	}
 
 	public override void ClientActivate(GameManager game, int entity)
@@ -50,6 +51,7 @@ public class EmptyHands : Item
 		};
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		itemHolder.ActiveItems.Add(this);
+		var stats = game.Entities.GetComponentOf<Stats>(entity).CharacterStats.ArmRotationSpeed = 300;
 	}
 
 	public override void OwnerDeActivate(GameManager game, int entity)
