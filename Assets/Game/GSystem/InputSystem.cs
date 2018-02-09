@@ -86,7 +86,7 @@ namespace Game.Systems
 					{
 						game.AddAction(() =>
 						{
-							game.CreateFullPlayer(false, "adw", false, 1, 0, Characters.Yolanda);
+							HandleNetEventSystem.AddEvent(game, e, NetEventCreateAnimal.Make(0, mousePos));
 						});
 
 						//game.CreateFullPlayer(false, "adw", false, 1, 0, Characters.Yolanda);
@@ -150,7 +150,9 @@ namespace Game.Systems
 					else
 						switch1.UnsetImage();
 
-					if(switch2.Item != null)
+					switch1.SetQuantity(0);
+					switch2.SetQuantity(0);
+					if (switch2.Item != null)
 						switch1.SetQuantity(switch2.Item.Quantity);
 					if (switch1.Item != null)
 						switch2.SetQuantity(switch1.Item.Quantity);

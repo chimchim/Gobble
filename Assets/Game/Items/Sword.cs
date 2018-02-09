@@ -15,6 +15,8 @@ public class Sword : Item
 
 	private static ObjectPool<Sword> _pool = new ObjectPool<Sword>(10);
 	public Transform Effect;
+	public List<Collider2D> CollidedWith = new List<Collider2D>();
+	bool attacking;
 	public override void Recycle()
 	{
 		_pool.Recycle(this);
@@ -34,25 +36,25 @@ public class Sword : Item
 	public void AttackEvent(GameManager game, int e)
 	{
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-		var input = game.Entities.GetComponentOf<InputComponent>(e);
-		Effect = CurrentGameObject.transform.Find("Effect");
-		var entity = game.Entities.GetEntity(e);
-		Vector2 pos = resources.FreeArmAnimator.transform.position;
-		Vector2 dir = -resources.FreeArm.up;
+		Vector2 pos = resources.Hand.transform.position;
+		Vector2 dir = resources.Hand.right;
 
-		var hit = Physics2D.Raycast(pos, dir, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
 		Debug.DrawLine(pos, pos + (dir * 1.4f), Color.red);
+		var hit = Physics2D.Raycast(pos, dir, 1.4f, game.LayerMasks.MappedMasks[3].UpLayers);
+
 		var collider = hit.collider;
-		if (collider != null)
+		if (collider != null && !CollidedWith.Contains(collider))
 		{
+			CollidedWith.Add(collider);
 			var transform = collider.transform;
-			if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield") || collider.gameObject.layer == LayerMask.NameToLayer("Collideable"))
+			if (collider.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
 			{
 				var normal = transform.right;
 				float dot = Vector2.Dot(CurrentGameObject.transform.right, normal);
 				if (dot < 0)
 				{
 					var itemholder = transform.GetComponent<ItemIdHolder>();
+					CollidedWith.Add(game.Entities.GetComponentOf<ResourcesComponent>(itemholder.Owner).HitBox);
 					HandleNetEventSystem.AddEventAndHandle(game, e, NetHitItem.Make(itemholder.Owner, itemholder.ID, 20, Effects.Ricochet, hit.point));
 				}
 			}
@@ -69,8 +71,6 @@ public class Sword : Item
 				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitAnimal.Make(id, 100, Effects.Blood3, offsetPoint));
 			}
 		}
-
-		game.CreateEffect(Effects.Slice2, Effect.position, Effect.right, 0.5f);
 	}
 
 	public override void OwnerActivate(GameManager game, int e)
@@ -79,9 +79,15 @@ public class Sword : Item
 		Effect = CurrentGameObject.transform.Find("Effect");
 		resources.ArmEvents.Attackable = () =>
 		{
-			AttackEvent(game, e);
+			CollidedWith.Clear();
+			//AttackEvent(game, e);
+			attacking = true;
+			game.CreateEffect(Effects.Slice2, Effect.position, Effect.right, 0.5f);
 		};
-
+		resources.ArmEvents.NotAttackable = () =>
+		{
+			attacking = false;
+		};
 		base.OwnerActivate(game, e);
 	}
 
@@ -92,9 +98,7 @@ public class Sword : Item
 		resources.ArmEvents.Attackable = () =>
 		{
 			game.CreateEffect(Effects.Slice2, Effect.position, Effect.right, 0.5f);
-		};
-		resources.ArmEvents.NotAttackable = () =>
-		{
+			
 		};
 		base.ClientActivate(game, entity);
 	}
@@ -158,19 +162,32 @@ public class Sword : Item
 	{
 		CheckMain(game, entity, gameObject);
 	}
+	bool leftInput;
 	public override void Input(GameManager game, int e, float delta)
 	{
 		var entity = game.Entities.GetEntity(e);
 		var input = game.Entities.GetComponentOf<InputComponent>(e);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-		resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
+		var player = game.Entities.GetComponentOf<Player>(e);
+		if (player.Owner)
+		{
+			leftInput = input.LeftDown;
+			resources.FreeArmAnimator.SetBool("Sword", input.LeftDown);
+			if (attacking)
+			{
+				AttackEvent(game, e);
+			}
+		}
+		else
+		{
+			resources.FreeArmAnimator.SetBool("Sword", leftInput);
+		}
 	}
 
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)
 	{
-
-
+		leftInput = BitConverter.ToBoolean(byteData, currentIndex); currentIndex += sizeof(bool);
 	}
 
 
@@ -178,6 +195,7 @@ public class Sword : Item
 	{
 
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
+		byteArray.AddRange(BitConverter.GetBytes(leftInput));
 	}
 }
 

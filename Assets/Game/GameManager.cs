@@ -141,7 +141,6 @@ namespace Game
 			var moveComp = MovementComponent.Make(ent.ID);
 			ent.AddComponent(moveComp);
 			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerLayer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
-			((Grounded)moveComp.States[(int)MoveState.Grounded]).PlayerPlatformLayer = !player.Enemy ? LayerMask.NameToLayer("PlayerPlatform") : LayerMask.NameToLayer("PlayerEnemyPlatform");
 			playerGameObject.tag = "Player";
 			playerGameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
 			playerGameObject.transform.Find("graphics/Hitbox").gameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("EnemyHitBox"); 
@@ -161,6 +160,7 @@ namespace Game
 			resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 			resources.LerpCharacter = playerGameObject.transform.Find("graphics").GetComponent<LerpCharacter>();
 			resources.FreeArm = playerGameObject.transform.Find("graphics/free_arm");
+			resources.HitBox = playerGameObject.transform.Find("graphics/Hitbox").GetComponent<Collider2D>();
 			resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
 			resources.ArmEvents = resources.FreeArmAnimator.GetComponent<AnimationEvents>();
 			resources.Hand = resources.FreeArmAnimator.transform.Find("hand");

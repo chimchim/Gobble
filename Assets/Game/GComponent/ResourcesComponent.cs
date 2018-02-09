@@ -9,6 +9,7 @@ namespace Game.Component
 		public GraphicRope GraphicRope;
 		public Transform FreeArm;
 		public Transform Hand;
+		public Collider2D HitBox;
 		public Animator FreeArmAnimator;
 		public AnimationEvents ArmEvents;
 		public string Character;

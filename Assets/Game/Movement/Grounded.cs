@@ -13,7 +13,6 @@ namespace Game.Movement
 {
 	public class Grounded : MovementState
 	{
-		public int PlayerPlatformLayer = LayerMask.NameToLayer("PlayerPlatform");
 		public int PlayerLayer = LayerMask.NameToLayer("Player");
 		int platformLayer = LayerMask.NameToLayer("Platform");
 		public Collider2D JumpLadder;

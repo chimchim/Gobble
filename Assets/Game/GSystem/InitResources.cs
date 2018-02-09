@@ -48,7 +48,6 @@ namespace Game.Systems
 				#region SetEnemy
 				player.Enemy = (player.Team != ownerTeam);
 				((Grounded)movecomp.States[(int)MoveState.Grounded]).PlayerLayer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
-				((Grounded)movecomp.States[(int)MoveState.Grounded]).PlayerPlatformLayer = !player.Enemy ? LayerMask.NameToLayer("PlayerPlatform") : LayerMask.NameToLayer("PlayerEnemyPlatform");
 				var playerGameObject = GameObject.Instantiate(game.GetCharacterByTeam(player.Team), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 				playerGameObject.tag = "Player";
 				playerGameObject.layer = !player.Enemy ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("PlayerEnemy");
@@ -73,6 +72,7 @@ namespace Game.Systems
 				resources.GraphicRope = Ropes.GetComponent<GraphicRope>();
 				resources.LerpCharacter = playerGameObject.transform.Find("graphics").GetComponent<LerpCharacter>();
 				resources.FreeArm = playerGameObject.transform.Find("graphics/free_arm");
+				resources.HitBox = playerGameObject.transform.Find("graphics/Hitbox").GetComponent<Collider2D>();
 				resources.FreeArmAnimator = resources.FreeArm.Find("animator").GetComponent<Animator>();
 				resources.ArmEvents = resources.FreeArmAnimator.GetComponent<AnimationEvents>();
 				resources.Hand = resources.FreeArmAnimator.transform.Find("hand");
