@@ -178,7 +178,6 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 
 	bool attacking = false;
 	float starX = 0;
-	Vector2 attackDir;
 	bool goBack = false;
 	bool hitReturn = false;
 	int attackCounter;

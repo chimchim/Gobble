@@ -45,22 +45,8 @@ namespace Game.Systems
 
 			foreach (int e in entities)
 			{
-				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
-				var entity = game.Entities.GetEntity(e);
 				input.Dir = new Vector2(1, 0);
-				//if (entity.Animator.transform.eulerAngles.y > 6)
-				//{
-				//	input.Dir = input.ScreenDirection;
-				//	resources.FreeArm.up = input.ScreenDirection;
-				//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-				//}
-				//else
-				//{
-				//
-				//	input.Dir = -input.ScreenDirection;
-				//	resources.FreeArm.up = -input.ScreenDirection;
-				//}
 			}
 		}
 	}

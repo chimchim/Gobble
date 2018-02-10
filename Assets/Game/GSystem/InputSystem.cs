@@ -31,10 +31,8 @@ namespace Game.Systems
 				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var itemHolder = game.Entities.GetComponentOf<ItemHolder>(e);
 				var entityTransform = game.Entities.GetEntity(e).gameObject.transform;
-				var entity = game.Entities.GetEntity(e);
 				if (player.Owner)
 				{
-					var movement = game.Entities.GetComponentOf<MovementComponent>(e);
 					var inventory = game.Entities.GetComponentOf<InventoryComponent>(e);
 					float x = UnityEngine.Input.GetAxis("Horizontal");
 					float y = UnityEngine.Input.GetAxis("Vertical");
@@ -44,12 +42,7 @@ namespace Game.Systems
 					Vector2 middleScreen = new Vector2(Screen.width / 2, Screen.height / 2);
 					Vector2 screenDirection = new Vector2(UnityEngine.Input.mousePosition.x, UnityEngine.Input.mousePosition.y) - middleScreen;
 					screenDirection.Normalize();
-					//resources.FreeArm.up = -screenDirection;
-					//if (entity.Animator.transform.eulerAngles.y > 6)
-					//{
-					//	resources.FreeArm.up = screenDirection;
-					//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-					//}
+
 					bool blockedByGUI = game.RealVariables.HoveringUI || game.RealVariables.ChangingItem;
 					CheckChangingItems(game, itemHolder, inventory);
 					ItemChangeInput(game, e, itemHolder, input);
@@ -101,10 +94,6 @@ namespace Game.Systems
 							game.RealVariables.HoveringUI = false;
 					}
 				}
-				//else
-				//{
-				//	resources.FreeArm.up = input.ArmDirection;
-				//}
 			}
 		}
 		private void CheckChangingItems(GameManager game, ItemHolder holder, InventoryComponent inv)

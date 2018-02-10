@@ -9,14 +9,10 @@ namespace Game.Systems
 	public class DeadReckoning : ISystem
 	{
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
-		bool[,] foundTile;
 
 		public void Update(GameManager game, float delta)
 		{
-			return;
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
-			float xOffset = GameUnity.GroundHitBox.x;
-			float yOffset = GameUnity.GroundHitBox.y;
 			foreach (int e in entities)
 			{
 				var player = game.Entities.GetComponentOf<Player>(e);
@@ -32,7 +28,6 @@ namespace Game.Systems
 				if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 				{
 
-					float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
 					Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
 					translate = translate.magnitude > diff.magnitude ? diff : translate;
 					Vector2 translatePos = otherPosition + translate;

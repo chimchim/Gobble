@@ -147,7 +147,6 @@ public class Rope : Item
 	{
 
 		int entity = pack.PlayerID;
-		var player = game.Entities.GetComponentOf<Player>(entity);
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
 		var movement = game.Entities.GetComponentOf<MovementComponent>(entity);
 		var resources = game.Entities.GetComponentOf<ResourcesComponent>(entity);

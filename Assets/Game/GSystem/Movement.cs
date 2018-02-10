@@ -10,7 +10,6 @@ namespace Game.Systems
 {
     public class Movement : ISystem
     {
-        private float _gravity = 20;
 		public enum LayerMaskEnum
 		{
 			Grounded,
@@ -29,8 +28,6 @@ namespace Game.Systems
 				
 				var entityGameObject = entity.gameObject;
 				entity.LastPosition = entityGameObject.transform.position;
-				var input = game.Entities.GetComponentOf<InputComponent>(e);
-				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
 				var resource = game.Entities.GetComponentOf<ResourcesComponent>(e);
 				resource.GraphicRope.UpdateRope();
@@ -106,8 +103,6 @@ namespace Game.Systems
 			Debug.DrawLine(otherPosition, otherPosition +(diff.normalized * 10), Color.green);
 			if (!player.Owner && movement.CurrentState != MovementComponent.MoveState.Roped)
 			{
-
-				float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
 				Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
 				translate = translate.magnitude > diff.magnitude ? diff : translate;
 				Vector2 translatePos = otherPosition + translate;
@@ -214,9 +209,7 @@ namespace Game.Systems
 			{
 				var stats = game.Entities.GetComponentOf<Game.Component.Stats>(e);
 				var player = game.Entities.GetComponentOf<Game.Component.Player>(e);
-				var input = game.Entities.GetComponentOf<InputComponent>(e);
 				var movement = game.Entities.GetComponentOf<MovementComponent>(e);
-				var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
 				movement.Body = game.Entities.GetEntity(e).gameObject.GetComponent<Rigidbody2D>();
 				Debug.Log("initiate aniamtor");
 				if (player.Owner)

@@ -12,7 +12,6 @@ public class BuildConsole : MonoBehaviour
 	private List<Text> _texts = new List<Text>();
 
 	public int _logIndex;
-	int b = 0;
 	private bool _isScrolled;
 	private void Update()
 	{

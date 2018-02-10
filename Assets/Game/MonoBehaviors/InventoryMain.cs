@@ -81,7 +81,7 @@ public class InventoryMain : MonoBehaviour {
 		for (int i = 0; i < slots; i++)
 		{
 			var go = Instantiate(Template);
-			go.transform.parent = transform;
+			go.transform.SetParent(transform);
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
 			go.GetComponent<ItemImage>().Type = Game.Inventory.Main;
 			go.GetComponent<ItemImage>().Index = i;

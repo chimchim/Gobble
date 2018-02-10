@@ -62,7 +62,6 @@ namespace Game.Movement
 			var transform = game.Entities.GetEntity(animal.EntityID).gameObject.transform;
 			Vector2 currentPos = new Vector2(transform.position.x, transform.position.y);
 			Vector2 diff = animal.HostPosition - currentPos;
-			float speed = GameUnity.NetworkLerpSpeed + (GameUnity.NetworkLerpSpeed * (diff.magnitude / GameUnity.NetworkLerpSpeed));
 			Vector2 translate = diff.normalized * GameUnity.NetworkLerpSpeed * delta;
 			if (translate.magnitude > diff.magnitude)
 			{

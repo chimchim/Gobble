@@ -11,8 +11,7 @@ public class CraftingMatsNeeded : MonoBehaviour
 	[HideInInspector]
 	public List<ItemImageCrafting> ItemImages = new List<ItemImageCrafting>();
 
-	private int _currentIndex;
-	private bool enabled;
+	private bool init;
 
 	public void Reset()
 	{
@@ -61,9 +60,9 @@ public class CraftingMatsNeeded : MonoBehaviour
 	}
 	void OnEnable()
 	{
-		if (enabled)
+		if (init)
 			return;
-		enabled = true;
+		init = true;
 		for (int i = 0; i < TemplateAmount; i++)
 		{
 			var go = Instantiate(Template);

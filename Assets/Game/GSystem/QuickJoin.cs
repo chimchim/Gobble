@@ -18,11 +18,6 @@ namespace Game.Systems
 		public void Update(GameManager game, float delta)
 		{
 			var players = game.Entities.GetEntitiesWithComponents(_playerBitmask);
-			foreach (int entity in players)
-			{
-				var player = game.Entities.GetComponentOf<Player>(entity);
-
-			}
 			for (int i = game.Client._byteDataBuffer.Count - 1; i >= 0; i--)
 			{
 

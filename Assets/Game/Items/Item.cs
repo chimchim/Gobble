@@ -78,28 +78,28 @@ public abstract class Item
 
 	public virtual void RotateArm(Game.GameManager game, int e)
 	{
-		return;
-		var entity = game.Entities.GetEntity(e);
-		var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
-		var input = game.Entities.GetComponentOf<InputComponent>(e);
-		resources.FreeArm.up = -input.ScreenDirection;
-		if (entity.Animator.transform.eulerAngles.y > 6)
-		{
-			resources.FreeArm.up = input.ScreenDirection;
-			resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
-		}
-		if (!CurrentGameObject)
-			return;
-		float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
-		var eu = CurrentGameObject.transform.localEulerAngles;
-		if (resources.FacingDirection > 0)
-		{
-			CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 180, eu.z) : new Vector3(eu.x, 0, eu.z);
-		}
-		else
-		{
-			CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 0, eu.z) : new Vector3(eu.x, 180, eu.z);
-		}
+		//return;
+		//var entity = game.Entities.GetEntity(e);
+		//var resources = game.Entities.GetComponentOf<ResourcesComponent>(e);
+		//var input = game.Entities.GetComponentOf<InputComponent>(e);
+		//resources.FreeArm.up = -input.ScreenDirection;
+		//if (entity.Animator.transform.eulerAngles.y > 6)
+		//{
+		//	resources.FreeArm.up = input.ScreenDirection;
+		//	resources.FreeArm.eulerAngles = new Vector3(resources.FreeArm.eulerAngles.x, resources.FreeArm.eulerAngles.y, 180 - resources.FreeArm.eulerAngles.z);
+		//}
+		//if (!CurrentGameObject)
+		//	return;
+		//float rotDir = Math.Sign((resources.FreeArm.up.x * resources.FacingDirection));
+		//var eu = CurrentGameObject.transform.localEulerAngles;
+		//if (resources.FacingDirection > 0)
+		//{
+		//	CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 180, eu.z) : new Vector3(eu.x, 0, eu.z);
+		//}
+		//else
+		//{
+		//	CurrentGameObject.transform.localEulerAngles = (rotDir > 0) ? new Vector3(eu.x, 0, eu.z) : new Vector3(eu.x, 180, eu.z);
+		//}
 	}
 	public virtual bool TryStack(Game.GameManager game, Item item)
 	{

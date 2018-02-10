@@ -11,13 +11,10 @@ namespace Game.Systems
 	{
 		private readonly Bitmask _bitmask = Bitmask.MakeFromComponents<Player, ActionQueue>();
 		private readonly Bitmask _animalBitmask = Bitmask.MakeFromComponents<Animal>();
-		bool[,] foundTile;
 
 		public void Update(GameManager game, float delta)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
-			int fullWidhth = GameUnity.FullWidth;
-			int fullHeight = GameUnity.FullHeight;
 
 			if (game.Client != null)
 			{

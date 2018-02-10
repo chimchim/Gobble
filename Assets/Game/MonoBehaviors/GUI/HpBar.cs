@@ -44,7 +44,7 @@ public class HpBar : MonoBehaviour
 		for (int i = 0; i < HeartAmount; i++)
 		{
 			var go = Instantiate(Template);
-			go.transform.parent = Bar.transform;
+			go.transform.SetParent(Bar.transform);
 			go.GetComponent<RectTransform>().localScale = Vector3.one;
 			go.GetComponent<Image>().sprite = FullHeart;
 			_items.Add(go.GetComponent<Image>());

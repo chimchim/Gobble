@@ -18,7 +18,6 @@ namespace Game.Systems
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
 			foreach (int entity in entities)
 			{
-				var player = game.Entities.GetComponentOf<Player>(entity);
 				var input = game.Entities.GetComponentOf<InputComponent>(entity);
 
 				input.Space = false;

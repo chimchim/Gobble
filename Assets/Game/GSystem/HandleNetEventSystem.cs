@@ -71,12 +71,7 @@ namespace Game.Systems
 
 		public void Initiate(GameManager game)
 		{
-			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
-			foreach (int entity in entities)
-			{
-				var ent = game.Entities.GetEntity(entity);
 
-			}
 		}
 	}
 }

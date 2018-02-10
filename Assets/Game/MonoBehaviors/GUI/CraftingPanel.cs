@@ -12,7 +12,7 @@ public class CraftingPanel : MonoBehaviour
 	public List<CraftButton> CraftButtons = new List<CraftButton>();
 	public CraftingPanel Collection;
 	//private int _currentIndex;
-	private bool enabled;
+	private bool init;
 	ScriptableItemCollection currentCollection;
 	public void SetItems(AllScriptableItems allItems, ScriptableItem.ItemCategory category)
 	{
@@ -79,9 +79,9 @@ public class CraftingPanel : MonoBehaviour
 
 	void OnEnable()
 	{
-		if (enabled)
+		if (init)
 			return;
-		enabled = true;
+		init = true;
 		for (int i = 0; i < TemplateAmount; i++)
 		{
 			var go = Instantiate(Template);

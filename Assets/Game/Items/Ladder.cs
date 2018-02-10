@@ -121,7 +121,6 @@ public class Ladder : Item
 
 		var transform = game.Entities.GetEntity(entity).gameObject.transform;
 		var input = game.Entities.GetComponentOf<InputComponent>(entity);
-		var hand = game.Entities.GetComponentOf<ResourcesComponent>(entity).Hand;
 		Vector2 placeDirection = input.ScreenDirection;
 		Vector2 pos = transform.position;
 		var hit = Physics2D.Raycast(pos, placeDirection, 2.0f, layerMask);

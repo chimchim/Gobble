@@ -324,7 +324,6 @@ public partial class TileMap
 	
 	void CreateTree(GameManager game, List<Vector2> tops)
 	{
-		GameObject go = null;
 		var leftType = BlockTypes[(int)tops[0].x -1, (int)tops[0].y + 1];
 		int start = 0;
 		if (leftType != TileType.Air)

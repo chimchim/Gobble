@@ -13,7 +13,6 @@ public class VisibleItem : MonoBehaviour
 	[HideInInspector]
 	public float timer;
 	Vector2 _offset;
-	bool grounded;
 
 	bool pickable;
 	MappedMasks Mask;
@@ -74,7 +73,6 @@ public class VisibleItem : MonoBehaviour
 		tempPos = Game.Systems.Movement.HorizontalMovement(tempPos, xMovement, _offset.x, _offset.y, out horGrounded);
 		if (vertGrounded)
 		{
-			grounded = true;
 			Force.y = 0;
 			Force.x *= 0.95f;
 		}

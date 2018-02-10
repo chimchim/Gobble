@@ -141,7 +141,7 @@ public class Client
 		}
 		catch (Exception ex)
 		{
-			Console.Write("failed to join server");
+			Console.Write("failed to join server " + ex.ToString());
 		}
 	}
 
@@ -220,7 +220,7 @@ public class Client
 		}
 		catch (Exception ex)
 		{
-			Console.Write("failed to Send");
+			Console.Write("failed to send " + ex.ToString());
 		}
 	}
 	//public struct 

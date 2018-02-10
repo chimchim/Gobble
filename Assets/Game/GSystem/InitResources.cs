@@ -23,7 +23,6 @@ namespace Game.Systems
 		public void Initiate(GameManager game)
 		{
 			var entities = game.Entities.GetEntitiesWithComponents(_bitmask);
-			int players = 0;
 			int ownerTeam = 0;
 			foreach (int entity in entities)
 			{

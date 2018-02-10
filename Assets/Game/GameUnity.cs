@@ -150,8 +150,6 @@ public class GameUnity : MonoBehaviour
 		inventory.Crafting = Crafting;
 	}
 
-	bool buildConsoleActive;
-	int normal = 0;
 	bool canvasactive = true;
 	void Update () 
 	{
@@ -160,12 +158,6 @@ public class GameUnity : MonoBehaviour
 		SetVariables();
 
 		StartingPosition = StartPos.position;
-
-		//if (UnityEngine.Input.GetKeyDown(KeyCode.B))
-		//{
-		//	buildConsoleActive = !buildConsoleActive;
-		//	BuildConsole.SetActive(buildConsoleActive);
-		//}
 		if (UnityEngine.Input.GetKeyDown(KeyCode.B))
 		{
 			Canvas.SetActive(!canvasactive);
@@ -174,7 +166,6 @@ public class GameUnity : MonoBehaviour
 	}
 	void FixedUpdate()
 	{
-		normal = 0;
 		game.FixedUpdate(Time.fixedDeltaTime);
 	}
 
@@ -258,7 +249,6 @@ public class GameUnity : MonoBehaviour
     private void SetFamilyID()
     {
         UnityEngine.Debug.Log("SETID");
-        var assembly = Assembly.GetExecutingAssembly();
         var types = FindSubClassesOf<GComponent>();
         int i = 0;
         foreach (var type in types)
