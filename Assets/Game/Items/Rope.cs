@@ -45,6 +45,7 @@ public class Rope : Item
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.ScrItem = game.GameResources.AllItems.Rope;
+		item.Health = item.ScrItem.MaxHp;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
@@ -115,7 +116,7 @@ public class Rope : Item
 		var position = ent.gameObject.transform.position;
 		var force = input.ScreenDirection * 5 + ent.PlayerSpeed;
 
-		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Rope, position, force));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Rope, position, force, 0, Health));
 	}
 
 	public override void Input(GameManager game, int entity, float delta)

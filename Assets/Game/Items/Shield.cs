@@ -10,16 +10,13 @@ using System.Text;
 using UnityEngine;
 using GatherLevel = GatherableScriptable.GatherLevel;
 
-public class Shield : Item, Item.IHealth
+public class Shield : Item
 {
 
 	private static ObjectPool<Shield> _pool = new ObjectPool<Shield>(10);
 	private LayerMask enemyLayer =  LayerMask.NameToLayer("EnemyShield");
 	private LayerMask playerLayer = LayerMask.NameToLayer("PlayerShield");
 	public bool IsSet;
-
-	private float health;
-
 
 	public override void Recycle()
 	{
@@ -105,7 +102,7 @@ public class Shield : Item, Item.IHealth
 		var position = ent.gameObject.transform.position;
 		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
 
-		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Shield, position, force));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Shield, position, force, 0, Health));
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
@@ -118,6 +115,7 @@ public class Shield : Item, Item.IHealth
 		item.ScrItem = game.GameResources.AllItems.Shield;
 		visible.Item = item;
 		visible.Force = force;
+		item.Health = item.ScrItem.MaxHp;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());
 		foreach (int e in entities)
 		{
@@ -198,12 +196,6 @@ public class Shield : Item, Item.IHealth
 	{
 
 		byteArray.AddRange(BitConverter.GetBytes(ItemNetID));
-	}
-
-	public void DoDamage(float dmg)
-	{
-		health -= dmg;
-		Debug.Log("Shield health " + health);
 	}
 }
 

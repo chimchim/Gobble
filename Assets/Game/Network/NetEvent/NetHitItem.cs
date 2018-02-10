@@ -25,8 +25,8 @@ public class NetHitItem : NetEvent
 		if (itemholder.Items.ContainsKey(ItemID))
 		{
 			var item = itemholder.Items[ItemID];
-			Item.IHealth item1 = item as Item.IHealth;
-			item1.DoDamage(Damage);
+			if(item.ScrItem.MaxHp > 0)
+				item.DoDamage(game, Damage, Player);
 			return;
 		}
 		Debug.Log("DIDT CONTAIN " + ItemID);

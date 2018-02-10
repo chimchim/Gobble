@@ -12,11 +12,16 @@ public class ItemImage : MonoBehaviour, IPointerDownHandler, IPointerEnterHandle
 	public Image Chosen;
 	public Image Image;
 	public Text Quantity;
-
+	public ItemHpBar HpBar;
 	public RealTimeVariables RealTime;
 	public Item Item;
 	public Inventory Type;
 	public int Index;
+
+	public void SetHp(float percent)
+	{
+		HpBar.SetHp(percent);
+	}
 	public void OnPointerExit(PointerEventData eventData)
 	{
 		RealTime.CurrentSwitch2 = null;

@@ -17,7 +17,6 @@ public class CraftButton : MonoBehaviour
 	private int[] Ingredients;
 	public bool IsSelected;
 
-	public bool CollectionIsSet;
 	public bool CollectionButton;
 	public void SetItem(ScriptableItem item, int[] ingredients)
 	{
@@ -45,7 +44,13 @@ public class CraftButton : MonoBehaviour
 	{
 		Chosen.enabled = true;
 		IsSelected = true;
-		SetMaterials.Invoke(Item);
+		if (!CollectionButton)
+			SetMaterials.Invoke(Item);
+		else
+		{
+			Debug.Log("CollectionClick return");
+			OnCollectionClick();
+		}
 	}
 	public void OnClick()
 	{

@@ -358,6 +358,7 @@
     <Compile Include="Assets\Game\MonoBehaviors\GUI\FreeArmPositioning.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\HpBar.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ImageFollowMouse.cs" />
+    <Compile Include="Assets\Game\MonoBehaviors\GUI\ItemHpBar.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ItemImage.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\ItemImageCrafting.cs" />
     <Compile Include="Assets\Game\MonoBehaviors\GUI\Menu\ButtonClick.cs" />

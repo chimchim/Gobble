@@ -139,12 +139,20 @@ namespace Game.Systems
 					else
 						switch1.UnsetImage();
 
+					//switch1.SetHp(switch2.Item.Health);
+					//switch2.SetHp(switch1.Item.Health);
 					switch1.SetQuantity(0);
 					switch2.SetQuantity(0);
 					if (switch2.Item != null)
+					{
+						switch1.SetHp(switch2.Item.Health);
 						switch1.SetQuantity(switch2.Item.Quantity);
+					}
 					if (switch1.Item != null)
+					{
 						switch2.SetQuantity(switch1.Item.Quantity);
+						switch2.SetHp(switch1.Item.Health);
+					}
 
 					var i = switch2.Item;
 					switch2.Item = switch1.Item;

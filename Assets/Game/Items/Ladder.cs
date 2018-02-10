@@ -66,7 +66,7 @@ public class Ladder : Item
 		var position = ent.gameObject.transform.position;
 		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
 
-		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Ladder, position, force));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Ladder, position, force, 0, Health));
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
@@ -77,6 +77,7 @@ public class Ladder : Item
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.ScrItem = game.GameResources.AllItems.Ladder;
+		item.Health = item.ScrItem.MaxHp;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());

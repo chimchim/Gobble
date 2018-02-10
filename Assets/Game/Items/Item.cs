@@ -9,7 +9,6 @@ using UnityEngine;
 
 public abstract class Item
 {
-	public interface IHealth{ void DoDamage(float dmg); }
 	public interface IOnMouseRight{ void OnMouseRight(GameManager game, int entity); }
 	public interface IOnMouseLeft { void OnMouseLeft(GameManager game, int entity); }
 	public enum ItemID
@@ -27,6 +26,14 @@ public abstract class Item
 	public GameObject CurrentGameObject;
 	public int ItemNetID;
 	public int Quantity = 1;
+	public float Health;
+	public float GetHpPercent
+	{
+		get
+		{
+			return (Health / ScrItem.MaxHp);
+		}
+	}
 
 	public bool Remove;
 	public bool GotUpdated;
@@ -53,6 +60,8 @@ public abstract class Item
 	}
 	public virtual void OwnerActivate(Game.GameManager game, int entity)
 	{
+		var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
+		
 		var itemHolder = game.Entities.GetComponentOf<ItemHolder>(entity);
 		var stats = game.Entities.GetComponentOf<Stats>(entity);
 		stats.CharacterStats.ArmRotationSpeed = ScrItem.RotationSpeed;
@@ -174,6 +183,21 @@ public abstract class Item
 
 		item.transform.localEulerAngles = new Vector3(0, 0, -90);
 		item.transform.localPosition = new Vector3(0, 0, 0);
+	}
+
+	public Action<float> SetHpInSlot;
+	public void DoDamage(GameManager game, float dmg, int owner)
+	{
+		Health -= dmg;
+		if (Health <= 0)
+		{
+			var go = GameObject.Instantiate(game.GameResources.Prefabs.Poof);
+			go.transform.position = CurrentGameObject.transform.position;
+			GameObject.Destroy(go, 0.4f);
+			DestroyItem(game, owner);
+			
+		}
+		SetHpInSlot.Invoke(GetHpPercent);
 	}
 }
 

@@ -13,6 +13,7 @@ public class NetCreateItem : NetEvent
 	public Vector2 Position;
 	public int Creator;
 	public int ItemTier;
+	public float Health;
 	public override void Recycle()
 	{
 		Iterations = 0;
@@ -46,6 +47,7 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Spear.MakeItem(game, Position, Force, ItemTier);
 		}
+		visible.Item.Health = Health;
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;
 		visible.Item.CurrentGameObject = visible.gameObject;
@@ -57,7 +59,7 @@ public class NetCreateItem : NetEvent
 		return _pool.GetNext();
 	}
 
-    public static NetCreateItem Make(int creator, Item.ItemID itemID, Vector3 position, Vector2 force, int itemTier = 0)
+    public static NetCreateItem Make(int creator, Item.ItemID itemID, Vector3 position, Vector2 force, int itemTier = 0, float health = 0)
 	{
 		var evt = _pool.GetNext();
 		evt.ItemID = itemID;
@@ -65,6 +67,7 @@ public class NetCreateItem : NetEvent
 		evt.Position = position;
 		evt.Creator = creator;
 		evt.ItemTier = itemTier;
+		evt.Health = health;
 		return evt;
 	}
 
@@ -84,6 +87,7 @@ public class NetCreateItem : NetEvent
 		float forceY = BitConverter.ToSingle(byteData, index);
 		index += sizeof(float);
 		ItemTier = BitConverter.ToInt32(byteData, index); index += sizeof(int);
+		Health = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 
 		ItemID = (Item.ItemID)id;
 		Position = new Vector2(posX, posY);
@@ -93,7 +97,7 @@ public class NetCreateItem : NetEvent
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
 		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetCreateItem));
-		outgoing.AddRange(BitConverter.GetBytes(28));
+		outgoing.AddRange(BitConverter.GetBytes(32));
 		outgoing.AddRange(BitConverter.GetBytes((int)ItemID));
 		outgoing.AddRange(BitConverter.GetBytes(Creator));
 		outgoing.AddRange(BitConverter.GetBytes(Position.x));
@@ -101,5 +105,6 @@ public class NetCreateItem : NetEvent
 		outgoing.AddRange(BitConverter.GetBytes(Force.x));
 		outgoing.AddRange(BitConverter.GetBytes(Force.y));
 		outgoing.AddRange(BitConverter.GetBytes((int)ItemTier));
+		outgoing.AddRange(BitConverter.GetBytes(Health));
 	}
 }

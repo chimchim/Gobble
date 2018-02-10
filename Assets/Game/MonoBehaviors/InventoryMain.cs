@@ -50,6 +50,11 @@ public class InventoryMain : MonoBehaviour {
 				ItemImage[i].Item = item;
 				ItemImage[i].SetImage(scriptable.Sprite);
 				ItemImage[i].SetQuantity(item.Quantity);
+				if(scriptable.MaxHp > 0)
+				{
+					item.SetHpInSlot = ItemImage[i].SetHp;
+					ItemImage[i].SetHp(item.GetHpPercent);
+				}
 				index = i;
 				break;
 			}
@@ -71,6 +76,7 @@ public class InventoryMain : MonoBehaviour {
 				ItemImage[i].Item = null;
 				ItemImage[i].UnsetImage();
 				ItemImage[i].Quantity.text = "";
+				ItemImage[i].HpBar.DisableImage();
 				break;
 			}
 		}

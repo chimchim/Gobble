@@ -137,7 +137,7 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 		var position = ent.gameObject.transform.position;
 		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
 
-		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Spear, position, force, SpearScript.Tier));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Spear, position, force, SpearScript.Tier, Health));
 	}
 
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force, int tier)
@@ -152,6 +152,7 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 		var item = Make();
 		item.SpearScript = spear;
 		item.ScrItem = spear;
+		item.Health = item.ScrItem.MaxHp;
 		visible.Item = item;
 		visible.Force = force;
 		var entities = game.Entities.GetEntitiesWithComponents(Bitmask.MakeFromComponents<Player>());

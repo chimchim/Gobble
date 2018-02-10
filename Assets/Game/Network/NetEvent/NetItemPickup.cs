@@ -29,7 +29,6 @@ public class NetItemPickup : NetEvent
 				break;
 			}
 		}
-
 		item.Item.CurrentGameObject.GetComponent<Collider2D>().enabled = false;
 		item.enabled = false;
 		if (!player.Owner)

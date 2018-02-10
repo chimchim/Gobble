@@ -13,6 +13,7 @@ public class NetCreateIngredient : NetEvent
 	public Vector2 Position;
 	public int Creator;
 	public int Quantity;
+	public float Health;
 	public override void Recycle()
 	{
 		Iterations = 0;

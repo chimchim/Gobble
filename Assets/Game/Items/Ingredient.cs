@@ -88,6 +88,7 @@ public class Ingredient : Item
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
 		item.ScrItem = game.GameResources.AllItems.Ingredient;
+		item.Health = item.ScrItem.MaxHp;
 		item.IngredientType = ingredientType;
 		visible.Item = item;
 		visible.Force = force;
