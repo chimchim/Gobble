@@ -18,9 +18,14 @@ public class ItemImage : MonoBehaviour, IPointerDownHandler, IPointerEnterHandle
 	public Inventory Type;
 	public int Index;
 
-	public void SetHp(float percent)
+	public void SetHp(Item item)
 	{
-		HpBar.SetHp(percent);
+		if (item == null)
+		{
+			HpBar.DisableImage();
+			return;
+		}
+		HpBar.SetHp(item.GetHpPercent);
 	}
 	public void OnPointerExit(PointerEventData eventData)
 	{

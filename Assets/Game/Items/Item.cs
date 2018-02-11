@@ -185,7 +185,7 @@ public abstract class Item
 		item.transform.localPosition = new Vector3(0, 0, 0);
 	}
 
-	public Action<float> SetHpInSlot;
+	public Action<Item> SetHpInSlot;
 	public void DoDamage(GameManager game, float dmg, int owner)
 	{
 		Health -= dmg;
@@ -197,7 +197,7 @@ public abstract class Item
 			DestroyItem(game, owner);
 			
 		}
-		SetHpInSlot.Invoke(GetHpPercent);
+		SetHpInSlot.Invoke(this);
 	}
 }
 

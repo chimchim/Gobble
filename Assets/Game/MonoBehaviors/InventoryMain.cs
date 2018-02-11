@@ -53,7 +53,7 @@ public class InventoryMain : MonoBehaviour {
 				if(scriptable.MaxHp > 0)
 				{
 					item.SetHpInSlot = ItemImage[i].SetHp;
-					ItemImage[i].SetHp(item.GetHpPercent);
+					ItemImage[i].SetHp(item);
 				}
 				index = i;
 				break;

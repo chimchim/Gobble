@@ -120,14 +120,12 @@ namespace Game.Systems
 				{
 					if (currentItem == switch1.Item)
 					{
-						//Debug.Log("currentItem switch 1 " + switch1.Item);
 						if (switch2.Item != null)
 							switch2.Item.OwnerActivate(game, holder.EntityID);
 						currentItem.OwnerDeActivate(game, holder.EntityID);
 					}
 					if (currentItem == switch2.Item && (currentItem != null || (switch2.Type == Inventory.Main && switch2.Index == inv.CurrentItemIndex)))
 					{
-						//Debug.Log("currentItem switch 2 " + switch1.Item);
 						switch1.Item.OwnerActivate(game, holder.EntityID);
 						if(currentItem != null)
 							currentItem.OwnerDeActivate(game, holder.EntityID);
@@ -139,19 +137,19 @@ namespace Game.Systems
 					else
 						switch1.UnsetImage();
 
-					//switch1.SetHp(switch2.Item.Health);
-					//switch2.SetHp(switch1.Item.Health);
+					switch1.SetHp(switch2.Item);
+					switch2.SetHp(switch1.Item);
 					switch1.SetQuantity(0);
 					switch2.SetQuantity(0);
 					if (switch2.Item != null)
 					{
-						switch1.SetHp(switch2.Item.Health);
+						//switch1.SetHp(switch2.Item.GetHpPercent);
 						switch1.SetQuantity(switch2.Item.Quantity);
 					}
 					if (switch1.Item != null)
 					{
 						switch2.SetQuantity(switch1.Item.Quantity);
-						switch2.SetHp(switch1.Item.Health);
+						//switch2.SetHp(switch1.Item.GetHpPercent);
 					}
 
 					var i = switch2.Item;
