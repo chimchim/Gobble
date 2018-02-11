@@ -14,6 +14,7 @@ public class AllScriptableItems : ScriptableObject
 	public ScriptableItem Shield;
 	public ScriptableItem Sword;
 	public ScriptableItem Spear;
+	public ScriptableItem Base;
 
 	public List<ScriptableItem> AllItemsList = new List<ScriptableItem>();
 	public ScriptableCharacter[] CharactersScriptables;

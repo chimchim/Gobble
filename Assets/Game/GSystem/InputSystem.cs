@@ -79,7 +79,8 @@ namespace Game.Systems
 					{
 						game.AddAction(() =>
 						{
-							HandleNetEventSystem.AddEvent(game, e, NetEventCreateAnimal.Make(0, mousePos));
+							game.CreateFullPlayer(false, "adw", false, 1, 0, Characters.Yolanda);
+							//HandleNetEventSystem.AddEvent(game, e, NetEventCreateAnimal.Make(0, mousePos));
 						});
 
 						//game.CreateFullPlayer(false, "adw", false, 1, 0, Characters.Yolanda);

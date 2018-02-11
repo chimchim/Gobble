@@ -10,10 +10,10 @@ using System.Text;
 using UnityEngine;
 using GatherLevel = GatherableScriptable.GatherLevel;
 
-public class Ladder : Item
+public class Base : Item
 {
 
-	private static ObjectPool<Ladder> _pool = new ObjectPool<Ladder>(10);
+	private static ObjectPool<Base> _pool = new ObjectPool<Base>(10);
 
 	Transform Placeable;
 	public override void Recycle()
@@ -22,14 +22,14 @@ public class Ladder : Item
 		_pool.Recycle(this);
 	}
 
-	public Ladder()
+	public Base()
 	{
 
 	}
-	public static Ladder Make()
+	public static Base Make()
 	{
-		Ladder item = _pool.GetNext();
-		item.ID = ItemID.Ladder;
+		Base item = _pool.GetNext();
+		item.ID = ItemID.Base;
 		return item;
 	}
 
@@ -37,9 +37,11 @@ public class Ladder : Item
 	{
 		if (Placeable == null)
 		{
-			
-			Placeable = GameObject.Instantiate(game.GameResources.Prefabs.Ladder).transform;
+
+			Placeable = GameObject.Instantiate(game.GameResources.AllItems.Base.Prefab).transform;
 			Placeable.gameObject.layer = LayerMask.NameToLayer("Default");
+			Placeable.transform.localScale = new Vector3(0.5f, 0.5f, 1);
+			Placeable.position = new Vector3(0, 0, 0);
 		}
 		base.OwnerActivate(game, entity);
 	}
@@ -52,7 +54,7 @@ public class Ladder : Item
 
 	public override void OwnerDeActivate(GameManager game, int entity)
 	{
-		if(Placeable)
+		if (Placeable)
 			Placeable.position = new Vector3(0, 0, 0);
 		base.OwnerDeActivate(game, entity);
 	}
@@ -66,17 +68,17 @@ public class Ladder : Item
 		var position = ent.gameObject.transform.position;
 		var force = (input.ScreenDirection * 5) + ent.PlayerSpeed;
 
-		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Ladder, position, force, 0, Health));
+		HandleNetEventSystem.AddEvent(game, entity, NetCreateItem.Make(entity, Item.ItemID.Base, position, force, 0, Health));
 	}
 	public static VisibleItem MakeItem(GameManager game, Vector3 position, Vector2 force)
 	{
-		var go = GameObject.Instantiate(game.GameResources.AllItems.Ladder.Prefab);
+		var go = GameObject.Instantiate(game.GameResources.AllItems.Base.Prefab);
 		go.transform.position = position;
 
 
 		var visible = go.AddComponent<VisibleItem>();
 		var item = Make();
-		item.ScrItem = game.GameResources.AllItems.Ladder;
+		item.ScrItem = game.GameResources.AllItems.Base;
 		item.Health = item.ScrItem.MaxHp;
 		visible.Item = item;
 		visible.Force = force;
@@ -96,17 +98,7 @@ public class Ladder : Item
 
 		return visible;
 	}
-	public override bool TryStack(GameManager game, Item item)
-	{
-		Ladder ladder = item as Ladder;
-		if (ladder != null)
-		{
-			Quantity += ladder.Quantity;
-			return true;	
-		}
 
-		return false;
-	}
 	public override void OnPickup(GameManager game, int entity, GameObject gameObject)
 	{
 		CheckMain(game, entity, gameObject);
@@ -124,53 +116,25 @@ public class Ladder : Item
 		Vector2 placeDirection = input.ScreenDirection;
 		Vector2 pos = transform.position;
 		var hit = Physics2D.Raycast(pos, placeDirection, 2.0f, layerMask);
-		Debug.DrawLine(pos, pos + (new Vector2(placeDirection.x, placeDirection.y) * 2.0f), Color.blue);
 		Placeable.position = new Vector3(0, 0, 0);
 		if (hit.transform != null)
 		{
 			bool placeOK = false;
-			if (hit.normal.y == 0)
+			if (hit.normal.y == 1)
 			{
 				placeOK = true;
-				Placeable.position = new Vector3(hit.transform.position.x + (hit.normal.x * 0.68f), hit.transform.position.y, -0.2f);
-			}
-			else if (hit.normal.x == 0)
-			{
-				var coord = hit.transform.position / 1.28f;
-				int x = (int)coord.x;
-				int y = (int)coord.y;
-				int nextX = x + (Math.Sign(placeDirection.x));
-				var cube = game.TileMap.Blocks[nextX, y];
-				if (cube == null || cube.GetComponent<GatherableBlock>().IngredientType == TileMap.IngredientType.TreeChunk)
-				{
-					placeOK = true;
-					Placeable.position = new Vector3(hit.transform.position.x + (0.68f * (Math.Sign(placeDirection.x))), hit.transform.position.y, -0.2f);
-				}
+				Placeable.position = hit.point + new Vector2(0, 0.64f);
 			}
 			if (input.OnLeftDown && placeOK)
 			{
 				HandleNetEventSystem.AddEventAndHandle(game, entity, NetCreateLadder.Make(Placeable.position));
-				Quantity--;
-				if (Quantity <= 0)
+				Placeable = null;
+				game.AddAction(() =>
 				{
-					game.AddAction(() =>
-					{
-						DestroyItem(game, entity);
-					});
-					game.AddAction(() =>
-					{
-						var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
-						holder.Hands.OwnerActivate(game, entity);
-					});
-					return;
-				}
-				var inv = game.Entities.GetComponentOf<InventoryComponent>(entity);
-				
-				inv.MainInventory.SetQuantity(this);
+					DestroyItem(game, entity);
+				});	
 			}
-			return;
 		}
-
 	}
 
 	public override void Sync(GameManager game, Client.GameLogicPacket pack, byte[] byteData, ref int currentIndex)

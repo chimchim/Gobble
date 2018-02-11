@@ -19,7 +19,8 @@ public abstract class Item
 		Ladder,
 		Shield,
 		Sword,
-		Spear
+		Spear,
+		Base
 	}
 	public ItemID ID;
 	public ScriptableItem ScrItem;
@@ -31,7 +32,7 @@ public abstract class Item
 	{
 		get
 		{
-			return (Health / ScrItem.MaxHp);
+			return (ScrItem.MaxHp <= 0) ? 0 : (Health / ScrItem.MaxHp);
 		}
 	}
 

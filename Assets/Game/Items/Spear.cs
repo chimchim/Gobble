@@ -117,7 +117,7 @@ public class Spear : Item, IOnMouseRight, IOnMouseLeft
 			{
 				var id = transform.root.GetComponent<IdHolder>().ID;
 				Vector2 offsetPoint = hit.point - new Vector2(transform.position.x, transform.position.y) + (dir * 0.3f);
-				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, SpearScript.Damage, Effects.Blood3, offsetPoint));
+				HandleNetEventSystem.AddEventAndHandle(game, e, NetHitPlayer.Make(id, SpearScript.Damage, Effects.Blood3, offsetPoint, dir * 5));
 			}
 			if (collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
 			{

@@ -31,7 +31,8 @@ public abstract class NetEvent
 		NetPlayerDeath,
 		NetEventSpawnPlayer,
 		NetHitAnimal,
-		NetInputKeyDown
+		NetInputKeyDown,
+		NetCreateBase
 	}
 
 	public static NetEvent GetGatherableEvent(Gatherable gatherable)
@@ -73,7 +74,8 @@ public abstract class NetEvent
 		NetPlayerDeath.Make,
 		NetEventSpawnPlayer.Make,
 		NetHitAnimal.Make,
-		NetInputKeyDown.Make
+		NetInputKeyDown.Make,
+		NetCreateBase.Make
 	};
 
 	// Default Accessability is Aspect

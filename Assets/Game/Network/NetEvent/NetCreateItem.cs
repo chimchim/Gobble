@@ -47,6 +47,10 @@ public class NetCreateItem : NetEvent
 		{
 			visible = Spear.MakeItem(game, Position, Force, ItemTier);
 		}
+		if (ItemID == Item.ItemID.Base)
+		{
+			visible = Base.MakeItem(game, Position, Force);
+		}
 		visible.Item.Health = Health;
 		visible.StartCoroutine(visible.TriggerTime());
 		visible.Item.ItemNetID = itemNetID;

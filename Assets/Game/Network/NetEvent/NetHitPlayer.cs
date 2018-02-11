@@ -14,12 +14,15 @@ public class NetHitPlayer : NetEvent
 	public float Damage;
 	public Vector2 EffectOffset;
 	public Effects Effect;
+	public Vector2 Force;
 	public override void Handle(GameManager game)
 	{
 		var entity = game.Entities.GetEntity(Player);
 		Vector3 pos = entity.gameObject.transform.position + new Vector3(EffectOffset.x, EffectOffset.y, 0.2f);
 		game.CreateEffect(Effect, pos, 0.5f);
 		var player = game.Entities.GetComponentOf<Player>(Player);
+		var move = game.Entities.GetComponentOf<MovementComponent>(Player);
+		move.ForceVelocity += Force;
 		if (!player.Owner || GameUnity.DebugMode)
 			return;
 
@@ -39,7 +42,16 @@ public class NetHitPlayer : NetEvent
 	{
 		return _pool.GetNext();
 	}
-
+	public static NetHitPlayer Make(int player, float damage, Effects effect, Vector2 effectOffset, Vector2 force)
+	{
+		var evt = _pool.GetNext();
+		evt.Player = player;
+		evt.Damage = damage;
+		evt.EffectOffset = effectOffset;
+		evt.Effect = effect;
+		evt.Force = force;
+		return evt;
+	}
 	public static NetHitPlayer Make(int player, float damage, Effects effect, Vector2 effectOffset)
 	{
 		var evt = _pool.GetNext();
@@ -47,6 +59,7 @@ public class NetHitPlayer : NetEvent
 		evt.Damage = damage;
 		evt.EffectOffset = effectOffset;
 		evt.Effect = effect;
+		evt.Force = Vector2.zero;
 		return evt;
 	}
 
@@ -63,17 +76,22 @@ public class NetHitPlayer : NetEvent
 		float x = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		float y = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		Effect = (Effects)BitConverter.ToInt32(byteData, index); index += sizeof(int);
+		float fx = BitConverter.ToSingle(byteData, index); index += sizeof(float);
+		float fy = BitConverter.ToSingle(byteData, index); index += sizeof(float);
 		EffectOffset = new Vector2(x, y);
+		Force = new Vector2(fx, fy);
 	}
 
 	protected override void InnerNetSerialize(GameManager game, List<byte> outgoing)
 	{
 		outgoing.AddRange(BitConverter.GetBytes((int)NetEventType.NetHitPlayer));
-		outgoing.AddRange(BitConverter.GetBytes(20));
+		outgoing.AddRange(BitConverter.GetBytes(28));
 		outgoing.AddRange(BitConverter.GetBytes(Player));
 		outgoing.AddRange(BitConverter.GetBytes(Damage));
 		outgoing.AddRange(BitConverter.GetBytes(EffectOffset.x));
 		outgoing.AddRange(BitConverter.GetBytes(EffectOffset.y));
 		outgoing.AddRange(BitConverter.GetBytes((int)Effect));
+		outgoing.AddRange(BitConverter.GetBytes(Force.x));
+		outgoing.AddRange(BitConverter.GetBytes(Force.y));
 	}
 }

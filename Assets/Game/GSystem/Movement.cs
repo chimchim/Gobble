@@ -60,7 +60,7 @@ namespace Game.Systems
 
 		}
 
-		public static bool CheckGrounded(Vector2 tempPos, float y, float yOffset, MappedMasks masks, out int layer)
+		public static bool CheckGrounded(Vector2 tempPos, float y, float yOffset, float xOffset, MappedMasks masks, out int layer)
 		{
 			layer = 0;
 			LayerMask layerMask = 0;// = masks.DownLayers[0];
@@ -79,7 +79,7 @@ namespace Game.Systems
 
 			for (int i = -1; i < 2; i++)
 			{
-				var pos = tempPos + new Vector2((i * 0.1f), yOffset * Math.Sign(y));
+				var pos = tempPos + new Vector2((i * xOffset), yOffset * Math.Sign(y));
 				var hit2 = Physics2D.Raycast(pos, yDirection, ySize, layerMask);
 				Debug.DrawLine(pos, pos + (yDirection * ySize), Color.red);
 				if (hit2.transform != null)

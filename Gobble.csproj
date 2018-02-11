@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2017.3.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -327,6 +329,7 @@
     <Compile Include="Assets\Game\GSystem\SendGamePackets.cs" />
     <Compile Include="Assets\Game\GSystem\System.cs" />
     <Compile Include="Assets\Game\GSystem\UpdateItems.cs" />
+    <Compile Include="Assets\Game\Items\Base.cs" />
     <Compile Include="Assets\Game\Items\EmptyHands.cs" />
     <Compile Include="Assets\Game\Items\Ingredient.cs" />
     <Compile Include="Assets\Game\Items\Item.cs" />
@@ -401,6 +404,7 @@
     <Compile Include="Assets\Game\Network\Data.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetAddForce.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetAnimalJump.cs" />
+    <Compile Include="Assets\Game\Network\NetEvent\NetCreateBase.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateEffect.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateIngredient.cs" />
     <Compile Include="Assets\Game\Network\NetEvent\NetCreateItem.cs" />

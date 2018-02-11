@@ -9,7 +9,6 @@ public class ItemHpBar : MonoBehaviour
 	void Start ()
 	{
 		startWidhtX = GetComponent<RectTransform>().rect.width;
-		Debug.Log("Sfresfe " + startWidhtX);
 	}
 
 	public void DisableImage()
@@ -19,9 +18,10 @@ public class ItemHpBar : MonoBehaviour
 	}
 	public void SetHp(float p)
 	{
-		if(p <= 0)
+		if (p <= 0)
 		{
 			GetComponent<UnityEngine.UI.Image>().enabled = false;
+			return;
 		}
 		var image = GetComponent<UnityEngine.UI.Image>();
 		if (!image.isActiveAndEnabled)

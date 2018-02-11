@@ -79,7 +79,9 @@ namespace Game.Movement
 			if (yMovement > 0)
 				yPos = box.offset.y  + box.size.y/2;
 			int layer = 0;
-			movement.Grounded = Game.Systems.Movement.CheckGrounded(tempPos, yMovement, yPos, mask, out layer);
+
+			float xoffset = yMovement > 0 ? box.size.x / 2 : 0.1f;
+			movement.Grounded = Game.Systems.Movement.CheckGrounded(tempPos, yMovement, yPos, xoffset, mask, out layer);
 
 			if (movement.Grounded)
 			{
@@ -87,7 +89,8 @@ namespace Game.Movement
 					groundTimer = 0;
 				movement.CurrentVelocity.y = 0;
 				yMovement = 0;
-
+				movement.ForceVelocity.x *= 0.88f;
+				movement.ForceVelocity.y = 0;
 			}
 			#region LadderCheck
 			
