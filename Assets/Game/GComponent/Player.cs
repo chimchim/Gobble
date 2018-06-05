@@ -17,6 +17,7 @@ namespace Game.Component
 		public float Health;
 
 		public bool Dead { get { return Health <= 0; } }
+		public Transform Base;
 		public override void Recycle()
 		{
 			LobbySlot = -1;

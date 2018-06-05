@@ -50,3 +50,16 @@ public static class Helper
 	}
 }
 
+//Vector2 segDir = seg.Pos1 - seg.Pos2;
+//Vector2 segNormal = Vector3.Cross(Vector3.forward, new Vector3(segDir.x, segDir.y, 0)).normalized;
+//float angleB = 90 - getAngle(bl, segDir.magnitude, cl);
+//var bPos = Rotate(segNormal, angleB + 90) * cl + seg.Pos1;
+//
+//float angleB2 = 90 - getAngle(cl, segDir.magnitude, bl);
+//var bPos2 = Rotate(segNormal, angleB + 90) * bl + seg.Pos1;
+//bPos = bPos.x > bPos2.x? bPos : bPos2;
+//
+//		Segment segb = new Segment { Pos1 = seg.Pos1, Pos2 = bPos };
+//Segment segc = new Segment { Pos1 = seg.Pos2, Pos2 = bPos };
+//segments.Add(segb);
+//		segments.Add(segc);

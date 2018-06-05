@@ -70,10 +70,10 @@ public class PickAxe : Item
 		var hit = Physics2D.Raycast(HitPointer.position, HitPointer.right, 0.2f, layerMask);
 		if (hit.transform == null)
 		{
-			var entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
-			var newDir = HitPointer.position - entityPos;
-			hit = Physics2D.Raycast(entityPos, newDir, 1.2f, layerMask);
-			if(hit.transform == null)
+			//var entityPos = game.Entities.GetEntity(entity).gameObject.transform.position;
+			//var newDir = HitPointer.position - entityPos;
+			//hit = Physics2D.Raycast(entityPos, newDir, 1.2f, layerMask);
+			//if(hit.transform == null)
 				return;
 		}
 		var bc = hit.transform.GetComponent<Gatherable>();

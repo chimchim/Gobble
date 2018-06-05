@@ -19,6 +19,7 @@ public class NetEventSpawnPlayer : NetEvent
 		var movecomp = game.Entities.GetComponentOf<MovementComponent>(Player);
 		var player = game.Entities.GetComponentOf<Player>(Player);
 		player.Health = 100;
+		entity.gameObject.transform.position = player.Base.position + Vector3.up;
 		entity.gameObject.layer = ((Grounded)movecomp.States[(int)MoveState.Grounded]).PlayerLayer;
 		resources.LerpCharacter.gameObject.SetActive(true);
 	}

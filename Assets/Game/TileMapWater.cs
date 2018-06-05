@@ -1,6 +1,7 @@
 ﻿using Game;
 using System.Collections;
 using System.Collections.Generic;
+using Gatherables;
 using UnityEngine;
 
 public partial class TileMap
@@ -61,6 +62,11 @@ public partial class TileMap
 				if ((y < fullHeight) && (x < fullWidhth) && Blocks[x, y] != null)
 				{
 					blocks[x, y] = 1;
+					var gb = Blocks[x, y].GetComponent<GatherableBlock>();
+					if (gb != null && gb.IngredientType == IngredientType.TreeChunk)
+					{
+						blocks[x, y] = 0;
+					}
 				}
 				mass[x, y] = blocks[x, y] == WATER ? MaxMass : 0.0f;
 				new_mass[x, y] = blocks[x, y] == WATER ? MaxMass : 0.0f;

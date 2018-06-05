@@ -41,7 +41,6 @@ public class Base : Item
 			Placeable = GameObject.Instantiate(game.GameResources.AllItems.Base.Prefab).transform;
 			Placeable.gameObject.layer = LayerMask.NameToLayer("Default");
 			Placeable.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-			Placeable.position = new Vector3(0, 0, 0);
 		}
 		base.OwnerActivate(game, entity);
 	}
@@ -116,6 +115,8 @@ public class Base : Item
 		Vector2 placeDirection = input.ScreenDirection;
 		Vector2 pos = transform.position;
 		var hit = Physics2D.Raycast(pos, placeDirection, 2.0f, layerMask);
+		if (Placeable == null)
+			return;
 		Placeable.position = new Vector3(0, 0, 0);
 		if (hit.transform != null)
 		{
@@ -124,15 +125,21 @@ public class Base : Item
 			{
 				placeOK = true;
 				Placeable.position = hit.point + new Vector2(0, 0.64f);
+				Placeable.position += new Vector3(0, 0, -0.15f);
 			}
 			if (input.OnLeftDown && placeOK)
 			{
-				HandleNetEventSystem.AddEventAndHandle(game, entity, NetCreateLadder.Make(Placeable.position));
-				Placeable = null;
+				HandleNetEventSystem.AddEventAndHandle(game, entity, NetCreateBase.Make(entity, Placeable.position));
+				GameObject.Destroy(Placeable.gameObject);
 				game.AddAction(() =>
 				{
 					DestroyItem(game, entity);
-				});	
+				});
+				game.AddAction(() =>
+				{
+					var holder = game.Entities.GetComponentOf<ItemHolder>(entity);
+					holder.Hands.OwnerActivate(game, entity);
+				});
 			}
 		}
 	}

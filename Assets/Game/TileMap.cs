@@ -255,16 +255,19 @@ public partial class TileMap
 		CreateGold(game);
 		CreateIron(game);
 		CreateCopper(game);
+		CreateTrees(game);
 		_enlisted = null;
 		MineralTypes = null;
 		BlockIslandSize = null;
 		Minerals = null;
-		if(GameUnity.CreateTrees)
-			CreateTrees(game);
+		
 	}
 
 	public void CreateTrees(GameManager game)
 	{
+		if (!GameUnity.CreateTrees)
+			return;
+
 		int fullWidhth = GameUnity.FullWidth;
 		int fullHeight = GameUnity.FullHeight;
 		int chance = 0;
