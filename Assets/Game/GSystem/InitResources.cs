@@ -58,7 +58,7 @@ namespace Game.Systems
 				ent.Animator = playerGameObject.GetComponentInChildren<Animator>();
 				playerGameObject.AddComponent<IdHolder>().ID = ent.ID;
 				playerGameObject.GetComponent<IdHolder>().Owner = player.Owner;
-				playerGameObject.transform.position =  GameUnity.StartingPosition;
+				playerGameObject.transform.position =  new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 				game.Entities.GetComponentOf<InputComponent>(ent.ID).NetworkPosition = new Vector3((GameUnity.FullWidth / 2), (GameUnity.FullHeight / 2), 0);
 				if (player.Owner)
 				{

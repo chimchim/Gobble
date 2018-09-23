@@ -146,7 +146,7 @@ namespace Game.Systems
 			ent.AddComponent(menu);
 			_menu = menu;
 
-			string ip = "193.11.162.110";
+			string ip = "172.20.10.7";
 			int port = 1112;
 			string name = "name";
 
