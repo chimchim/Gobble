@@ -85,6 +85,7 @@ public class GameUnity : MonoBehaviour
 	public static int MiniMapBoundryX;
 	public static int MiniMapBoundryY;
 	public static float PerlinZoom;
+	public static Vector2 PerlinShift;
 	public static Vector3 DebugVector;
 
 	public static int MainInventorySize = 3;
@@ -226,6 +227,7 @@ public class GameUnity : MonoBehaviour
 		FullWidth = MapWidth + (WidhtBound * 2);
 		FullHeight = MapHeight + (HeightBound * 2) + BottomBoundOffset + TopBoundOffset;
 		PerlinZoom = MapData.PerlinZoom;
+		PerlinShift = MapData.PerlinShift;
 		DebugVector = MapData.DebugVector;
 
 	}

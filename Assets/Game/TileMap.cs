@@ -210,7 +210,7 @@ public partial class TileMap
 			}
 		}
 
-		Vector2 shift = new Vector2(0, 0); // play with this to shift map around
+		Vector2 shift = GameUnity.PerlinShift; // play with this to shift map around
 		float zoom = GameUnity.PerlinZoom; // play with this to zoom into the noise field
 		int startY = GameUnity.HeightBound + GameUnity.BottomBoundOffset;
 		int maxY = GameUnity.MapHeight;
@@ -338,8 +338,6 @@ public partial class TileMap
 		#region Ground
 
 		int twigAmount = 0;
-		int leftHeight = 0;
-		int rightHeight = 0;
 		Vector2 startPos = Vector2.zero;
 		bool groundTwig = false;
 		for (int i = 0; i < tops.Count; i++)
@@ -380,7 +378,6 @@ public partial class TileMap
 								twigAmount++;
 								CreatTwig(game, game.GameResources.Prefabs.TwigLeft.gameObject, tops[i].x, tops[i].y + 2 + j, 1);
 							}
-							leftHeight++;
 							int mod = j % 2;
 							if (mod == 1) CreateBlockTree(game, game.GameResources.Prefabs.Level3_1.gameObject, tops[i].x, tops[i].y + 2 + j);
 							if (mod == 0) CreateBlockTree(game, game.GameResources.Prefabs.Level4_1.gameObject, tops[i].x, tops[i].y + 2 + j);
@@ -414,7 +411,6 @@ public partial class TileMap
 						up = BlockTypes[(int)tops[i].x, (int)tops[i].y + 2 + j + roofOffset];
 						if (up == TileType.Air && j < treeLength - 1)
 						{
-							rightHeight++;
 							int extra = 6 - j;
 							extra = Mathf.Min(extra, 0);
 							int twig = game.CurrentRandom.Next(0, 3 + ((extra) * -1) + twigAmount);

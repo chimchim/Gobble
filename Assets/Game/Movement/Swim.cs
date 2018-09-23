@@ -14,7 +14,7 @@ namespace Game.Movement
 	{
 		public override void EnterState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-
+			Debug.Log("Swim EnterState");
 		}
 		public override void Update(GameManager game, MovementComponent movement, int entityID, Entity entity, float delta)
 		{
@@ -99,7 +99,7 @@ namespace Game.Movement
 		}
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
-
+			Debug.Log("Swim LeaveState");
 		}
 	}
 }

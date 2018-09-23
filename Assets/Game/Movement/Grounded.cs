@@ -76,6 +76,7 @@ namespace Game.Movement
 			var box =  entityGameObject.GetComponent<BoxCollider2D>();
 			var circle = entityGameObject.GetComponent<CircleCollider2D>();
 			float yPos = -circle.offset.y + (circle.radius * 1.1f);
+
 			if (yMovement > 0)
 				yPos = box.offset.y  + box.size.y/2;
 			int layer = 0;
@@ -85,6 +86,7 @@ namespace Game.Movement
 
 			if (movement.Grounded)
 			{
+				
 				if(yMovement < 0)
 					groundTimer = 0;
 				movement.CurrentVelocity.y = 0;
@@ -93,9 +95,14 @@ namespace Game.Movement
 				movement.ForceVelocity.y = 0;
 			}
 			#region LadderCheck
-			
+			var water = WaterCheck(tempPos, yMovement, box.size.x, box.size.y);
+			if(water)
+			{
+				groundTimer = 0;
+				movement.CurrentState = MovementComponent.MoveState.Swimming;
+			}
 			var ladder1 = VerticalMovementLadder(tempPos, yMovement, box.size.x, box.size.y);
-			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/ && !player.Dead)
+			if (ladder1/* && (input.Axis.x != 0 || input.Axis.y != 0)*/ && !player.Dead && !water)
 			{
 				var skipLadder = (JumpLadderTimer > 0 || ladder1 == JumpLadder);
 				if (!skipLadder)
@@ -142,6 +149,20 @@ namespace Game.Movement
 			return hitsY.collider;
 		}
 
+		public static Collider2D WaterCheck(Vector3 pos, float y, float Xoffset, float yoffset)
+		{
+			float half = yoffset - (yoffset / 10);
+			float fullRayDistance = yoffset + Mathf.Abs(y) - half;
+			var layerMask = 1 << LayerMask.NameToLayer("Water");
+
+			float sign = Mathf.Sign(y);
+			Vector3 firstStartY = pos;
+			RaycastHit2D hitsY = new RaycastHit2D();
+			hitsY = Physics2D.Raycast(firstStartY, Vector3.up * sign, 0.1f, layerMask);
+
+			//var laddered = ((hitsY.collider != null));
+			return hitsY.collider;
+		}
 		public override void LeaveState(GameManager game, MovementComponent movement, int entityID, Entity entity)
 		{
 
